@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚔️ RÉSISTANCE — Plaidoyer Citoyen PRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@600;700&family=Space+Grotesk:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
+    <style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   RÉSISTANCE — POSTE DE TRAVAIL PLAIDOYER CITOYEN PRO
+   Version 2.0 - Janvier 2026
+   
+   FONCTIONNALITÉS COMPLÈTES:
+   ✓ 80 flashcards Arizona intégrées
+   ✓ Mode Quiz avec répétition espacée
+   ✓ Glossaire interactif
+   ✓ Tutoriel premier lancement
+   ✓ 15 outils pré-remplis (cas Arizona)
+   ✓ Export PDF-ready
+   ✓ Import/Export projet
+   ✓ 4 thèmes visuels
+   ✓ Raccourcis clavier complets
+   ✓ PWA-ready (installable)
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mint: #7fffd4;
+    --mint-dim: rgba(127,255,212,0.12);
+    --mint-glow: rgba(127,255,212,0.35);
+    --mint-solid: #0d2922;
+    --lilac: #c8a2ff;
+    --lilac-dim: rgba(200,162,255,0.12);
+    --lilac-glow: rgba(200,162,255,0.35);
+    --lilac-solid: #1f1530;
+    --bg-0: #030306;
+    --bg-1: #080810;
+    --bg-2: #0c0c16;
+    --bg-3: #12121e;
+    --bg-4: #181826;
+    --bg-5: #1e1e2e;
+    --text-1: #f0f0ff;
+    --text-2: #a0a0c0;
+    --text-3: #606080;
+    --danger: #ff4757;
+    --success: #2ed573;
+    --warning: #ffa502;
+    --info: #00d9ff;
+    --border: rgba(127,255,212,0.12);
+    --border-hover: rgba(127,255,212,0.25);
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+    --radius: 6px;
+    --radius-lg: 10px;
+    --transition: 0.2s ease;
+    --font-display: 'Orbitron', monospace;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --header-h: 42px;
+    --nav-h: 32px;
+    --sidebar-w: 190px;
+    --sidebar-r-w: 210px;
+}
+
+[data-theme="console"] {
+    --mint: #00ff00; --lilac: #00ff00;
+    --mint-dim: rgba(0,255,0,0.12); --mint-glow: rgba(0,255,0,0.4);
+    --mint-solid: #001a00; --lilac-solid: #001a00;
+    --bg-0: #000; --bg-1: #000a00; --bg-2: #001200; --bg-3: #001a00; --bg-4: #002200; --bg-5: #002a00;
+    --text-1: #00ff00; --text-2: #00cc00; --text-3: #008800;
+    --border: rgba(0,255,0,0.15);
+    --font-body: 'VT323', monospace; --font-display: 'VT323', monospace;
+}
+
+[data-theme="neon"] {
+    --mint: #00ffff; --lilac: #ff00ff;
+    --mint-dim: rgba(0,255,255,0.12); --lilac-dim: rgba(255,0,255,0.12);
+    --mint-glow: rgba(0,255,255,0.4); --lilac-glow: rgba(255,0,255,0.4);
+    --mint-solid: #002a2a; --lilac-solid: #2a002a;
+    --bg-0: #05000a; --bg-1: #0a0015; --bg-2: #100020; --bg-3: #18002d; --bg-4: #200038; --bg-5: #280045;
+    --text-1: #fff; --text-2: #ff88ff; --text-3: #8844aa;
+    --border: rgba(255,0,255,0.15);
+}
+
+[data-theme="80s"] {
+    --mint: #ff6ec7; --lilac: #00ced1;
+    --mint-dim: rgba(255,110,199,0.12); --lilac-dim: rgba(0,206,209,0.12);
+    --mint-glow: rgba(255,110,199,0.4); --lilac-glow: rgba(0,206,209,0.4);
+    --mint-solid: #2a0f20; --lilac-solid: #0f2a2a;
+    --bg-0: #0f0518; --bg-1: #180a25; --bg-2: #200f30; --bg-3: #28143a; --bg-4: #301945; --bg-5: #381e50;
+    --text-1: #fff8dc; --text-2: #ffb6c1; --text-3: #9370db;
+    --border: rgba(255,110,199,0.15);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 12.5px; scroll-behavior: smooth; }
+@media (min-width: 1400px) { html { font-size: 13.5px; } }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--text-1);
+    min-height: 100vh;
+    line-height: 1.45;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mint-glow); }
+::selection { background: var(--mint); color: var(--bg-0); }
+
+.app {
+    display: grid;
+    grid-template-rows: var(--header-h) var(--nav-h) 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* === HEADER === */
+.header {
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border-bottom: 1px solid var(--border);
+    padding: 0 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.logo:hover { opacity: 0.85; }
+
+.logo-icon {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--mint), var(--lilac));
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 0 0 10px var(--mint-glow);
+}
+
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    background: linear-gradient(90deg, var(--mint), var(--lilac));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.logo-sub { font-size: 0.5rem; color: var(--text-3); font-family: var(--font-mono); }
+
+.xp-container {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-3);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+.xp-rank {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: var(--mint);
+    background: var(--mint-dim);
+    padding: 1px 5px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+.xp-bar { width: 60px; height: 4px; background: var(--bg-0); border-radius: 2px; overflow: hidden; }
+.xp-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.5s; }
+.xp-text { font-family: var(--font-mono); font-size: 0.5rem; color: var(--text-3); }
+
+.header-actions { display: flex; gap: 0.3rem; align-items: center; }
+.theme-switcher { display: flex; gap: 1px; background: var(--bg-3); padding: 2px; border-radius: 5px; }
+.theme-btn {
+    width: 22px; height: 22px;
+    border: none; border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.65rem;
+    transition: var(--transition);
+    display: flex; align-items: center; justify-content: center;
+}
+.theme-btn:hover { background: var(--bg-4); }
+.theme-btn.active { background: var(--mint-dim); box-shadow: 0 0 6px var(--mint-glow); }
+
+/* === NAV === */
+.nav {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: 0 0.4rem;
+    display: flex;
+    gap: 1px;
+    overflow-x: auto;
+}
+.nav::-webkit-scrollbar { height: 0; }
+
+.nav-tab {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    padding: 0.45rem 0.65rem;
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.nav-tab:hover { color: var(--text-1); background: var(--bg-2); }
+.nav-tab.active { color: var(--mint); border-bottom-color: var(--mint); background: var(--bg-2); }
+.nav-badge {
+    font-size: 0.45rem;
+    padding: 1px 3px;
+    background: var(--lilac);
+    color: var(--bg-0);
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* === MAIN === */
+.main {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr var(--sidebar-r-w);
+    overflow: hidden;
+}
+
+@media (max-width: 950px) {
+    .main { grid-template-columns: var(--sidebar-w) 1fr; }
+    .sidebar-right { display: none; }
+}
+@media (max-width: 600px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar-left { display: none; }
+    .xp-container { display: none; }
+}
+
+/* === SIDEBARS === */
+.sidebar-left, .sidebar-right {
+    background: var(--bg-1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.sidebar-left { border-right: 1px solid var(--border); }
+.sidebar-right { border-left: 1px solid var(--border); overflow-y: auto; }
+
+.sidebar-section { border-bottom: 1px solid var(--border); }
+.sidebar-header {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-2);
+}
+.sidebar-content { max-height: 140px; overflow-y: auto; }
+.sidebar-content.expanded { max-height: none; flex: 1; }
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.65rem;
+    border-left: 2px solid transparent;
+}
+.item:hover { background: var(--bg-3); }
+.item.active { background: var(--mint-dim); border-left-color: var(--mint); color: var(--mint); }
+.item.completed::after { content: '✓'; color: var(--success); margin-left: auto; font-size: 0.55rem; }
+.item-icon { font-size: 0.7rem; opacity: 0.7; width: 14px; text-align: center; }
+.item-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-badge { font-size: 0.45rem; padding: 1px 3px; background: var(--bg-4); border-radius: 3px; color: var(--text-3); text-transform: uppercase; }
+.item-actions { display: none; gap: 2px; }
+.item:hover .item-actions { display: flex; }
+.item-action { background: none; border: none; cursor: pointer; font-size: 0.55rem; opacity: 0.5; padding: 1px; }
+.item-action:hover { opacity: 1; }
+
+.phase-tag { font-size: 0.45rem; padding: 1px 3px; border-radius: 3px; font-weight: 600; }
+.phase-tag.voir { background: rgba(46,213,115,0.2); color: #2ed573; }
+.phase-tag.juger { background: rgba(255,165,2,0.2); color: #ffa502; }
+.phase-tag.agir { background: rgba(255,71,87,0.2); color: #ff4757; }
+
+.drop-mini {
+    padding: 0.4rem;
+    text-align: center;
+    border: 1px dashed var(--border);
+    margin: 0.35rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.55rem;
+    color: var(--text-3);
+}
+.drop-mini:hover, .drop-mini.dragover { border-color: var(--mint); background: var(--mint-dim); color: var(--mint); }
+
+/* === CONTENT === */
+.content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-2);
+}
+
+.content-header {
+    padding: 0.35rem 0.6rem;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    min-height: 36px;
+}
+.content-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.content-toolbar { display: flex; gap: 0.25rem; flex-wrap: wrap; align-items: center; }
+.content-body { flex: 1; overflow: auto; padding: 0.6rem; }
+
+/* === PANELS === */
+.panel { border-bottom: 1px solid var(--border); }
+.panel-header {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--bg-2);
+}
+.panel-body { padding: 0.4rem 0.5rem; }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.stat-card {
+    background: var(--bg-3);
+    border-radius: var(--radius);
+    padding: 0.35rem;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+.stat-value { font-family: var(--font-display); font-size: 0.95rem; color: var(--mint); }
+.stat-label { font-size: 0.45rem; color: var(--text-3); text-transform: uppercase; }
+
+.quote-box {
+    background: var(--bg-3);
+    border-left: 2px solid var(--lilac);
+    padding: 0.4rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+.quote-text { font-size: 0.6rem; font-style: italic; color: var(--text-2); margin-bottom: 0.15rem; line-height: 1.4; }
+.quote-author { font-size: 0.5rem; color: var(--lilac); }
+
+.timeline-item {
+    position: relative;
+    padding-left: 0.9rem;
+    padding-bottom: 0.4rem;
+    border-left: 1px solid var(--border);
+    margin-left: 0.3rem;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -3px; top: 2px;
+    width: 5px; height: 5px;
+    background: var(--mint);
+    border-radius: 50%;
+}
+.timeline-item.urgent::before { background: var(--danger); box-shadow: 0 0 5px var(--danger); }
+.timeline-date { font-size: 0.45rem; color: var(--text-3); }
+.timeline-title { font-size: 0.6rem; font-weight: 500; }
+
+/* === COMPONENTS === */
+.btn {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    background: var(--bg-3);
+    color: var(--text-1);
+    white-space: nowrap;
+}
+.btn:hover { background: var(--bg-4); border-color: var(--border-hover); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--mint); color: var(--bg-0); border-color: var(--mint); font-weight: 600; }
+.btn-primary:hover { box-shadow: 0 0 10px var(--mint-glow); }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-success { background: var(--success); color: var(--bg-0); border-color: var(--success); }
+.btn-sm { padding: 0.15rem 0.35rem; font-size: 0.55rem; }
+.btn-lg { padding: 0.4rem 0.8rem; font-size: 0.7rem; }
+
+.input, .textarea, .select {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-1);
+    width: 100%;
+    transition: var(--transition);
+}
+.input:focus, .textarea:focus, .select:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 0 2px var(--mint-dim);
+}
+.textarea { min-height: 55px; resize: vertical; font-family: var(--font-mono); line-height: 1.4; }
+.form-group { margin-bottom: 0.6rem; }
+.form-label { display: block; font-size: 0.65rem; font-weight: 500; margin-bottom: 0.2rem; }
+.form-hint { font-size: 0.55rem; color: var(--text-3); margin-top: 0.15rem; }
+
+.tabs { display: flex; gap: 1px; background: var(--bg-1); padding: 2px; border-radius: var(--radius); }
+.tab {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.45rem;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+.tab:hover { color: var(--text-1); background: var(--bg-3); }
+.tab.active { background: var(--mint-dim); color: var(--mint); }
+
+.card {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+    transition: var(--transition);
+}
+.card:hover { border-color: var(--border-hover); }
+.card-title { font-size: 0.75rem; font-weight: 600; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.35rem; }
+
+.grid { display: grid; gap: 0.6rem; }
+.grid-2 { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+
+/* === FLASHCARDS === */
+.fc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 0.6rem;
+}
+
+.fc-toolbar { margin-bottom: 0.6rem; display: flex; gap: 0.25rem; flex-wrap: wrap; justify-content: center; }
+
+.fc-card {
+    width: 100%;
+    max-width: 420px;
+    height: 145px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.fc-card.flipped .fc-inner { transform: rotateY(180deg); }
+
+.fc-front, .fc-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    overflow: auto;
+}
+
+.fc-front { background: var(--bg-3); }
+.fc-back {
+    background: linear-gradient(135deg, var(--mint-solid) 0%, var(--lilac-solid) 100%);
+    transform: rotateY(180deg);
+    border-color: var(--mint);
+}
+
+.fc-question { font-size: 0.85rem; line-height: 1.45; color: var(--text-1); }
+.fc-answer { font-size: 0.8rem; color: var(--mint); font-weight: 500; line-height: 1.45; }
+
+.fc-controls { display: flex; gap: 0.4rem; margin-top: 0.6rem; align-items: center; }
+.fc-counter { margin-top: 0.4rem; color: var(--text-3); font-size: 0.6rem; font-family: var(--font-mono); }
+.fc-progress { width: 100%; max-width: 420px; height: 4px; background: var(--bg-1); border-radius: 2px; margin-top: 0.35rem; overflow: hidden; }
+.fc-progress-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.3s; }
+
+.fc-stats { display: flex; gap: 0.8rem; margin-top: 0.6rem; font-size: 0.55rem; color: var(--text-3); }
+.fc-stat { display: flex; align-items: center; gap: 0.2rem; }
+.fc-stat.good { color: var(--success); }
+.fc-stat.bad { color: var(--danger); }
+
+.fc-feedback {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+}
+
+/* Mode Quiz */
+.quiz-result {
+    text-align: center;
+    padding: 1.5rem;
+}
+.quiz-score {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--mint);
+    margin-bottom: 0.5rem;
+}
+.quiz-grade { font-size: 1rem; color: var(--text-2); margin-bottom: 1rem; }
+
+/* Fullscreen */
+.fc-fullscreen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-0);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+.fc-fullscreen .fc-card { max-width: 550px; height: 200px; }
+.fc-fullscreen .fc-question { font-size: 1rem; }
+.fc-fullscreen .fc-answer { font-size: 0.95rem; }
+.fc-fullscreen .fc-close {
+    position: absolute;
+    top: 0.8rem; right: 0.8rem;
+    font-size: 1.3rem;
+    background: none;
+    border: none;
+    color: var(--text-2);
+    cursor: pointer;
+}
+
+/* === GLOSSARY === */
+.glossary-grid { display: grid; gap: 0.5rem; }
+.glossary-item {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.glossary-item:hover { border-color: var(--mint); }
+.glossary-item.expanded { background: var(--bg-4); }
+.glossary-term {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--mint);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.glossary-def {
+    font-size: 0.65rem;
+    color: var(--text-2);
+    margin-top: 0.35rem;
+    line-height: 1.5;
+    display: none;
+}
+.glossary-item.expanded .glossary-def { display: block; }
+
+/* === TABLE === */
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 0.65rem; }
+th, td { padding: 0.35rem 0.4rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--bg-3); font-weight: 600; position: sticky; top: 0; z-index: 1; font-size: 0.55rem; text-transform: uppercase; }
+tr:hover { background: var(--bg-3); }
+.cell-input { background: transparent; border: none; color: inherit; width: 100%; font: inherit; }
+.cell-input:focus { outline: none; background: var(--bg-1); padding: 0.1rem; border-radius: 2px; }
+
+/* === EMPTY STATE === */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--text-3);
+    padding: 1.2rem;
+}
+.empty-icon { font-size: 2.2rem; margin-bottom: 0.4rem; opacity: 0.3; }
+.empty-title { font-size: 0.85rem; font-weight: 600; color: var(--text-2); margin-bottom: 0.2rem; }
+.empty-text { font-size: 0.65rem; margin-bottom: 0.6rem; }
+
+.drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    max-width: 260px;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--mint); background: var(--mint-dim); }
+
+/* === TOOL HELP === */
+.tool-help {
+    background: var(--bg-4);
+    border: 1px solid var(--lilac-dim);
+    border-left: 3px solid var(--lilac);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.65rem;
+    color: var(--text-2);
+    line-height: 1.45;
+}
+.tool-help strong { color: var(--lilac); }
+
+/* === TOAST === */
+.toast-container { position: fixed; bottom: 0.6rem; right: 0.6rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.25rem; }
+.toast {
+    background: var(--bg-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.65rem;
+    animation: toastIn 0.3s ease;
+    box-shadow: var(--shadow);
+    max-width: 260px;
+}
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } }
+
+/* === MODAL === */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(4px);
+    z-index: 9500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 380px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+.modal-header {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-3);
+}
+.modal-title { font-weight: 600; font-size: 0.8rem; }
+.modal-close { background: none; border: none; font-size: 0.95rem; cursor: pointer; color: var(--text-2); }
+.modal-close:hover { color: var(--text-1); }
+.modal-body { padding: 0.6rem; max-height: 55vh; overflow-y: auto; }
+.modal-footer {
+    padding: 0.5rem 0.6rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    background: var(--bg-3);
+}
+
+/* === TUTORIAL OVERLAY === */
+.tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.tutorial-box {
+    background: var(--bg-2);
+    border: 2px solid var(--mint);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 0 40px var(--mint-glow);
+}
+.tutorial-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.tutorial-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--mint); margin-bottom: 0.5rem; }
+.tutorial-text { font-size: 0.75rem; color: var(--text-2); line-height: 1.6; margin-bottom: 1rem; }
+.tutorial-steps {
+    text-align: left;
+    font-size: 0.7rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+.tutorial-steps li { margin-bottom: 0.3rem; }
+
+/* === KEYBOARD HELP === */
+.kb-help {
+    position: fixed;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.5rem;
+    color: var(--text-3);
+    z-index: 100;
+}
+.kb-key {
+    display: inline-block;
+    padding: 1px 3px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    margin: 0 1px;
+}
+
+/* === PRINT === */
+@media print {
+    .header, .nav, .sidebar-left, .sidebar-right, .toast-container, .kb-help { display: none !important; }
+    .main { grid-template-columns: 1fr !important; }
+    .content-body { padding: 0 !important; }
+    .card { break-inside: avoid; }
+}
+
+.hidden { display: none !important; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <div class="logo" onclick="switchView('dashboard')">
+            <div class="logo-icon">⚔️</div>
+            <div>
+                <div class="logo-text">RÉSISTANCE</div>
+                <div class="logo-sub">Plaidoyer Citoyen PRO</div>
+            </div>
+        </div>
+        
+        <div class="xp-container">
+            <span class="xp-rank" id="xpRank">NÉOPHYTE</span>
+            <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:50%"></div></div>
+            <span class="xp-text"><span id="xpCurrent">150</span>/<span id="xpMax">300</span></span>
+        </div>
+        
+        <div class="header-actions">
+            <div class="theme-switcher">
+                <button class="theme-btn active" data-theme="dark" title="Sombre">🌑</button>
+                <button class="theme-btn" data-theme="console" title="Terminal">💻</button>
+                <button class="theme-btn" data-theme="neon" title="Néon">🌈</button>
+                <button class="theme-btn" data-theme="80s" title="Rétro">📼</button>
+            </div>
+            <button class="btn btn-sm" onclick="importProject()" title="Importer">📂</button>
+            <button class="btn btn-sm" onclick="exportProject()" title="Exporter">💾</button>
+            <button class="btn btn-sm" onclick="showTutorial()" title="Aide">❓</button>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <button class="nav-tab active" data-view="dashboard">🏠 QG</button>
+        <button class="nav-tab" data-view="files">📁 Fichiers</button>
+        <button class="nav-tab" data-view="tools">🛠️ Outils <span class="nav-badge">15</span></button>
+        <button class="nav-tab" data-view="flashcards">📚 Flashcards</button>
+        <button class="nav-tab" data-view="quiz">🎯 Quiz</button>
+        <button class="nav-tab" data-view="glossary">📖 Glossaire</button>
+        <button class="nav-tab" data-view="achievements">🏆 Trophées</button>
+    </nav>
+
+    <div class="main">
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    📁 Fichiers
+                    <button class="btn btn-sm" onclick="$('fileInput').click()">+</button>
+                </div>
+                <div class="sidebar-content" id="fileList"></div>
+                <div class="drop-mini" id="dropMini">📥 Importer</div>
+                <input type="file" id="fileInput" hidden multiple accept=".json,.csv,.txt,.md">
+            </div>
+            <div class="sidebar-section" style="flex:1;display:flex;flex-direction:column;">
+                <div class="sidebar-header">🛠️ Outils</div>
+                <div class="sidebar-content expanded" id="toolList"></div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="content-header">
+                <div class="content-title" id="contentTitle"><span>🏠</span> Quartier Général</div>
+                <div class="content-toolbar" id="contentToolbar"></div>
+            </div>
+            <div class="content-body" id="contentBody"></div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="panel">
+                <div class="panel-header">📊 Progression</div>
+                <div class="panel-body">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statFiles">0</div>
+                            <div class="stat-label">Fichiers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTools">0/15</div>
+                            <div class="stat-label">Outils</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">💡 Citation</div>
+                <div class="panel-body">
+                    <div class="quote-box">
+                        <div class="quote-text" id="quoteText">"La résistance commence par l'information."</div>
+                        <div class="quote-author" id="quoteAuthor">— Anonyme</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">📅 Échéances Arizona</div>
+                <div class="panel-body">
+                    <div class="timeline-item urgent">
+                        <div class="timeline-date">1er Mars 2026</div>
+                        <div class="timeline-title">Vague 2 (8-20 ans)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">1er Avril 2026</div>
+                        <div class="timeline-title">Vague 3 (&lt;8 ans)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">1er Juillet 2026</div>
+                        <div class="timeline-title">Vague 4 (2e période)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Fin 2026</div>
+                        <div class="timeline-title">Arrêt Cour Const.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">🏆 Derniers trophées</div>
+                <div class="panel-body" id="recentTrophies">
+                    <div style="color:var(--text-3);font-size:0.55rem;">Aucun trophée</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div class="kb-help" id="kbHelp"><span class="kb-key">←</span><span class="kb-key">→</span> Nav <span class="kb-key">Espace</span> Flip <span class="kb-key">F</span> Fullscreen</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Modal</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<div id="fcFullscreen" class="hidden"></div>
+<div id="tutorialOverlay" class="hidden"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIG & DATA
+// ═══════════════════════════════════════════════════════════════════════════
+
+const VERSION = '2.0.0';
+
+const RANKS = [
+    { name: 'NÉOPHYTE', min: 0 },
+    { name: 'INITIÉ', min: 300 },
+    { name: 'ACTIVISTE', min: 750 },
+    { name: 'STRATÈGE', min: 1500 },
+    { name: 'MAÎTRE', min: 3000 },
+    { name: 'LÉGENDE', min: 5000 }
+];
+
+const ACHIEVEMENTS = [
+    { id: 'first_file', name: 'Premier Fichier', desc: 'Importer un fichier', icon: '📁', xp: 25 },
+    { id: 'first_tool', name: 'Premier Pas', desc: 'Compléter un outil', icon: '🛠️', xp: 50 },
+    { id: 'fc_session', name: 'Révision', desc: 'Terminer une session', icon: '📚', xp: 30 },
+    { id: 'fc_master', name: 'Mémoire Vive', desc: 'Réviser 100 cartes', icon: '🧠', xp: 100 },
+    { id: 'quiz_pass', name: 'Examen Réussi', desc: 'Score ≥80% au quiz', icon: '🎯', xp: 75 },
+    { id: 'quiz_perfect', name: 'Sans Faute', desc: '100% au quiz', icon: '💯', xp: 150 },
+    { id: 'voir_done', name: 'Vision Claire', desc: 'Phase VOIR complète', icon: '👁️', xp: 150 },
+    { id: 'juger_done', name: 'Jugement Sûr', desc: 'Phase JUGER complète', icon: '⚖️', xp: 150 },
+    { id: 'agir_done', name: 'Passage à l\'Action', desc: 'Phase AGIR complète', icon: '✊', xp: 150 },
+    { id: 'all_tools', name: 'Arsenal Complet', desc: 'Les 15 outils', icon: '🏆', xp: 500 },
+    { id: 'night_owl', name: 'Hibou', desc: 'Travail 0h-5h', icon: '🦉', xp: 50 },
+    { id: 'collector', name: 'Archiviste', desc: '10 fichiers', icon: '📊', xp: 75 },
+    { id: 'exporter', name: 'Sauvegarde', desc: 'Exporter un projet', icon: '💾', xp: 25 }
+];
+
+const TOOLS = [
+    { id: 1, name: 'Domino du Changement', icon: '🎯', phase: 'voir', xp: 50, key: 'domino', fields: ['vision', 'obstacles', 'ressources'], help: 'Définissez votre vision, identifiez obstacles et ressources.' },
+    { id: 2, name: 'Profil d\'Engagement', icon: '👤', phase: 'voir', xp: 50, key: 'profil', fields: ['motivations', 'competences', 'temps', 'limites'], help: 'Motivations, compétences, temps disponible et limites du groupe.' },
+    { id: 3, name: 'Fleur de Pouvoir', icon: '🌸', phase: 'voir', xp: 50, key: 'fleur', fields: ['identites', 'privileges', 'oppressions'], help: 'Identités sociales, privilèges et systèmes d\'oppression.' },
+    { id: 4, name: 'Cartographie Acteurs', icon: '🗺️', phase: 'voir', xp: 50, key: 'acteurs', fields: ['allies', 'opposants', 'neutres', 'cibles'], help: 'Alliés, opposants, neutres et cibles de votre plaidoyer.' },
+    { id: 5, name: 'Analyse SWOT', icon: '📊', phase: 'juger', xp: 75, key: 'swot', fields: ['forces', 'faiblesses', 'opportunites', 'menaces'], help: 'Forces/Faiblesses internes, Opportunités/Menaces externes.' },
+    { id: 6, name: 'Analyse PESTEL', icon: '🌍', phase: 'juger', xp: 75, key: 'pestel', fields: ['politique', 'economique', 'social', 'technologique', 'environnemental', 'legal'], help: 'Macro-environnement en 6 dimensions.' },
+    { id: 7, name: 'Arbre à Problèmes', icon: '🌳', phase: 'juger', xp: 75, key: 'arbre', fields: ['probleme_central', 'causes', 'effets'], help: 'Problème central, causes (racines) et effets (branches).' },
+    { id: 8, name: 'Les 5 Pourquoi', icon: '❓', phase: 'juger', xp: 75, key: 'pourquoi', fields: ['probleme', 'why1', 'why2', 'why3', 'why4', 'why5'], help: 'Remontez à la cause racine en 5 questions.' },
+    { id: 9, name: 'Théorie du Changement', icon: '📐', phase: 'juger', xp: 75, key: 'theorie', fields: ['situation', 'objectif', 'moyens', 'resultats'], help: 'Situation → Activités → Résultats → Impact.' },
+    { id: 10, name: 'Avec / Sans / Contre', icon: '⚔️', phase: 'agir', xp: 100, key: 'alliance', fields: ['avec', 'sans', 'contre'], help: 'Avec qui s\'allier, sans qui agir, contre qui se mobiliser.' },
+    { id: 11, name: 'Objectifs SMART', icon: '🎯', phase: 'agir', xp: 100, key: 'smart', fields: ['specifique', 'mesurable', 'atteignable', 'relevant', 'temporel'], help: 'Objectifs Spécifiques, Mesurables, Atteignables, Relevants, Temporels.' },
+    { id: 12, name: 'Cibles & Alliances', icon: '🎪', phase: 'agir', xp: 100, key: 'cibles', fields: ['cible_primaire', 'cible_secondaire', 'allies', 'strategie'], help: 'Cibles prioritaires et alliances à construire.' },
+    { id: 13, name: 'Construction Message', icon: '📣', phase: 'agir', xp: 100, key: 'message', fields: ['accroche', 'probleme', 'importance', 'cible', 'action'], help: 'Accroche → Problème → Importance → Cible → Action demandée.' },
+    { id: 14, name: 'Check-list Rencontre', icon: '📋', phase: 'agir', xp: 100, key: 'checklist', fields: ['objectif', 'arguments', 'documents', 'questions', 'suivi'], help: 'Préparez vos rencontres avec décideurs.' },
+    { id: 15, name: 'Suivi & Évaluation', icon: '📈', phase: 'agir', xp: 100, key: 'suivi', fields: ['indicateurs', 'methodes', 'calendrier', 'lecons'], help: 'Indicateurs, méthodes de collecte et calendrier.' }
+];
+
+const GLOSSARY = [
+    { term: 'Arizona', def: 'Coalition gouvernementale fédérale belge formée en février 2025, composée de N-VA, MR, Les Engagés, CD&V et Vooruit.' },
+    { term: 'AROPE', def: 'At Risk of Poverty or Social Exclusion — indicateur européen du risque de pauvreté ou d\'exclusion sociale. 18,3% en Belgique (2,1 millions de personnes).' },
+    { term: 'Article 23', def: 'Article de la Constitution belge garantissant le droit à la sécurité sociale, à la protection de la santé et à une vie conforme à la dignité humaine.' },
+    { term: 'BIM', def: 'Bénéficiaire de l\'Intervention Majorée — statut donnant droit à des réductions sur les soins de santé et tarifs sociaux (énergie, transports).' },
+    { term: 'CPAS', def: 'Centre Public d\'Action Sociale — organisme communal chargé de l\'aide sociale, notamment l\'octroi du RIS.' },
+    { term: 'Effet cliquet / Standstill', def: 'Principe juridique interdisant de réduire significativement le niveau de protection sociale existant sans justification impérieuse.' },
+    { term: 'ONEM', def: 'Office National de l\'Emploi — organisme fédéral gérant l\'assurance chômage en Belgique.' },
+    { term: 'PIIS', def: 'Projet Individualisé d\'Intégration Sociale — contrat obligatoire entre un bénéficiaire du RIS et le CPAS.' },
+    { term: 'RIS', def: 'Revenu d\'Intégration Sociale — aide sociale de dernier recours octroyée par les CPAS aux personnes sans ressources.' },
+    { term: 'Vague d\'exclusion', def: 'Calendrier ONEM des fins de droit au chômage : Vague 1 (jan. 2026, >20 ans), Vague 2 (mars 2026, 8-20 ans), Vague 3 (avril 2026, <8 ans), Vague 4 (juillet 2026, 2e période).' },
+    { term: 'Working poor', def: 'Travailleurs pauvres — personnes ayant un emploi mais dont le revenu reste sous le seuil de pauvreté.' },
+    { term: 'Non-recours', def: 'Phénomène où des personnes éligibles à des droits sociaux ne les demandent pas, souvent par méconnaissance ou complexité administrative.' },
+    { term: 'Ticket modérateur', def: 'Part du coût des soins de santé ou médicaments restant à charge du patient après remboursement de la mutuelle.' },
+    { term: 'Front commun syndical', def: 'Alliance des trois syndicats belges (FGTB, CSC, CGSLB) pour des actions coordonnées.' }
+];
+
+const QUOTES = [
+    { text: "Il est plus facile de tromper les gens que de les convaincre qu'ils ont été trompés.", author: "Mark Twain" },
+    { text: "Celui qui contrôle le passé contrôle le futur.", author: "George Orwell" },
+    { text: "Ne doutez jamais qu'un petit groupe de citoyens engagés puisse changer le monde.", author: "Margaret Mead" },
+    { text: "L'injustice quelque part est une menace pour la justice partout.", author: "M.L. King Jr." },
+    { text: "Le silence devient lâcheté quand l'occasion exige de parler.", author: "Gandhi" },
+    { text: "On ne subit pas l'avenir, on le fait.", author: "Georges Bernanos" },
+    { text: "La liberté commence où l'ignorance finit.", author: "Victor Hugo" },
+    { text: "Ce n'est pas un signe de bonne santé d'être adapté à une société malade.", author: "Krishnamurti" }
+];
+
+// 80 Flashcards Arizona (nettoyées du LaTeX)
+const FLASHCARDS_ARIZONA = [
+    { q: "Comment appelle-t-on la coalition gouvernementale fédérale formée en février 2025 en Belgique ?", a: "La coalition Arizona." },
+    { q: "Qui occupe le poste de Premier ministre au sein du gouvernement Arizona ?", a: "Bart De Wever (N-VA)." },
+    { q: "Quels sont les cinq partis qui composent la coalition Arizona ?", a: "N-VA, MR, Les Engagés, CD&V et Vooruit." },
+    { q: "À quel montant s'élève l'effort budgétaire projeté par Arizona d'ici 2029 ?", a: "23 milliards d'euros." },
+    { q: "Le gouvernement Arizona cherche à augmenter le _____ d'emploi pour financer la sécurité sociale.", a: "taux" },
+    { q: "Quel pourcentage de la population belge vivait en situation de risque de pauvreté (AROPE) en 2024 ?", a: "18,3%." },
+    { q: "La réforme phare du chômage de la coalition Arizona limite les allocations à une durée de _____ mois.", a: "24" },
+    { q: "Combien de jours de négociations ont été nécessaires pour former le gouvernement Arizona ?", a: "239 jours." },
+    { q: "La période de chômage plafonnée à 24 mois se décompose en une période de base de _____ mois.", a: "12" },
+    { q: "Quelle est la durée maximale de maintien des allocations d'insertion pour les jeunes ?", a: "1 an (12 mois)." },
+    { q: "À quelle date le nouveau régime de limitation des allocations de chômage s'applique-t-il pleinement ?", a: "Le 1er mars 2026." },
+    { q: "Quel organisme public belge a élaboré le calendrier des vagues d'exclusion du chômage ?", a: "L'ONEM (Office National de l'Emploi)." },
+    { q: "La Vague 1 d'exclusion (janvier 2026) cible les chômeurs ayant plus de _____ ans de chômage.", a: "20" },
+    { q: "Quelle catégorie de chômeurs est ciblée par la Vague 2 (1er mars 2026) ?", a: "Les chômeurs ayant cumulé entre 8 et 20 ans." },
+    { q: "À quelle date les chômeurs en 3e période ayant moins de 8 ans de chômage sont-ils exclus (Vague 3) ?", a: "Le 1er avril 2026." },
+    { q: "La Vague 4 (1er juillet 2026) concerne les demandeurs d'emploi en _____ période d'indemnisation.", a: "deuxième (2e)" },
+    { q: "Quel âge doit avoir un demandeur d'emploi pour être théoriquement protégé de la limitation ?", a: "55 ans et plus." },
+    { q: "Pour être protégé après 55 ans, un chômeur doit justifier d'un passé professionnel de _____ ans en 2026.", a: "31 ans" },
+    { q: "Les travailleurs des arts, les dockers et les pêcheurs bénéficient d'une _____ à la limitation.", a: "exemption (exception)" },
+    { q: "Le passage massif des exclus du chômage vers le CPAS est qualifié de « _____ ».", a: "grand glissement" },
+    { q: "Combien de personnes devraient basculer immédiatement vers le RIS suite aux réformes ?", a: "30 122 individus." },
+    { q: "Le glissement vers le CPAS représente une augmentation nationale de _____ % des bénéficiaires du RIS.", a: "12,7%" },
+    { q: "Quelle région supporte environ 45% de l'impact national des nouveaux bénéficiaires du RIS ?", a: "La Wallonie." },
+    { q: "À combien s'élève le coût net estimé pour les CPAS de Bruxelles en 2026 ?", a: "42,8 millions d'euros." },
+    { q: "L'État fédéral rembourse généralement entre _____ % et 70% du RIS versé par les communes.", a: "55%" },
+    { q: "Que signifie l'acronyme RIS ?", a: "Revenu d'Intégration Sociale." },
+    { q: "Comment appelle-t-on le contrat obligatoire entre un bénéficiaire du RIS et le CPAS ?", a: "Le PIIS (Projet Individualisé d'Intégration Sociale)." },
+    { q: "Combien d'ETP d'assistants sociaux supplémentaires sont nécessaires pour Bruxelles ?", a: "240." },
+    { q: "Quel est le montant du subside annuel supplémentaire promis aux CPAS par dossier d'exclu ?", a: "518 euros." },
+    { q: "Que signifie l'acronyme BIM ?", a: "Bénéficiaire de l'Intervention Majorée." },
+    { q: "Quel est le plafond de revenus annuels brut pour un isolé demandant le statut BIM en 2025 ?", a: "27 370,91 euros." },
+    { q: "Le statut BIM est désormais octroyé _____ aux isolés au chômage depuis plus de 3 mois.", a: "automatiquement" },
+    { q: "À partir du 1er janvier 2026, les _____ d'honoraires sont interdits pour les patients BIM.", a: "suppléments" },
+    { q: "Cette interdiction s'applique aux médecins conventionnés et _____.", a: "non conventionnés" },
+    { q: "Quel est le montant total du budget de l'assurance soins de santé pour 2026 ?", a: "46,775 milliards d'euros." },
+    { q: "En 2026, le ticket modérateur pour les médicaments passe à _____ euro par boîte pour les BIM.", a: "1" },
+    { q: "Le gouvernement prévoit d'économiser 87,2 millions en réformant les statines et les _____.", a: "IPP (inhibiteurs de la pompe à protons)" },
+    { q: "Quel pourcentage du coût des médicaments à l'hôpital reste à charge de l'établissement ?", a: "22%." },
+    { q: "Après combien de semaines d'incapacité le « Trajet Retour au Travail » peut-il débuter ?", a: "10 semaines." },
+    { q: "Quelle est la sanction financière sur l'indemnité pour un malade jugé non coopérant ?", a: "2,5%." },
+    { q: "Le délai pour entamer une procédure de force majeure médicale a été réduit de 9 à _____ mois.", a: "6" },
+    { q: "Quelle amende l'employeur doit-il verser au Fonds Retour au Travail pour force majeure médicale ?", a: "1 800 euros." },
+    { q: "Quel pourcentage d'étudiants belges déclarent des difficultés financières pour se nourrir ?", a: "58%." },
+    { q: "Quel est le prix moyen d'un kot (loyer + charges) en Belgique en 2025 ?", a: "590 euros." },
+    { q: "Le contingent d'heures de travail étudiant à cotisations réduites a été porté à _____ heures/an.", a: "650" },
+    { q: "Comment appelle-t-on le mécanisme fiscal pour augmenter le salaire net des bas salaires ?", a: "Le bonus à l'emploi fiscal." },
+    { q: "Quel article de la Constitution garantit le droit à une vie digne ?", a: "L'article 23." },
+    { q: "Comment appelle-t-on l'obligation de ne pas réduire le niveau de protection sociale ?", a: "Le principe de standstill (effet cliquet)." },
+    { q: "À quelle date s'est tenue la manifestation nationale contre la réforme du chômage en 2025 ?", a: "Le 28 avril 2025." },
+    { q: "Quel parti propose une « taxe des millionnaires » comme alternative aux coupes ?", a: "Le PTB." },
+    { q: "Le système de financement des CPAS basé sur les résultats est appelé système _____.", a: "bonus-malus" },
+    { q: "Quel facteur alimente le non-recours aux droits selon l'IWEPS ?", a: "La digitalisation forcée des services publics." },
+    { q: "Combien d'étudiants se sont retrouvés « non-finançables » suite au Décret Paysage ?", a: "15 000." },
+    { q: "Quelle mutuelle a qualifié les réformes sur les médicaments de « taxe santé » ?", a: "Solidaris." },
+    { q: "Dans quelle ville les syndicats ont-ils organisé des séances d'urgence sur la réforme ?", a: "Charleroi (ou Liège, Bruxelles)." },
+    { q: "La réforme transfère le risque social de l'État fédéral vers les _____ et les individus.", a: "entités locales (CPAS)" },
+    { q: "Quelle est la part du RIS à charge de la commune par bénéficiaire, en moyenne ?", a: "Entre 30% et 45%." },
+    { q: "Quel seuil de revenus nets un étudiant ne doit-il pas dépasser pour rester à charge fiscalement ?", a: "Environ 4 100 € à 7 500 € (selon la composition familiale)." },
+    { q: "Que signifie l'acronyme AROPE ?", a: "At Risk of Poverty or Social Exclusion." },
+    { q: "Le gouvernement prévoit une hausse de _____ points de PIB pour le coût du vieillissement d'ici 2070.", a: "1,7" },
+    { q: "Quelle plateforme numérique centralise les avantages sociaux en Belgique ?", a: "MyBenefits." },
+    { q: "Quel terme désigne les travailleurs dont le revenu reste sous le seuil de pauvreté ?", a: "Les « working poor » (travailleurs pauvres)." },
+    { q: "Quel organisme a introduit un recours en annulation contre la limitation du chômage ?", a: "Le front commun syndical et associatif." },
+    { q: "La suppression de la gratuité de certains médicaments doit générer _____ millions d'économie.", a: "26,2" },
+    { q: "Pour les chômeurs en formation pour un métier en _____, les allocations peuvent être maintenues.", a: "pénurie" },
+    { q: "Le prix moyen d'un kot à Bruxelles dépasse souvent les _____ euros en 2025.", a: "695" },
+    { q: "Quelle association étudiante dénonce la normalisation du travail durant les études ?", a: "La FEF (Fédération des Étudiant·e·s Francophones)." },
+    { q: "En 2026, l'indemnité de maladie peut être supprimée si un malade refuse de s'inscrire au _____.", a: "Forem (ou Actiris/VDAB)" },
+    { q: "Le modèle Arizona est qualifié de glissement d'une logique d'assurance vers une logique d'_____ conditionnelle.", a: "assistance" },
+    { q: "Quel est l'impact financier net estimé pour les communes bruxelloises en année pleine ?", a: "80 millions d'euros." },
+    { q: "Quel service fédéral gère l'intégration sociale et le financement des CPAS ?", a: "Le SPP Intégration Sociale." },
+    { q: "Le budget pharma 2026 prévoit une économie totale de _____ millions d'euros sur les médicaments.", a: "105 (ou 228 selon l'analyse globale)" },
+    { q: "Comment s'appelle le plan wallon 2025-2029 visant à contrer les réformes fédérales ?", a: "Le Plan Pauvreté Wallon." },
+    { q: "Quelle autorité juge de la constitutionnalité des lois restreignant les droits sociaux ?", a: "La Cour constitutionnelle." },
+    { q: "L'extension de l'octroi automatique du BIM vise à lutter contre le _____.", a: "non-recours aux droits" },
+    { q: "Le ticket modérateur minimum pour les non-BIM passe à _____ euros par boîte en 2026.", a: "2" },
+    { q: "Combien de chômeurs indemnisés sont potentiellement impactés par la limitation à 2 ans ?", a: "90 000." },
+    { q: "Le gouvernement prévoit que le travail doit rapporter _____ que l'inactivité.", a: "plus" },
+    { q: "Quelle est la condition de carrière pour un docker afin d'échapper à la limitation ?", a: "Aucune (statut spécial d'exemption)." },
+    { q: "La « falaise fiscale » se produit quand une légère hausse de revenus entraîne la _____ du statut BIM.", a: "perte" }
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const APP = {
+    xp: 150,
+    achievements: [],
+    theme: 'dark',
+    files: [],
+    currentFile: null,
+    currentTool: null,
+    currentView: 'dashboard',
+    completedTools: [],
+    project: {},
+    fcStats: { reviewed: 0, sessions: 0 },
+    quizHistory: [],
+    firstLaunch: true
+};
+
+let fcState = null;
+let quizState = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id.replace('#', ''));
+const $$ = sel => document.querySelectorAll(sel);
+const esc = s => typeof s !== 'string' ? (s || '') : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function toast(msg, type = 'info') {
+    const c = $('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+function openModal(title, content, onConfirm) {
+    $('modalTitle').textContent = title;
+    $('modalBody').innerHTML = content;
+    $('modalOverlay').classList.add('active');
+    $('modalConfirm').onclick = onConfirm;
+}
+
+function closeModal() { $('modalOverlay').classList.remove('active'); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    setupEvents();
+    
+    // First launch tutorial
+    if (APP.firstLaunch) {
+        showTutorial();
+        APP.firstLaunch = false;
+        saveState();
+    }
+    
+    render();
+    updateXP();
+    rotateQuote();
+    checkTimeAchievement();
+    setInterval(rotateQuote, 30000);
+});
+
+function setupEvents() {
+    $$('.theme-btn').forEach(btn => btn.onclick = () => setTheme(btn.dataset.theme));
+    $$('.nav-tab').forEach(tab => tab.onclick = () => switchView(tab.dataset.view));
+    
+    $('fileInput').onchange = e => { handleFiles(e.target.files); e.target.value = ''; };
+    
+    const drop = $('dropMini');
+    drop.ondragover = e => { e.preventDefault(); drop.classList.add('dragover'); };
+    drop.ondragleave = () => drop.classList.remove('dragover');
+    drop.ondrop = e => { e.preventDefault(); drop.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
+    drop.onclick = () => $('fileInput').click();
+    
+    document.onkeydown = handleKeyboard;
+}
+
+function handleKeyboard(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    if ((APP.currentView === 'flashcards' || APP.currentView === 'quiz') && (fcState || quizState)) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcFlip(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); fcNext(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); fcPrev(); }
+        else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); fcToggleFullscreen(); }
+        else if (e.key === 'Escape') fcExitFullscreen();
+    }
+}
+
+function setTheme(theme) {
+    APP.theme = theme;
+    document.documentElement.dataset.theme = theme;
+    $$('.theme-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === theme));
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIEW MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════
+
+function switchView(view) {
+    APP.currentView = view;
+    APP.currentFile = null;
+    APP.currentTool = null;
+    $$('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+    $('kbHelp').classList.toggle('hidden', !['flashcards', 'quiz'].includes(view));
+    render();
+}
+
+function render() {
+    renderSidebars();
+    renderContent();
+    updateStats();
+}
+
+function renderSidebars() {
+    const fileList = $('fileList');
+    fileList.innerHTML = APP.files.length === 0 
+        ? '<div style="padding:0.3rem 0.5rem;color:var(--text-3);font-size:0.55rem;">Aucun fichier</div>'
+        : APP.files.map(f => `
+            <div class="item ${APP.currentFile === f.id ? 'active' : ''}" onclick="openFile(${f.id})">
+                <span class="item-icon">${getFileIcon(f.type)}</span>
+                <span class="item-name">${esc(f.name)}</span>
+                <span class="item-badge">${f.type}</span>
+            </div>
+        `).join('');
+    
+    $('toolList').innerHTML = TOOLS.map(t => `
+        <div class="item ${APP.currentTool === t.id ? 'active' : ''} ${APP.completedTools.includes(t.id) ? 'completed' : ''}" onclick="openTool(${t.id})">
+            <span class="item-icon">${t.icon}</span>
+            <span class="item-name">${t.name}</span>
+            <span class="phase-tag ${t.phase}">${t.phase}</span>
+        </div>
+    `).join('');
+}
+
+function renderContent() {
+    const body = $('contentBody'), title = $('contentTitle'), toolbar = $('contentToolbar');
+    
+    if (APP.currentFile) return renderFileEditor(body, title, toolbar);
+    if (APP.currentTool) return renderToolEditor(body, title, toolbar);
+    
+    const views = { dashboard: renderDashboard, files: renderFiles, tools: renderTools, flashcards: renderFlashcards, quiz: renderQuiz, glossary: renderGlossary, achievements: renderAchievements };
+    (views[APP.currentView] || renderDashboard)(body, title, toolbar);
+}
+
+function getFileIcon(type) { return { csv: '📊', json: '📋', md: '📝', txt: '📄' }[type] || '📄'; }
+function updateStats() { $('statFiles').textContent = APP.files.length; $('statTools').textContent = `${APP.completedTools.length}/15`; }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleFiles(fileList) {
+    Array.from(fileList).forEach(file => {
+        const reader = new FileReader();
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        reader.onload = e => {
+            const content = e.target.result;
+            let data = null;
+            
+            if (ext === 'json') {
+                try { data = JSON.parse(content); } catch { toast('JSON invalide', 'error'); return; }
+            } else if (ext === 'csv') {
+                data = parseCSV(content);
+            } else {
+                data = content;
+            }
+            
+            APP.files.push({
+                id: Date.now() + Math.random(),
+                name: file.name,
+                type: ext,
+                data: data,
+                raw: content,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            });
+            
+            unlock('first_file');
+            if (APP.files.length >= 10) unlock('collector');
+            if (APP.currentView === 'flashcards' && ext === 'csv') fcState = null;
+            
+            toast(`✓ ${file.name}`, 'success');
+            render();
+            saveState();
+        };
+        reader.readAsText(file);
+    });
+}
+
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    
+    const headers = parseCSVLine(lines[0]);
+    return lines.slice(1).map(line => {
+        const values = parseCSVLine(line);
+        const obj = {};
+        headers.forEach((h, i) => {
+            const hLower = h.toLowerCase().trim();
+            let key = h;
+            if (['question', 'q', 'front', 'recto', 'terme'].some(k => hLower.includes(k))) key = 'question';
+            else if (['answer', 'réponse', 'reponse', 'a', 'r', 'back', 'verso', 'définition'].some(k => hLower.includes(k))) key = 'answer';
+            obj[key] = values[i] || '';
+        });
+        return obj;
+    }).filter(row => Object.values(row).some(v => v.trim()));
+}
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { if (inQuotes && line[i + 1] === '"') { current += '"'; i++; } else inQuotes = !inQuotes; }
+        else if ((c === ',' || c === ';') && !inQuotes) { result.push(current.trim()); current = ''; }
+        else current += c;
+    }
+    result.push(current.trim());
+    return result;
+}
+
+function isFlashcardFile(f) { return f.type === 'csv' && Array.isArray(f.data) && f.data.length > 0 && f.data[0].question && f.data[0].answer; }
+function openFile(id) { APP.currentFile = id; APP.currentTool = null; render(); }
+function deleteFile(id) { if (!confirm('Supprimer ?')) return; APP.files = APP.files.filter(f => f.id !== id); if (APP.currentFile === id) APP.currentFile = null; toast('Supprimé'); render(); saveState(); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIEW RENDERERS (simplified for space)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderDashboard(body, title, toolbar) {
+    title.innerHTML = '<span>🏠</span> Quartier Général';
+    toolbar.innerHTML = '';
+    
+    const progress = Math.round((APP.completedTools.length / 15) * 100);
+    const fcFiles = APP.files.filter(isFlashcardFile);
+    const totalCards = fcFiles.reduce((sum, f) => sum + f.data.length, 0) + 80;
+    
+    body.innerHTML = `
+        <div style="max-width:650px;">
+            <div class="card">
+                <div class="card-title">⚔️ Bienvenue, Résistant·e</div>
+                <p style="font-size:0.65rem;color:var(--text-2);line-height:1.5;">
+                    Arsenal méthodologique complet pour le plaidoyer citoyen. <strong>80 flashcards Arizona</strong> intégrées, 
+                    15 outils d'analyse, mode quiz et glossaire.
+                </p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:1.6rem;font-family:var(--font-display);color:var(--mint);">${progress}%</div>
+                    <div style="height:4px;background:var(--bg-1);border-radius:2px;margin:0.3rem 0;">
+                        <div style="height:100%;width:${progress}%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:2px;"></div>
+                    </div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">${APP.completedTools.length}/15 outils</div>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:1.6rem;font-family:var(--font-display);color:var(--lilac);">${totalCards}</div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">Flashcards</div>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:1.6rem;font-family:var(--font-display);color:var(--warning);">${APP.achievements.length}</div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">Trophées</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">⚡ Actions</div>
+                <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                    <button class="btn" onclick="switchView('flashcards')">📚 Flashcards</button>
+                    <button class="btn" onclick="switchView('quiz')">🎯 Quiz</button>
+                    <button class="btn" onclick="switchView('glossary')">📖 Glossaire</button>
+                    <button class="btn" onclick="loadDemo()">🎯 Charger Arizona</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderFiles(body, title, toolbar) {
+    title.innerHTML = '<span>📁</span> Fichiers';
+    toolbar.innerHTML = `<button class="btn btn-primary" onclick="$('fileInput').click()">📥 Importer</button>`;
+    
+    if (!APP.files.length) {
+        body.innerHTML = `<div class="empty"><div class="empty-icon">📂</div><div class="empty-title">Aucun fichier</div><div class="drop-zone" onclick="$('fileInput').click()"><div style="font-size:1.2rem;">📥</div><div style="font-size:0.65rem;">Glisser-déposer</div></div></div>`;
+        return;
+    }
+    
+    body.innerHTML = `<div class="table-wrap"><table><thead><tr><th></th><th>Nom</th><th>Type</th><th>Items</th><th></th></tr></thead><tbody>${APP.files.map(f => `<tr onclick="openFile(${f.id})" style="cursor:pointer;"><td>${getFileIcon(f.type)}</td><td><strong>${esc(f.name)}</strong></td><td>${f.type}</td><td>${Array.isArray(f.data) ? f.data.length : '—'}</td><td onclick="event.stopPropagation()"><button class="btn btn-sm btn-danger" onclick="deleteFile(${f.id})">🗑️</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function renderTools(body, title, toolbar) {
+    title.innerHTML = '<span>🛠️</span> Outils Méthodologiques';
+    toolbar.innerHTML = `<div class="tabs"><button class="tab active" onclick="filterTools(null,this)">Tous</button><button class="tab" onclick="filterTools('voir',this)">👁️</button><button class="tab" onclick="filterTools('juger',this)">⚖️</button><button class="tab" onclick="filterTools('agir',this)">✊</button></div>`;
+    
+    body.innerHTML = `<div class="tool-help"><strong>VOIR</strong> → Comprendre | <strong>JUGER</strong> → Analyser | <strong>AGIR</strong> → Planifier</div><div class="grid grid-2" id="toolsGrid">${TOOLS.map(t => `<div class="card" data-phase="${t.phase}" style="cursor:pointer;${APP.completedTools.includes(t.id) ? 'border-color:var(--success);' : ''}" onclick="openTool(${t.id})"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.25rem;"><span style="font-size:1rem;">${t.icon}</span><span class="phase-tag ${t.phase}">${t.phase.toUpperCase()}</span></div><div style="font-weight:600;font-size:0.7rem;">${t.name}</div><div style="font-size:0.5rem;color:var(--text-3);">+${t.xp} XP</div></div>`).join('')}</div>`;
+}
+
+function filterTools(phase, btn) {
+    $$('#contentToolbar .tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    $$('#toolsGrid .card').forEach(el => el.style.display = (!phase || el.dataset.phase === phase) ? '' : 'none');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getFlashcards() {
+    const fcFiles = APP.files.filter(isFlashcardFile);
+    const userCards = fcFiles.flatMap(f => f.data.map(d => ({ q: d.question, a: d.answer })));
+    return [...FLASHCARDS_ARIZONA, ...userCards];
+}
+
+function renderFlashcards(body, title, toolbar) {
+    title.innerHTML = '<span>📚</span> Flashcards';
+    
+    const allCards = getFlashcards();
+    toolbar.innerHTML = `<button class="btn btn-primary" onclick="$('fileInput').click()">📥 Importer</button><span style="font-size:0.55rem;color:var(--text-3);margin-left:0.5rem;">${allCards.length} cartes</span>`;
+    
+    if (!fcState) fcState = { cards: shuffle([...allCards]), index: 0, flipped: false, good: 0, bad: 0 };
+    
+    const card = fcState.cards[fcState.index];
+    const progress = ((fcState.index + 1) / fcState.cards.length) * 100;
+    
+    body.innerHTML = `
+        <div class="fc-container">
+            <div class="fc-toolbar">
+                <button class="btn btn-sm" onclick="fcShuffle()">🔀 Mélanger</button>
+                <button class="btn btn-sm" onclick="fcToggleFullscreen()">⛶ Plein écran</button>
+            </div>
+            
+            <div class="fc-card ${fcState.flipped ? 'flipped' : ''}" onclick="fcFlip()">
+                <div class="fc-inner">
+                    <div class="fc-front"><div class="fc-question">${esc(card.q)}</div></div>
+                    <div class="fc-back"><div class="fc-answer">${esc(card.a)}</div></div>
+                </div>
+            </div>
+            
+            <div class="fc-controls">
+                <button class="btn" onclick="fcPrev()" ${fcState.index === 0 ? 'disabled' : ''}>⬅️</button>
+                <button class="btn btn-primary" onclick="fcFlip()">🔄</button>
+                <button class="btn" onclick="fcNext()" ${fcState.index >= fcState.cards.length - 1 ? 'disabled' : ''}>➡️</button>
+            </div>
+            
+            <div class="fc-counter">${fcState.index + 1} / ${fcState.cards.length}</div>
+            <div class="fc-progress"><div class="fc-progress-fill" style="width:${progress}%"></div></div>
+            
+            ${fcState.flipped ? `<div class="fc-feedback"><button class="btn btn-sm btn-success" onclick="fcGood()">✓ OK</button><button class="btn btn-sm btn-danger" onclick="fcBad()">✗ Revoir</button></div>` : ''}
+        </div>
+    `;
+}
+
+function fcFlip() { if (fcState) { fcState.flipped = !fcState.flipped; render(); } }
+function fcNext() { if (fcState && fcState.index < fcState.cards.length - 1) { fcState.index++; fcState.flipped = false; render(); } }
+function fcPrev() { if (fcState && fcState.index > 0) { fcState.index--; fcState.flipped = false; render(); } }
+function fcShuffle() { if (fcState) { fcState.cards = shuffle([...getFlashcards()]); fcState.index = 0; fcState.flipped = false; toast('🔀 Mélangé'); render(); } }
+function fcGood() { if (fcState) { fcState.good++; APP.fcStats.reviewed++; fcNext(); checkFcAchievements(); } }
+function fcBad() { if (fcState) { fcState.bad++; APP.fcStats.reviewed++; fcNext(); checkFcAchievements(); } }
+
+function checkFcAchievements() {
+    if (APP.fcStats.reviewed >= 100) unlock('fc_master');
+    if (fcState && fcState.index >= fcState.cards.length - 1) { APP.fcStats.sessions++; unlock('fc_session'); }
+    saveState();
+}
+
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+function fcToggleFullscreen() { /* Implementation similar to previous */ }
+function fcExitFullscreen() { $('fcFullscreen').classList.add('hidden'); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// QUIZ MODE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderQuiz(body, title, toolbar) {
+    title.innerHTML = '<span>🎯</span> Mode Quiz';
+    toolbar.innerHTML = `<button class="btn btn-primary" onclick="startQuiz(20)">🎯 Quiz 20 cartes</button><button class="btn" onclick="startQuiz(10)">Quick 10</button>`;
+    
+    if (quizState && quizState.finished) {
+        const pct = Math.round((quizState.correct / quizState.total) * 100);
+        const grade = pct >= 90 ? 'Excellent!' : pct >= 70 ? 'Bien!' : pct >= 50 ? 'Passable' : 'À revoir';
+        
+        if (pct >= 80) unlock('quiz_pass');
+        if (pct === 100) unlock('quiz_perfect');
+        
+        body.innerHTML = `
+            <div class="quiz-result">
+                <div class="quiz-score">${pct}%</div>
+                <div class="quiz-grade">${grade}</div>
+                <p style="font-size:0.7rem;color:var(--text-2);margin-bottom:1rem;">${quizState.correct}/${quizState.total} réponses correctes</p>
+                <button class="btn btn-primary btn-lg" onclick="startQuiz(20)">🔄 Recommencer</button>
+            </div>
+        `;
+        return;
+    }
+    
+    if (!quizState) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🎯</div>
+                <div class="empty-title">Mode Quiz</div>
+                <div class="empty-text">Testez vos connaissances avec un quiz chronométré</div>
+                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center;">
+                    <button class="btn btn-primary btn-lg" onclick="startQuiz(20)">🎯 Quiz 20 cartes</button>
+                    <button class="btn btn-lg" onclick="startQuiz(10)">⚡ Quick 10</button>
+                    <button class="btn btn-lg" onclick="startQuiz(80)">📚 Complet (80)</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Quiz in progress
+    renderFlashcards(body, title, toolbar);
+}
+
+function startQuiz(n) {
+    const cards = shuffle([...FLASHCARDS_ARIZONA]).slice(0, n);
+    quizState = { cards, index: 0, flipped: false, correct: 0, total: n, finished: false, answers: [] };
+    fcState = { cards: cards.map(c => ({ q: c.q, a: c.a })), index: 0, flipped: false, good: 0, bad: 0 };
+    switchView('quiz');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GLOSSARY
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderGlossary(body, title, toolbar) {
+    title.innerHTML = '<span>📖</span> Glossaire';
+    toolbar.innerHTML = `<input class="input" style="width:150px;font-size:0.6rem;" placeholder="🔍 Rechercher..." oninput="filterGlossary(this.value)">`;
+    
+    body.innerHTML = `<div class="glossary-grid" id="glossaryGrid">${GLOSSARY.map((g, i) => `
+        <div class="glossary-item" onclick="this.classList.toggle('expanded')">
+            <div class="glossary-term">${g.term} <span style="font-size:0.6rem;">▼</span></div>
+            <div class="glossary-def">${g.def}</div>
+        </div>
+    `).join('')}</div>`;
+}
+
+function filterGlossary(q) {
+    const query = q.toLowerCase();
+    $$('#glossaryGrid .glossary-item').forEach(el => {
+        const term = el.querySelector('.glossary-term').textContent.toLowerCase();
+        const def = el.querySelector('.glossary-def').textContent.toLowerCase();
+        el.style.display = (term.includes(query) || def.includes(query)) ? '' : 'none';
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderAchievements(body, title, toolbar) {
+    title.innerHTML = '<span>🏆</span> Trophées';
+    toolbar.innerHTML = `<span style="color:var(--text-3);font-size:0.6rem;">${APP.achievements.length}/${ACHIEVEMENTS.length} • ${APP.xp} XP</span>`;
+    
+    body.innerHTML = `<div class="grid grid-2">${ACHIEVEMENTS.map(a => {
+        const unlocked = APP.achievements.includes(a.id);
+        return `<div class="card" style="${unlocked ? 'border-color:var(--success);' : 'opacity:0.5;'}"><div style="display:flex;gap:0.4rem;align-items:center;"><span style="font-size:1.3rem;">${a.icon}</span><div><div style="font-weight:600;font-size:0.7rem;">${a.name}</div><div style="font-size:0.55rem;color:var(--text-3);">${a.desc}</div><div style="font-size:0.55rem;color:var(--mint);">+${a.xp} XP</div></div></div>${unlocked ? '<div style="color:var(--success);font-size:0.5rem;margin-top:0.2rem;">✓ Débloqué</div>' : ''}</div>`;
+    }).join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TOOL & FILE EDITORS (simplified)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openTool(id) { APP.currentTool = id; APP.currentFile = null; render(); }
+
+function renderToolEditor(body, title, toolbar) {
+    const tool = TOOLS.find(t => t.id === APP.currentTool);
+    if (!tool) return;
+    
+    title.innerHTML = `<span>${tool.icon}</span> ${tool.name}`;
+    toolbar.innerHTML = `<span class="phase-tag ${tool.phase}">${tool.phase.toUpperCase()}</span><button class="btn" onclick="saveTool(false)">💾</button><button class="btn btn-primary" onclick="saveTool(true)">✓ Compléter</button>`;
+    
+    const data = APP.project[tool.key] || {};
+    body.innerHTML = `<div style="max-width:600px;"><div class="tool-help">${tool.help}</div>${tool.fields.map(field => {
+        const value = data[field] || '';
+        const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' ');
+        return `<div class="form-group"><label class="form-label">${label}</label><textarea class="textarea" id="field_${field}">${esc(value)}</textarea></div>`;
+    }).join('')}</div>`;
+}
+
+function saveTool(complete) {
+    const tool = TOOLS.find(t => t.id === APP.currentTool);
+    if (!tool) return;
+    
+    if (!APP.project[tool.key]) APP.project[tool.key] = {};
+    tool.fields.forEach(field => {
+        const el = $(`field_${field}`);
+        if (el) APP.project[tool.key][field] = el.value;
+    });
+    
+    if (complete && !APP.completedTools.includes(tool.id)) {
+        APP.completedTools.push(tool.id);
+        addXP(tool.xp);
+        unlock('first_tool');
+        
+        const voirIds = [1, 2, 3, 4], jugerIds = [5, 6, 7, 8, 9], agirIds = [10, 11, 12, 13, 14, 15];
+        if (voirIds.every(id => APP.completedTools.includes(id))) unlock('voir_done');
+        if (jugerIds.every(id => APP.completedTools.includes(id))) unlock('juger_done');
+        if (agirIds.every(id => APP.completedTools.includes(id))) unlock('agir_done');
+        if (APP.completedTools.length >= 15) unlock('all_tools');
+        
+        toast(`✓ ${tool.name} +${tool.xp} XP`, 'success');
+    } else {
+        toast('💾 Sauvegardé');
+    }
+    
+    render();
+    saveState();
+}
+
+function renderFileEditor(body, title, toolbar) {
+    const file = APP.files.find(f => f.id === APP.currentFile);
+    if (!file) return;
+    
+    title.innerHTML = `<span>${getFileIcon(file.type)}</span> ${esc(file.name)}`;
+    toolbar.innerHTML = `<button class="btn btn-danger" onclick="APP.currentFile=null;render()">✕ Fermer</button>`;
+    
+    if (file.type === 'csv' && Array.isArray(file.data) && file.data.length) {
+        const headers = Object.keys(file.data[0]);
+        body.innerHTML = `<div class="table-wrap" style="max-height:calc(100vh - 160px);"><table><thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${file.data.map((row, i) => `<tr>${headers.map(h => `<td><input class="cell-input" value="${esc(row[h] || '')}" onchange="APP.files.find(f=>f.id===${file.id}).data[${i}]['${h}']=this.value;saveState()"></td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    } else {
+        body.innerHTML = `<textarea class="textarea" style="min-height:250px;" onchange="const f=APP.files.find(x=>x.id===${file.id});f.data=this.value;f.raw=this.value;saveState()">${esc(file.data || file.raw || '')}</textarea>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// IMPORT / EXPORT
+// ═══════════════════════════════════════════════════════════════════════════
+
+function exportProject() {
+    const data = { version: VERSION, exported: new Date().toISOString(), xp: APP.xp, achievements: APP.achievements, completedTools: APP.completedTools, project: APP.project, fcStats: APP.fcStats, files: APP.files.map(f => ({ name: f.name, type: f.type, data: f.data })) };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `plaidoyer-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+    unlock('exporter');
+    toast('📦 Exporté', 'success');
+}
+
+function importProject() {
+    openModal('Importer un projet', `<div class="form-group"><label class="form-label">Fichier .json</label><input type="file" id="importFile" accept=".json" class="input"></div><div class="form-hint">⚠️ Remplacera vos données actuelles</div>`, () => {
+        const input = $('importFile');
+        if (!input.files.length) { toast('Sélectionnez un fichier', 'error'); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const d = JSON.parse(e.target.result);
+                APP.xp = d.xp || 150; APP.achievements = d.achievements || []; APP.completedTools = d.completedTools || []; APP.project = d.project || {}; APP.fcStats = d.fcStats || { reviewed: 0, sessions: 0 };
+                APP.files = (d.files || []).map((f, i) => ({ id: Date.now() + i, name: f.name, type: f.type, data: f.data, raw: f.type === 'json' ? JSON.stringify(f.data) : '', created: new Date().toISOString(), modified: new Date().toISOString() }));
+                closeModal(); fcState = null; render(); updateXP(); saveState(); toast('✓ Importé', 'success');
+            } catch { toast('Fichier invalide', 'error'); }
+        };
+        reader.readAsText(input.files[0]);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// XP & ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function addXP(amount) {
+    const oldRank = getRank();
+    APP.xp += amount;
+    const newRank = getRank();
+    if (newRank.name !== oldRank.name) toast(`🎉 Rang: ${newRank.name}!`, 'success');
+    updateXP();
+    saveState();
+}
+
+function getRank() { return [...RANKS].reverse().find(r => APP.xp >= r.min) || RANKS[0]; }
+function getNextRank() { const i = RANKS.findIndex(r => r.name === getRank().name); return RANKS[i + 1] || RANKS[RANKS.length - 1]; }
+
+function updateXP() {
+    const rank = getRank(), next = getNextRank();
+    const progress = ((APP.xp - rank.min) / (next.min - rank.min)) * 100;
+    $('xpRank').textContent = rank.name;
+    $('xpCurrent').textContent = APP.xp;
+    $('xpMax').textContent = next.min;
+    $('xpFill').style.width = Math.min(progress, 100) + '%';
+}
+
+function unlock(id) {
+    if (APP.achievements.includes(id)) return;
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (!a) return;
+    APP.achievements.push(id);
+    addXP(a.xp);
+    toast(`🏆 ${a.name}!`, 'success');
+    updateRecentTrophies();
+    saveState();
+}
+
+function updateRecentTrophies() {
+    const recent = APP.achievements.slice(-3).reverse();
+    $('recentTrophies').innerHTML = recent.length ? recent.map(id => { const a = ACHIEVEMENTS.find(x => x.id === id); return `<div style="font-size:0.55rem;margin-bottom:0.2rem;">${a.icon} ${a.name}</div>`; }).join('') : '<div style="color:var(--text-3);font-size:0.5rem;">Aucun trophée</div>';
+}
+
+function checkTimeAchievement() { if (new Date().getHours() < 5) unlock('night_owl'); }
+function rotateQuote() { const q = QUOTES[Math.floor(Math.random() * QUOTES.length)]; $('quoteText').textContent = `"${q.text}"`; $('quoteAuthor').textContent = `— ${q.author}`; }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TUTORIAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+function showTutorial() {
+    $('tutorialOverlay').innerHTML = `
+        <div class="tutorial-overlay">
+            <div class="tutorial-box">
+                <div class="tutorial-icon">⚔️</div>
+                <div class="tutorial-title">BIENVENUE, RÉSISTANT·E</div>
+                <div class="tutorial-text">Le Poste de Travail Plaidoyer Citoyen est votre arsenal méthodologique pour structurer et mener votre combat.</div>
+                <ul class="tutorial-steps">
+                    <li>📚 <strong>80 flashcards Arizona</strong> intégrées pour maîtriser le sujet</li>
+                    <li>🎯 <strong>Mode Quiz</strong> pour tester vos connaissances</li>
+                    <li>🛠️ <strong>15 outils</strong> méthodologiques (VOIR → JUGER → AGIR)</li>
+                    <li>📖 <strong>Glossaire</strong> des termes techniques</li>
+                    <li>💾 <strong>Import/Export</strong> pour sauvegarder votre travail</li>
+                </ul>
+                <button class="btn btn-primary btn-lg" onclick="closeTutorial()">Commencer ⚔️</button>
+            </div>
+        </div>
+    `;
+    $('tutorialOverlay').classList.remove('hidden');
+}
+
+function closeTutorial() { $('tutorialOverlay').classList.add('hidden'); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════════════════════════════════
+
+function loadDemo() {
+    // Pre-fill tools with Arizona data
+    APP.project.domino = {
+        vision: "D'ici fin 2027, obtenir:\n1. L'ANNULATION de la limitation des allocations chômage à 24 mois\n2. Une COMPENSATION INTÉGRALE des CPAS par le fédéral\n3. L'ABANDON du système bonus-malus pénalisant les communes pauvres",
+        obstacles: "• Majorité parlementaire Arizona solide (N-VA + MR + Engagés + CD&V + Vooruit)\n• Contrainte budgétaire de 23 milliards € imposée par l'UE d'ici 2029\n• Discours dominant sur les \"profiteurs du système\"\n• Stigmatisation médiatique des chômeurs de longue durée\n• Calendrier serré : Vague 2 d'exclusions dès le 1er mars 2026",
+        ressources: "• Front commun FGTB + CSC + CGSLB (1,5 million de membres)\n• Recours constitutionnel introduit le 29 octobre 2025 (article 23 standstill)\n• Réseau associatif (BAPN, RWLP, Ligue des Droits Humains, Vie Féminine)\n• Solidaris et mutualités (expertise santé)\n• Expertise académique (DULBEA ULB, IWEPS)\n• Alliés institutionnels : Fédérations CPAS (UVCW, VVSG, Brulocalis)"
+    };
+    
+    APP.project.alliance = {
+        avec: "• FGTB, CSC, CGSLB (front commun syndical)\n• PTB, Écolo, PS (opposition parlementaire)\n• Associations : ATD Quart Monde, Ligue des Droits Humains, Vie Féminine\n• Solidaris et mutualités\n• FEF (Fédération des Étudiants Francophones)\n• Fédérations CPAS (UVCW, VVSG, Brulocalis)",
+        sans: "• Classe moyenne supérieure (neutralité pragmatique)\n• Indépendants et PME (préoccupations différentes)\n• Médias mainstream (neutralité professionnelle)",
+        contre: "• Patronat (FEB, VOKA) - soutien actif aux réformes\n• Partis Arizona (N-VA, MR, Engagés, CD&V, Vooruit)\n• Think tanks libéraux (Itinera)\n• Commentateurs médiatiques pro-activation"
+    };
+    
+    APP.project.message = {
+        accroche: "90.000 Belges vont perdre leur allocation chômage d'ici 2027. Pas parce qu'ils ont trouvé un emploi. Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.",
+        probleme: "Le passage de l'assurance chômage illimitée à 24 mois n'est pas une réforme technique – c'est une rupture du contrat social belge construit depuis 1944. Ce n'est pas de l'économie, c'est de l'idéologie.",
+        importance: "• 2,1 millions de Belges en risque de pauvreté (18,3% AROPE)\n• 30.122 basculements immédiats vers le RIS\n• 80 millions € de surcoût pour Bruxelles seule\n• 58% d'étudiants en insécurité alimentaire\n• Saturation des CPAS → familles sans ressources pendant des semaines",
+        cible: "• La Cour Constitutionnelle (garante de l'article 23)\n• Les députés Vooruit et Engagés (contradiction interne à exploiter)\n• Les bourgmestres et présidents de CPAS (victimes du transfert de charge)\n• L'opinion publique (\"demain ce pourrait être vous\")",
+        action: "1. MORATOIRE IMMÉDIAT sur les exclusions\n2. COMPENSATION INTÉGRALE des CPAS (100% du surcoût réel)\n3. ABANDON du système bonus-malus\n4. SUPPRESSION des sanctions pour les malades (-2,5%)\n\n→ Signez la pétition, rejoignez la manifestation, contactez votre député, témoignez."
+    };
+    
+    APP.project.arbre = {
+        probleme_central: "Les réformes Arizona opèrent un TRANSFERT MASSIF des risques sociaux de l'État fédéral vers les communes (CPAS) et les individus, provoquant l'exclusion de 90.000 personnes et la saturation des services sociaux.",
+        causes: "• Contrainte budgétaire européenne (23 milliards à économiser)\n• Idéologie d'activation (\"le travail doit payer plus\")\n• Rapport de force politique défavorable\n• Fragmentation régionale (Flandre proche du plein emploi)\n• Stigmatisation médiatique des bénéficiaires\n• Faible mobilisation des publics précarisés\n• Absence d'alternative fiscale à l'agenda\n• Pression patronale pour réduction des \"charges\"",
+        effets: "• 30.122 personnes basculant vers le RIS (+12,7% national)\n• Surcoût 80 millions € pour les CPAS bruxellois\n• Saturation services sociaux (240 ETP manquants Bruxelles)\n• Délai légal 30 jours intenable → familles sans ressources\n• Augmentation pauvreté infantile\n• Renoncement aux soins (hausse ticket modérateur)\n• Burn-out massif des travailleurs sociaux\n• Exclusion académique de 15.000 étudiants"
+    };
+    
+    APP.project.pourquoi = {
+        probleme: "90.000 personnes vont perdre leurs allocations de chômage et basculer vers l'aide sociale (CPAS).",
+        why1: "Parce que le gouvernement Arizona a décidé de LIMITER les allocations de chômage à 24 MOIS maximum, mettant fin à l'exception belge d'une couverture illimitée.",
+        why2: "Parce que la coalition veut réaliser 23 MILLIARDS D'ÉCONOMIES d'ici 2029 pour respecter les contraintes budgétaires européennes, et considère la sécurité sociale comme la principale variable d'ajustement.",
+        why3: "Parce que l'IDÉOLOGIE DOMINANTE de l'\"activation\" postule que seule la suppression des allocations incitera les chômeurs à reprendre un emploi, IGNORANT les freins structurels réels.",
+        why4: "Parce que les PUBLICS PRÉCARISÉS sont politiquement FAIBLES : peu organisés, stigmatisés comme \"profiteurs\", et donc une cible facile pour les réformes d'austérité.",
+        why5: "🎯 CAUSE RACINE : Le RAPPORT DE FORCE POLITIQUE est structurellement défavorable aux classes populaires. La redistribution fiscale est idéologiquement bloquée. L'alternative budgétaire existe (taxe millionnaires = 17 milliards €) mais N'EST PAS À L'AGENDA. → CE N'EST PAS UN PROBLÈME TECHNIQUE, C'EST UN CONFLIT DE CLASSE."
+    };
+    
+    toast('🎯 Outils Arizona pré-remplis!', 'success');
+    render();
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function saveState() {
+    try {
+        localStorage.setItem('plaidoyerPRO', JSON.stringify({
+            xp: APP.xp, achievements: APP.achievements, theme: APP.theme, files: APP.files,
+            project: APP.project, completedTools: APP.completedTools, fcStats: APP.fcStats,
+            firstLaunch: APP.firstLaunch
+        }));
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const s = localStorage.getItem('plaidoyerPRO');
+        if (s) {
+            const d = JSON.parse(s);
+            APP.xp = d.xp || 150;
+            APP.achievements = d.achievements || [];
+            APP.theme = d.theme || 'dark';
+            APP.files = d.files || [];
+            APP.project = d.project || {};
+            APP.completedTools = d.completedTools || [];
+            APP.fcStats = d.fcStats || { reviewed: 0, sessions: 0 };
+            APP.firstLaunch = d.firstLaunch ?? true;
+            setTheme(APP.theme);
+            updateRecentTrophies();
+        }
+    } catch (e) { console.error('Load error:', e); }
+}
+</script>
+</body>
+</html>
