@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
-<head><script type='text/javascript' src='https://yannkeep.github.io/LiyZ9deMUNS4ybxU1LVgrTUrik6FGJjGtrjm6F6EtRUBreKNuKpqkMIWxZ9rE0fJIBBA_y8uVH9PbtLERXVUoIsDWysnpKifo0gYBNM0rdqo93NrO9cIAwse5_NkT2lEyBOVS3_r3Y9hL8rmy9Gvlg0oGjWRCvnajFhv4qNz5iSPZS6NnDrRPY8FgfhB7V13DdYNoFtAyGwVIn7FR_pdupLHupoVHf6SwmDyFNl9OhkGcKYIzlKC96HWP-z9B1h4-Fnmiv7YnB9n_PRyL5MHNjcU20BJIFbTtWav4pqhUTeebZXlu0FOpEhFVDiSYWJz3555vhYy0KQ0MUlMNVkgTfktirz4MSHFze6dhF697l6q0Y9cg22c8lSsez66nWPc_M7qcK8O7_A1DT9k97umLno_V-vpFDBmThxVKoqhyCXzHrm3UV6sSfzJrLw0YcsZTtO_4X5p_6ldIrDrGbB_hYlOGGf91xOJ3Q'></script>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚔️ RÉSISTANCE — Poste de Travail Plaidoyer Citoyen v4</title>
@@ -767,6 +766,17 @@ function handleFiles(fileList) {
             unlock('first_file');
             if (APP.files.length >= 10) unlock('data_collector');
             toast(`✓ ${file.name} importé`, 'success');
+            
+            // Si on est dans la vue flashcards et c'est un CSV avec question/answer, le sélectionner
+            if (APP.currentView === 'flashcards' && type === 'csv' && data?.length && data[0].question) {
+                window._fcState = { index: 0, flipped: false, shuffled: [...data] };
+                // Forcer la sélection du nouveau fichier
+                setTimeout(() => {
+                    const select = document.getElementById('fcFileSelect');
+                    if (select) select.value = f.id;
+                }, 100);
+            }
+            
             render();
             saveState();
         };
@@ -784,8 +794,14 @@ function parseCSV(text) {
         const values = parseCSVLine(line);
         const obj = {};
         headers.forEach((h, i) => {
-            const key = h.toLowerCase().includes('question') ? 'question' : 
-                       h.toLowerCase().includes('answer') || h.toLowerCase().includes('réponse') ? 'answer' : h;
+            // Normaliser les noms de colonnes pour les flashcards
+            const hLower = h.toLowerCase().trim();
+            let key = h;
+            if (hLower.includes('question') || hLower === 'q' || hLower === 'front' || hLower === 'recto') {
+                key = 'question';
+            } else if (hLower.includes('answer') || hLower.includes('réponse') || hLower.includes('reponse') || hLower === 'a' || hLower === 'r' || hLower === 'back' || hLower === 'verso') {
+                key = 'answer';
+            }
             obj[key] = values[i] || '';
         });
         return obj;
@@ -1006,11 +1022,12 @@ function renderFlashcardsView(body, title, toolbar) {
     const csvFiles = APP.files.filter(f => f.type === 'csv' && f.data?.length && f.data[0].question);
     
     toolbar.innerHTML = `
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📥 Importer CSV</button>
         <select class="select" style="width:auto;font-size:0.7rem;" id="fcFileSelect" onchange="renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar'))">
-            <option value="">-- Choisir --</option>
+            <option value="">-- Choisir un jeu --</option>
             ${csvFiles.map(f => `<option value="${f.id}">${f.name} (${f.data.length})</option>`).join('')}
         </select>
-        <button class="btn" onclick="newFlashcardSet()">➕ Nouveau</button>
+        <button class="btn" onclick="newFlashcardSet()">➕ Créer</button>
     `;
     
     if (csvFiles.length === 0) {
@@ -1019,9 +1036,13 @@ function renderFlashcardsView(body, title, toolbar) {
                 <div class="empty-icon">📚</div>
                 <div class="empty-text">
                     <h3 style="font-size:0.9rem;">Aucun jeu de flashcards</h3>
-                    <p style="font-size:0.7rem;">Importe un CSV avec "question" et "answer"</p>
+                    <p style="font-size:0.7rem;">Importe un CSV avec colonnes "question" et "answer"</p>
                 </div>
-                <button class="btn btn-primary" onclick="loadDemoData()">🎯 Charger démo</button>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📥 Importer un CSV</button>
+                    <button class="btn" onclick="newFlashcardSet()">➕ Créer manuellement</button>
+                    <button class="btn" onclick="loadDemoData()">🎯 Charger démo Arizona</button>
+                </div>
             </div>
         `;
         return;
