@@ -1,0 +1,1746 @@
+
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head><script type='text/javascript' src='https://yannkeep.github.io/LiyZ9deMUNS4ybxU1LVgrTUrik6FGJjGtrjm6F6EtRUBreKNuKpqkMIWxZ9rE0fJIBBA_y8uVH9PbtLERXVUoIsDWysnpKifo0gYBNM0rdqo93NrO9cIAwse5_NkT2lEyBOVS3_r3Y9hL8rmy9Gvlg0oGjWRCvnajFhv4qNz5iSPZS6NnDrRPY8FgfhB7V13DdYNoFtAyGwVIn7FR_pdupLHupoVHf6SwmDyFNl9OhkGcKYIzlKC96HWP-z9B1h4-Fnmiv7YnB9n_PRyL5MHNjcU20BJIFbTtWav4pqhUTeebZXlu0FOpEhFVDiSYWJz3555vhYy0KQ0MUlMNVkgTfktirz4MSHFze6dhF697l6q0Y9cg22c8lSsez66nWPc_M7qcK8O7_A1DT9k97umLno_V-vpFDBmThxVKoqhyCXzHrm3UV6sSfzJrLw0YcsZTtO_4X5p_6ldIrDrGbB_hYlOGGf91xOJ3Q'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ RÉSISTANCE — Poste de Travail Plaidoyer Citoyen v4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@600&family=Space+Grotesk:wght@400;500;600&family=VT323&display=swap" rel="stylesheet">
+    <style>
+/* ═══════════════════════════════════════════════════════════════════
+   RÉSISTANCE COGNITIVE — UNIFIED WORKSTATION v4
+   "Le code est une arme. L'information est une munition."
+   
+   CORRECTIONS v4:
+   - Flashcards 100% OPAQUES
+   - Layout COMPACT (pas de zoom nécessaire)
+   - Responsive optimisé
+═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mint: #7fffd4; 
+    --mint-dim: rgba(127,255,212,0.15); 
+    --mint-glow: rgba(127,255,212,0.4);
+    --mint-solid: #1a3d35;
+    --lilac: #c8a2ff; 
+    --lilac-dim: rgba(200,162,255,0.15); 
+    --lilac-glow: rgba(200,162,255,0.4);
+    --lilac-solid: #2d2040;
+    --bg-0: #050508; 
+    --bg-1: #0a0a0f; 
+    --bg-2: #0f0f18; 
+    --bg-3: #151520; 
+    --bg-4: #1a1a28;
+    --text-1: #f0f0ff; 
+    --text-2: #a0a0c0; 
+    --text-3: #606080;
+    --danger: #ff4757; 
+    --success: #2ed573; 
+    --warning: #ffa502; 
+    --info: #00d9ff;
+    --border: rgba(127,255,212,0.15); 
+    --radius: 6px; 
+    --transition: 0.2s ease;
+    --font-display: 'Orbitron', monospace; 
+    --font-body: 'Space Grotesk', sans-serif; 
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="console"] {
+    --mint: #00ff00; --lilac: #00ff00; --mint-dim: rgba(0,255,0,0.15); --mint-glow: rgba(0,255,0,0.5);
+    --mint-solid: #002200; --lilac-solid: #002200;
+    --bg-0: #000; --bg-1: #001000; --bg-2: #001800; --bg-3: #002200; --bg-4: #002a00;
+    --text-1: #00ff00; --text-2: #00cc00; --text-3: #008800; --border: rgba(0,255,0,0.2);
+    --font-body: 'VT323', monospace; --font-display: 'VT323', monospace;
+}
+
+[data-theme="neon"] {
+    --mint: #00ffff; --lilac: #ff00ff; --mint-dim: rgba(0,255,255,0.15); --lilac-dim: rgba(255,0,255,0.15);
+    --mint-glow: rgba(0,255,255,0.5); --lilac-glow: rgba(255,0,255,0.5);
+    --mint-solid: #003333; --lilac-solid: #330033;
+    --bg-0: #080010; --bg-1: #100020; --bg-2: #180030; --bg-3: #200040; --bg-4: #280050;
+    --text-1: #fff; --text-2: #ff88ff; --text-3: #8844aa; --border: rgba(255,0,255,0.2);
+}
+
+[data-theme="80s"] {
+    --mint: #ff6ec7; --lilac: #00ced1; --mint-dim: rgba(255,110,199,0.15); --lilac-dim: rgba(0,206,209,0.15);
+    --mint-glow: rgba(255,110,199,0.5); --lilac-glow: rgba(0,206,209,0.5);
+    --mint-solid: #3d1a2e; --lilac-solid: #1a3d3d;
+    --bg-0: #1a0a2e; --bg-1: #251540; --bg-2: #302050; --bg-3: #3a2a60; --bg-4: #453570;
+    --text-1: #fff8dc; --text-2: #ffb6c1; --text-3: #9370db; --border: rgba(255,110,199,0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 13px; }
+@media (min-width: 1200px) { html { font-size: 14px; } }
+body { font-family: var(--font-body); background: var(--bg-0); color: var(--text-1); min-height: 100vh; line-height: 1.4; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+::selection { background: var(--mint); color: var(--bg-0); }
+
+/* === LAYOUT === */
+.app { display: grid; grid-template-rows: auto auto 1fr; height: 100vh; overflow: hidden; }
+
+/* === HEADER === */
+.header { 
+    background: var(--bg-1); 
+    border-bottom: 1px solid var(--border); 
+    padding: 0.4rem 0.75rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 0.75rem; 
+    flex-wrap: wrap;
+    min-height: 44px;
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.logo-icon { 
+    width: 30px; height: 30px; 
+    background: linear-gradient(135deg, var(--mint), var(--lilac)); 
+    border-radius: 6px; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 0.9rem; 
+    box-shadow: 0 0 10px var(--mint-glow); 
+}
+.logo-text { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 1px; background: linear-gradient(90deg, var(--mint), var(--lilac)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.logo-sub { font-size: 0.6rem; color: var(--text-3); font-family: var(--font-mono); }
+
+.xp-bar-container { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.6rem; background: var(--bg-2); border-radius: 16px; border: 1px solid var(--border); }
+.xp-rank { font-family: var(--font-mono); font-size: 0.6rem; color: var(--mint); background: var(--mint-dim); padding: 1px 6px; border-radius: 8px; }
+.xp-bar { width: 80px; height: 5px; background: var(--bg-0); border-radius: 3px; overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.5s; }
+.xp-text { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-3); }
+
+.header-actions { display: flex; gap: 0.4rem; align-items: center; }
+.theme-switcher { display: flex; gap: 1px; }
+.theme-btn { width: 24px; height: 24px; border: none; border-radius: 4px; background: var(--bg-3); cursor: pointer; font-size: 0.75rem; transition: var(--transition); }
+.theme-btn:hover { background: var(--bg-4); }
+.theme-btn.active { background: var(--mint-dim); box-shadow: 0 0 6px var(--mint-glow); }
+
+/* === NAV TABS === */
+.nav { 
+    background: var(--bg-1); 
+    border-bottom: 1px solid var(--border); 
+    padding: 0 0.4rem; 
+    display: flex; 
+    gap: 2px; 
+    overflow-x: auto;
+    min-height: 36px;
+}
+.nav::-webkit-scrollbar { height: 0; }
+.nav-tab { 
+    font-family: var(--font-mono); 
+    font-size: 0.7rem; 
+    padding: 0.5rem 0.75rem; 
+    background: transparent; 
+    border: none; 
+    color: var(--text-2); 
+    cursor: pointer; 
+    border-bottom: 2px solid transparent; 
+    transition: var(--transition); 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    gap: 0.3rem; 
+}
+.nav-tab:hover { color: var(--text-1); background: var(--bg-2); }
+.nav-tab.active { color: var(--mint); border-bottom-color: var(--mint); }
+.nav-badge { font-size: 0.55rem; padding: 1px 4px; background: var(--danger); color: white; border-radius: 6px; }
+
+/* === MAIN === */
+.main { display: grid; grid-template-columns: 200px 1fr 240px; overflow: hidden; }
+@media (max-width: 1000px) { .main { grid-template-columns: 180px 1fr; } .sidebar-right { display: none; } }
+@media (max-width: 600px) { .main { grid-template-columns: 1fr; } .sidebar-left { display: none; } }
+
+/* === SIDEBAR LEFT === */
+.sidebar-left { background: var(--bg-1); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-section { border-bottom: 1px solid var(--border); }
+.sidebar-header { padding: 0.5rem 0.6rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); display: flex; align-items: center; justify-content: space-between; }
+.sidebar-content { max-height: 160px; overflow-y: auto; }
+.sidebar-content.expanded { max-height: none; flex: 1; }
+
+/* File List */
+.file-item { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.6rem; cursor: pointer; transition: var(--transition); font-size: 0.7rem; border-left: 2px solid transparent; }
+.file-item:hover { background: var(--bg-3); }
+.file-item.active { background: var(--mint-dim); border-left-color: var(--mint); color: var(--mint); }
+.file-icon { font-size: 0.8rem; opacity: 0.7; }
+.file-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-badge { font-size: 0.55rem; padding: 1px 3px; background: var(--bg-4); border-radius: 3px; color: var(--text-3); }
+.file-actions { display: none; gap: 2px; }
+.file-item:hover .file-actions { display: flex; }
+.file-action { background: none; border: none; cursor: pointer; font-size: 0.65rem; opacity: 0.5; padding: 1px; }
+.file-action:hover { opacity: 1; }
+
+/* Tool List */
+.tool-item { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.6rem; cursor: pointer; transition: var(--transition); font-size: 0.7rem; border-left: 2px solid transparent; }
+.tool-item:hover { background: var(--bg-3); }
+.tool-item.active { background: var(--mint-dim); border-left-color: var(--mint); }
+.tool-item.completed { opacity: 0.6; }
+.tool-item.completed::after { content: '✓'; color: var(--success); margin-left: auto; }
+.tool-phase { font-size: 0.55rem; padding: 1px 3px; border-radius: 3px; }
+.tool-phase.voir { background: rgba(46,213,115,0.2); color: #2ed573; }
+.tool-phase.juger { background: rgba(255,165,2,0.2); color: #ffa502; }
+.tool-phase.agir { background: rgba(255,71,87,0.2); color: #ff4757; }
+
+/* Drop Zone Mini */
+.drop-mini { padding: 0.5rem; text-align: center; border: 1px dashed var(--border); margin: 0.4rem; border-radius: var(--radius); cursor: pointer; transition: var(--transition); font-size: 0.65rem; color: var(--text-3); }
+.drop-mini:hover, .drop-mini.dragover { border-color: var(--mint); background: var(--mint-dim); color: var(--mint); }
+
+/* === CONTENT === */
+.content { display: flex; flex-direction: column; overflow: hidden; background: var(--bg-2); }
+.content-header { padding: 0.4rem 0.75rem; background: var(--bg-1); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; min-height: 40px; }
+.content-title { font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+.content-toolbar { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.content-body { flex: 1; overflow: auto; padding: 0.75rem; }
+
+/* === SIDEBAR RIGHT === */
+.sidebar-right { background: var(--bg-1); border-left: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+.panel { border-bottom: 1px solid var(--border); }
+.panel-header { padding: 0.5rem 0.75rem; font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; background: var(--bg-2); }
+.panel-body { padding: 0.5rem 0.75rem; }
+
+/* Stats */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.stat-card { background: var(--bg-3); border-radius: var(--radius); padding: 0.5rem; text-align: center; }
+.stat-value { font-family: var(--font-display); font-size: 1.1rem; color: var(--mint); }
+.stat-label { font-size: 0.55rem; color: var(--text-3); text-transform: uppercase; }
+
+/* Quote */
+.quote-box { background: var(--bg-3); border-left: 2px solid var(--lilac); padding: 0.5rem; margin-bottom: 0.5rem; }
+.quote-text { font-size: 0.7rem; font-style: italic; color: var(--text-2); margin-bottom: 0.2rem; }
+.quote-author { font-size: 0.6rem; color: var(--lilac); }
+
+/* Timeline */
+.timeline-item { position: relative; padding-left: 1rem; padding-bottom: 0.5rem; border-left: 1px solid var(--border); margin-left: 0.4rem; }
+.timeline-item::before { content: ''; position: absolute; left: -3px; top: 2px; width: 5px; height: 5px; background: var(--mint); border-radius: 50%; }
+.timeline-item.urgent::before { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.timeline-date { font-size: 0.55rem; color: var(--text-3); }
+.timeline-title { font-size: 0.7rem; font-weight: 500; }
+
+/* === BUTTONS === */
+.btn { font-family: var(--font-body); font-size: 0.65rem; font-weight: 500; padding: 0.3rem 0.6rem; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.25rem; background: var(--bg-3); color: var(--text-1); }
+.btn:hover { background: var(--bg-4); border-color: var(--mint); }
+.btn-primary { background: var(--mint); color: var(--bg-0); border-color: var(--mint); }
+.btn-primary:hover { box-shadow: 0 0 10px var(--mint-glow); }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-sm { padding: 0.2rem 0.4rem; font-size: 0.6rem; }
+.btn-icon { padding: 0.25rem; min-width: 24px; justify-content: center; }
+
+/* === INPUTS === */
+.input, .textarea, .select { font-family: var(--font-body); font-size: 0.75rem; padding: 0.4rem 0.6rem; background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-1); width: 100%; transition: var(--transition); }
+.input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint-dim); }
+.textarea { min-height: 60px; resize: vertical; font-family: var(--font-mono); line-height: 1.4; }
+.form-group { margin-bottom: 0.75rem; }
+.form-label { display: block; font-size: 0.7rem; font-weight: 500; margin-bottom: 0.25rem; }
+.form-hint { font-size: 0.6rem; color: var(--text-3); margin-bottom: 0.25rem; }
+
+/* === TABS === */
+.tabs { display: flex; gap: 2px; background: var(--bg-1); padding: 2px; border-radius: var(--radius); }
+.tab { font-size: 0.65rem; padding: 0.3rem 0.6rem; border: none; background: transparent; color: var(--text-2); cursor: pointer; border-radius: 4px; transition: var(--transition); }
+.tab:hover { color: var(--text-1); background: var(--bg-3); }
+.tab.active { background: var(--mint-dim); color: var(--mint); }
+
+/* === TABLE === */
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+th, td { padding: 0.4rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--bg-3); font-weight: 600; position: sticky; top: 0; z-index: 1; font-size: 0.65rem; }
+tr:hover { background: var(--bg-3); }
+.cell-input { background: transparent; border: none; color: inherit; width: 100%; font: inherit; padding: 0; }
+.cell-input:focus { outline: none; background: var(--bg-1); padding: 0.15rem; margin: -0.15rem; border-radius: 3px; }
+.row-actions { display: flex; gap: 2px; opacity: 0; }
+tr:hover .row-actions { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLASHCARD v4 — CARTES 100% OPAQUES
+═══════════════════════════════════════════════════════════════════ */
+.fc-container { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 280px; 
+    padding: 0.75rem; 
+}
+
+.fc-card { 
+    width: 100%; 
+    max-width: 480px; 
+    height: 180px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.fc-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.fc-card.flipped .fc-card-inner {
+    transform: rotateY(180deg);
+}
+
+.fc-face, .fc-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+}
+
+/* FACE AVANT - OPAQUE */
+.fc-face { 
+    background: var(--bg-3);
+}
+
+/* FACE ARRIÈRE - OPAQUE - On ne voit RIEN à travers */
+.fc-back { 
+    background: linear-gradient(135deg, var(--mint-solid), var(--lilac-solid));
+    transform: rotateY(180deg);
+    border-color: var(--mint);
+}
+
+.fc-question { font-size: 0.95rem; line-height: 1.5; color: var(--text-1); }
+.fc-answer { font-size: 0.9rem; color: var(--mint); font-weight: 500; }
+
+.fc-controls { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.fc-counter { margin-top: 0.5rem; color: var(--text-3); font-size: 0.7rem; }
+.fc-progress { width: 100%; max-width: 480px; height: 4px; background: var(--bg-1); border-radius: 2px; margin-top: 0.4rem; overflow: hidden; }
+.fc-progress-bar { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.3s; }
+
+/* === JSON TREE === */
+.json-tree { font-family: var(--font-mono); font-size: 0.65rem; line-height: 1.5; }
+.json-key { color: var(--lilac); }
+.json-string { color: var(--success); }
+.json-number { color: var(--warning); }
+.json-bool { color: var(--info); }
+.json-null { color: var(--text-3); }
+.json-bracket { color: var(--text-3); }
+.json-toggle { cursor: pointer; user-select: none; }
+.json-toggle:hover { background: var(--bg-3); border-radius: 2px; }
+.json-collapsed .json-children { display: none; }
+.json-collapsed .json-toggle::before { content: '▶ '; font-size: 0.55rem; }
+.json-expanded .json-toggle::before { content: '▼ '; font-size: 0.55rem; }
+.json-children { margin-left: 1rem; border-left: 1px solid var(--border); padding-left: 0.4rem; }
+.json-edit { background: transparent; border: none; color: inherit; font: inherit; padding: 0; }
+.json-edit:focus { outline: none; background: var(--bg-1); padding: 1px 2px; margin: -1px -2px; border-radius: 2px; }
+
+/* === MARKDOWN === */
+.md-view { line-height: 1.6; font-size: 0.8rem; }
+.md-view h1, .md-view h2, .md-view h3 { color: var(--mint); margin: 1rem 0 0.4rem; }
+.md-view h1 { font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+.md-view h2 { font-size: 1rem; }
+.md-view h3 { font-size: 0.9rem; }
+.md-view p { margin-bottom: 0.6rem; }
+.md-view ul, .md-view ol { margin: 0.4rem 0 0.6rem 1rem; }
+.md-view code { background: var(--bg-1); padding: 0.1rem 0.25rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.8em; }
+.md-view pre { background: var(--bg-1); padding: 0.6rem; border-radius: var(--radius); overflow-x: auto; margin: 0.6rem 0; }
+.md-view blockquote { border-left: 2px solid var(--lilac); padding-left: 0.6rem; margin: 0.6rem 0; color: var(--text-2); font-style: italic; }
+
+/* === EDITOR SPLIT === */
+.editor-split { display: grid; grid-template-columns: 1fr 1fr; height: 100%; overflow: hidden; }
+.editor-split.source-only { grid-template-columns: 1fr; }
+.editor-split.preview-only { grid-template-columns: 1fr; }
+.editor-pane { overflow: auto; padding: 0.75rem; }
+.editor-source { background: var(--bg-1); border-right: 1px solid var(--border); }
+.editor-source textarea { height: 100%; min-height: 200px; background: transparent; border: none; resize: none; }
+.editor-source textarea:focus { box-shadow: none; }
+
+/* === TOOL FORM === */
+.tool-section { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; margin-bottom: 0.75rem; }
+.tool-section-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+
+/* === EMPTY STATE === */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: var(--text-3); padding: 1.5rem; }
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.3; }
+.empty-text { margin-bottom: 0.75rem; }
+.drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1.5rem; cursor: pointer; transition: var(--transition); max-width: 320px; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--mint); background: var(--mint-dim); }
+
+/* === TOAST === */
+.toast-container { position: fixed; bottom: 0.75rem; right: 0.75rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.3rem; }
+.toast { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; animation: slideIn 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
+
+/* === MODAL === */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 9000; display: none; align-items: center; justify-content: center; padding: 0.75rem; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; width: 100%; max-width: 420px; max-height: 80vh; overflow: hidden; }
+.modal-header { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-weight: 600; font-size: 0.85rem; }
+.modal-close { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text-2); }
+.modal-body { padding: 0.75rem; max-height: 50vh; overflow-y: auto; }
+.modal-footer { padding: 0.6rem 0.75rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.4rem; background: var(--bg-3); }
+
+/* === HIDDEN === */
+.hidden { display: none !important; }
+@media (max-width: 600px) { .xp-bar-container { display: none; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo" onclick="showDashboard()">
+            <div class="logo-icon">⚔️</div>
+            <div>
+                <div class="logo-text">RÉSISTANCE</div>
+                <div class="logo-sub">Plaidoyer Citoyen v4</div>
+            </div>
+        </div>
+        <div class="xp-bar-container">
+            <span class="xp-rank" id="userRank">NÉOPHYTE</span>
+            <div class="xp-bar"><div class="xp-bar-fill" id="xpBar" style="width: 50%"></div></div>
+            <span class="xp-text"><span id="xpCurrent">150</span>/<span id="xpMax">300</span></span>
+        </div>
+        <div class="header-actions">
+            <div class="theme-switcher">
+                <button class="theme-btn active" data-theme="dark" title="Sombre">🌑</button>
+                <button class="theme-btn" data-theme="console" title="Console">💻</button>
+                <button class="theme-btn" data-theme="neon" title="Néon">🌈</button>
+                <button class="theme-btn" data-theme="80s" title="80's">📼</button>
+            </div>
+            <button class="btn" onclick="exportProject()">💾 Export</button>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <button class="nav-tab" data-view="dashboard">🏠 QG</button>
+        <button class="nav-tab" data-view="files">📁 Fichiers</button>
+        <button class="nav-tab active" data-view="tools">🛠️ Outils <span class="nav-badge">15</span></button>
+        <button class="nav-tab" data-view="flashcards">📚 Flashcards</button>
+        <button class="nav-tab" data-view="achievements">🏆 Trophées</button>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- SIDEBAR LEFT -->
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    📁 Fichiers
+                    <button class="btn btn-sm" onclick="document.getElementById('fileInput').click()">+</button>
+                </div>
+                <div class="sidebar-content" id="fileListSidebar"></div>
+                <div class="drop-mini" id="dropMini">📥 Importer</div>
+                <input type="file" id="fileInput" hidden multiple accept=".json,.csv,.txt,.md">
+            </div>
+            <div class="sidebar-section" style="flex:1; display:flex; flex-direction:column;">
+                <div class="sidebar-header">🛠️ Outils</div>
+                <div class="sidebar-content expanded" id="toolListSidebar"></div>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+            <div class="content-header">
+                <div class="content-title" id="contentTitle"><span>🏠</span> Quartier Général</div>
+                <div class="content-toolbar" id="contentToolbar"></div>
+            </div>
+            <div class="content-body" id="contentBody"></div>
+        </main>
+
+        <!-- SIDEBAR RIGHT -->
+        <aside class="sidebar-right">
+            <div class="panel">
+                <div class="panel-header">📊 Progression</div>
+                <div class="panel-body">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statFiles">0</div>
+                            <div class="stat-label">Fichiers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTools">0/15</div>
+                            <div class="stat-label">Outils</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">💡 Citation</div>
+                <div class="panel-body">
+                    <div class="quote-box">
+                        <div class="quote-text" id="quoteText">"Il est plus facile de tromper les gens que de les convaincre qu'ils ont été trompés."</div>
+                        <div class="quote-author" id="quoteAuthor">— Mark Twain</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">📅 Échéances</div>
+                <div class="panel-body">
+                    <div class="timeline-item urgent">
+                        <div class="timeline-date">1er Mars 2026</div>
+                        <div class="timeline-title">Vague 2 exclusions</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Automne 2026</div>
+                        <div class="timeline-title">Budget 2027</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Fin 2026</div>
+                        <div class="timeline-title">Arrêt Cour Const.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">🏆 Trophées récents</div>
+                <div class="panel-body" id="recentAchievements">
+                    <div style="color:var(--text-3);font-size:0.7rem;">Aucun trophée</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Modal</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA STRUCTURES
+// ═══════════════════════════════════════════════════════════════════
+
+const RANKS = [
+    { name: 'NÉOPHYTE', min: 0 },
+    { name: 'INITIÉ', min: 300 },
+    { name: 'ACTIVISTE', min: 750 },
+    { name: 'STRATÈGE', min: 1500 },
+    { name: 'MAÎTRE', min: 3000 },
+    { name: 'LÉGENDE', min: 5000 }
+];
+
+const ACHIEVEMENTS = [
+    { id: 'first_file', name: 'Premier Fichier', desc: 'Importer un fichier', icon: '📁', xp: 25 },
+    { id: 'first_tool', name: 'Premier Pas', desc: 'Compléter un outil', icon: '🛠️', xp: 50 },
+    { id: 'flashcard_master', name: 'Mémoire Vive', desc: 'Réviser 50 flashcards', icon: '🧠', xp: 100 },
+    { id: 'voir_complete', name: 'Vision Claire', desc: 'Compléter phase VOIR', icon: '👁️', xp: 150 },
+    { id: 'juger_complete', name: 'Jugement Sûr', desc: 'Compléter phase JUGER', icon: '⚖️', xp: 150 },
+    { id: 'agir_complete', name: 'Action!', desc: 'Compléter phase AGIR', icon: '✊', xp: 150 },
+    { id: 'all_tools', name: 'Arsenal Complet', desc: 'Compléter tous les outils', icon: '🏆', xp: 500 },
+    { id: 'night_owl', name: 'Hibou Nocturne', desc: 'Travailler entre minuit et 5h', icon: '🦉', xp: 50 },
+    { id: 'data_collector', name: 'Collectionneur', desc: 'Avoir 10 fichiers', icon: '📊', xp: 75 }
+];
+
+const TOOLS = [
+    { id: 1, name: 'Domino du Changement', icon: '🎯', phase: 'voir', xp: 50, key: 'domino', fields: ['probleme', 'causes', 'consequences', 'acteurs'] },
+    { id: 2, name: "Profil d'Engagement", icon: '👤', phase: 'voir', xp: 50, key: 'profil', fields: ['groupe', 'motivations', 'freins', 'canaux'] },
+    { id: 3, name: 'Fleur de Pouvoir', icon: '🌸', phase: 'voir', xp: 50, key: 'fleur', fields: ['centre', 'politique', 'economique', 'mediatique', 'social'] },
+    { id: 4, name: 'Cartographie Acteurs', icon: '🗺️', phase: 'voir', xp: 50, key: 'carto', fields: ['allies', 'opposants', 'neutres', 'cibles'] },
+    { id: 5, name: 'Analyse SWOT', icon: '📊', phase: 'juger', xp: 75, key: 'swot', fields: ['forces', 'faiblesses', 'opportunites', 'menaces'] },
+    { id: 6, name: 'Analyse PESTEL', icon: '🌍', phase: 'juger', xp: 75, key: 'pestel', fields: ['politique', 'economique', 'social', 'technologique', 'environnemental', 'legal'] },
+    { id: 7, name: 'Arbre à Problèmes', icon: '🌳', phase: 'juger', xp: 75, key: 'arbre', fields: ['probleme', 'causes', 'effets', 'solutions'] },
+    { id: 8, name: 'Les 5 Pourquoi', icon: '❓', phase: 'juger', xp: 75, key: 'pourquoi', fields: ['symptome', 'pq1', 'pq2', 'pq3', 'pq4', 'pq5'] },
+    { id: 9, name: 'Théorie du Changement', icon: '📐', phase: 'juger', xp: 75, key: 'theorie', fields: ['situation', 'objectif', 'activites', 'resultats', 'impact'] },
+    { id: 10, name: 'Avec / Sans / Contre', icon: '✖️', phase: 'agir', xp: 100, key: 'alliance', fields: ['avec', 'sans', 'contre'] },
+    { id: 11, name: 'Objectifs SMART', icon: '🎯', phase: 'agir', xp: 100, key: 'smart', fields: ['specifique', 'mesurable', 'atteignable', 'relevant', 'temporel'] },
+    { id: 12, name: 'Cibles & Alliances', icon: '🎪', phase: 'agir', xp: 100, key: 'cibles', fields: ['ciblePrimaire', 'cibleSecondaire', 'allies', 'strategie'] },
+    { id: 13, name: 'Construction du Message', icon: '📣', phase: 'agir', xp: 100, key: 'message', fields: ['accroche', 'probleme', 'importance', 'cible', 'action'] },
+    { id: 14, name: 'Check-list Rencontre', icon: '📋', phase: 'agir', xp: 100, key: 'checklist', fields: ['objectif', 'arguments', 'documents', 'questions', 'suivi'] },
+    { id: 15, name: 'Suivi & Évaluation', icon: '📈', phase: 'agir', xp: 100, key: 'suivi', fields: ['indicateurs', 'sources', 'frequence', 'responsable', 'ajustements'] }
+];
+
+const QUOTES = [
+    { text: "Il est plus facile de tromper les gens que de les convaincre qu'ils ont été trompés.", author: "Mark Twain" },
+    { text: "Celui qui contrôle le passé contrôle le futur.", author: "George Orwell" },
+    { text: "La résistance commence par l'information.", author: "Anon" },
+    { text: "Seul on va plus vite, ensemble on va plus loin.", author: "Proverbe africain" },
+    { text: "Ne doutez jamais qu'un petit groupe de citoyens puisse changer le monde.", author: "Margaret Mead" }
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════════════════════════════
+
+const APP = {
+    xp: 150,
+    achievements: [],
+    theme: 'dark',
+    files: [],
+    currentFile: null,
+    currentTool: null,
+    currentView: 'tools',
+    completedTools: [],
+    project: {
+        domino: {}, profil: {}, fleur: {}, carto: {}, swot: {}, pestel: {},
+        arbre: {}, pourquoi: {}, theorie: {}, alliance: {}, smart: {},
+        cibles: {}, message: {}, checklist: {}, suivi: {}
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    setupEventListeners();
+    render();
+    rotateQuote();
+    checkTimeAchievements();
+    updateXPBar();
+    setInterval(rotateQuote, 30000);
+});
+
+function setupEventListeners() {
+    // Theme switcher
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+    
+    // Nav tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchView(tab.dataset.view));
+    });
+    
+    // File input
+    document.getElementById('fileInput').addEventListener('change', e => {
+        handleFiles(e.target.files);
+        e.target.value = '';
+    });
+    
+    // Drop mini
+    const dropMini = document.getElementById('dropMini');
+    dropMini.addEventListener('dragover', e => { e.preventDefault(); dropMini.classList.add('dragover'); });
+    dropMini.addEventListener('dragleave', () => dropMini.classList.remove('dragover'));
+    dropMini.addEventListener('drop', e => { e.preventDefault(); dropMini.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+    dropMini.addEventListener('click', () => document.getElementById('fileInput').click());
+    
+    // Keyboard
+    document.addEventListener('keydown', e => {
+        if (APP.currentView === 'flashcards') {
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcFlip(); }
+            else if (e.key === 'ArrowRight') fcNext();
+            else if (e.key === 'ArrowLeft') fcPrev();
+        }
+    });
+}
+
+function setTheme(theme) {
+    APP.theme = theme;
+    document.documentElement.dataset.theme = theme;
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VIEW MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════
+
+function switchView(view) {
+    APP.currentView = view;
+    APP.currentFile = null;
+    APP.currentTool = null;
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+    render();
+}
+
+function render() {
+    renderSidebars();
+    renderContent();
+    updateStats();
+}
+
+function renderSidebars() {
+    // Files sidebar
+    const fileList = document.getElementById('fileListSidebar');
+    if (APP.files.length === 0) {
+        fileList.innerHTML = '<div style="padding:0.5rem;color:var(--text-3);font-size:0.65rem;">Aucun fichier</div>';
+    } else {
+        fileList.innerHTML = APP.files.map(f => `
+        <div class="file-item ${APP.currentFile===f.id?'active':''}" onclick="openFile(${f.id})">
+            <span class="file-icon">${getFileIcon(f.type)}</span>
+            <span class="file-name">${esc(f.name)}</span>
+            <span class="file-badge">${f.type}</span>
+            <div class="file-actions">
+                <button class="file-action" onclick="event.stopPropagation();deleteFile(${f.id})">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+    }
+    
+    // Tools sidebar
+    const toolList = document.getElementById('toolListSidebar');
+    toolList.innerHTML = TOOLS.map(t => `
+        <div class="tool-item ${APP.currentTool===t.id?'active':''} ${APP.completedTools.includes(t.id)?'completed':''}" onclick="openTool(${t.id})">
+            <span>${t.icon}</span>
+            <span class="file-name">${t.name}</span>
+            <span class="tool-phase ${t.phase}">${t.phase}</span>
+        </div>
+    `).join('');
+}
+
+function renderContent() {
+    const body = document.getElementById('contentBody');
+    const title = document.getElementById('contentTitle');
+    const toolbar = document.getElementById('contentToolbar');
+    
+    if (APP.currentFile) {
+        renderFileEditor(body, title, toolbar);
+        return;
+    }
+    if (APP.currentTool) {
+        renderToolEditor(body, title, toolbar);
+        return;
+    }
+    
+    switch (APP.currentView) {
+        case 'dashboard': renderDashboardView(body, title, toolbar); break;
+        case 'files': renderFilesView(body, title, toolbar); break;
+        case 'tools': renderToolsView(body, title, toolbar); break;
+        case 'flashcards': renderFlashcardsView(body, title, toolbar); break;
+        case 'achievements': renderAchievementsView(body, title, toolbar); break;
+        default: renderDashboardView(body, title, toolbar);
+    }
+}
+
+function getFileIcon(type) {
+    const icons = { csv: '📊', json: '📋', md: '📝', txt: '📄' };
+    return icons[type] || '📄';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════════════
+
+function handleFiles(fileList) {
+    Array.from(fileList).forEach(file => {
+        const reader = new FileReader();
+        const ext = file.name.split('.').pop().toLowerCase();
+        
+        reader.onload = e => {
+            const content = e.target.result;
+            let data = null;
+            let type = ext;
+            
+            if (ext === 'json') {
+                try { data = JSON.parse(content); } catch { toast('JSON invalide', 'error'); return; }
+            } else if (ext === 'csv') {
+                data = parseCSV(content);
+            } else {
+                data = content;
+            }
+            
+            const f = {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                type: type,
+                data: data,
+                raw: content,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            };
+            
+            APP.files.push(f);
+            unlock('first_file');
+            if (APP.files.length >= 10) unlock('data_collector');
+            toast(`✓ ${file.name} importé`, 'success');
+            render();
+            saveState();
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    
+    const headers = parseCSVLine(lines[0]);
+    return lines.slice(1).map(line => {
+        const values = parseCSVLine(line);
+        const obj = {};
+        headers.forEach((h, i) => {
+            const key = h.toLowerCase().includes('question') ? 'question' : 
+                       h.toLowerCase().includes('answer') || h.toLowerCase().includes('réponse') ? 'answer' : h;
+            obj[key] = values[i] || '';
+        });
+        return obj;
+    }).filter(row => Object.values(row).some(v => v));
+}
+
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+            inQuotes = !inQuotes;
+        } else if ((c === ',' || c === ';') && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += c;
+        }
+    }
+    result.push(current.trim());
+    return result;
+}
+
+function openFile(id) {
+    APP.currentFile = id;
+    APP.currentTool = null;
+    render();
+}
+
+function deleteFile(id) {
+    if (!confirm('Supprimer ce fichier?')) return;
+    APP.files = APP.files.filter(f => f.id !== id);
+    if (APP.currentFile === id) APP.currentFile = null;
+    toast('Fichier supprimé', 'success');
+    render();
+    saveState();
+}
+
+function exportFile(id) {
+    const f = APP.files.find(x => x.id === id);
+    if (!f) return;
+    
+    let content = f.raw;
+    if (f.type === 'json') content = JSON.stringify(f.data, null, 2);
+    else if (f.type === 'csv' && Array.isArray(f.data)) {
+        const headers = Object.keys(f.data[0] || {});
+        content = headers.join(',') + '\n' + f.data.map(row => headers.map(h => `"${(row[h]||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    }
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = f.name;
+    a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VIEW RENDERERS
+// ═══════════════════════════════════════════════════════════════════
+
+function renderDashboardView(body, title, toolbar) {
+    title.innerHTML = '<span>🏠</span> Quartier Général';
+    toolbar.innerHTML = '';
+    
+    const completedCount = APP.completedTools.length;
+    const progress = Math.round((completedCount / 15) * 100);
+    
+    body.innerHTML = `
+        <div style="max-width:800px;">
+            <div class="tool-section">
+                <div class="tool-section-title">⚔️ Bienvenue, Résistant·e</div>
+                <p style="font-size:0.75rem;color:var(--text-2);line-height:1.5;">
+                    Le Poste de Travail Plaidoyer Citoyen est votre arsenal méthodologique pour structurer votre combat.
+                    Importez vos données, utilisez les 15 outils d'analyse, révisez vos flashcards et construisez votre stratégie.
+                </p>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;margin-top:1rem;">
+                <div class="tool-section">
+                    <div class="tool-section-title">📊 Progression</div>
+                    <div style="font-size:1.5rem;font-family:var(--font-display);color:var(--mint);">${progress}%</div>
+                    <div style="height:6px;background:var(--bg-1);border-radius:3px;margin-top:0.4rem;">
+                        <div style="height:100%;width:${progress}%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:3px;"></div>
+                    </div>
+                    <div style="font-size:0.65rem;color:var(--text-3);margin-top:0.3rem;">${completedCount}/15 outils</div>
+                </div>
+                
+                <div class="tool-section">
+                    <div class="tool-section-title">📁 Fichiers</div>
+                    <div style="font-size:1.5rem;font-family:var(--font-display);color:var(--lilac);">${APP.files.length}</div>
+                    <div style="font-size:0.65rem;color:var(--text-3);margin-top:0.3rem;">
+                        ${APP.files.filter(f=>f.type==='csv').length} CSV • ${APP.files.filter(f=>f.type==='json').length} JSON
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <div class="tool-section-title">🏆 Trophées</div>
+                    <div style="font-size:1.5rem;font-family:var(--font-display);color:var(--warning);">${APP.achievements.length}/${ACHIEVEMENTS.length}</div>
+                    <div style="font-size:0.65rem;color:var(--text-3);margin-top:0.3rem;">${APP.xp} XP</div>
+                </div>
+            </div>
+            
+            <div class="tool-section" style="margin-top:1rem;">
+                <div class="tool-section-title">⚡ Actions rapides</div>
+                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                    <button class="btn" onclick="newFlashcardSet()">📚 Flashcards</button>
+                    <button class="btn" onclick="openTool(1)">🎯 Domino</button>
+                    <button class="btn" onclick="loadDemoData()">🎯 Démo Arizona</button>
+                    <button class="btn" onclick="exportProject()">💾 Export</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderFilesView(body, title, toolbar) {
+    title.innerHTML = '<span>📁</span> Fichiers';
+    toolbar.innerHTML = `
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📥 Import</button>
+        <button class="btn" onclick="newFlashcardSet()">📚 Flashcards</button>
+    `;
+    
+    if (APP.files.length === 0) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📂</div>
+                <div class="empty-text">
+                    <h3 style="font-size:0.9rem;">Aucun fichier</h3>
+                    <p style="font-size:0.7rem;">CSV, JSON, Markdown, Texte</p>
+                </div>
+                <div class="drop-zone" id="dropMain">
+                    <div style="font-size:1.5rem;margin-bottom:0.4rem;">📥</div>
+                    <div style="font-size:0.75rem;">Glisser-déposer</div>
+                </div>
+            </div>
+        `;
+        const dz = document.getElementById('dropMain');
+        dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
+        dz.ondragleave = () => dz.classList.remove('dragover');
+        dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
+        dz.onclick = () => document.getElementById('fileInput').click();
+        return;
+    }
+    
+    body.innerHTML = `
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th></th><th>Nom</th><th>Type</th><th>Items</th><th>Actions</th></tr></thead>
+                <tbody>
+                    ${APP.files.map(f => `
+                        <tr onclick="openFile(${f.id})" style="cursor:pointer;">
+                            <td>${getFileIcon(f.type)}</td>
+                            <td><strong>${esc(f.name)}</strong></td>
+                            <td><span class="file-badge">${f.type.toUpperCase()}</span></td>
+                            <td>${f.data?.length || '—'}</td>
+                            <td>
+                                <div class="row-actions" style="opacity:1;">
+                                    <button class="btn btn-sm" onclick="event.stopPropagation();exportFile(${f.id})">💾</button>
+                                    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteFile(${f.id})">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderToolsView(body, title, toolbar) {
+    title.innerHTML = '<span>🛠️</span> Outils';
+    toolbar.innerHTML = `
+        <div class="tabs">
+            <button class="tab active" onclick="filterToolsPhase(null, this)">Tous</button>
+            <button class="tab" onclick="filterToolsPhase('voir', this)">👁️ VOIR</button>
+            <button class="tab" onclick="filterToolsPhase('juger', this)">⚖️ JUGER</button>
+            <button class="tab" onclick="filterToolsPhase('agir', this)">✊ AGIR</button>
+        </div>
+    `;
+    
+    body.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;" id="toolsGrid">
+            ${TOOLS.map(t => `
+                <div class="tool-section" data-phase="${t.phase}" style="cursor:pointer;${APP.completedTools.includes(t.id)?'border-color:var(--success);':''}">
+                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.4rem;">
+                        <span style="font-size:1.2rem;">${t.icon}</span>
+                        <span class="tool-phase ${t.phase}">${t.phase.toUpperCase()}</span>
+                    </div>
+                    <div style="font-weight:600;font-size:0.8rem;margin-bottom:0.2rem;">${t.name}</div>
+                    <div style="font-size:0.65rem;color:var(--text-3);margin-bottom:0.5rem;">+${t.xp} XP</div>
+                    <button class="btn btn-sm ${APP.completedTools.includes(t.id)?'':'btn-primary'}" onclick="openTool(${t.id})">
+                        ${APP.completedTools.includes(t.id)?'✓ Fait':'Commencer'}
+                    </button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function filterToolsPhase(phase, btn) {
+    document.querySelectorAll('#contentToolbar .tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#toolsGrid .tool-section').forEach(el => {
+        el.style.display = (!phase || el.dataset.phase === phase) ? '' : 'none';
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FLASHCARDS VIEW — CARTES OPAQUES
+// ═══════════════════════════════════════════════════════════════════
+
+function renderFlashcardsView(body, title, toolbar) {
+    title.innerHTML = '<span>📚</span> Flashcards';
+    
+    const csvFiles = APP.files.filter(f => f.type === 'csv' && f.data?.length && f.data[0].question);
+    
+    toolbar.innerHTML = `
+        <select class="select" style="width:auto;font-size:0.7rem;" id="fcFileSelect" onchange="renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar'))">
+            <option value="">-- Choisir --</option>
+            ${csvFiles.map(f => `<option value="${f.id}">${f.name} (${f.data.length})</option>`).join('')}
+        </select>
+        <button class="btn" onclick="newFlashcardSet()">➕ Nouveau</button>
+    `;
+    
+    if (csvFiles.length === 0) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📚</div>
+                <div class="empty-text">
+                    <h3 style="font-size:0.9rem;">Aucun jeu de flashcards</h3>
+                    <p style="font-size:0.7rem;">Importe un CSV avec "question" et "answer"</p>
+                </div>
+                <button class="btn btn-primary" onclick="loadDemoData()">🎯 Charger démo</button>
+            </div>
+        `;
+        return;
+    }
+    
+    const selectedId = document.getElementById('fcFileSelect')?.value || csvFiles[0].id;
+    const file = APP.files.find(f => f.id == selectedId) || csvFiles[0];
+    
+    if (document.getElementById('fcFileSelect')) {
+        document.getElementById('fcFileSelect').value = file.id;
+    }
+    
+    renderFlashcardStudy(file, body);
+}
+
+function renderFlashcardStudy(file, container) {
+    const cards = file.data.filter(d => d.question && d.answer);
+    if (!cards.length) { 
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📚</div><div>Aucune carte valide</div></div>'; 
+        return; 
+    }
+    
+    window._fcState = window._fcState || { index: 0, flipped: false, shuffled: [...cards] };
+    const st = window._fcState;
+    if (st.shuffled.length !== cards.length) { st.shuffled = [...cards]; st.index = 0; }
+    
+    const card = st.shuffled[st.index];
+    
+    // Structure avec deux faces SÉPARÉES et OPAQUES
+    container.innerHTML = `
+        <div class="fc-container">
+            <div style="margin-bottom:0.75rem;">
+                <button class="btn btn-sm" onclick="fcEdit(${file.id})">📝 Éditer</button>
+                <button class="btn btn-sm" onclick="fcShuffle()">🔀 Mélanger</button>
+            </div>
+            <div class="fc-card ${st.flipped?'flipped':''}" onclick="fcFlip()">
+                <div class="fc-card-inner">
+                    <div class="fc-face">
+                        <div class="fc-question">${esc(card.question)}</div>
+                    </div>
+                    <div class="fc-back">
+                        <div class="fc-answer">${esc(card.answer)}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fc-controls">
+                <button class="btn" onclick="fcPrev()" ${st.index===0?'disabled':''}>⬅️</button>
+                <button class="btn btn-primary" onclick="fcFlip()">🔄 Retourner</button>
+                <button class="btn" onclick="fcNext()" ${st.index>=st.shuffled.length-1?'disabled':''}>➡️</button>
+            </div>
+            <div class="fc-counter">${st.index+1} / ${st.shuffled.length}</div>
+            <div class="fc-progress"><div class="fc-progress-bar" style="width:${((st.index+1)/st.shuffled.length)*100}%"></div></div>
+        </div>
+    `;
+    
+    window._fcReviews = (window._fcReviews || 0) + 1;
+    if (window._fcReviews >= 50) unlock('flashcard_master');
+}
+
+window.fcFlip = () => { 
+    window._fcState.flipped = !window._fcState.flipped; 
+    renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); 
+};
+window.fcNext = () => { 
+    if (window._fcState.index < window._fcState.shuffled.length-1) { 
+        window._fcState.index++; 
+        window._fcState.flipped = false; 
+        renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); 
+    }
+};
+window.fcPrev = () => { 
+    if (window._fcState.index > 0) { 
+        window._fcState.index--; 
+        window._fcState.flipped = false; 
+        renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); 
+    }
+};
+window.fcShuffle = () => { 
+    const arr = window._fcState.shuffled; 
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    } 
+    window._fcState.index=0; 
+    window._fcState.flipped=false; 
+    renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); 
+    toast('🔀 Mélangé!'); 
+};
+window.fcEdit = (id) => { openFile(id); };
+
+// ═══════════════════════════════════════════════════════════════════
+// ACHIEVEMENTS VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function renderAchievementsView(body, title, toolbar) {
+    title.innerHTML = '<span>🏆</span> Trophées';
+    toolbar.innerHTML = `<span style="color:var(--text-3);font-size:0.7rem;">${APP.achievements.length}/${ACHIEVEMENTS.length}</span>`;
+    
+    body.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.75rem;">
+            ${ACHIEVEMENTS.map(a => {
+                const unlocked = APP.achievements.includes(a.id);
+                return `
+                    <div class="tool-section" style="${unlocked?'border-color:var(--success);':'opacity:0.5;'}">
+                        <div style="font-size:1.5rem;margin-bottom:0.4rem;">${a.icon}</div>
+                        <div style="font-weight:600;font-size:0.8rem;">${a.name}</div>
+                        <div style="font-size:0.65rem;color:var(--text-3);margin:0.2rem 0;">${a.desc}</div>
+                        <div style="font-size:0.7rem;color:var(--mint);">+${a.xp} XP</div>
+                        ${unlocked?'<div style="color:var(--success);font-size:0.65rem;margin-top:0.3rem;">✓ Débloqué</div>':''}
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOOL EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function openTool(id) {
+    const tool = TOOLS.find(t => t.id === id);
+    if (!tool) return;
+    
+    APP.currentTool = id;
+    APP.currentFile = null;
+    renderSidebars();
+    renderToolEditor(
+        document.getElementById('contentBody'),
+        document.getElementById('contentTitle'),
+        document.getElementById('contentToolbar')
+    );
+}
+
+function renderToolEditor(body, title, toolbar) {
+    const tool = TOOLS.find(t => t.id === APP.currentTool);
+    if (!tool) return;
+    
+    title.innerHTML = `<span>${tool.icon}</span> ${tool.name}`;
+    toolbar.innerHTML = `
+        <span class="tool-phase ${tool.phase}" style="padding:0.25rem 0.5rem;">${tool.phase.toUpperCase()}</span>
+        <button class="btn" onclick="saveTool(${tool.id},false)">💾 Save</button>
+        <button class="btn btn-primary" onclick="saveTool(${tool.id},true)">✓ Complété</button>
+    `;
+    
+    let html = '<div style="max-width:700px;">';
+    
+    if (tool.fields) {
+        tool.fields.forEach(field => {
+            const value = APP.project[tool.key]?.[field] || '';
+            const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
+            html += `
+                <div class="form-group">
+                    <label class="form-label">${label}</label>
+                    <textarea class="textarea" id="tool_${field}" placeholder="Développe ici...">${esc(value)}</textarea>
+                </div>
+            `;
+        });
+    }
+    
+    html += '</div>';
+    body.innerHTML = html;
+}
+
+function saveTool(id, markComplete) {
+    const tool = TOOLS.find(t => t.id === id);
+    if (!tool) return;
+    
+    if (!APP.project[tool.key]) APP.project[tool.key] = {};
+    
+    tool.fields.forEach(field => {
+        const el = document.getElementById(`tool_${field}`);
+        if (el) APP.project[tool.key][field] = el.value;
+    });
+    
+    if (markComplete && !APP.completedTools.includes(id)) {
+        APP.completedTools.push(id);
+        addXP(tool.xp);
+        unlock('first_tool');
+        
+        const voirTools = [1,2,3,4];
+        const jugerTools = [5,6,7,8,9];
+        const agirTools = [10,11,12,13,14,15];
+        
+        if (voirTools.every(t => APP.completedTools.includes(t))) unlock('voir_complete');
+        if (jugerTools.every(t => APP.completedTools.includes(t))) unlock('juger_complete');
+        if (agirTools.every(t => APP.completedTools.includes(t))) unlock('agir_complete');
+        if (APP.completedTools.length >= 15) unlock('all_tools');
+        
+        toast(`✓ ${tool.name} complété! +${tool.xp} XP`, 'success');
+    } else {
+        toast('💾 Sauvegardé', 'success');
+    }
+    
+    render();
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function renderFileEditor(body, title, toolbar) {
+    const file = APP.files.find(f => f.id === APP.currentFile);
+    if (!file) return;
+    
+    title.innerHTML = `<span>${getFileIcon(file.type)}</span> ${esc(file.name)}`;
+    toolbar.innerHTML = `
+        <button class="btn" onclick="saveCurrentFile()">💾 Save</button>
+        <button class="btn" onclick="exportFile(${file.id})">📥 Export</button>
+        <button class="btn btn-danger" onclick="APP.currentFile=null;render()">✕ Fermer</button>
+    `;
+    
+    if (file.type === 'csv' && Array.isArray(file.data)) {
+        renderCSVEditor(file, body);
+    } else if (file.type === 'json') {
+        renderJSONEditor(file, body);
+    } else {
+        renderTextEditor(file, body);
+    }
+}
+
+function renderCSVEditor(file, container) {
+    if (!file.data.length) {
+        container.innerHTML = '<div class="empty">Fichier vide</div>';
+        return;
+    }
+    
+    const headers = Object.keys(file.data[0]);
+    
+    container.innerHTML = `
+        <div style="margin-bottom:0.75rem;">
+            <button class="btn btn-sm" onclick="addCSVRow(${file.id})">➕ Ligne</button>
+        </div>
+        <div class="table-wrap" style="max-height:calc(100vh - 200px);">
+            <table>
+                <thead>
+                    <tr>
+                        ${headers.map(h => `<th>${esc(h)}</th>`).join('')}
+                        <th style="width:60px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="csvTableBody">
+                    ${file.data.map((row, i) => `
+                        <tr>
+                            ${headers.map(h => `
+                                <td><input class="cell-input" value="${esc(row[h]||'')}" onchange="updateCSVCell(${file.id},${i},'${h}',this.value)"></td>
+                            `).join('')}
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCSVRow(${file.id},${i})">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function updateCSVCell(fileId, rowIndex, header, value) {
+    const file = APP.files.find(f => f.id === fileId);
+    if (file && file.data[rowIndex]) {
+        file.data[rowIndex][header] = value;
+        file.modified = new Date().toISOString();
+        saveState();
+    }
+}
+
+function addCSVRow(fileId) {
+    const file = APP.files.find(f => f.id === fileId);
+    if (!file || !file.data.length) return;
+    
+    const headers = Object.keys(file.data[0]);
+    const newRow = {};
+    headers.forEach(h => newRow[h] = '');
+    file.data.push(newRow);
+    file.modified = new Date().toISOString();
+    render();
+    saveState();
+}
+
+function deleteCSVRow(fileId, rowIndex) {
+    const file = APP.files.find(f => f.id === fileId);
+    if (file) {
+        file.data.splice(rowIndex, 1);
+        file.modified = new Date().toISOString();
+        render();
+        saveState();
+    }
+}
+
+function renderJSONEditor(file, container) {
+    container.innerHTML = `
+        <div class="editor-split">
+            <div class="editor-pane editor-source">
+                <textarea class="textarea" id="jsonEditor" style="height:100%;min-height:300px;">${JSON.stringify(file.data, null, 2)}</textarea>
+            </div>
+            <div class="editor-pane">
+                <div class="json-tree" id="jsonTree"></div>
+            </div>
+        </div>
+    `;
+    
+    renderJSONTree(file.data, document.getElementById('jsonTree'));
+    
+    document.getElementById('jsonEditor').addEventListener('input', e => {
+        try {
+            const data = JSON.parse(e.target.value);
+            file.data = data;
+            file.modified = new Date().toISOString();
+            renderJSONTree(data, document.getElementById('jsonTree'));
+            saveState();
+        } catch {}
+    });
+}
+
+function renderJSONTree(data, container, path = '') {
+    if (typeof data !== 'object' || data === null) {
+        const type = data === null ? 'null' : typeof data;
+        container.innerHTML = `<span class="json-${type}">${JSON.stringify(data)}</span>`;
+        return;
+    }
+    
+    const isArray = Array.isArray(data);
+    let html = `<span class="json-bracket">${isArray ? '[' : '{'}</span>`;
+    
+    const entries = Object.entries(data);
+    if (entries.length > 0) {
+        html += '<div class="json-children">';
+        entries.forEach(([key, val], i) => {
+            const valType = val === null ? 'null' : typeof val;
+            const isObj = typeof val === 'object' && val !== null;
+            
+            html += `<div class="${isObj ? 'json-expanded' : ''}">`;
+            if (!isArray) html += `<span class="json-key">"${key}"</span>: `;
+            
+            if (isObj) {
+                html += `<span class="json-toggle">${Array.isArray(val) ? `[${Object.keys(val).length}]` : `{${Object.keys(val).length}}`}</span>`;
+                html += `<div class="json-children">${renderJSONValue(val)}</div>`;
+            } else {
+                html += `<span class="json-${valType}">${JSON.stringify(val)}</span>`;
+            }
+            
+            if (i < entries.length - 1) html += ',';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+    
+    html += `<span class="json-bracket">${isArray ? ']' : '}'}</span>`;
+    container.innerHTML = html;
+    
+    container.querySelectorAll('.json-toggle').forEach(toggle => {
+        toggle.onclick = () => toggle.parentElement.classList.toggle('json-collapsed');
+    });
+}
+
+function renderJSONValue(val) {
+    if (typeof val !== 'object' || val === null) {
+        const type = val === null ? 'null' : typeof val;
+        return `<span class="json-${type}">${JSON.stringify(val)}</span>`;
+    }
+    
+    const isArray = Array.isArray(val);
+    let html = '';
+    
+    Object.entries(val).forEach(([k, v], i, arr) => {
+        html += '<div>';
+        if (!isArray) html += `<span class="json-key">"${k}"</span>: `;
+        
+        if (typeof v === 'object' && v !== null) {
+            html += `<span class="json-toggle">${Array.isArray(v) ? `[${Object.keys(v).length}]` : `{${Object.keys(v).length}}`}</span>`;
+            html += `<div class="json-children">${renderJSONValue(v)}</div>`;
+        } else {
+            const vType = v === null ? 'null' : typeof v;
+            html += `<span class="json-${vType}">${JSON.stringify(v)}</span>`;
+        }
+        
+        if (i < arr.length - 1) html += ',';
+        html += '</div>';
+    });
+    
+    return html;
+}
+
+function renderTextEditor(file, container) {
+    container.innerHTML = `
+        <div class="editor-split">
+            <div class="editor-pane editor-source">
+                <textarea class="textarea" id="textEditor" style="height:100%;min-height:300px;">${esc(file.data || file.raw || '')}</textarea>
+            </div>
+            <div class="editor-pane">
+                <div class="md-view" id="mdPreview"></div>
+            </div>
+        </div>
+    `;
+    
+    const updatePreview = () => {
+        const text = document.getElementById('textEditor').value;
+        document.getElementById('mdPreview').innerHTML = renderMarkdown(text);
+        file.data = text;
+        file.raw = text;
+        file.modified = new Date().toISOString();
+        saveState();
+    };
+    
+    document.getElementById('textEditor').addEventListener('input', updatePreview);
+    updatePreview();
+}
+
+function renderMarkdown(text) {
+    return text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(.+)$/gm, '<p>$1</p>')
+        .replace(/<p><h/g, '<h')
+        .replace(/<\/h(\d)><\/p>/g, '</h$1>')
+        .replace(/<p><li>/g, '<li>')
+        .replace(/<\/li><\/p>/g, '</li>')
+        .replace(/<p><ul>/g, '<ul>')
+        .replace(/<\/ul><\/p>/g, '</ul>');
+}
+
+function saveCurrentFile() {
+    toast('💾 Fichier sauvegardé', 'success');
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FLASHCARD SET CREATION
+// ═══════════════════════════════════════════════════════════════════
+
+function newFlashcardSet() {
+    openModal('Nouveau jeu de flashcards', `
+        <div class="form-group">
+            <label class="form-label">Nom du jeu</label>
+            <input class="input" id="newFcName" value="flashcards.csv">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Contenu (question;answer par ligne)</label>
+            <textarea class="textarea" id="newFcContent" style="min-height:150px;" placeholder="Question 1;Réponse 1&#10;Question 2;Réponse 2"></textarea>
+        </div>
+    `, () => {
+        const name = document.getElementById('newFcName').value || 'flashcards.csv';
+        const content = document.getElementById('newFcContent').value;
+        
+        const lines = content.trim().split('\n').filter(l => l.trim());
+        const data = lines.map(line => {
+            const [q, a] = line.split(/[;,]/).map(s => s.trim());
+            return { question: q || '', answer: a || '' };
+        }).filter(d => d.question && d.answer);
+        
+        if (data.length === 0) {
+            toast('Ajoute au moins une carte!', 'error');
+            return;
+        }
+        
+        const f = {
+            id: Date.now(),
+            name: name,
+            type: 'csv',
+            data: data,
+            raw: 'question,answer\n' + data.map(d => `"${d.question}","${d.answer}"`).join('\n'),
+            created: new Date().toISOString(),
+            modified: new Date().toISOString()
+        };
+        
+        APP.files.push(f);
+        closeModal();
+        switchView('flashcards');
+        toast(`✓ ${data.length} flashcards créées`, 'success');
+        saveState();
+    });
+}
+
+function newDocument() {
+    openModal('Nouveau document', `
+        <div class="form-group">
+            <label class="form-label">Nom</label>
+            <input class="input" id="newDocName" value="notes.md">
+        </div>
+    `, () => {
+        const name = document.getElementById('newDocName').value || 'notes.md';
+        const ext = name.split('.').pop().toLowerCase();
+        
+        const f = {
+            id: Date.now(),
+            name: name,
+            type: ext === 'json' ? 'json' : ext === 'csv' ? 'csv' : ext === 'md' ? 'md' : 'txt',
+            data: ext === 'json' ? {} : ext === 'csv' ? [] : '',
+            raw: '',
+            created: new Date().toISOString(),
+            modified: new Date().toISOString()
+        };
+        
+        APP.files.push(f);
+        closeModal();
+        openFile(f.id);
+        toast('Document créé', 'success');
+        saveState();
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════
+
+function exportProject() {
+    const data = {
+        version: '4.0',
+        exported: new Date().toISOString(),
+        xp: APP.xp,
+        achievements: APP.achievements,
+        completedTools: APP.completedTools,
+        project: APP.project,
+        files: APP.files.map(f => ({
+            name: f.name,
+            type: f.type,
+            data: f.data
+        }))
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `plaidoyer-export-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    
+    toast('📦 Projet exporté', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════════════════════════
+
+function loadDemoData() {
+    const demoFlashcards = [
+        { question: "Comment appelle-t-on la coalition gouvernementale fédérale formée en février 2025 en Belgique ?", answer: "La coalition Arizona." },
+        { question: "Quelle est la durée maximale des allocations de chômage prévue par l'accord Arizona ?", answer: "24 mois (2 ans)." },
+        { question: "Combien de personnes risquent de perdre leurs allocations selon les projections ?", answer: "90.000 personnes d'ici 2027." },
+        { question: "Quel article de la Constitution belge garantit le droit à la sécurité sociale ?", answer: "L'article 23." },
+        { question: "Depuis quelle année la Belgique dispose-t-elle d'une assurance chômage illimitée ?", answer: "1944." },
+        { question: "Quel est le taux AROPE (risque de pauvreté) en Belgique ?", answer: "18,3% soit 2,1 millions de personnes." },
+        { question: "Combien de chômeurs pourraient basculer vers le RIS dès l'entrée en vigueur ?", answer: "30.122 personnes." },
+        { question: "Quel pourcentage d'étudiants belges sont en insécurité alimentaire ?", answer: "58%." }
+    ];
+    
+    const f = {
+        id: Date.now(),
+        name: 'flashcards-arizona.csv',
+        type: 'csv',
+        data: demoFlashcards,
+        raw: 'question,answer\n' + demoFlashcards.map(d => `"${d.question}","${d.answer}"`).join('\n'),
+        created: new Date().toISOString(),
+        modified: new Date().toISOString()
+    };
+    
+    APP.files.push(f);
+    
+    // Pre-fill some tools
+    APP.project.pestel = {
+        politique: "Gouvernement Arizona (MR-N-VA-Vooruit-Engagés-CD&V). Majorité fragile. Pression européenne sur les finances.",
+        economique: "Objectif: économiser 1,2 milliards sur le chômage. Taux de chômage: 5,6%. Croissance atone.",
+        social: "2,1 millions en risque de pauvreté. Tensions communautaires. Mouvement syndical mobilisé.",
+        technologique: "Digitalisation ONEM. Contrôle renforcé. Plateformisation du travail.",
+        environnemental: "Transition verte créant des emplois mais aussi des pertes dans certains secteurs.",
+        legal: "Article 23 Constitution. Jurisprudence Cour Constitutionnelle. Directive européenne 2019/1158."
+    };
+    
+    APP.project.alliance = {
+        avec: "FGTB, CSC, CGSLB, PTB, Ecolo, associations (ATD Quart Monde, Ligue des Droits Humains), médias indépendants",
+        sans: "Classe moyenne supérieure, indépendants, PME, médias mainstream (neutralité)",
+        contre: "Patronat (FEB, VOKA), partis Arizona, think tanks libéraux (Itinera)"
+    };
+    
+    APP.project.message = {
+        accroche: "90.000 Belges vont perdre leur allocation de chômage d'ici 2027. Pas parce qu'ils ont trouvé un emploi. Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.",
+        probleme: "Le passage de l'assurance chômage illimitée à 24 mois n'est pas une réforme technique – c'est une rupture du contrat social belge construit depuis 1944.",
+        importance: "2,1 millions de Belges en risque de pauvreté. 30.122 basculements immédiats vers le RIS. 58% d'étudiants en insécurité alimentaire.",
+        cible: "La Cour Constitutionnelle, le cabinet Vandenbroucke, les députés Vooruit et Engagés",
+        action: "Signez la pétition, rejoignez la manifestation du 1er mars, contactez votre député, témoignez."
+    };
+    
+    render();
+    saveState();
+    toast('🎯 Données Arizona chargées!', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// XP & ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════════
+
+function addXP(amount) {
+    const oldRank = getRank();
+    APP.xp += amount;
+    const newRank = getRank();
+    if (newRank.name !== oldRank.name) toast(`🎉 Nouveau rang: ${newRank.name}!`, 'success');
+    updateXPBar();
+    saveState();
+}
+
+function getRank() {
+    return [...RANKS].reverse().find(r => APP.xp >= r.min) || RANKS[0];
+}
+
+function getNextRank() {
+    const i = RANKS.findIndex(r => r.name === getRank().name);
+    return RANKS[i + 1] || RANKS[RANKS.length - 1];
+}
+
+function updateXPBar() {
+    const rank = getRank();
+    const next = getNextRank();
+    const progress = ((APP.xp - rank.min) / (next.min - rank.min)) * 100;
+    document.getElementById('userRank').textContent = rank.name;
+    document.getElementById('xpCurrent').textContent = APP.xp;
+    document.getElementById('xpMax').textContent = next.min;
+    document.getElementById('xpBar').style.width = Math.min(progress, 100) + '%';
+}
+
+function unlock(id) {
+    if (APP.achievements.includes(id)) return;
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (!a) return;
+    APP.achievements.push(id);
+    addXP(a.xp);
+    toast(`🏆 ${a.name} débloqué!`, 'success');
+    render();
+    saveState();
+}
+
+function checkTimeAchievements() {
+    const h = new Date().getHours();
+    if (h >= 0 && h < 5) unlock('night_owl');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+function updateStats() {
+    document.getElementById('statFiles').textContent = APP.files.length;
+    document.getElementById('statTools').textContent = `${APP.completedTools.length}/15`;
+}
+
+function rotateQuote() {
+    const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    document.getElementById('quoteText').textContent = `"${q.text}"`;
+    document.getElementById('quoteAuthor').textContent = `— ${q.author}`;
+}
+
+function toast(msg, type = 'info') {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+function openModal(title, content, onConfirm) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = content;
+    document.getElementById('modalOverlay').classList.add('active');
+    document.getElementById('modalConfirm').onclick = onConfirm;
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function esc(s) {
+    if (typeof s !== 'string') return s;
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showDashboard() {
+    switchView('dashboard');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════
+
+function saveState() {
+    try {
+        localStorage.setItem('plaidoyerV4', JSON.stringify({
+            xp: APP.xp,
+            achievements: APP.achievements,
+            theme: APP.theme,
+            files: APP.files,
+            project: APP.project,
+            completedTools: APP.completedTools
+        }));
+    } catch (e) { console.error('Save error', e); }
+}
+
+function loadState() {
+    try {
+        const s = localStorage.getItem('plaidoyerV4');
+        if (s) {
+            const d = JSON.parse(s);
+            APP.xp = d.xp || 150;
+            APP.achievements = d.achievements || [];
+            APP.theme = d.theme || 'dark';
+            APP.files = d.files || [];
+            APP.project = { ...APP.project, ...d.project };
+            APP.completedTools = d.completedTools || [];
+            setTheme(APP.theme);
+        }
+    } catch (e) { console.error('Load error', e); }
+}
+</script>
+</body>
+</html>
