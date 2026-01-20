@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARIZONA : Le SALOON — Motion de Défiance Populaire Permanente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0f14;
+      --bg-card: #12181f;
+      --mint: #7ee8b8;
+      --mint-dim: #4a9d78;
+      --mint-glow: rgba(126, 232, 184, 0.3);
+      --lilac: #c4a7e7;
+      --lilac-dim: #9678b3;
+      --lilac-glow: rgba(196, 167, 231, 0.3);
+      --coral: #f08080;
+      --coral-glow: rgba(240, 128, 128, 0.3);
+      --gold: #e6c85c;
+      --gold-glow: rgba(230, 200, 92, 0.3);
+      --text: #e8e6e3;
+      --text-dim: #9ca3af;
+      --border: rgba(126, 232, 184, 0.2);
+      --scanline: rgba(126, 232, 184, 0.03);
+      --font-terminal: 'VT323', monospace;
+      --font-mono: 'Space Mono', monospace;
+      --font-serif: 'Crimson Pro', serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    @keyframes scanlines { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
+    @keyframes countUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes glitch {
+      0%, 90%, 100% { transform: translate(0); }
+      92% { transform: translate(-2px, 1px); }
+      94% { transform: translate(2px, -1px); }
+      96% { transform: translate(-1px, -1px); }
+      98% { transform: translate(1px, 1px); }
+    }
+    @keyframes typing { from { width: 0; } to { width: 100%; } }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        var(--scanline) 0px,
+        var(--scanline) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      z-index: 9999;
+      animation: scanlines 8s linear infinite;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+      z-index: 9998;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(10,15,20,0.95) 100%);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px;
+    }
+
+    .header-content {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      position: relative;
+      font-family: var(--font-terminal);
+      font-size: 2.2rem;
+      letter-spacing: 4px;
+      color: var(--mint);
+      text-shadow: 0 0 20px var(--mint-glow), 0 0 40px var(--mint-glow);
+    }
+
+    .logo::before {
+      content: "⚡";
+      margin-right: 8px;
+      animation: blink 1s infinite;
+    }
+
+    .logo-sub {
+      font-family: var(--font-serif);
+      font-size: 0.75rem;
+      color: var(--lilac);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-terminal);
+      font-size: 1rem;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(126, 232, 184, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.live { background: var(--coral); box-shadow: 0 0 10px var(--coral-glow); }
+    .status-dot.active { background: var(--mint); box-shadow: 0 0 10px var(--mint-glow); }
+
+    /* MAIN GRID */
+    main {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+      min-height: calc(100vh - 80px);
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--mint), var(--lilac));
+      opacity: 0.6;
+    }
+
+    .card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(126, 232, 184, 0.02);
+    }
+
+    .card-title {
+      font-family: var(--font-terminal);
+      font-size: 1.1rem;
+      color: var(--mint);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(196, 167, 231, 0.2);
+      color: var(--lilac);
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    /* CRISIS COUNTER */
+    .crisis-counter {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(240,128,128,0.1) 0%, rgba(126,232,184,0.05) 100%);
+      border-color: var(--coral);
+    }
+
+    .crisis-counter::before {
+      background: linear-gradient(90deg, var(--coral), var(--gold), var(--coral));
+    }
+
+    .counter-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .counter-item {
+      text-align: center;
+      padding: 16px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      border: 1px solid rgba(240,128,128,0.2);
+    }
+
+    .counter-value {
+      font-family: var(--font-terminal);
+      font-size: 2.8rem;
+      color: var(--coral);
+      text-shadow: 0 0 20px var(--coral-glow);
+      animation: countUp 0.8s ease-out;
+    }
+
+    .counter-value.mint { color: var(--mint); text-shadow: 0 0 20px var(--mint-glow); }
+    .counter-value.lilac { color: var(--lilac); text-shadow: 0 0 20px var(--lilac-glow); }
+    .counter-value.gold { color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); }
+
+    .counter-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .counter-trend {
+      font-size: 0.8rem;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .counter-trend.up { background: rgba(240,128,128,0.2); color: var(--coral); }
+    .counter-trend.down { background: rgba(126,232,184,0.2); color: var(--mint); }
+
+    /* TIMELINE */
+    .timeline-panel { grid-row: 2 / 4; }
+
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--coral), var(--lilac), var(--mint));
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 12px 0 20px 20px;
+      animation: slideIn 0.5s ease-out backwards;
+    }
+
+    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+    .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 16px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-dark);
+    }
+
+    .timeline-dot.past { background: var(--text-dim); }
+    .timeline-dot.active { background: var(--coral); box-shadow: 0 0 12px var(--coral-glow); animation: pulse 1.5s infinite; }
+    .timeline-dot.future { background: var(--lilac-dim); }
+
+    .timeline-date {
+      font-family: var(--font-terminal);
+      font-size: 0.9rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .timeline-count {
+      font-family: var(--font-terminal);
+      font-size: 1.2rem;
+      color: var(--coral);
+      margin-top: 4px;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-content { grid-column: 2; grid-row: 2 / 4; display: flex; flex-direction: column; gap: 16px; }
+
+    /* TABS */
+    .tabs-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px 8px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      font-family: var(--font-terminal);
+      font-size: 0.95rem;
+      padding: 10px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--mint);
+      background: rgba(126, 232, 184, 0.1);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--mint);
+      border-color: var(--border);
+      border-bottom-color: var(--bg-card);
+    }
+
+    .tabs-content {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+
+    .tab-panel {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .tab-panel.active { display: block; }
+
+    /* ARGUMENT CARDS */
+    .argument-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .argument-card {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .argument-card:hover {
+      border-color: var(--mint);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(126, 232, 184, 0.1);
+    }
+
+    .argument-tag {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      background: rgba(196, 167, 231, 0.2);
+      color: var(--lilac);
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .argument-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .argument-content {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .argument-source {
+      margin-top: 12px;
+      font-size: 0.7rem;
+      color: var(--mint-dim);
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* FLASHCARDS */
+    .flashcard-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .flashcard {
+      background: linear-gradient(135deg, rgba(126,232,184,0.1) 0%, rgba(196,167,231,0.1) 100%);
+      border: 2px solid var(--mint);
+      border-radius: 12px;
+      padding: 30px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .flashcard:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 40px var(--mint-glow);
+    }
+
+    .flashcard-question {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .flashcard-answer {
+      display: none;
+      font-family: var(--font-terminal);
+      font-size: 1.5rem;
+      color: var(--mint);
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--mint-dim);
+    }
+
+    .flashcard.flipped .flashcard-question { display: none; }
+    .flashcard.flipped .flashcard-answer { display: block; }
+
+    .flashcard-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .fc-btn {
+      font-family: var(--font-terminal);
+      font-size: 1rem;
+      padding: 10px 24px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .fc-btn:hover {
+      background: var(--mint);
+      color: var(--bg-dark);
+      border-color: var(--mint);
+    }
+
+    .fc-btn.secondary { border-color: var(--lilac-dim); }
+    .fc-btn.secondary:hover { background: var(--lilac); border-color: var(--lilac); }
+
+    .flashcard-progress {
+      text-align: center;
+      margin-top: 16px;
+      font-family: var(--font-terminal);
+      color: var(--text-dim);
+    }
+
+    /* RESOURCES LIST */
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .resource-item:hover {
+      background: rgba(126, 232, 184, 0.1);
+      border-color: var(--mint);
+    }
+
+    .resource-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(196, 167, 231, 0.2);
+      border-radius: 8px;
+      font-size: 1.4rem;
+    }
+
+    .resource-info { flex: 1; }
+
+    .resource-title {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .resource-desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .resource-action {
+      font-family: var(--font-terminal);
+      font-size: 0.8rem;
+      color: var(--mint);
+      padding: 6px 12px;
+      border: 1px solid var(--mint-dim);
+      border-radius: 4px;
+    }
+
+    /* TOOLS PANEL */
+    .tools-panel { grid-row: 2 / 4; }
+
+    .tool-section {
+      margin-bottom: 20px;
+    }
+
+    .tool-section-title {
+      font-family: var(--font-terminal);
+      font-size: 0.9rem;
+      color: var(--lilac);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* QUICK ACTIONS */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      font-family: var(--font-terminal);
+      font-size: 0.85rem;
+      padding: 12px 8px;
+      background: rgba(126, 232, 184, 0.1);
+      border: 1px solid var(--border);
+      color: var(--mint);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-btn:hover {
+      background: var(--mint);
+      color: var(--bg-dark);
+      transform: translateY(-2px);
+    }
+
+    .quick-btn span { font-size: 1.4rem; }
+
+    /* GENERATOR */
+    .generator-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .generator-output {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 80px;
+      padding: 12px;
+      background: rgba(126, 232, 184, 0.05);
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .generator-btn {
+      width: 100%;
+      font-family: var(--font-terminal);
+      font-size: 0.9rem;
+      padding: 10px;
+      background: linear-gradient(90deg, var(--lilac-dim), var(--mint-dim));
+      border: none;
+      color: var(--bg-dark);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .generator-btn:hover {
+      filter: brightness(1.2);
+      transform: scale(1.02);
+    }
+
+    /* STATS MINI */
+    .stats-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-mini {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-mini-value {
+      font-family: var(--font-terminal);
+      font-size: 1.4rem;
+      color: var(--mint);
+    }
+
+    .stat-mini-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* LIVE FEED */
+    .live-feed {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .live-header {
+      padding: 8px 12px;
+      background: rgba(240,128,128,0.1);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-indicator {
+      width: 8px;
+      height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    .live-title {
+      font-family: var(--font-terminal);
+      font-size: 0.85rem;
+      color: var(--coral);
+    }
+
+    .feed-items {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .feed-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(126, 232, 184, 0.1);
+      font-size: 0.8rem;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .feed-time {
+      font-family: var(--font-terminal);
+      color: var(--text-dim);
+      font-size: 0.7rem;
+    }
+
+    .feed-text {
+      color: var(--text);
+      margin-top: 4px;
+    }
+
+    /* CHECKLIST */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .checklist-item:hover { background: rgba(126, 232, 184, 0.1); }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--mint-dim);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .check-box.checked {
+      background: var(--mint);
+      border-color: var(--mint);
+    }
+
+    .check-box.checked::after {
+      content: "✓";
+      color: var(--bg-dark);
+      font-weight: bold;
+    }
+
+    .check-text {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .check-text.done {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    /* ACTORS MAP */
+    .actors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .actor-card {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .actor-card:hover { transform: translateY(-2px); }
+
+    .actor-card.ally {
+      background: rgba(126, 232, 184, 0.1);
+      border-color: var(--mint-dim);
+    }
+
+    .actor-card.opponent {
+      background: rgba(240, 128, 128, 0.1);
+      border-color: rgba(240, 128, 128, 0.3);
+    }
+
+    .actor-card.neutral {
+      background: rgba(196, 167, 231, 0.1);
+      border-color: var(--lilac-dim);
+    }
+
+    .actor-name {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .actor-role {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .actor-position {
+      font-family: var(--font-terminal);
+      font-size: 0.7rem;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .actor-position.ally { background: var(--mint); color: var(--bg-dark); }
+    .actor-position.opponent { background: var(--coral); color: var(--bg-dark); }
+    .actor-position.neutral { background: var(--lilac); color: var(--bg-dark); }
+
+    /* TERMINAL OUTPUT */
+    .terminal-output {
+      background: #000;
+      border: 1px solid var(--mint-dim);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: var(--font-terminal);
+      font-size: 0.95rem;
+      color: var(--mint);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .terminal-line {
+      margin-bottom: 4px;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    .terminal-line::before {
+      content: "> ";
+      color: var(--lilac);
+    }
+
+    .terminal-line.comment { color: var(--text-dim); }
+    .terminal-line.warning { color: var(--gold); }
+    .terminal-line.error { color: var(--coral); }
+
+    /* MANIFESTO */
+    .manifesto {
+      background: linear-gradient(135deg, rgba(196,167,231,0.1) 0%, rgba(126,232,184,0.05) 100%);
+      border: 1px solid var(--lilac-dim);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .manifesto-title {
+      font-family: var(--font-terminal);
+      font-size: 1.5rem;
+      color: var(--lilac);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .manifesto-text {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .manifesto-text p { margin-bottom: 16px; }
+
+    .manifesto-signature {
+      font-family: var(--font-terminal);
+      text-align: right;
+      color: var(--gold);
+      margin-top: 20px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.3);
+    }
+
+    .footer-text {
+      font-family: var(--font-terminal);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .footer-text a {
+      color: var(--mint);
+      text-decoration: none;
+    }
+
+    .footer-badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .badge {
+      font-family: var(--font-terminal);
+      font-size: 0.7rem;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-dim);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1400px) {
+      main {
+        grid-template-columns: 260px 1fr 280px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .timeline-panel, .tools-panel {
+        grid-column: 1;
+        grid-row: auto;
+      }
+      .main-content { grid-column: 1; grid-row: auto; }
+      .counter-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .counter-grid { grid-template-columns: 1fr 1fr; }
+      .header-content { flex-direction: column; }
+      .status-bar { flex-wrap: wrap; justify-content: center; }
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--mint); }
+
+    /* CUSTOM CURSOR EFFECT */
+    .cursor-trail {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--mint);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s, opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <div>
+          <div class="logo">ARIZONA : Le SALOON</div>
+          <div class="logo-sub">Motion de Défiance Populaire & Permanente</div>
+        </div>
+      </div>
+      <div class="status-bar">
+        <div class="status-item">
+          <div class="status-dot live"></div>
+          <span>ALERTE SOCIALE</span>
+        </div>
+        <div class="status-item">
+          <div class="status-dot active"></div>
+          <span id="clock">--:--:--</span>
+        </div>
+        <div class="status-item">
+          <span>📡 RÉSISTANCE ACTIVE</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- CRISIS COUNTER -->
+    <section class="card crisis-counter">
+      <div class="card-header">
+        <div class="card-title">
+          <span>🚨</span> COMPTEUR DE CRISE — Impact des Réformes Arizona
+        </div>
+        <div class="card-badge">Temps Réel</div>
+      </div>
+      <div class="counter-grid">
+        <div class="counter-item">
+          <div class="counter-value" id="counter-exclus">90,000</div>
+          <div class="counter-label">Personnes Menacées d'Exclusion</div>
+          <div class="counter-trend up">↑ D'ici 2027</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-value mint" id="counter-cpas">30,122</div>
+          <div class="counter-label">Basculements vers RIS</div>
+          <div class="counter-trend up">↑ +12.7% national</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-value lilac" id="counter-bim">2,200,000</div>
+          <div class="counter-label">Bénéficiaires BIM</div>
+          <div class="counter-trend up">↑ 20.4% population</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-value gold" id="counter-arope">18.3%</div>
+          <div class="counter-label">Risque Pauvreté (AROPE)</div>
+          <div class="counter-trend">2.1M personnes</div>
+        </div>
+        <div class="counter-item">
+          <div class="counter-value" id="counter-cout">1 Md€</div>
+          <div class="counter-label">Surcoût CPAS Estimé</div>
+          <div class="counter-trend up">↑ Non compensé</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMELINE PANEL -->
+    <aside class="card timeline-panel">
+      <div class="card-header">
+        <div class="card-title">
+          <span>📅</span> VAGUES D'EXCLUSION
+        </div>
+        <div class="card-badge">Calendrier</div>
+      </div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot past"></div>
+            <div class="timeline-date">1er JANVIER 2026</div>
+            <div class="timeline-title">VAGUE 1 — Les Anciens</div>
+            <div class="timeline-desc">Chômeurs 3e période &gt;20 ans</div>
+            <div class="timeline-count">~28,000 personnes</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-date">1er MARS 2026</div>
+            <div class="timeline-title">VAGUE 2 — Le Gros Œuvre</div>
+            <div class="timeline-desc">Chômeurs 3e période 8-20 ans</div>
+            <div class="timeline-count">~35,000 personnes</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot future"></div>
+            <div class="timeline-date">1er AVRIL 2026</div>
+            <div class="timeline-title">VAGUE 3 — L'Avalanche</div>
+            <div class="timeline-desc">Chômeurs 3e période &lt;8 ans</div>
+            <div class="timeline-count">~27,000 personnes</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot future"></div>
+            <div class="timeline-date">1er JUILLET 2026</div>
+            <div class="timeline-title">VAGUE 4 — La Fin</div>
+            <div class="timeline-desc">Chômeurs 2e période</div>
+            <div class="timeline-count">En cours d'évaluation</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot future"></div>
+            <div class="timeline-date">FIN 2026/2027</div>
+            <div class="timeline-title">⚖️ COUR CONSTITUTIONNELLE</div>
+            <div class="timeline-desc">Arrêt Article 23 attendu</div>
+            <div class="timeline-count">ESPOIR JURIDIQUE</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <section class="main-content">
+      <div class="tabs-container">
+        <nav class="tabs-nav">
+          <button class="tab-btn active" data-tab="arguments">💬 ARGUMENTAIRE</button>
+          <button class="tab-btn" data-tab="flashcards">🎴 FLASHCARDS</button>
+          <button class="tab-btn" data-tab="acteurs">🎭 ACTEURS</button>
+          <button class="tab-btn" data-tab="ressources">📚 RESSOURCES</button>
+          <button class="tab-btn" data-tab="checklist">✅ CHECKLIST</button>
+          <button class="tab-btn" data-tab="manifeste">📜 MANIFESTE</button>
+        </nav>
+        <div class="tabs-content">
+          <!-- ARGUMENTS TAB -->
+          <div class="tab-panel active" id="tab-arguments">
+            <h3 style="color: var(--mint); margin-bottom: 20px; font-family: var(--font-terminal);">💥 CONTRE-DISCOURS — Armes d'Instruction Massive</h3>
+            <div class="argument-grid" id="arguments-container">
+              <!-- Arguments loaded dynamically -->
+            </div>
+          </div>
+
+          <!-- FLASHCARDS TAB -->
+          <div class="tab-panel" id="tab-flashcards">
+            <h3 style="color: var(--mint); margin-bottom: 20px; font-family: var(--font-terminal);">🧠 ÉDUCATION POPULAIRE — Testez vos connaissances</h3>
+            <div class="flashcard-container">
+              <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="flashcard-question" id="fc-question">Cliquez pour commencer</div>
+                <div class="flashcard-answer" id="fc-answer"></div>
+              </div>
+              <div class="flashcard-controls">
+                <button class="fc-btn secondary" onclick="prevCard()">◀ Précédent</button>
+                <button class="fc-btn" onclick="nextCard()">Suivant ▶</button>
+              </div>
+              <div class="flashcard-progress">
+                <span id="fc-progress">0 / 0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTEURS TAB -->
+          <div class="tab-panel" id="tab-acteurs">
+            <h3 style="color: var(--mint); margin-bottom: 20px; font-family: var(--font-terminal);">🎭 CARTOGRAPHIE DES ACTEURS — Qui est qui ?</h3>
+            <div class="actors-grid" id="actors-container">
+              <!-- Actors loaded dynamically -->
+            </div>
+          </div>
+
+          <!-- RESSOURCES TAB -->
+          <div class="tab-panel" id="tab-ressources">
+            <h3 style="color: var(--mint); margin-bottom: 20px; font-family: var(--font-terminal);">📚 ARSENAL DOCUMENTAIRE</h3>
+            <div class="resource-list">
+              <div class="resource-item">
+                <div class="resource-icon">⚖️</div>
+                <div class="resource-info">
+                  <div class="resource-title">Article 23 — Constitution Belge</div>
+                  <div class="resource-desc">Le droit à une vie conforme à la dignité humaine</div>
+                </div>
+                <div class="resource-action">CONSULTER</div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-icon">📊</div>
+                <div class="resource-info">
+                  <div class="resource-title">Études DULBEA (ULB)</div>
+                  <div class="resource-desc">Impact chiffré des réformes sociales</div>
+                </div>
+                <div class="resource-action">TÉLÉCHARGER</div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-icon">📰</div>
+                <div class="resource-info">
+                  <div class="resource-title">Dossier de Presse Syndical</div>
+                  <div class="resource-desc">Front commun FGTB-CSC-CGSLB</div>
+                </div>
+                <div class="resource-action">ACCÉDER</div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-icon">🏛️</div>
+                <div class="resource-info">
+                  <div class="resource-title">Recours Cour Constitutionnelle</div>
+                  <div class="resource-desc">Requête du 29 octobre 2025</div>
+                </div>
+                <div class="resource-action">LIRE</div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-icon">💰</div>
+                <div class="resource-info">
+                  <div class="resource-title">Alternative : Taxe Millionnaires</div>
+                  <div class="resource-desc">17 milliards € potentiels — Chiffrage PTB</div>
+                </div>
+                <div class="resource-action">EXPLORER</div>
+              </div>
+              <div class="resource-item">
+                <div class="resource-icon">🗺️</div>
+                <div class="resource-info">
+                  <div class="resource-title">Carte Interactive CPAS</div>
+                  <div class="resource-desc">Impact par commune — Surcharge prévue</div>
+                </div>
+                <div class="resource-action">VOIR</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHECKLIST TAB -->
+          <div class="tab-panel" id="tab-checklist">
+            <h3 style="color: var(--mint); margin-bottom: 20px; font-family: var(--font-terminal);">✅ PLAN D'ACTION — Résistance Organisée</h3>
+            <div id="checklist-container">
+              <!-- Checklist loaded dynamically -->
+            </div>
+          </div>
+
+          <!-- MANIFESTE TAB -->
+          <div class="tab-panel" id="tab-manifeste">
+            <div class="manifesto">
+              <div class="manifesto-title">📜 MANIFESTE DU SALOON</div>
+              <div class="manifesto-text">
+                <p><strong>« En Belgique, 90 000 personnes vont perdre leur allocation de chômage d'ici 2027.</strong></p>
+                <p>Pas parce qu'elles ont trouvé un emploi.<br>
+                Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.</p>
+                <p>Après ? Les CPAS.<br>
+                Et quand les CPAS n'auront plus les moyens ?<br>
+                <strong>La rue.</strong> »</p>
+                <hr style="border-color: var(--lilac-dim); margin: 20px 0;">
+                <p>Ce n'est pas une réforme technique. C'est un <strong>TRANSFERT ORGANISÉ</strong> :</p>
+                <p>• De l'État fédéral → vers les communes<br>
+                • De la solidarité nationale → vers l'assistance locale<br>
+                • De l'assurance → vers la charité</p>
+                <hr style="border-color: var(--lilac-dim); margin: 20px 0;">
+                <p><strong>L'ALTERNATIVE EXISTE :</strong></p>
+                <p>• Taxe des millionnaires : 17 milliards €<br>
+                • Lutte contre la fraude fiscale : 30 milliards €<br>
+                • Révision des subsides aux entreprises</p>
+                <p style="color: var(--coral); font-size: 1.2rem; text-align: center; margin-top: 20px;">
+                  <strong>CE N'EST PAS UN PROBLÈME TECHNIQUE,<br>C'EST UN CONFLIT DE CLASSE.</strong>
+                </p>
+              </div>
+              <div class="manifesto-signature">
+                #StopArizona #Article23 #DigniteHumaine<br>
+                <span style="animation: blink 1s infinite;">_</span> Le SALOON, 2026
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS PANEL -->
+    <aside class="card tools-panel">
+      <div class="card-header">
+        <div class="card-title">
+          <span>🛠️</span> OUTILS TACTIQUES
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="tool-section">
+          <div class="tool-section-title">⚡ Actions Rapides</div>
+          <div class="quick-actions">
+            <button class="quick-btn" onclick="copyArgument()">
+              <span>📋</span>
+              Copier Argument
+            </button>
+            <button class="quick-btn" onclick="shareAction()">
+              <span>📤</span>
+              Partager
+            </button>
+            <button class="quick-btn" onclick="generateTweet()">
+              <span>🐦</span>
+              Tweet Prêt
+            </button>
+            <button class="quick-btn" onclick="showStats()">
+              <span>📊</span>
+              Statistiques
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <div class="tool-section-title">🎰 Générateur de Contre-Discours</div>
+          <div class="generator-box">
+            <div class="generator-output" id="generator-output">
+              « Les réformes Arizona ne sont pas une "activation". C'est un <strong>glissement organisé</strong> de la solidarité fédérale vers l'assistance locale. »
+            </div>
+            <button class="generator-btn" onclick="generateCounterDiscourse()">
+              ⚡ GÉNÉRER UN NOUVEAU CONTRE-DISCOURS
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <div class="tool-section-title">📈 Stats Clés</div>
+          <div class="stats-mini">
+            <div class="stat-mini">
+              <div class="stat-mini-value">23 Md€</div>
+              <div class="stat-mini-label">Budget à économiser</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-value">24 mois</div>
+              <div class="stat-mini-label">Nouvelle limite chômage</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-value">1.5M</div>
+              <div class="stat-mini-label">Membres syndicaux</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-value">140K</div>
+              <div class="stat-mini-label">Manifestants oct. 2025</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <div class="live-feed">
+            <div class="live-header">
+              <div class="live-indicator"></div>
+              <div class="live-title">FIL D'ACTUALITÉ</div>
+            </div>
+            <div class="feed-items" id="feed-items">
+              <div class="feed-item">
+                <div class="feed-time">20/01/2026 — 14:32</div>
+                <div class="feed-text">📢 Vague 2 confirmée pour le 1er mars — 35 000 personnes concernées</div>
+              </div>
+              <div class="feed-item">
+                <div class="feed-time">19/01/2026 — 09:15</div>
+                <div class="feed-text">⚖️ Audience préliminaire Cour Constitutionnelle — délais en discussion</div>
+              </div>
+              <div class="feed-item">
+                <div class="feed-time">18/01/2026 — 16:45</div>
+                <div class="feed-text">🏛️ UVCW dénonce l'insuffisance des compensations : 518€ vs coût réel</div>
+              </div>
+              <div class="feed-item">
+                <div class="feed-time">17/01/2026 — 11:20</div>
+                <div class="feed-text">✊ Front commun annonce nouvelles actions en février</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <div class="tool-section-title">💻 Terminal Résistance</div>
+          <div class="terminal-output" id="terminal">
+            <div class="terminal-line comment">// ARIZONA SALOON v1.0 — Système de Résistance Populaire</div>
+            <div class="terminal-line">init_resistance_mode();</div>
+            <div class="terminal-line">loading_counter_arguments... OK</div>
+            <div class="terminal-line">syncing_with_front_commun... OK</div>
+            <div class="terminal-line warning">WARNING: Vague 2 dans 40 jours</div>
+            <div class="terminal-line">status: MOBILISATION_ACTIVE</div>
+            <div class="terminal-line" style="color: var(--mint);">« La solidarité n'est pas négociable. »</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="footer-text">
+      ⚡ ARIZONA : Le SALOON — Arme d'Instruction Massive ⚡<br>
+      <a href="#">Éducation Populaire</a> · <a href="#">Empouvoirement Numérique</a> · <a href="#">Solidarité Active</a>
+    </div>
+    <div class="footer-badges">
+      <span class="badge">📡 LOW-TECH</span>
+      <span class="badge">✊ OPEN SOURCE</span>
+      <span class="badge">🔥 RÉSISTANCE</span>
+      <span class="badge">💚 SOLIDAIRE</span>
+    </div>
+  </footer>
+
+  <script>
+    // DATA
+    const arguments_data = [
+      {
+        tag: "Économie",
+        title: "L'alternative budgétaire existe",
+        content: "La taxe des millionnaires rapporterait 17 milliards €. La lutte contre la fraude fiscale : 30 milliards €. Mais le gouvernement préfère cibler les 90 000 chômeurs les plus vulnérables.",
+        source: "PTB — Chiffrage Bureau du Plan"
+      },
+      {
+        tag: "Social",
+        title: "Le grand glissement vers les CPAS",
+        content: "30 122 personnes basculeront immédiatement vers le RIS. Les CPAS estiment le surcoût à plus d'1 milliard €. La compensation fédérale ? 518€ par dossier.",
+        source: "UVCW, Brulocalis — 2025"
+      },
+      {
+        tag: "Juridique",
+        title: "L'Article 23 en danger",
+        content: "Le principe de standstill (effet cliquet) interdit de réduire le niveau de protection sociale existant. Le recours constitutionnel du 29 octobre 2025 conteste cette régression.",
+        source: "Recours Front Commun"
+      },
+      {
+        tag: "Santé",
+        title: "Les malades ciblés, pas les maladies",
+        content: "60% des invalides le sont pour des troubles musculo-squelettiques ou mentaux liés aux conditions de travail. La réforme sanctionne les victimes, pas les causes.",
+        source: "Solidaris — 2025"
+      },
+      {
+        tag: "Territorial",
+        title: "Punir les communes pauvres",
+        content: "Bruxelles supporte 1/3 des exclusions pour 1/10 de la population. Le système bonus-malus pénalise les communes déjà en difficulté.",
+        source: "Vivalis — Projections 2026"
+      },
+      {
+        tag: "Idéologie",
+        title: "Le mythe de l'activation",
+        content: "Supprimer une allocation ne crée pas d'emploi. Les freins réels : santé, âge, mobilité, discrimination à l'embauche. La Belgique reste dernière de l'UE pour le taux de ménages sans emploi (11.3%).",
+        source: "EU-SILC 2024"
+      },
+      {
+        tag: "Historique",
+        title: "80 ans de recul social",
+        content: "Le système de chômage illimité existe depuis 1944. Les syndicats qualifient ces réformes de 'plus grand recul social depuis 80 ans'.",
+        source: "FGTB — Communiqué 2025"
+      },
+      {
+        tag: "Numérique",
+        title: "La fracture digitale exclut",
+        content: "40% des Belges présentent une vulnérabilité numérique (68% chez les peu diplômés). eBox et MyBenefits deviennent des barrières à l'accès aux droits.",
+        source: "Fondation Roi Baudouin"
+      }
+    ];
+
+    const flashcards_data = [
+      { q: "Comment appelle-t-on la coalition gouvernementale fédérale formée en février 2025 ?", a: "La coalition Arizona" },
+      { q: "Qui est le Premier ministre du gouvernement Arizona ?", a: "Bart De Wever (N-VA)" },
+      { q: "Quelle est la nouvelle durée maximale des allocations de chômage ?", a: "24 mois (12 + 12)" },
+      { q: "Combien de personnes sont menacées d'exclusion du chômage ?", a: "90 000 personnes" },
+      { q: "Que signifie l'acronyme RIS ?", a: "Revenu d'Intégration Sociale" },
+      { q: "Que signifie BIM ?", a: "Bénéficiaire de l'Intervention Majorée" },
+      { q: "Quel article de la Constitution protège le droit à une vie digne ?", a: "L'article 23" },
+      { q: "Qu'est-ce que le principe de standstill ?", a: "L'obligation de ne pas réduire le niveau de protection sociale existant" },
+      { q: "Combien coûterait le 'glissement' aux CPAS selon les estimations ?", a: "Plus d'1 milliard d'euros" },
+      { q: "Quel pourcentage de la population belge est en risque de pauvreté (AROPE) ?", a: "18,3%" },
+      { q: "Combien de membres comptent les trois syndicats du front commun ?", a: "1,5 million de membres" },
+      { q: "À combien s'élève la taxe des millionnaires proposée comme alternative ?", a: "17 milliards d'euros" },
+      { q: "Quand la Vague 2 d'exclusion est-elle prévue ?", a: "1er mars 2026" },
+      { q: "Quel âge protège (théoriquement) de la limitation du chômage ?", a: "55 ans et plus" },
+      { q: "Combien de manifestants ont défilé en octobre 2025 ?", a: "140 000 manifestants" }
+    ];
+
+    const actors_data = [
+      { name: "Bart De Wever", role: "Premier Ministre (N-VA)", position: "opponent" },
+      { name: "Frank Vandenbroucke", role: "Ministre Affaires sociales (Vooruit)", position: "neutral" },
+      { name: "Georges-Louis Bouchez", role: "Président MR", position: "opponent" },
+      { name: "Thierry Bodson", role: "Président FGTB", position: "ally" },
+      { name: "Marc Leemans", role: "Président CSC", position: "ally" },
+      { name: "CGSLB", role: "Syndicat libéral", position: "ally" },
+      { name: "Cour Constitutionnelle", role: "Recours Article 23", position: "neutral" },
+      { name: "UVCW", role: "CPAS wallons", position: "ally" },
+      { name: "Brulocalis", role: "CPAS bruxellois", position: "ally" },
+      { name: "BAPN", role: "Réseau anti-pauvreté", position: "ally" },
+      { name: "Solidaris", role: "Mutualité socialiste", position: "ally" },
+      { name: "Paul Magnette", role: "Président PS", position: "ally" },
+      { name: "PTB", role: "Opposition", position: "ally" },
+      { name: "Commission Européenne", role: "Pression budgétaire", position: "opponent" },
+      { name: "Maxime Prévot", role: "Président Les Engagés", position: "neutral" }
+    ];
+
+    const checklist_data = [
+      { task: "Constituer le dossier juridique pour la Cour Constitutionnelle", done: true },
+      { task: "Identifier et briefer 10 témoins représentatifs", done: true },
+      { task: "Préparer les argumentaires chiffrés (études DULBEA)", done: true },
+      { task: "Briefer les porte-parole syndicaux sur les éléments de langage", done: false },
+      { task: "Coordonner avec l'opposition parlementaire", done: false },
+      { task: "Préparer le kit média (communiqués, visuels, infographies)", done: false },
+      { task: "Contacter les journalistes clés pour embargo pré-action", done: false },
+      { task: "Vérifier la logistique de la prochaine manifestation", done: false },
+      { task: "Organiser les séances d'information syndicats/CPAS", done: false },
+      { task: "Collecter 1000 témoignages d'ici décembre 2026", done: false }
+    ];
+
+    const counter_discourses = [
+      "« Les réformes Arizona ne sont pas une 'activation'. C'est un <strong>glissement organisé</strong> de la solidarité fédérale vers l'assistance locale. »",
+      "« 30 122 : c'est le nombre de familles qui basculeront vers l'aide sociale. Pas des chiffres. Des parents. Des enfants. <strong>Des vies.</strong> »",
+      "« Supprimer une allocation ne crée pas d'emploi. Les freins réels : santé, âge, mobilité, discrimination. <strong>Ce n'est pas de l'économie, c'est de l'idéologie.</strong> »",
+      "« La taxe des millionnaires rapporterait 17 milliards €. Mais on préfère cibler les 90 000 chômeurs les plus vulnérables. <strong>Question de priorités.</strong> »",
+      "« Le système bonus-malus punit les communes d'être pauvres. <strong>Double peine pour les territoires déjà précarisés.</strong> »",
+      "« 60% des invalides le sont à cause des conditions de travail. La réforme sanctionne les victimes, pas les causes. <strong>On cible les malades, pas ce qui les rend malades.</strong> »",
+      "« 1.5 million de syndiqués, 140 000 manifestants, un recours constitutionnel. <strong>La résistance est massive et organisée.</strong> »",
+      "« Après 24 mois ? Les CPAS. Et quand les CPAS n'auront plus les moyens ? <strong>La rue.</strong> »"
+    ];
+
+    // STATE
+    let currentCard = 0;
+    let cardFlipped = false;
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', () => {
+      initClock();
+      renderArguments();
+      renderActors();
+      renderChecklist();
+      updateFlashcard();
+      initTabs();
+      animateCounters();
+    });
+
+    // CLOCK
+    function initClock() {
+      setInterval(() => {
+        const now = new Date();
+        document.getElementById('clock').textContent = now.toLocaleTimeString('fr-BE');
+      }, 1000);
+    }
+
+    // TABS
+    function initTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        });
+      });
+    }
+
+    // ARGUMENTS
+    function renderArguments() {
+      const container = document.getElementById('arguments-container');
+      container.innerHTML = arguments_data.map(arg => `
+        <div class="argument-card" onclick="copyToClipboard(this)">
+          <div class="argument-tag">${arg.tag}</div>
+          <div class="argument-title">${arg.title}</div>
+          <div class="argument-content">${arg.content}</div>
+          <div class="argument-source">📎 ${arg.source}</div>
+        </div>
+      `).join('');
+    }
+
+    // ACTORS
+    function renderActors() {
+      const container = document.getElementById('actors-container');
+      container.innerHTML = actors_data.map(actor => `
+        <div class="actor-card ${actor.position}">
+          <div class="actor-name">${actor.name}</div>
+          <div class="actor-role">${actor.role}</div>
+          <div class="actor-position ${actor.position}">
+            ${actor.position === 'ally' ? '✊ ALLIÉ' : actor.position === 'opponent' ? '⚔️ ADVERSAIRE' : '⚖️ NEUTRE'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // CHECKLIST
+    function renderChecklist() {
+      const container = document.getElementById('checklist-container');
+      container.innerHTML = checklist_data.map((item, i) => `
+        <div class="checklist-item" onclick="toggleCheck(${i})">
+          <div class="check-box ${item.done ? 'checked' : ''}" id="check-${i}"></div>
+          <div class="check-text ${item.done ? 'done' : ''}" id="text-${i}">${item.task}</div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCheck(i) {
+      checklist_data[i].done = !checklist_data[i].done;
+      document.getElementById('check-' + i).classList.toggle('checked');
+      document.getElementById('text-' + i).classList.toggle('done');
+    }
+
+    // FLASHCARDS
+    function updateFlashcard() {
+      document.getElementById('fc-question').textContent = flashcards_data[currentCard].q;
+      document.getElementById('fc-answer').textContent = flashcards_data[currentCard].a;
+      document.getElementById('fc-progress').textContent = `${currentCard + 1} / ${flashcards_data.length}`;
+      document.getElementById('flashcard').classList.remove('flipped');
+      cardFlipped = false;
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+      cardFlipped = !cardFlipped;
+    }
+
+    function nextCard() {
+      currentCard = (currentCard + 1) % flashcards_data.length;
+      updateFlashcard();
+    }
+
+    function prevCard() {
+      currentCard = (currentCard - 1 + flashcards_data.length) % flashcards_data.length;
+      updateFlashcard();
+    }
+
+    // GENERATOR
+    function generateCounterDiscourse() {
+      const output = document.getElementById('generator-output');
+      const random = counter_discourses[Math.floor(Math.random() * counter_discourses.length)];
+      output.innerHTML = random;
+      output.style.animation = 'none';
+      output.offsetHeight;
+      output.style.animation = 'slideIn 0.3s ease-out';
+    }
+
+    // ACTIONS
+    function copyToClipboard(el) {
+      const text = el.querySelector('.argument-title').textContent + ': ' + 
+                   el.querySelector('.argument-content').textContent;
+      navigator.clipboard.writeText(text);
+      showNotification('Argument copié !');
+    }
+
+    function copyArgument() {
+      const args = arguments_data[Math.floor(Math.random() * arguments_data.length)];
+      navigator.clipboard.writeText(args.title + ': ' + args.content);
+      showNotification('Argument copié dans le presse-papiers !');
+    }
+
+    function shareAction() {
+      showNotification('Fonction de partage en préparation...');
+    }
+
+    function generateTweet() {
+      const tweets = [
+        "90 000 personnes vont perdre leurs allocations d'ici 2027. Pas parce qu'elles ont trouvé un emploi — parce qu'un gouvernement a décidé que 24 mois suffisent. #StopArizona #Article23",
+        "La taxe des millionnaires rapporterait 17 milliards €. Mais on préfère exclure 90 000 chômeurs. Question de priorités. #StopArizona",
+        "30 122 familles basculeront vers l'aide sociale. Pas des chiffres. Des parents. Des enfants. Des vies. #StopArizona #DigniteHumaine"
+      ];
+      const tweet = tweets[Math.floor(Math.random() * tweets.length)];
+      navigator.clipboard.writeText(tweet);
+      showNotification('Tweet copié ! Prêt à partager.');
+    }
+
+    function showStats() {
+      document.querySelector('[data-tab="arguments"]').click();
+    }
+
+    function showNotification(msg) {
+      const notif = document.createElement('div');
+      notif.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; background: var(--mint);
+        color: var(--bg-dark); padding: 12px 20px; border-radius: 8px;
+        font-family: var(--font-terminal); z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+      `;
+      notif.textContent = msg;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 2500);
+    }
+
+    // ANIMATE COUNTERS
+    function animateCounters() {
+      const counters = document.querySelectorAll('.counter-value');
+      counters.forEach(counter => {
+        counter.style.animation = 'countUp 0.8s ease-out';
+      });
+    }
+
+    // TERMINAL AUTO-UPDATE
+    setInterval(() => {
+      const terminal = document.getElementById('terminal');
+      const messages = [
+        { text: 'ping solidarity_network... OK', class: '' },
+        { text: 'update resistance_status...', class: '' },
+        { text: 'monitoring vague_2_countdown...', class: 'warning' },
+        { text: 'syncing arguments_database...', class: '' },
+        { text: '« Ensemble, on est plus forts. »', class: '' }
+      ];
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      const line = document.createElement('div');
+      line.className = 'terminal-line ' + msg.class;
+      line.textContent = msg.text;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+      if (terminal.children.length > 15) {
+        terminal.removeChild(terminal.children[1]);
+      }
+    }, 8000);
+
+    // KEYBOARD SHORTCUTS
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextCard();
+      if (e.key === 'ArrowLeft') prevCard();
+      if (e.key === ' ' && document.getElementById('tab-flashcards').classList.contains('active')) {
+        e.preventDefault();
+        flipCard();
+      }
+    });
+  </script>
+</body>
+</html>
