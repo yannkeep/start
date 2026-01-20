@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARIZONA : Le SALOON — War Room Activiste</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #05070a;
+      --bg: #0a0d12;
+      --surface: #10141a;
+      --card: #161b24;
+      --card-hover: #1c222e;
+      --border: #2a3142;
+      --border-light: #3a4560;
+      --text: #e8eaed;
+      --text-soft: #b4bcd0;
+      --muted: #6b7894;
+      --mint: #7ee8b8;
+      --mint-dim: rgba(126,232,184,0.15);
+      --mint-glow: rgba(126,232,184,0.4);
+      --lilac: #c4a7e7;
+      --lilac-dim: rgba(196,167,231,0.15);
+      --lilac-glow: rgba(196,167,231,0.4);
+      --coral: #f08080;
+      --coral-dim: rgba(240,128,128,0.15);
+      --coral-glow: rgba(240,128,128,0.4);
+      --gold: #fbbf24;
+      --gold-dim: rgba(251,191,36,0.15);
+      --blue: #4da6ff;
+      --blue-dim: rgba(77,166,255,0.15);
+      --green: #4ade80;
+      --green-dim: rgba(74,222,128,0.15);
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.5);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.7);
+      --font: 'Outfit', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(126,232,184,0.02) 0px, rgba(126,232,184,0.02) 1px, transparent 1px, transparent 3px);
+      z-index: 9999;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--mint-dim); }
+
+    /* Animations */
+    @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 10px var(--coral-glow); } 50% { box-shadow: 0 0 25px var(--coral-glow), 0 0 40px var(--coral-glow); } }
+
+    /* Layout */
+    .app { display: flex; flex-direction: column; height: 100%; }
+
+    /* Header */
+    header {
+      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--coral) 0%, var(--gold) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 15px var(--coral-glow);
+      animation: glowPulse 3s infinite;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text .highlight { color: var(--mint); }
+    .logo-text .sub {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--lilac);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      margin-left: 24px;
+    }
+
+    .nav-tab {
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--font);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-tab:hover { background: var(--card); color: var(--text-soft); }
+    .nav-tab.active { background: var(--mint-dim); color: var(--mint); }
+    .nav-tab .icon { font-size: 14px; }
+
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .search-box:focus-within { border-color: var(--mint); box-shadow: 0 0 0 3px var(--mint-dim); }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 12px;
+      padding: 8px 0;
+      width: 180px;
+      outline: none;
+      font-family: var(--font);
+    }
+
+    .search-box input::placeholder { color: var(--muted); }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--coral-dim);
+      border: 1px solid rgba(240,128,128,0.3);
+      border-radius: var(--radius);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--coral);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--card-hover); border-color: var(--border-light); }
+    .btn-primary { background: var(--mint); border-color: var(--mint); color: var(--bg-deep); font-weight: 600; }
+    .btn-primary:hover { background: #9ef0cc; }
+    .btn-danger { background: var(--coral-dim); border-color: rgba(240,128,128,0.3); color: var(--coral); }
+    .btn-ghost { background: transparent; border-color: transparent; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+    /* Main */
+    main { flex: 1; display: flex; overflow: hidden; }
+
+    /* Tab Content */
+    .tab-content { display: none; flex: 1; overflow: hidden; }
+    .tab-content.active { display: flex; }
+
+    /* Panels */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .panel-content { flex: 1; overflow-y: auto; padding: 12px; }
+    .panel-border-right { border-right: 1px solid var(--border); }
+
+    /* Entity List */
+    .entity-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .entity-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .entity-item:hover { border-color: var(--border-light); background: var(--card-hover); }
+    .entity-item.selected { border-color: var(--mint); box-shadow: 0 0 0 1px var(--mint); }
+
+    .entity-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+    .entity-role { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .entity-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .badge {
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-ally { background: var(--green-dim); color: var(--green); }
+    .badge-opponent { background: var(--coral-dim); color: var(--coral); }
+    .badge-neutral { background: var(--lilac-dim); color: var(--lilac); }
+    .badge-target { background: var(--gold-dim); color: var(--gold); }
+    .badge-person { background: var(--blue-dim); color: var(--blue); }
+    .badge-org { background: var(--lilac-dim); color: var(--lilac); }
+
+    /* Detail Panel */
+    .detail-panel { flex: 1; display: flex; flex-direction: column; }
+
+    .detail-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      gap: 12px;
+    }
+
+    .detail-empty .icon { font-size: 48px; opacity: 0.3; }
+
+    .detail-header {
+      padding: 20px;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .detail-subtitle { color: var(--muted); font-size: 12px; }
+    .detail-badges { display: flex; gap: 8px; margin-top: 12px; }
+    .detail-body { padding: 20px; overflow-y: auto; flex: 1; }
+    .detail-section { margin-bottom: 24px; }
+
+    .detail-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .detail-desc { color: var(--text-soft); line-height: 1.7; font-size: 13px; }
+
+    /* CRISIS DASHBOARD */
+    .crisis-dashboard {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(240,128,128,0.05) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .crisis-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .crisis-stat:hover { border-color: var(--mint); transform: translateY(-2px); }
+
+    .crisis-value {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .crisis-value.coral { color: var(--coral); }
+    .crisis-value.mint { color: var(--mint); }
+    .crisis-value.lilac { color: var(--lilac); }
+    .crisis-value.gold { color: var(--gold); }
+
+    .crisis-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .crisis-trend {
+      font-size: 10px;
+      margin-top: 4px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .crisis-trend.up { background: var(--coral-dim); color: var(--coral); }
+    .crisis-trend.down { background: var(--green-dim); color: var(--green); }
+
+    /* SWOT Grid */
+    .swot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .swot-cell {
+      border-radius: var(--radius);
+      padding: 16px;
+      min-height: 180px;
+    }
+
+    .swot-cell h4 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swot-strengths { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); }
+    .swot-strengths h4 { color: var(--green); }
+    .swot-weaknesses { background: var(--coral-dim); border: 1px solid rgba(240,128,128,0.2); }
+    .swot-weaknesses h4 { color: var(--coral); }
+    .swot-opportunities { background: var(--blue-dim); border: 1px solid rgba(77,166,255,0.2); }
+    .swot-opportunities h4 { color: var(--blue); }
+    .swot-threats { background: var(--gold-dim); border: 1px solid rgba(251,191,36,0.2); }
+    .swot-threats h4 { color: var(--gold); }
+
+    .swot-items { list-style: none; }
+
+    .swot-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 11px;
+      color: var(--text-soft);
+      line-height: 1.4;
+    }
+
+    .swot-item::before {
+      content: "•";
+      flex-shrink: 0;
+      color: inherit;
+    }
+
+    /* Timeline */
+    .timeline-container { flex: 1; overflow-y: auto; padding: 24px; }
+
+    .timeline { position: relative; padding-left: 30px; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--coral), var(--lilac), var(--mint));
+    }
+
+    .timeline-item { position: relative; margin-bottom: 24px; animation: slideIn 0.4s ease-out backwards; }
+    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+    .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-dot.past { background: var(--muted); }
+    .timeline-dot.active { background: var(--coral); box-shadow: 0 0 12px var(--coral-glow); animation: pulse 1.5s infinite; }
+    .timeline-dot.future { background: var(--lilac); opacity: 0.6; }
+
+    .timeline-date { font-size: 11px; color: var(--gold); font-family: var(--mono); margin-bottom: 4px; }
+    .timeline-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .timeline-card:hover { border-color: var(--mint); }
+    .timeline-title { font-weight: 600; margin-bottom: 4px; }
+    .timeline-desc { font-size: 11px; color: var(--muted); }
+    .timeline-count { font-family: var(--mono); font-size: 14px; color: var(--coral); margin-top: 8px; }
+
+    /* Plaidoyer Layout */
+    .plaidoyer-layout { display: flex; flex: 1; overflow: hidden; }
+
+    .plaidoyer-sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .plaidoyer-content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    .plaid-nav-group { margin-bottom: 20px; }
+
+    .plaid-nav-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+    }
+
+    .plaid-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-soft);
+      transition: var(--transition);
+    }
+
+    .plaid-nav-item:hover { background: var(--card); color: var(--text); }
+    .plaid-nav-item.active { background: var(--mint-dim); color: var(--mint); }
+    .plaid-nav-item .emoji { font-size: 15px; }
+
+    .plaid-section { display: none; }
+    .plaid-section.active { display: block; }
+
+    .plaid-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .plaid-card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .plaid-card-title { font-weight: 600; font-size: 14px; }
+    .plaid-card-body { padding: 18px; }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    /* Flashcards */
+    .flashcard-container { max-width: 650px; margin: 0 auto; }
+
+    .flashcard {
+      background: linear-gradient(135deg, var(--mint-dim) 0%, var(--lilac-dim) 100%);
+      border: 2px solid var(--mint);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .flashcard:hover { transform: scale(1.02); box-shadow: 0 12px 40px var(--mint-glow); }
+
+    .flashcard-question { font-size: 1.2rem; color: var(--text); line-height: 1.6; }
+    .flashcard-answer {
+      display: none;
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      color: var(--mint);
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--mint);
+    }
+
+    .flashcard.flipped .flashcard-question { display: none; }
+    .flashcard.flipped .flashcard-answer { display: block; }
+
+    .flashcard-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .flashcard-progress {
+      text-align: center;
+      margin-top: 16px;
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    /* Arguments Grid */
+    .arguments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .argument-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .argument-card:hover { border-color: var(--mint); transform: translateY(-3px); box-shadow: var(--shadow); }
+
+    .argument-tag {
+      font-size: 9px;
+      padding: 3px 8px;
+      background: var(--lilac-dim);
+      color: var(--lilac);
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .argument-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+    .argument-content { font-size: 12px; color: var(--text-soft); line-height: 1.6; }
+    .argument-source {
+      margin-top: 12px;
+      font-size: 10px;
+      color: var(--mint);
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* Checklist */
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .checklist-item:hover { background: var(--card-hover); }
+
+    .check-box {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--mint);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+
+    .check-box.checked { background: var(--mint); color: var(--bg-deep); }
+    .check-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+    .check-text.done { text-decoration: line-through; color: var(--muted); }
+
+    .check-phase {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .phase-avant { background: var(--blue-dim); color: var(--blue); }
+    .phase-pendant { background: var(--gold-dim); color: var(--gold); }
+    .phase-apres { background: var(--green-dim); color: var(--green); }
+
+    /* 5 Pourquoi */
+    .pourquoi-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pourquoi-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+      border-left: 4px solid var(--lilac);
+    }
+
+    .pourquoi-item:last-child { border-left-color: var(--coral); }
+
+    .pourquoi-number {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 28px;
+      height: 28px;
+      background: var(--lilac);
+      color: var(--bg-deep);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .pourquoi-item:last-child .pourquoi-number { background: var(--coral); }
+
+    .pourquoi-text { font-size: 12px; color: var(--text-soft); line-height: 1.6; padding-left: 10px; }
+
+    /* Message Section */
+    .message-box {
+      background: linear-gradient(135deg, var(--coral-dim) 0%, var(--lilac-dim) 100%);
+      border: 1px solid rgba(240,128,128,0.3);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .message-accroche {
+      font-size: 1.1rem;
+      color: var(--text);
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    .message-hashtags {
+      margin-top: 16px;
+      font-family: var(--mono);
+      color: var(--mint);
+      font-size: 12px;
+    }
+
+    /* SMART Goals */
+    .smart-grid { display: flex; flex-direction: column; gap: 12px; }
+
+    .smart-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .smart-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .smart-letter {
+      width: 28px;
+      height: 28px;
+      background: var(--mint);
+      color: var(--bg-deep);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .smart-title { font-weight: 600; font-size: 13px; }
+    .smart-desc { font-size: 11px; color: var(--text-soft); line-height: 1.5; }
+
+    /* Tools Grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tool-card:hover { border-color: var(--mint); transform: translateY(-3px); }
+
+    .tool-icon { font-size: 32px; margin-bottom: 12px; }
+    .tool-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .tool-desc { font-size: 11px; color: var(--muted); }
+
+    /* Terminal */
+    .terminal {
+      background: #000;
+      border: 1px solid var(--mint);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--mint);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .terminal-line { margin-bottom: 4px; animation: fadeIn 0.3s ease-out; }
+    .terminal-line::before { content: "> "; color: var(--lilac); }
+    .terminal-line.warning { color: var(--gold); }
+    .terminal-line.error { color: var(--coral); }
+
+    /* Live Feed */
+    .live-feed {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .live-header {
+      padding: 10px 14px;
+      background: var(--coral-dim);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-indicator {
+      width: 8px;
+      height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    .live-title { font-size: 11px; font-weight: 600; color: var(--coral); text-transform: uppercase; }
+
+    .feed-items { max-height: 300px; overflow-y: auto; }
+
+    .feed-item {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .feed-time { font-family: var(--mono); color: var(--muted); font-size: 10px; }
+    .feed-text { color: var(--text); margin-top: 4px; }
+
+    /* Generator */
+    .generator-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .generator-output {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 80px;
+      padding: 14px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+
+    .generator-btn {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 12px;
+      background: linear-gradient(90deg, var(--lilac), var(--mint));
+      border: none;
+      color: var(--bg-deep);
+      cursor: pointer;
+      border-radius: var(--radius);
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .generator-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 90%;
+      max-width: 600px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title { font-size: 17px; font-weight: 600; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover { background: var(--surface); color: var(--text); }
+
+    .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast-success { border-left: 3px solid var(--mint); }
+    .toast-error { border-left: 3px solid var(--coral); }
+
+    /* Stats Mini Cards */
+    .stats-mini { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    .stat-mini {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-mini-value { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--mint); }
+    .stat-mini-label { font-size: 9px; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .crisis-dashboard { grid-template-columns: repeat(3, 1fr); }
+      .nav { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .crisis-dashboard { grid-template-columns: repeat(2, 1fr); }
+      header { padding: 0 12px; }
+      .search-box { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🌵</div>
+      <div class="logo-text">
+        ARIZONA : <span class="highlight">Le SALOON</span>
+        <span class="sub">War Room Activiste</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-tab active" data-tab="dashboard"><span class="icon">📊</span> Dashboard</button>
+      <button class="nav-tab" data-tab="acteurs"><span class="icon">👥</span> Acteurs</button>
+      <button class="nav-tab" data-tab="timeline"><span class="icon">📅</span> Timeline</button>
+      <button class="nav-tab" data-tab="plaidoyer"><span class="icon">🎯</span> Plaidoyer</button>
+      <button class="nav-tab" data-tab="flashcards"><span class="icon">🎴</span> Flashcards</button>
+      <button class="nav-tab" data-tab="outils"><span class="icon">🛠️</span> Outils</button>
+    </nav>
+    <div class="header-actions">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="globalSearch" placeholder="Rechercher... (Ctrl+K)">
+      </div>
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>ALERTE VAGUE 2</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- DASHBOARD TAB -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div style="flex: 1; overflow-y: auto;">
+        <!-- Crisis Counter -->
+        <div class="crisis-dashboard">
+          <div class="crisis-stat">
+            <div class="crisis-value coral">90,000</div>
+            <div class="crisis-label">Personnes Menacées</div>
+            <div class="crisis-trend up">↑ D'ici 2027</div>
+          </div>
+          <div class="crisis-stat">
+            <div class="crisis-value mint">30,122</div>
+            <div class="crisis-label">Basculements RIS</div>
+            <div class="crisis-trend up">↑ +12.7%</div>
+          </div>
+          <div class="crisis-stat">
+            <div class="crisis-value lilac">2.2M</div>
+            <div class="crisis-label">Bénéficiaires BIM</div>
+            <div class="crisis-trend">20.4% pop.</div>
+          </div>
+          <div class="crisis-stat">
+            <div class="crisis-value gold">18.3%</div>
+            <div class="crisis-label">Risque AROPE</div>
+            <div class="crisis-trend">2.1M personnes</div>
+          </div>
+          <div class="crisis-stat">
+            <div class="crisis-value coral">1 Md€</div>
+            <div class="crisis-label">Surcoût CPAS</div>
+            <div class="crisis-trend up">↑ Non compensé</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 20px;">
+          <!-- Left Column -->
+          <div>
+            <div class="plaid-card">
+              <div class="plaid-card-header">
+                <div class="plaid-card-title">📜 Message Central</div>
+              </div>
+              <div class="plaid-card-body">
+                <div class="message-box">
+                  <div class="message-accroche">
+                    « En Belgique, 90 000 personnes vont perdre leur allocation de chômage d'ici 2027.<br><br>
+                    Pas parce qu'elles ont trouvé un emploi.<br>
+                    Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.<br><br>
+                    Après ? Les CPAS.<br>
+                    Et quand les CPAS n'auront plus les moyens ?<br>
+                    <strong style="color: var(--coral);">La rue.</strong> »
+                  </div>
+                  <div class="message-hashtags">#StopArizona #Article23 #DigniteHumaine</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="plaid-card">
+              <div class="plaid-card-header">
+                <div class="plaid-card-title">⚡ Arguments Clés</div>
+                <button class="btn btn-sm" onclick="showTab('plaidoyer')">Voir tout</button>
+              </div>
+              <div class="plaid-card-body">
+                <div class="arguments-grid" id="quick-arguments"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <div class="plaid-card">
+              <div class="plaid-card-header">
+                <div class="plaid-card-title">📅 Prochaines Vagues</div>
+              </div>
+              <div class="plaid-card-body" style="padding: 12px;">
+                <div class="timeline" style="padding-left: 25px;">
+                  <div class="timeline-item">
+                    <div class="timeline-dot past"></div>
+                    <div class="timeline-date">1 JAN 2026</div>
+                    <div class="timeline-card">
+                      <div class="timeline-title">Vague 1</div>
+                      <div class="timeline-desc">Chômeurs &gt;20 ans</div>
+                      <div class="timeline-count">~28,000</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot active"></div>
+                    <div class="timeline-date">1 MARS 2026</div>
+                    <div class="timeline-card">
+                      <div class="timeline-title">Vague 2</div>
+                      <div class="timeline-desc">Chômeurs 8-20 ans</div>
+                      <div class="timeline-count">~35,000</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot future"></div>
+                    <div class="timeline-date">1 AVR 2026</div>
+                    <div class="timeline-card">
+                      <div class="timeline-title">Vague 3</div>
+                      <div class="timeline-desc">Chômeurs &lt;8 ans</div>
+                      <div class="timeline-count">~27,000</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="live-feed">
+              <div class="live-header">
+                <div class="live-indicator"></div>
+                <div class="live-title">Fil d'Actualité</div>
+              </div>
+              <div class="feed-items" id="feed-items">
+                <div class="feed-item">
+                  <div class="feed-time">20/01/2026 — 14:32</div>
+                  <div class="feed-text">📢 Vague 2 confirmée — 35 000 personnes concernées</div>
+                </div>
+                <div class="feed-item">
+                  <div class="feed-time">19/01/2026 — 09:15</div>
+                  <div class="feed-text">⚖️ Audience Cour Constitutionnelle — délais en discussion</div>
+                </div>
+                <div class="feed-item">
+                  <div class="feed-time">18/01/2026 — 16:45</div>
+                  <div class="feed-text">🏛️ UVCW dénonce compensations insuffisantes</div>
+                </div>
+                <div class="feed-item">
+                  <div class="feed-time">17/01/2026 — 11:20</div>
+                  <div class="feed-text">✊ Front commun prépare actions février</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTEURS TAB -->
+    <div class="tab-content" id="tab-acteurs">
+      <div class="panel panel-border-right" style="width: 320px;">
+        <div class="panel-header">
+          <span class="panel-title">Acteurs</span>
+          <select id="filterRole" class="btn btn-sm" style="padding: 4px 8px;">
+            <option value="">Tous</option>
+            <option value="ally">✅ Alliés</option>
+            <option value="opponent">❌ Adversaires</option>
+            <option value="neutral">⚖️ Neutres</option>
+          </select>
+        </div>
+        <div class="panel-content">
+          <div class="entity-list" id="actorsList"></div>
+        </div>
+      </div>
+      <div class="detail-panel" id="actorDetail">
+        <div class="detail-empty">
+          <div class="icon">👤</div>
+          <p>Sélectionnez un acteur pour voir les détails</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE TAB -->
+    <div class="tab-content" id="tab-timeline">
+      <div class="timeline-container">
+        <h2 style="margin-bottom: 24px; color: var(--mint);">📅 Calendrier des Exclusions</h2>
+        <div class="timeline" id="full-timeline"></div>
+      </div>
+    </div>
+
+    <!-- PLAIDOYER TAB -->
+    <div class="tab-content" id="tab-plaidoyer">
+      <div class="plaidoyer-layout">
+        <div class="plaidoyer-sidebar">
+          <div class="plaid-nav-group">
+            <div class="plaid-nav-title">📋 Analyse</div>
+            <div class="plaid-nav-item active" data-section="vision"><span class="emoji">🎯</span> Vision</div>
+            <div class="plaid-nav-item" data-section="swot"><span class="emoji">📊</span> SWOT</div>
+            <div class="plaid-nav-item" data-section="pourquoi"><span class="emoji">❓</span> 5 Pourquoi</div>
+          </div>
+          <div class="plaid-nav-group">
+            <div class="plaid-nav-title">💬 Message</div>
+            <div class="plaid-nav-item" data-section="message"><span class="emoji">📢</span> Accroche</div>
+            <div class="plaid-nav-item" data-section="arguments"><span class="emoji">⚔️</span> Arguments</div>
+          </div>
+          <div class="plaid-nav-group">
+            <div class="plaid-nav-title">🎬 Action</div>
+            <div class="plaid-nav-item" data-section="smart"><span class="emoji">🎯</span> Objectifs SMART</div>
+            <div class="plaid-nav-item" data-section="checklist"><span class="emoji">✅</span> Checklist</div>
+          </div>
+        </div>
+        <div class="plaidoyer-content" id="plaidoyer-content">
+          <!-- Sections loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASHCARDS TAB -->
+    <div class="tab-content" id="tab-flashcards">
+      <div style="flex: 1; overflow-y: auto; padding: 40px;">
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--mint);">🎴 Éducation Populaire — 80 Flashcards</h2>
+        <div class="flashcard-container">
+          <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="flashcard-question" id="fc-question">Cliquez pour commencer</div>
+            <div class="flashcard-answer" id="fc-answer"></div>
+          </div>
+          <div class="flashcard-controls">
+            <button class="btn" onclick="prevCard()">◀ Précédent</button>
+            <button class="btn btn-primary" onclick="flipCard()">Retourner</button>
+            <button class="btn" onclick="nextCard()">Suivant ▶</button>
+          </div>
+          <div class="flashcard-progress">
+            <span id="fc-progress">0 / 0</span>
+            <br><small style="color: var(--muted);">Raccourcis : ← → Espace</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTILS TAB -->
+    <div class="tab-content" id="tab-outils">
+      <div style="flex: 1; overflow-y: auto; padding: 24px;">
+        <h2 style="margin-bottom: 24px; color: var(--mint);">🛠️ Arsenal Tactique</h2>
+        
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="plaid-card">
+            <div class="plaid-card-header">
+              <div class="plaid-card-title">🎰 Générateur de Contre-Discours</div>
+            </div>
+            <div class="plaid-card-body">
+              <div class="generator-box">
+                <div class="generator-output" id="generator-output">
+                  « Les réformes Arizona ne sont pas une "activation". C'est un <strong>glissement organisé</strong> de la solidarité fédérale vers l'assistance locale. »
+                </div>
+                <button class="generator-btn" onclick="generateCounterDiscourse()">
+                  ⚡ GÉNÉRER UN NOUVEAU CONTRE-DISCOURS
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="plaid-card">
+            <div class="plaid-card-header">
+              <div class="plaid-card-title">📊 Chiffres Clés</div>
+            </div>
+            <div class="plaid-card-body">
+              <div class="stats-mini">
+                <div class="stat-mini">
+                  <div class="stat-mini-value">23 Md€</div>
+                  <div class="stat-mini-label">Budget économies</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="stat-mini-value">24 mois</div>
+                  <div class="stat-mini-label">Limite chômage</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="stat-mini-value">1.5M</div>
+                  <div class="stat-mini-label">Syndiqués</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="stat-mini-value">140K</div>
+                  <div class="stat-mini-label">Manifestants</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plaid-card">
+          <div class="plaid-card-header">
+            <div class="plaid-card-title">⚡ Actions Rapides</div>
+          </div>
+          <div class="plaid-card-body">
+            <div class="tools-grid">
+              <div class="tool-card" onclick="copyArgument()">
+                <div class="tool-icon">📋</div>
+                <div class="tool-name">Copier Argument</div>
+                <div class="tool-desc">Argument aléatoire</div>
+              </div>
+              <div class="tool-card" onclick="generateTweet()">
+                <div class="tool-icon">🐦</div>
+                <div class="tool-name">Tweet Prêt</div>
+                <div class="tool-desc">Copier un tweet</div>
+              </div>
+              <div class="tool-card" onclick="showTab('flashcards')">
+                <div class="tool-icon">🎴</div>
+                <div class="tool-name">Flashcards</div>
+                <div class="tool-desc">80 questions</div>
+              </div>
+              <div class="tool-card" onclick="exportData()">
+                <div class="tool-icon">📥</div>
+                <div class="tool-name">Exporter</div>
+                <div class="tool-desc">Données JSON</div>
+              </div>
+              <div class="tool-card" onclick="showTab('acteurs')">
+                <div class="tool-icon">👥</div>
+                <div class="tool-name">Acteurs</div>
+                <div class="tool-desc">Cartographie</div>
+              </div>
+              <div class="tool-card" onclick="showTab('plaidoyer')">
+                <div class="tool-icon">🎯</div>
+                <div class="tool-name">Plaidoyer</div>
+                <div class="tool-desc">Stratégie complète</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plaid-card">
+          <div class="plaid-card-header">
+            <div class="plaid-card-title">💻 Terminal Résistance</div>
+          </div>
+          <div class="plaid-card-body">
+            <div class="terminal" id="terminal">
+              <div class="terminal-line">// ARIZONA SALOON v2.0 — War Room Activiste</div>
+              <div class="terminal-line">init_resistance_mode();</div>
+              <div class="terminal-line">loading 80 flashcards... OK</div>
+              <div class="terminal-line">loading 25 acteurs... OK</div>
+              <div class="terminal-line warning">WARNING: Vague 2 dans 40 jours</div>
+              <div class="terminal-line">status: MOBILISATION_ACTIVE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const flashcards = [
+  {q: "Comment appelle-t-on la coalition gouvernementale fédérale formée en février 2025 ?", a: "La coalition Arizona"},
+  {q: "Qui est le Premier ministre du gouvernement Arizona ?", a: "Bart De Wever (N-VA)"},
+  {q: "Quels sont les 5 partis de la coalition Arizona ?", a: "N-VA, MR, Les Engagés, CD&V et Vooruit"},
+  {q: "Quel est l'effort budgétaire total prévu d'ici 2029 ?", a: "23 milliards d'euros"},
+  {q: "Quelle est la nouvelle durée maximale des allocations de chômage ?", a: "24 mois (12 + 12)"},
+  {q: "Combien de jours de négociations pour former le gouvernement ?", a: "239 jours"},
+  {q: "Quelle est la durée max des allocations d'insertion pour les jeunes ?", a: "1 an (12 mois)"},
+  {q: "À quelle date le nouveau régime de limitation s'applique-t-il pleinement ?", a: "1er mars 2026"},
+  {q: "La Vague 1 cible les chômeurs ayant plus de combien d'années de chômage ?", a: "Plus de 20 ans"},
+  {q: "Quelle catégorie est ciblée par la Vague 2 (1er mars 2026) ?", a: "Chômeurs ayant entre 8 et 20 ans de chômage"},
+  {q: "À quelle date les chômeurs avec moins de 8 ans sont exclus (Vague 3) ?", a: "1er avril 2026"},
+  {q: "La Vague 4 concerne les demandeurs d'emploi en quelle période ?", a: "Deuxième (2e) période"},
+  {q: "Quel âge protège théoriquement de la limitation du chômage ?", a: "55 ans et plus"},
+  {q: "Pour être protégé après 55 ans, combien d'années de carrière faut-il ?", a: "31 ans (en 2026)"},
+  {q: "Quels travailleurs bénéficient d'une exemption à la limitation ?", a: "Artistes, dockers, pêcheurs de mer"},
+  {q: "Comment appelle-t-on le passage massif vers les CPAS ?", a: "Le grand glissement"},
+  {q: "Combien de personnes basculeront immédiatement vers le RIS ?", a: "30 122 personnes"},
+  {q: "Quelle augmentation nationale des bénéficiaires RIS est prévue ?", a: "12,7%"},
+  {q: "Quelle région supporte 45% de l'impact national ?", a: "La Wallonie"},
+  {q: "Quel est le coût net estimé pour Bruxelles en 2026 ?", a: "42,8 millions d'euros"},
+  {q: "Quel % du RIS l'État fédéral rembourse-t-il généralement ?", a: "Entre 55% et 70%"},
+  {q: "Que signifie RIS ?", a: "Revenu d'Intégration Sociale"},
+  {q: "Comment s'appelle le contrat obligatoire entre bénéficiaire RIS et CPAS ?", a: "PIIS (Projet Individualisé d'Intégration Sociale)"},
+  {q: "Combien d'ETP d'assistants sociaux supplémentaires pour Bruxelles ?", a: "240"},
+  {q: "Quel subside annuel par dossier d'exclu du chômage ?", a: "518 euros"},
+  {q: "Que signifie BIM ?", a: "Bénéficiaire de l'Intervention Majorée"},
+  {q: "Quel est le plafond de revenus annuels pour un isolé demandant le BIM ?", a: "27 370,91 euros"},
+  {q: "Le statut BIM est octroyé automatiquement après combien de mois ?", a: "3 mois (chômage ou incapacité)"},
+  {q: "À partir du 1er janvier 2026, quels suppléments sont interdits pour les BIM ?", a: "Suppléments d'honoraires (en ambulatoire)"},
+  {q: "Quel est le budget de l'assurance soins de santé en 2026 ?", a: "46,775 milliards d'euros"},
+  {q: "Quel ticket modérateur pour les médicaments BIM en 2026 ?", a: "1 euro par boîte"},
+  {q: "Quelle économie prévue sur statines et IPP ?", a: "87,2 millions d'euros"},
+  {q: "Après combien de semaines le Trajet Retour au Travail peut débuter ?", a: "10 semaines"},
+  {q: "Quelle sanction pour un malade jugé non coopérant ?", a: "2,5% de l'indemnité journalière"},
+  {q: "Le délai pour force majeure médicale est réduit à combien de mois ?", a: "6 mois"},
+  {q: "Quelle amende l'employeur doit-il verser au Fonds Retour au Travail ?", a: "1 800 euros"},
+  {q: "Quel % d'étudiants déclarent des difficultés pour se nourrir ?", a: "58%"},
+  {q: "Quel est le prix moyen d'un kot en Belgique (2025) ?", a: "590 euros"},
+  {q: "Combien d'heures de travail étudiant à cotisations réduites ?", a: "650 heures par an"},
+  {q: "Comment s'appelle le mécanisme pour augmenter le salaire net des bas salaires ?", a: "Le bonus à l'emploi fiscal"},
+  {q: "Quel article de la Constitution garantit le droit à une vie digne ?", a: "L'article 23"},
+  {q: "Comment appelle-t-on l'obligation de ne pas réduire la protection sociale ?", a: "Le principe de standstill (effet cliquet)"},
+  {q: "Quelle date pour la manifestation nationale massive de 2025 ?", a: "28 avril 2025"},
+  {q: "Quel parti propose la taxe des millionnaires ?", a: "Le PTB"},
+  {q: "Comment s'appelle le système de financement des CPAS basé sur les résultats ?", a: "Le système bonus-malus"},
+  {q: "Quel facteur alimente le non-recours aux droits selon l'IWEPS ?", a: "La digitalisation forcée des services publics"},
+  {q: "Combien d'étudiants 'non-finançables' suite au Décret Paysage ?", a: "15 000"},
+  {q: "Quelle mutuelle a qualifié les réformes de 'taxe santé' ?", a: "Solidaris"},
+  {q: "Quel % de la population belge était en risque AROPE en 2024 ?", a: "18,3%"},
+  {q: "Que signifie AROPE ?", a: "At Risk of Poverty or Social Exclusion"},
+  {q: "Quelle plateforme centralise les avantages sociaux ?", a: "MyBenefits"},
+  {q: "Comment appelle-t-on les travailleurs sous le seuil de pauvreté ?", a: "Working poor (travailleurs pauvres)"},
+  {q: "Quelle date pour le recours en annulation contre la limitation ?", a: "29 octobre 2025"},
+  {q: "Quelle économie prévue sur les médicaments vitaux ?", a: "26,2 millions d'euros"},
+  {q: "Le prix moyen d'un kot à Bruxelles dépasse combien ?", a: "695 euros"},
+  {q: "Quelle association étudiante dénonce la normalisation du travail salarié ?", a: "La FEF"},
+  {q: "Le modèle Arizona est un glissement vers quelle logique ?", a: "Logique d'assistance conditionnelle"},
+  {q: "Quel impact financier net pour les communes bruxelloises en année pleine ?", a: "80 millions d'euros"},
+  {q: "Quel service fédéral gère l'intégration sociale ?", a: "Le SPP Intégration Sociale"},
+  {q: "Comment s'appelle le plan wallon 2025-2029 ?", a: "Le Plan Pauvreté Wallon"},
+  {q: "Quelle autorité juge de la constitutionnalité des lois sociales ?", a: "La Cour constitutionnelle"},
+  {q: "Combien de chômeurs potentiellement impactés à terme ?", a: "90 000"},
+  {q: "Qu'est-ce que la 'falaise fiscale' ?", a: "Une légère hausse de revenus entraîne la perte du statut BIM"},
+  {q: "Combien de personnes menacées d'exclusion du chômage ?", a: "90 000 personnes"},
+  {q: "Combien rapporterait la taxe des millionnaires ?", a: "17 milliards d'euros"},
+  {q: "Combien représente la fraude fiscale estimée ?", a: "30 milliards d'euros"},
+  {q: "Combien de membres dans le front commun syndical ?", a: "1,5 million de membres"},
+  {q: "Combien de manifestants en octobre 2025 ?", a: "140 000 manifestants"},
+  {q: "Quel % de Belges présentent une vulnérabilité numérique ?", a: "40%"},
+  {q: "Quel % chez les peu diplômés ?", a: "68%"},
+  {q: "Quel est le taux AROPE à Bruxelles ?", a: "37,3%"},
+  {q: "Quel est le taux de bénéficiaires RIS à Bruxelles ?", a: "3,68%"},
+  {q: "Combien de sans-abri à Bruxelles (nov. 2024) ?", a: "9 777 personnes"},
+  {q: "Combien de sans-abri estimés en Belgique ?", a: "Près de 50 000 personnes"},
+  {q: "Quel % des invalides le sont pour troubles musculo-squelettiques ou mentaux ?", a: "60%"},
+  {q: "Combien d'ETP supplémentaires nécessaires pour les CPAS wallons ?", a: "1 539"},
+  {q: "Combien d'ETP prévus par les compensations fédérales ?", a: "600 à 800"},
+  {q: "Quelle pénalité pour départ anticipé à la retraite (nés après 1975) ?", a: "-5% par année anticipée"},
+  {q: "Quel montant du RIS isolé par rapport au seuil de pauvreté ?", a: "78% (1 314,20€ vs 1 522€)"}
+];
+
+const actors = [
+  {name: "Bart De Wever", role: "Premier Ministre (N-VA)", position: "opponent", power: 5, desc: "Architecte idéologique des réformes. Leader inflexible de la coalition."},
+  {name: "Frank Vandenbroucke", role: "Ministre Affaires sociales (Vooruit)", position: "neutral", power: 5, desc: "Pilote le volet santé. Position délicate au sein de la coalition."},
+  {name: "Georges-Louis Bouchez", role: "Président MR", position: "opponent", power: 4, desc: "Orthodoxie budgétaire. Défenseur des coupes sociales."},
+  {name: "Maxime Prévot", role: "Président Les Engagés", position: "neutral", power: 3, desc: "Sensibilité sociale relative. Partenaire hésitant."},
+  {name: "Thierry Bodson", role: "Président FGTB", position: "ally", power: 4, desc: "Leader du front commun syndical. Mobilisation nationale."},
+  {name: "Marc Leemans", role: "Président CSC", position: "ally", power: 4, desc: "Syndicat chrétien. Pilier du front commun."},
+  {name: "CGSLB", role: "Syndicat libéral", position: "ally", power: 3, desc: "Membre du front commun malgré positionnement libéral."},
+  {name: "Cour Constitutionnelle", role: "Juridiction suprême", position: "target", power: 5, desc: "Recours Article 23 pendants. Arrêt attendu fin 2026."},
+  {name: "Commission Européenne", role: "Surveillance budgétaire", position: "opponent", power: 4, desc: "Pression 23 milliards. Procédure déficit excessif."},
+  {name: "UVCW", role: "CPAS wallons", position: "ally", power: 3, desc: "Union des Villes et Communes de Wallonie."},
+  {name: "Brulocalis", role: "CPAS bruxellois", position: "ally", power: 3, desc: "80M€ surcoût estimé. Alerte sur la saturation."},
+  {name: "BAPN", role: "Réseau anti-pauvreté belge", position: "ally", power: 2, desc: "Coordination nationale de lutte contre la pauvreté."},
+  {name: "RWLP", role: "Réseau wallon anti-pauvreté", position: "ally", power: 2, desc: "Expertise terrain en Wallonie."},
+  {name: "Solidaris", role: "Mutualité socialiste", position: "ally", power: 3, desc: "Dénonce la 'taxe santé'. Expertise santé."},
+  {name: "Paul Magnette", role: "Président PS", position: "ally", power: 3, desc: "Opposition principale. Alternative politique."},
+  {name: "PTB", role: "Parti gauche radicale", position: "ally", power: 2, desc: "Alternatives budgétaires chiffrées. Taxe millionnaires."},
+  {name: "Écolo/Groen", role: "Partis verts", position: "ally", power: 2, desc: "Opposition écologique-sociale."},
+  {name: "Ligue Droits Humains", role: "ONG droits fondamentaux", position: "ally", power: 2, desc: "Co-requérant recours constitutionnel."},
+  {name: "Vie Féminine", role: "Mouvement féministe", position: "ally", power: 2, desc: "Dénonce discrimination indirecte femmes."},
+  {name: "FEF", role: "Fédération Étudiants", position: "ally", power: 2, desc: "Précarité étudiante. 58% insécurité alimentaire."},
+  {name: "DULBEA (ULB)", role: "Centre recherche économique", position: "ally", power: 2, desc: "Études d'impact chiffrées."},
+  {name: "Vlaams Belang", role: "Extrême-droite", position: "opponent", power: 3, desc: "Risque récupération populiste de la colère."},
+  {name: "ONEM", role: "Office National Emploi", position: "neutral", power: 3, desc: "Exécutant des vagues d'exclusion."},
+  {name: "INAMI", role: "Assurance maladie", position: "neutral", power: 3, desc: "Gestion statut BIM."},
+  {name: "Sammy Mahdi", role: "Président CD&V", position: "neutral", power: 3, desc: "Conservateur modéré. Position médiane."}
+];
+
+const arguments_data = [
+  {tag: "Économie", title: "L'alternative budgétaire existe", content: "La taxe des millionnaires rapporterait 17 milliards €. La lutte contre la fraude fiscale : 30 milliards €. Mais le gouvernement préfère cibler les 90 000 chômeurs les plus vulnérables.", source: "PTB — Chiffrage Bureau du Plan"},
+  {tag: "Social", title: "Le grand glissement vers les CPAS", content: "30 122 personnes basculeront immédiatement vers le RIS. Les CPAS estiment le surcoût à plus d'1 milliard €. La compensation fédérale ? 518€ par dossier.", source: "UVCW, Brulocalis — 2025"},
+  {tag: "Juridique", title: "L'Article 23 en danger", content: "Le principe de standstill interdit de réduire le niveau de protection sociale existant. Le recours constitutionnel du 29 octobre 2025 conteste cette régression.", source: "Recours Front Commun"},
+  {tag: "Santé", title: "Les malades ciblés, pas les maladies", content: "60% des invalides le sont pour des troubles musculo-squelettiques ou mentaux liés aux conditions de travail. La réforme sanctionne les victimes, pas les causes.", source: "Solidaris — 2025"},
+  {tag: "Territorial", title: "Punir les communes pauvres", content: "Bruxelles supporte 1/3 des exclusions pour 1/10 de la population. Le système bonus-malus pénalise les communes déjà en difficulté.", source: "Vivalis — 2026"},
+  {tag: "Idéologie", title: "Le mythe de l'activation", content: "Supprimer une allocation ne crée pas d'emploi. Les freins réels : santé, âge, mobilité, discrimination. La Belgique reste dernière de l'UE pour les ménages sans emploi (11.3%).", source: "EU-SILC 2024"},
+  {tag: "Historique", title: "80 ans de recul social", content: "Le système de chômage illimité existe depuis 1944. Les syndicats qualifient ces réformes de 'plus grand recul social depuis 80 ans'.", source: "FGTB — 2025"},
+  {tag: "Numérique", title: "La fracture digitale exclut", content: "40% des Belges présentent une vulnérabilité numérique (68% chez les peu diplômés). eBox et MyBenefits deviennent des barrières à l'accès aux droits.", source: "Fondation Roi Baudouin"}
+];
+
+const swot = {
+  strengths: [
+    "Front commun syndical historique (1.5M membres)",
+    "Recours constitutionnel déjà introduit",
+    "Données chiffrées crédibles (DULBEA, IWEPS)",
+    "Soutien unanime des CPAS wallons et bruxellois",
+    "Réseau associatif dense",
+    "Précédents historiques de victoires sociales"
+  ],
+  weaknesses: [
+    "Fragmentation linguistique (mobilisation faible en Flandre)",
+    "Ressources financières limitées",
+    "Publics cibles difficiles à mobiliser",
+    "Complexité technique des réformes",
+    "Fatigue militante après crises successives",
+    "Absence de relais au sein de la majorité"
+  ],
+  opportunities: [
+    "Tensions internes à la coalition Arizona",
+    "Calendrier juridique favorable (arrêt 2026/2027)",
+    "Saturation prévisible des CPAS",
+    "Intérêt médiatique pour les victimes",
+    "Comparaison internationale favorable",
+    "Mobilisations parallèles actives"
+  ],
+  threats: [
+    "Majorité parlementaire solide et disciplinée",
+    "Pression budgétaire européenne",
+    "Discours médiatique dominant",
+    "Récupération par l'extrême-droite",
+    "Épuisement si premières actions échouent",
+    "Divisions internes sur les priorités"
+  ]
+};
+
+const pourquoi = [
+  "Parce que le gouvernement Arizona a décidé de LIMITER les allocations de chômage à 24 MOIS maximum, mettant fin à l'exception belge d'une couverture illimitée.",
+  "Parce que la coalition veut réaliser 23 MILLIARDS D'ÉCONOMIES d'ici 2029 pour respecter les contraintes européennes, et considère la sécurité sociale comme la principale VARIABLE D'AJUSTEMENT.",
+  "Parce que l'IDÉOLOGIE DOMINANTE de l'activation postule que seule la suppression des allocations incitera les chômeurs à reprendre un emploi, IGNORANT les freins structurels.",
+  "Parce que les PUBLICS PRÉCARISÉS sont politiquement FAIBLES : peu organisés, stigmatisés comme 'profiteurs', isolés socialement — une CIBLE FACILE.",
+  "🎯 CAUSE RACINE : Le RAPPORT DE FORCE POLITIQUE est structurellement défavorable aux classes populaires. L'alternative budgétaire existe (17 Md€ taxe millionnaires) mais N'EST PAS À L'AGENDA. CE N'EST PAS UN PROBLÈME TECHNIQUE, C'EST UN CONFLIT DE CLASSE."
+];
+
+const smart_goals = [
+  {letter: "S", title: "Obtenir un MORATOIRE sur les exclusions", desc: "Suspension officielle des vagues 2-3-4 par décision gouvernementale ou judiciaire, d'ici le 1er mars 2026."},
+  {letter: "M", title: "Documenter 1000 TÉMOIGNAGES", desc: "Base de données structurée avec consentement éclairé, publiée sur plateforme dédiée, d'ici décembre 2026."},
+  {letter: "A", title: "Faire basculer 3-5 DÉPUTÉS", desc: "Vote d'un amendement supprimant le bonus-malus CPAS au budget 2027. Lobbying ciblé Vooruit/Engagés."},
+  {letter: "R", title: "Obtenir 100% de COMPENSATION CPAS", desc: "Amendement budgétaire remplaçant le subside partiel (518€) par un remboursement intégral."},
+  {letter: "T", title: "Mobiliser 50.000 PERSONNES", desc: "Manifestation nationale avant les vagues 3-4 (printemps 2026). Coordination front commun."}
+];
+
+const checklist = [
+  {task: "Constituer le dossier juridique pour la Cour Constitutionnelle", phase: "avant", done: true},
+  {task: "Identifier et briefer 10 témoins représentatifs", phase: "avant", done: true},
+  {task: "Préparer les argumentaires chiffrés (études DULBEA)", phase: "avant", done: true},
+  {task: "Briefer les porte-parole syndicaux sur les éléments de langage", phase: "avant", done: false},
+  {task: "Coordonner avec l'opposition parlementaire", phase: "avant", done: false},
+  {task: "Préparer le kit média (communiqués, visuels, infographies)", phase: "avant", done: false},
+  {task: "Contacter les journalistes clés pour embargo pré-action", phase: "avant", done: false},
+  {task: "Cadrer les prises de parole : focus dignité et données", phase: "pendant", done: false},
+  {task: "Documenter l'action (photos, vidéos, comptage)", phase: "pendant", done: false},
+  {task: "Diffuser le compte-rendu aux partenaires dans les 24h", phase: "apres", done: false},
+  {task: "Communiquer sur les avancées vers les médias", phase: "apres", done: false},
+  {task: "Organiser un débriefing interne", phase: "apres", done: false}
+];
+
+const counter_discourses = [
+  "« Les réformes Arizona ne sont pas une 'activation'. C'est un <strong>glissement organisé</strong> de la solidarité fédérale vers l'assistance locale. »",
+  "« 30 122 : c'est le nombre de familles qui basculeront vers l'aide sociale. Pas des chiffres. Des parents. Des enfants. <strong>Des vies.</strong> »",
+  "« Supprimer une allocation ne crée pas d'emploi. Les freins réels : santé, âge, mobilité, discrimination. <strong>Ce n'est pas de l'économie, c'est de l'idéologie.</strong> »",
+  "« La taxe des millionnaires rapporterait 17 milliards €. Mais on préfère cibler les 90 000 chômeurs les plus vulnérables. <strong>Question de priorités.</strong> »",
+  "« Le système bonus-malus punit les communes d'être pauvres. <strong>Double peine pour les territoires précarisés.</strong> »",
+  "« 60% des invalides le sont à cause des conditions de travail. La réforme sanctionne les victimes, pas les causes. »",
+  "« 1.5 million de syndiqués, 140 000 manifestants, un recours constitutionnel. <strong>La résistance est massive.</strong> »",
+  "« Après 24 mois ? Les CPAS. Et quand les CPAS n'auront plus les moyens ? <strong>La rue.</strong> »"
+];
+
+const timeline_events = [
+  {date: "1 JAN 2026", title: "VAGUE 1 — Les Anciens", desc: "Chômeurs 3e période >20 ans", count: "~28,000 personnes", status: "past"},
+  {date: "1 MARS 2026", title: "VAGUE 2 — Le Gros Œuvre", desc: "Chômeurs 3e période 8-20 ans", count: "~35,000 personnes", status: "active"},
+  {date: "1 AVR 2026", title: "VAGUE 3 — L'Avalanche", desc: "Chômeurs 3e période <8 ans", count: "~27,000 personnes", status: "future"},
+  {date: "1 JUIL 2026", title: "VAGUE 4 — La Fin", desc: "Chômeurs 2e période", count: "En évaluation", status: "future"},
+  {date: "FIN 2026", title: "⚖️ COUR CONSTITUTIONNELLE", desc: "Arrêt Article 23 attendu", count: "ESPOIR JURIDIQUE", status: "future"}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentCard = 0;
+let selectedActor = null;
+let currentPlaidSection = 'vision';
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initTabs();
+  initPlaidoyer();
+  renderActors();
+  renderTimeline();
+  renderQuickArguments();
+  updateFlashcard();
+});
+
+// ============================================================
+// TABS
+// ============================================================
+function initTabs() {
+  document.querySelectorAll('.nav-tab').forEach(btn => {
+    btn.addEventListener('click', () => showTab(btn.dataset.tab));
+  });
+}
+
+function showTab(tabId) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+  document.getElementById('tab-' + tabId)?.classList.add('active');
+}
+
+// ============================================================
+// PLAIDOYER
+// ============================================================
+function initPlaidoyer() {
+  document.querySelectorAll('.plaid-nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.plaid-nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      currentPlaidSection = item.dataset.section;
+      renderPlaidSection(currentPlaidSection);
+    });
+  });
+  renderPlaidSection('vision');
+}
+
+function renderPlaidSection(section) {
+  const content = document.getElementById('plaidoyer-content');
+  
+  const sections = {
+    vision: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">🎯 Vision</div></div>
+        <div class="plaid-card-body">
+          <div class="detail-desc">
+            <p><strong>D'ici fin 2027, obtenir par voie judiciaire et/ou politique :</strong></p>
+            <ol style="margin: 16px 0 16px 20px; color: var(--text-soft);">
+              <li>L'ANNULATION de la limitation des allocations de chômage à 24 mois</li>
+              <li>Une COMPENSATION INTÉGRALE des CPAS par le fédéral (100% du surcoût)</li>
+              <li>L'ABANDON du système bonus-malus pénalisant les communes pauvres</li>
+              <li>La SUPPRESSION des sanctions financières (-2,5%) pour les malades</li>
+              <li>Le MAINTIEN de la gratuité des médicaments d'importance vitale</li>
+            </ol>
+            <p style="color: var(--mint); font-weight: 600;">Objectif ultime : Préserver le modèle social belge fondé sur une logique assurantielle et de solidarité fédérale.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    swot: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">📊 Analyse SWOT</div></div>
+        <div class="plaid-card-body">
+          <div class="swot-grid">
+            <div class="swot-cell swot-strengths">
+              <h4>💪 Forces</h4>
+              <ul class="swot-items">${swot.strengths.map(s => `<li class="swot-item">${s}</li>`).join('')}</ul>
+            </div>
+            <div class="swot-cell swot-weaknesses">
+              <h4>⚠️ Faiblesses</h4>
+              <ul class="swot-items">${swot.weaknesses.map(s => `<li class="swot-item">${s}</li>`).join('')}</ul>
+            </div>
+            <div class="swot-cell swot-opportunities">
+              <h4>🌟 Opportunités</h4>
+              <ul class="swot-items">${swot.opportunities.map(s => `<li class="swot-item">${s}</li>`).join('')}</ul>
+            </div>
+            <div class="swot-cell swot-threats">
+              <h4>🔥 Menaces</h4>
+              <ul class="swot-items">${swot.threats.map(s => `<li class="swot-item">${s}</li>`).join('')}</ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+    pourquoi: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">❓ Les 5 Pourquoi — Analyse Racine</div></div>
+        <div class="plaid-card-body">
+          <p style="margin-bottom: 20px; color: var(--muted);">Problème : 90 000 personnes vont perdre leurs allocations et basculer vers l'aide sociale.</p>
+          <div class="pourquoi-chain">
+            ${pourquoi.map((p, i) => `
+              <div class="pourquoi-item">
+                <div class="pourquoi-number">${i < 4 ? i + 1 : '🎯'}</div>
+                <div class="pourquoi-text">${p}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `,
+    message: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">📢 Message — Accroche</div></div>
+        <div class="plaid-card-body">
+          <div class="message-box">
+            <div class="message-accroche">
+              « En Belgique, 90 000 personnes vont perdre leur allocation de chômage d'ici 2027.<br><br>
+              Pas parce qu'elles ont trouvé un emploi.<br>
+              Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.<br><br>
+              Après ? Les CPAS.<br>
+              Et quand les CPAS n'auront plus les moyens ?<br>
+              <strong style="color: var(--coral);">La rue.</strong> »
+            </div>
+            <div class="message-hashtags">#StopArizona #Article23 #DigniteHumaine</div>
+          </div>
+          <div style="margin-top: 20px;">
+            <p style="color: var(--muted); margin-bottom: 10px;">Variante statistique :</p>
+            <p style="color: var(--text);">« 30 122 : c'est le nombre de familles belges qui basculeront vers l'aide sociale dès 2026. Pas des chiffres. Des parents. Des enfants. Des vies. »</p>
+          </div>
+        </div>
+      </div>
+    `,
+    arguments: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">⚔️ Argumentaire</div></div>
+        <div class="plaid-card-body">
+          <div class="arguments-grid">
+            ${arguments_data.map(arg => `
+              <div class="argument-card" onclick="copyArgumentText(this)">
+                <div class="argument-tag">${arg.tag}</div>
+                <div class="argument-title">${arg.title}</div>
+                <div class="argument-content">${arg.content}</div>
+                <div class="argument-source">📎 ${arg.source}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `,
+    smart: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">🎯 Objectifs SMART</div></div>
+        <div class="plaid-card-body">
+          <div class="smart-grid">
+            ${smart_goals.map(g => `
+              <div class="smart-item">
+                <div class="smart-header">
+                  <div class="smart-letter">${g.letter}</div>
+                  <div class="smart-title">${g.title}</div>
+                </div>
+                <div class="smart-desc">${g.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `,
+    checklist: `
+      <div class="plaid-card">
+        <div class="plaid-card-header"><div class="plaid-card-title">✅ Checklist d'Action</div></div>
+        <div class="plaid-card-body">
+          <div id="checklist-container">
+            ${checklist.map((item, i) => `
+              <div class="checklist-item" onclick="toggleCheck(${i})">
+                <div class="check-box ${item.done ? 'checked' : ''}" id="check-${i}">${item.done ? '✓' : ''}</div>
+                <div class="check-text ${item.done ? 'done' : ''}" id="text-${i}">${item.task}</div>
+                <div class="check-phase phase-${item.phase}">${item.phase.toUpperCase()}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `
+  };
+  
+  content.innerHTML = sections[section] || '<p>Section non trouvée</p>';
+}
+
+function toggleCheck(i) {
+  checklist[i].done = !checklist[i].done;
+  const box = document.getElementById('check-' + i);
+  const text = document.getElementById('text-' + i);
+  box.classList.toggle('checked');
+  box.textContent = checklist[i].done ? '✓' : '';
+  text.classList.toggle('done');
+}
+
+// ============================================================
+// ACTORS
+// ============================================================
+function renderActors(filter = '') {
+  const list = document.getElementById('actorsList');
+  const filtered = filter ? actors.filter(a => a.position === filter) : actors;
+  
+  list.innerHTML = filtered.map(actor => `
+    <div class="entity-item ${selectedActor?.name === actor.name ? 'selected' : ''}" onclick='selectActor(${JSON.stringify(actor).replace(/'/g, "\\'")})'>
+      <div class="entity-name">${actor.name}</div>
+      <div class="entity-role">${actor.role}</div>
+      <div class="entity-meta">
+        <span class="badge badge-${actor.position}">${actor.position === 'ally' ? '✅ ALLIÉ' : actor.position === 'opponent' ? '❌ ADVERSAIRE' : actor.position === 'target' ? '🎯 CIBLE' : '⚖️ NEUTRE'}</span>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('filterRole').onchange = (e) => renderActors(e.target.value);
+}
+
+function selectActor(actor) {
+  selectedActor = actor;
+  renderActors(document.getElementById('filterRole').value);
+  
+  document.getElementById('actorDetail').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-title">${actor.name}</div>
+      <div class="detail-subtitle">${actor.role}</div>
+      <div class="detail-badges">
+        <span class="badge badge-${actor.position}">${actor.position === 'ally' ? '✅ ALLIÉ' : actor.position === 'opponent' ? '❌ ADVERSAIRE' : actor.position === 'target' ? '🎯 CIBLE' : '⚖️ NEUTRE'}</span>
+        <span class="badge" style="background: var(--gold-dim); color: var(--gold);">Pouvoir: ${actor.power}/5</span>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="detail-section-title">Description</div>
+        <div class="detail-desc">${actor.desc}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+function renderTimeline() {
+  const container = document.getElementById('full-timeline');
+  container.innerHTML = timeline_events.map(event => `
+    <div class="timeline-item">
+      <div class="timeline-dot ${event.status}"></div>
+      <div class="timeline-date">${event.date}</div>
+      <div class="timeline-card">
+        <div class="timeline-title">${event.title}</div>
+        <div class="timeline-desc">${event.desc}</div>
+        <div class="timeline-count">${event.count}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// QUICK ARGUMENTS
+// ============================================================
+function renderQuickArguments() {
+  const container = document.getElementById('quick-arguments');
+  container.innerHTML = arguments_data.slice(0, 4).map(arg => `
+    <div class="argument-card" onclick="copyArgumentText(this)">
+      <div class="argument-tag">${arg.tag}</div>
+      <div class="argument-title">${arg.title}</div>
+      <div class="argument-content">${arg.content}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+function updateFlashcard() {
+  document.getElementById('fc-question').textContent = flashcards[currentCard].q;
+  document.getElementById('fc-answer').textContent = flashcards[currentCard].a;
+  document.getElementById('fc-progress').textContent = `${currentCard + 1} / ${flashcards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function flipCard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+}
+
+function nextCard() {
+  currentCard = (currentCard + 1) % flashcards.length;
+  updateFlashcard();
+}
+
+function prevCard() {
+  currentCard = (currentCard - 1 + flashcards.length) % flashcards.length;
+  updateFlashcard();
+}
+
+// ============================================================
+// TOOLS
+// ============================================================
+function generateCounterDiscourse() {
+  const output = document.getElementById('generator-output');
+  output.innerHTML = counter_discourses[Math.floor(Math.random() * counter_discourses.length)];
+  output.style.animation = 'none';
+  output.offsetHeight;
+  output.style.animation = 'fadeIn 0.3s ease-out';
+}
+
+function copyArgumentText(el) {
+  const text = el.querySelector('.argument-title').textContent + ': ' + el.querySelector('.argument-content').textContent;
+  navigator.clipboard.writeText(text);
+  showToast('Argument copié !', 'success');
+}
+
+function copyArgument() {
+  const arg = arguments_data[Math.floor(Math.random() * arguments_data.length)];
+  navigator.clipboard.writeText(arg.title + ': ' + arg.content);
+  showToast('Argument copié !', 'success');
+}
+
+function generateTweet() {
+  const tweets = [
+    "90 000 personnes vont perdre leurs allocations d'ici 2027. Pas parce qu'elles ont trouvé un emploi — parce qu'un gouvernement a décidé que 24 mois suffisent. #StopArizona #Article23",
+    "La taxe des millionnaires rapporterait 17 milliards €. Mais on préfère exclure 90 000 chômeurs. Question de priorités. #StopArizona",
+    "30 122 familles basculeront vers l'aide sociale. Pas des chiffres. Des parents. Des enfants. Des vies. #StopArizona #DigniteHumaine"
+  ];
+  navigator.clipboard.writeText(tweets[Math.floor(Math.random() * tweets.length)]);
+  showToast('Tweet copié !', 'success');
+}
+
+function exportData() {
+  const data = {flashcards, actors, arguments: arguments_data, swot, pourquoi, smart_goals, checklist};
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'arizona-saloon-data.json';
+  a.click();
+  showToast('Données exportées !', 'success');
+}
+
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span>${type === 'success' ? '✓' : '!'}</span> ${message}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('tab-flashcards').classList.contains('active')) {
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft') prevCard();
+    if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  }
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('globalSearch').focus();
+  }
+});
+
+// ============================================================
+// TERMINAL AUTO-UPDATE
+// ============================================================
+setInterval(() => {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+  const messages = [
+    {text: 'ping solidarity_network... OK', cls: ''},
+    {text: 'update resistance_status...', cls: ''},
+    {text: 'monitoring vague_2_countdown...', cls: 'warning'},
+    {text: 'syncing with front_commun...', cls: ''},
+    {text: '« La solidarité n\'est pas négociable. »', cls: ''}
+  ];
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  const line = document.createElement('div');
+  line.className = 'terminal-line ' + msg.cls;
+  line.textContent = msg.text;
+  terminal.appendChild(line);
+  terminal.scrollTop = terminal.scrollHeight;
+  if (terminal.children.length > 12) terminal.removeChild(terminal.children[0]);
+}, 6000);
+</script>
+</body>
+</html>
