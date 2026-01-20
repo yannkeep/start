@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ RÉSISTANCE — Poste de Travail Plaidoyer Citoyen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+/* ═══════════════════════════════════════════════════════════════════
+   RÉSISTANCE COGNITIVE — UNIFIED WORKSTATION
+   "Le code est une arme. L'information est une munition."
+═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mint: #7fffd4; --mint-dim: rgba(127,255,212,0.12); --mint-glow: rgba(127,255,212,0.4);
+    --lilac: #c8a2ff; --lilac-dim: rgba(200,162,255,0.12); --lilac-glow: rgba(200,162,255,0.4);
+    --bg-0: #050508; --bg-1: #0a0a0f; --bg-2: #0f0f18; --bg-3: #151520; --bg-4: #1a1a28;
+    --text-1: #f0f0ff; --text-2: #a0a0c0; --text-3: #606080;
+    --danger: #ff4757; --success: #2ed573; --warning: #ffa502; --info: #00d9ff;
+    --border: rgba(127,255,212,0.15); --radius: 8px; --transition: 0.2s ease;
+    --font-display: 'Orbitron', monospace; --font-body: 'Space Grotesk', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+}
+[data-theme="console"] {
+    --mint: #00ff00; --lilac: #00ff00; --mint-dim: rgba(0,255,0,0.15); --mint-glow: rgba(0,255,0,0.5);
+    --bg-0: #000; --bg-1: #001000; --bg-2: #001800; --bg-3: #002200; --bg-4: #002a00;
+    --text-1: #00ff00; --text-2: #00cc00; --text-3: #008800; --border: rgba(0,255,0,0.2);
+    --font-body: 'VT323', monospace; --font-display: 'VT323', monospace;
+}
+[data-theme="neon"] {
+    --mint: #00ffff; --lilac: #ff00ff; --mint-dim: rgba(0,255,255,0.15); --lilac-dim: rgba(255,0,255,0.15);
+    --mint-glow: rgba(0,255,255,0.5); --lilac-glow: rgba(255,0,255,0.5);
+    --bg-0: #080010; --bg-1: #100020; --bg-2: #180030; --bg-3: #200040; --bg-4: #280050;
+    --text-1: #fff; --text-2: #ff88ff; --text-3: #8844aa; --border: rgba(255,0,255,0.2);
+}
+[data-theme="80s"] {
+    --mint: #ff6ec7; --lilac: #00ced1; --mint-dim: rgba(255,110,199,0.15); --lilac-dim: rgba(0,206,209,0.15);
+    --mint-glow: rgba(255,110,199,0.5); --lilac-glow: rgba(0,206,209,0.5);
+    --bg-0: #1a0a2e; --bg-1: #251540; --bg-2: #302050; --bg-3: #3a2a60; --bg-4: #453570;
+    --text-1: #fff8dc; --text-2: #ffb6c1; --text-3: #9370db; --border: rgba(255,110,199,0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 15px; } }
+body { font-family: var(--font-body); background: var(--bg-0); color: var(--text-1); min-height: 100vh; line-height: 1.5; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+::selection { background: var(--mint); color: var(--bg-0); }
+
+/* === LAYOUT === */
+.app { display: grid; grid-template-rows: auto auto 1fr; height: 100vh; overflow: hidden; }
+
+/* === HEADER === */
+.header { background: var(--bg-1); border-bottom: 1px solid var(--border); padding: 0.5rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.logo { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+.logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--lilac)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 0 15px var(--mint-glow); }
+.logo-text { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 1px; background: linear-gradient(90deg, var(--mint), var(--lilac)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo-sub { font-size: 0.65rem; color: var(--text-3); font-family: var(--font-mono); }
+
+.xp-bar-container { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0.8rem; background: var(--bg-2); border-radius: 20px; border: 1px solid var(--border); }
+.xp-rank { font-family: var(--font-mono); font-size: 0.7rem; color: var(--mint); background: var(--mint-dim); padding: 2px 8px; border-radius: 10px; }
+.xp-bar { width: 100px; height: 6px; background: var(--bg-0); border-radius: 3px; overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.5s; }
+.xp-text { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-3); }
+
+.header-actions { display: flex; gap: 0.5rem; align-items: center; }
+.theme-switcher { display: flex; gap: 2px; }
+.theme-btn { width: 28px; height: 28px; border: none; border-radius: 4px; background: var(--bg-3); cursor: pointer; font-size: 0.85rem; transition: var(--transition); }
+.theme-btn:hover { background: var(--bg-4); }
+.theme-btn.active { background: var(--mint-dim); box-shadow: 0 0 8px var(--mint-glow); }
+
+/* === NAV TABS === */
+.nav { background: var(--bg-1); border-bottom: 1px solid var(--border); padding: 0 0.5rem; display: flex; gap: 0.25rem; overflow-x: auto; }
+.nav::-webkit-scrollbar { height: 0; }
+.nav-tab { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.6rem 1rem; background: transparent; border: none; color: var(--text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; display: flex; align-items: center; gap: 0.4rem; }
+.nav-tab:hover { color: var(--text-1); background: var(--bg-2); }
+.nav-tab.active { color: var(--mint); border-bottom-color: var(--mint); }
+.nav-badge { font-size: 0.6rem; padding: 1px 5px; background: var(--danger); color: white; border-radius: 8px; }
+
+/* === MAIN === */
+.main { display: grid; grid-template-columns: 260px 1fr 300px; overflow: hidden; }
+@media (max-width: 1100px) { .main { grid-template-columns: 220px 1fr; } .sidebar-right { display: none; } }
+@media (max-width: 700px) { .main { grid-template-columns: 1fr; } .sidebar-left { display: none; } }
+
+/* === SIDEBAR LEFT === */
+.sidebar-left { background: var(--bg-1); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-section { border-bottom: 1px solid var(--border); }
+.sidebar-header { padding: 0.75rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); display: flex; align-items: center; justify-content: space-between; }
+.sidebar-content { max-height: 200px; overflow-y: auto; }
+.sidebar-content.expanded { max-height: none; flex: 1; }
+
+/* File List */
+.file-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; transition: var(--transition); font-size: 0.8rem; border-left: 2px solid transparent; }
+.file-item:hover { background: var(--bg-3); }
+.file-item.active { background: var(--mint-dim); border-left-color: var(--mint); color: var(--mint); }
+.file-icon { font-size: 0.9rem; opacity: 0.7; }
+.file-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-badge { font-size: 0.6rem; padding: 1px 4px; background: var(--bg-4); border-radius: 4px; color: var(--text-3); }
+.file-actions { display: none; gap: 2px; }
+.file-item:hover .file-actions { display: flex; }
+.file-action { background: none; border: none; cursor: pointer; font-size: 0.7rem; opacity: 0.5; padding: 2px; }
+.file-action:hover { opacity: 1; }
+
+/* Tool List */
+.tool-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; transition: var(--transition); font-size: 0.8rem; border-left: 2px solid transparent; }
+.tool-item:hover { background: var(--bg-3); }
+.tool-item.active { background: var(--mint-dim); border-left-color: var(--mint); }
+.tool-item.completed { opacity: 0.6; }
+.tool-item.completed::after { content: '✓'; color: var(--success); margin-left: auto; }
+.tool-phase { font-size: 0.6rem; padding: 1px 4px; border-radius: 4px; }
+.tool-phase.voir { background: rgba(46,213,115,0.2); color: #2ed573; }
+.tool-phase.juger { background: rgba(255,165,2,0.2); color: #ffa502; }
+.tool-phase.agir { background: rgba(255,71,87,0.2); color: #ff4757; }
+
+/* Drop Zone Mini */
+.drop-mini { padding: 0.75rem; text-align: center; border: 1px dashed var(--border); margin: 0.5rem; border-radius: var(--radius); cursor: pointer; transition: var(--transition); font-size: 0.75rem; color: var(--text-3); }
+.drop-mini:hover, .drop-mini.dragover { border-color: var(--mint); background: var(--mint-dim); color: var(--mint); }
+
+/* === CONTENT === */
+.content { display: flex; flex-direction: column; overflow: hidden; background: var(--bg-2); }
+.content-header { padding: 0.6rem 1rem; background: var(--bg-1); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; min-height: 50px; }
+.content-title { font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+.content-toolbar { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.content-body { flex: 1; overflow: auto; padding: 1rem; }
+
+/* === SIDEBAR RIGHT === */
+.sidebar-right { background: var(--bg-1); border-left: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+.panel { border-bottom: 1px solid var(--border); }
+.panel-header { padding: 0.75rem 1rem; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; background: var(--bg-2); }
+.panel-body { padding: 0.75rem 1rem; }
+
+/* Stats */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.stat-card { background: var(--bg-3); border-radius: var(--radius); padding: 0.6rem; text-align: center; }
+.stat-value { font-family: var(--font-display); font-size: 1.3rem; color: var(--mint); }
+.stat-label { font-size: 0.65rem; color: var(--text-3); text-transform: uppercase; }
+
+/* Achievements Mini */
+.achievement-mini { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem; background: var(--bg-3); border-radius: var(--radius); margin-bottom: 0.4rem; font-size: 0.75rem; }
+.achievement-mini.locked { opacity: 0.4; }
+.achievement-mini .icon { font-size: 1rem; }
+
+/* Quote */
+.quote-box { background: var(--bg-3); border-left: 2px solid var(--lilac); padding: 0.75rem; margin-bottom: 0.75rem; }
+.quote-text { font-size: 0.8rem; font-style: italic; color: var(--text-2); margin-bottom: 0.25rem; }
+.quote-author { font-size: 0.7rem; color: var(--lilac); }
+
+/* Timeline */
+.timeline-item { position: relative; padding-left: 1.25rem; padding-bottom: 0.75rem; border-left: 1px solid var(--border); margin-left: 0.5rem; }
+.timeline-item::before { content: ''; position: absolute; left: -4px; top: 2px; width: 7px; height: 7px; background: var(--mint); border-radius: 50%; }
+.timeline-item.urgent::before { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+.timeline-date { font-size: 0.65rem; color: var(--text-3); }
+.timeline-title { font-size: 0.8rem; font-weight: 500; }
+
+/* === BUTTONS === */
+.btn { font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; padding: 0.4rem 0.75rem; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.3rem; background: var(--bg-3); color: var(--text-1); }
+.btn:hover { background: var(--bg-4); border-color: var(--mint); }
+.btn-primary { background: var(--mint); color: var(--bg-0); border-color: var(--mint); }
+.btn-primary:hover { box-shadow: 0 0 12px var(--mint-glow); }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-sm { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
+.btn-icon { padding: 0.3rem; min-width: 28px; justify-content: center; }
+
+/* === INPUTS === */
+.input, .textarea, .select { font-family: var(--font-body); font-size: 0.85rem; padding: 0.5rem 0.75rem; background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-1); width: 100%; transition: var(--transition); }
+.input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint-dim); }
+.textarea { min-height: 80px; resize: vertical; font-family: var(--font-mono); line-height: 1.5; }
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.3rem; }
+.form-hint { font-size: 0.7rem; color: var(--text-3); margin-bottom: 0.3rem; }
+
+/* === TABS === */
+.tabs { display: flex; gap: 2px; background: var(--bg-1); padding: 3px; border-radius: var(--radius); }
+.tab { font-size: 0.75rem; padding: 0.4rem 0.75rem; border: none; background: transparent; color: var(--text-2); cursor: pointer; border-radius: 5px; transition: var(--transition); }
+.tab:hover { color: var(--text-1); background: var(--bg-3); }
+.tab.active { background: var(--mint-dim); color: var(--mint); }
+
+/* === TABLE === */
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+th, td { padding: 0.5rem 0.6rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--bg-3); font-weight: 600; position: sticky; top: 0; z-index: 1; font-size: 0.75rem; }
+tr:hover { background: var(--bg-3); }
+.cell-input { background: transparent; border: none; color: inherit; width: 100%; font: inherit; padding: 0; }
+.cell-input:focus { outline: none; background: var(--bg-1); padding: 0.2rem; margin: -0.2rem; border-radius: 3px; }
+.row-actions { display: flex; gap: 2px; opacity: 0; }
+tr:hover .row-actions { opacity: 1; }
+
+/* === FLASHCARD === */
+.fc-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 350px; padding: 1rem; }
+.fc-card { width: 100%; max-width: 550px; min-height: 200px; background: var(--bg-3); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: transform 0.5s; transform-style: preserve-3d; position: relative; }
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face { display: flex; align-items: center; justify-content: center; text-align: center; backface-visibility: hidden; min-height: 150px; }
+.fc-back { position: absolute; inset: 0; padding: 1.5rem; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--mint-dim), var(--lilac-dim)); border-radius: 16px; }
+.fc-question { font-size: 1.1rem; line-height: 1.6; }
+.fc-answer { font-size: 1rem; color: var(--mint); }
+.fc-controls { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+.fc-counter { margin-top: 0.75rem; color: var(--text-3); font-size: 0.8rem; }
+.fc-progress { width: 100%; max-width: 550px; height: 5px; background: var(--bg-1); border-radius: 3px; margin-top: 0.5rem; overflow: hidden; }
+.fc-progress-bar { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.3s; }
+
+/* === JSON TREE === */
+.json-tree { font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; }
+.json-key { color: var(--lilac); }
+.json-string { color: var(--success); }
+.json-number { color: var(--warning); }
+.json-bool { color: var(--info); }
+.json-null { color: var(--text-3); }
+.json-bracket { color: var(--text-3); }
+.json-toggle { cursor: pointer; user-select: none; }
+.json-toggle:hover { background: var(--bg-3); border-radius: 2px; }
+.json-collapsed .json-children { display: none; }
+.json-collapsed .json-toggle::before { content: '▶ '; font-size: 0.6rem; }
+.json-expanded .json-toggle::before { content: '▼ '; font-size: 0.6rem; }
+.json-children { margin-left: 1.25rem; border-left: 1px solid var(--border); padding-left: 0.5rem; }
+.json-edit { background: transparent; border: none; color: inherit; font: inherit; padding: 0; }
+.json-edit:focus { outline: none; background: var(--bg-1); padding: 1px 3px; margin: -1px -3px; border-radius: 2px; }
+
+/* === MARKDOWN === */
+.md-view { line-height: 1.7; }
+.md-view h1, .md-view h2, .md-view h3 { color: var(--mint); margin: 1.25rem 0 0.5rem; }
+.md-view h1 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+.md-view h2 { font-size: 1.2rem; }
+.md-view h3 { font-size: 1rem; }
+.md-view p { margin-bottom: 0.75rem; }
+.md-view ul, .md-view ol { margin: 0.5rem 0 0.75rem 1.25rem; }
+.md-view code { background: var(--bg-1); padding: 0.1rem 0.3rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.85em; }
+.md-view pre { background: var(--bg-1); padding: 0.75rem; border-radius: var(--radius); overflow-x: auto; margin: 0.75rem 0; }
+.md-view blockquote { border-left: 2px solid var(--lilac); padding-left: 0.75rem; margin: 0.75rem 0; color: var(--text-2); font-style: italic; }
+.md-view strong { color: var(--text-1); }
+
+/* === EDITOR SPLIT === */
+.editor-split { display: grid; grid-template-columns: 1fr 1fr; height: 100%; overflow: hidden; }
+.editor-split.source-only { grid-template-columns: 1fr; }
+.editor-split.preview-only { grid-template-columns: 1fr; }
+.editor-pane { overflow: auto; padding: 1rem; }
+.editor-source { background: var(--bg-1); border-right: 1px solid var(--border); }
+.editor-source textarea { height: 100%; min-height: 250px; background: transparent; border: none; resize: none; }
+.editor-source textarea:focus { box-shadow: none; }
+
+/* === TOOL FORM === */
+.tool-section { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
+.tool-section-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+
+/* === EMPTY STATE === */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: var(--text-3); padding: 2rem; }
+.empty-icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.3; }
+.empty-text { margin-bottom: 1rem; }
+.drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 2rem; cursor: pointer; transition: var(--transition); max-width: 400px; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--mint); background: var(--mint-dim); }
+
+/* === TOAST === */
+.toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.4rem; }
+.toast { background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.6rem 1rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; animation: slideIn 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
+
+/* === MODAL === */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 9000; display: none; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 500px; max-height: 85vh; overflow: hidden; }
+.modal-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-weight: 600; font-size: 0.95rem; }
+.modal-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-2); }
+.modal-body { padding: 1rem; max-height: 55vh; overflow-y: auto; }
+.modal-footer { padding: 0.75rem 1rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.5rem; background: var(--bg-3); }
+
+/* === HIDDEN === */
+.hidden { display: none !important; }
+@media (max-width: 700px) { .xp-bar-container { display: none; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo" onclick="showDashboard()">
+            <div class="logo-icon">⚔️</div>
+            <div>
+                <div class="logo-text">RÉSISTANCE</div>
+                <div class="logo-sub">Plaidoyer Citoyen v3</div>
+            </div>
+        </div>
+        <div class="xp-bar-container">
+            <span class="xp-rank" id="userRank">NÉOPHYTE</span>
+            <div class="xp-bar"><div class="xp-bar-fill" id="xpBar" style="width:15%"></div></div>
+            <span class="xp-text"><span id="xpCurrent">150</span>/<span id="xpMax">500</span></span>
+        </div>
+        <div class="header-actions">
+            <div class="theme-switcher">
+                <button class="theme-btn active" data-theme="dark" title="Sombre">🌑</button>
+                <button class="theme-btn" data-theme="console" title="Console">💻</button>
+                <button class="theme-btn" data-theme="neon" title="Néon">🌈</button>
+                <button class="theme-btn" data-theme="80s" title="80's">📼</button>
+            </div>
+            <button class="btn" onclick="exportProject()">💾 Exporter tout</button>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <button class="nav-tab active" data-view="dashboard">🏠 QG</button>
+        <button class="nav-tab" data-view="files">📁 Fichiers</button>
+        <button class="nav-tab" data-view="tools">🛠️ Outils <span class="nav-badge">15</span></button>
+        <button class="nav-tab" data-view="flashcards">📚 Flashcards</button>
+        <button class="nav-tab" data-view="achievements">🏆 Trophées</button>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- SIDEBAR LEFT -->
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    📁 Fichiers
+                    <button class="btn btn-sm" onclick="document.getElementById('fileInput').click()">+</button>
+                </div>
+                <div class="sidebar-content" id="fileListSidebar"></div>
+                <div class="drop-mini" id="dropMini">📥 Importer</div>
+                <input type="file" id="fileInput" hidden multiple accept=".json,.csv,.txt,.md">
+            </div>
+            <div class="sidebar-section" style="flex:1; display:flex; flex-direction:column;">
+                <div class="sidebar-header">🛠️ Outils Plaidoyer</div>
+                <div class="sidebar-content expanded" id="toolListSidebar"></div>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+            <div class="content-header">
+                <div class="content-title" id="contentTitle"><span>🏠</span> Quartier Général</div>
+                <div class="content-toolbar" id="contentToolbar"></div>
+            </div>
+            <div class="content-body" id="contentBody"></div>
+        </main>
+
+        <!-- SIDEBAR RIGHT -->
+        <aside class="sidebar-right">
+            <div class="panel">
+                <div class="panel-header">📊 Progression</div>
+                <div class="panel-body">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statFiles">0</div>
+                            <div class="stat-label">Fichiers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTools">0/15</div>
+                            <div class="stat-label">Outils</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">💡 Citation</div>
+                <div class="panel-body">
+                    <div class="quote-box">
+                        <div class="quote-text" id="quoteText">"Dans un empire de mensonges, dire la vérité est un acte révolutionnaire."</div>
+                        <div class="quote-author" id="quoteAuthor">— George Orwell</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">📅 Échéances</div>
+                <div class="panel-body">
+                    <div class="timeline-item urgent">
+                        <div class="timeline-date">1er Mars 2026</div>
+                        <div class="timeline-title">Vague 2 exclusions</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Automne 2026</div>
+                        <div class="timeline-title">Budget 2027</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Fin 2026</div>
+                        <div class="timeline-title">Arrêt Cour Const.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">🏆 Derniers trophées</div>
+                <div class="panel-body" id="recentAchievements"></div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modalTitle">Modal</span>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter">
+            <button class="btn" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// UNIFIED STATE — Tout le projet en un seul objet
+// ═══════════════════════════════════════════════════════════════════
+
+const APP = {
+    // User progression
+    xp: 150,
+    achievements: [],
+    theme: 'dark',
+    
+    // Files (flashcards, datasets, documents)
+    files: [],
+    activeFileId: null,
+    
+    // Plaidoyer project data (linked to tools)
+    project: {
+        name: "Mon Plaidoyer",
+        created: new Date().toISOString(),
+        modified: new Date().toISOString(),
+        // Tool data storage
+        domino: { vision: '', obstacles: '', ressources: '' },
+        profil: { motivations: '', competences: '', temps: '', limites: '' },
+        fleur: { identites: '', privileges: '', oppressions: '' },
+        acteurs: [],
+        swot: { forces: '', faiblesses: '', opportunites: '', menaces: '' },
+        pestel: { politique: '', economique: '', social: '', technologique: '', environnemental: '', legal: '' },
+        arbre: { probleme: '', causes: '', consequences: '' },
+        cinqPourquoi: ['', '', '', '', ''],
+        theorie: { interneIndiv: '', interneColl: '', externeIndiv: '', externeColl: '' },
+        strategies: { avec: '', sans: '', contre: '' },
+        smart: [],
+        cibles: { principale: '', secondaires: '', allies: '', opposants: '' },
+        message: { accroche: '', probleme: '', importance: '', cible: '', action: '' },
+        checklist: [],
+        evaluation: { indicateurs: '', methodes: '', calendrier: '' }
+    },
+    
+    // Completed tools tracking
+    completedTools: [],
+    
+    // UI state
+    currentView: 'dashboard',
+    currentTool: null
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// TOOLS DEFINITION
+// ═══════════════════════════════════════════════════════════════════
+
+const TOOLS = [
+    { id: 1, key: 'domino', name: 'Domino du Changement', phase: 'voir', xp: 100, icon: '🎯', fields: ['vision', 'obstacles', 'ressources'] },
+    { id: 2, key: 'profil', name: "Profil d'Engagement", phase: 'voir', xp: 80, icon: '👤', fields: ['motivations', 'competences', 'temps', 'limites'] },
+    { id: 3, key: 'fleur', name: 'Fleur de Pouvoir', phase: 'voir', xp: 120, icon: '🌸', fields: ['identites', 'privileges', 'oppressions'] },
+    { id: 4, key: 'acteurs', name: 'Cartographie des Acteurs', phase: 'voir', xp: 150, icon: '🗺️', type: 'list' },
+    { id: 5, key: 'swot', name: 'Analyse SWOT', phase: 'juger', xp: 100, icon: '📊', fields: ['forces', 'faiblesses', 'opportunites', 'menaces'] },
+    { id: 6, key: 'pestel', name: 'Analyse PESTEL', phase: 'juger', xp: 120, icon: '🌍', fields: ['politique', 'economique', 'social', 'technologique', 'environnemental', 'legal'] },
+    { id: 7, key: 'arbre', name: 'Arbre à Problèmes', phase: 'juger', xp: 130, icon: '🌳', fields: ['probleme', 'causes', 'consequences'] },
+    { id: 8, key: 'cinqPourquoi', name: 'Les 5 Pourquoi', phase: 'juger', xp: 80, icon: '❓', type: 'array5' },
+    { id: 9, key: 'theorie', name: 'Théorie du Changement', phase: 'juger', xp: 150, icon: '🔄', fields: ['interneIndiv', 'interneColl', 'externeIndiv', 'externeColl'] },
+    { id: 10, key: 'strategies', name: 'Avec / Sans / Contre', phase: 'agir', xp: 100, icon: '⚔️', fields: ['avec', 'sans', 'contre'] },
+    { id: 11, key: 'smart', name: 'Objectifs SMART', phase: 'agir', xp: 120, icon: '🎯', type: 'list' },
+    { id: 12, key: 'cibles', name: 'Cibles & Alliances', phase: 'agir', xp: 130, icon: '🎪', fields: ['principale', 'secondaires', 'allies', 'opposants'] },
+    { id: 13, key: 'message', name: 'Construction du Message', phase: 'agir', xp: 140, icon: '📣', fields: ['accroche', 'probleme', 'importance', 'cible', 'action'] },
+    { id: 14, key: 'checklist', name: 'Check-list Rencontre', phase: 'agir', xp: 80, icon: '📋', type: 'checklist' },
+    { id: 15, key: 'evaluation', name: 'Suivi & Évaluation', phase: 'agir', xp: 100, icon: '📈', fields: ['indicateurs', 'methodes', 'calendrier'] }
+];
+
+const ACHIEVEMENTS = [
+    { id: 'first_file', name: 'Premier Import', desc: 'Importer ton premier fichier', icon: '📥', xp: 30 },
+    { id: 'first_tool', name: 'Premier Pas', desc: 'Compléter ton premier outil', icon: '🚀', xp: 50 },
+    { id: 'flashcard_master', name: 'Maître des Cartes', desc: 'Réviser 50 flashcards', icon: '🃏', xp: 80 },
+    { id: 'voir_complete', name: "L'Analyste", desc: 'Compléter tous les outils VOIR', icon: '👁️', xp: 200 },
+    { id: 'juger_complete', name: 'Le Stratège', desc: 'Compléter tous les outils JUGER', icon: '⚖️', xp: 250 },
+    { id: 'agir_complete', name: "L'Activiste", desc: 'Compléter tous les outils AGIR', icon: '✊', xp: 300 },
+    { id: 'all_tools', name: 'Arsenal Complet', desc: 'Compléter les 15 outils', icon: '🛡️', xp: 500 },
+    { id: 'exporter', name: 'Contrebandier', desc: 'Exporter ton projet', icon: '📦', xp: 50 },
+    { id: 'night_owl', name: 'Hibou de Nuit', desc: 'Travailler après minuit', icon: '🦉', xp: 30 },
+    { id: 'data_hoarder', name: 'Data Hoarder', desc: 'Avoir 10+ fichiers', icon: '💾', xp: 60 }
+];
+
+const RANKS = [
+    { name: 'NÉOPHYTE', min: 0 },
+    { name: 'ÉVEILLÉ', min: 300 },
+    { name: 'RÉSISTANT', min: 700 },
+    { name: 'INSURGÉ', min: 1200 },
+    { name: 'SUBVERSIF', min: 2000 },
+    { name: 'RÉVOLUTIONNAIRE', min: 3500 },
+    { name: 'ARCHITECTE', min: 5000 }
+];
+
+const QUOTES = [
+    { text: "Dans un empire de mensonges, dire la vérité est un acte révolutionnaire.", author: "George Orwell" },
+    { text: "L'oppresseur ne libère jamais volontairement.", author: "Martin Luther King Jr." },
+    { text: "Le pouvoir concède jamais rien sans demande.", author: "Frederick Douglass" },
+    { text: "La désobéissance est le vrai fondement de la liberté.", author: "Henry David Thoreau" },
+    { text: "Il est plus facile de tromper les gens que de les convaincre qu'ils ont été trompés.", author: "Mark Twain" },
+    { text: "La propagande est aux démocraties ce que la matraque est aux dictatures.", author: "Noam Chomsky" }
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    setupEvents();
+    render();
+    checkTimeAchievements();
+    rotateQuote();
+});
+
+function setupEvents() {
+    // Theme
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.onclick = () => setTheme(btn.dataset.theme);
+    });
+    
+    // Nav tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.onclick = () => switchView(tab.dataset.view);
+    });
+    
+    // File input
+    document.getElementById('fileInput').onchange = e => { handleFiles(e.target.files); e.target.value = ''; };
+    
+    // Drop zones
+    const setupDrop = el => {
+        if (!el) return;
+        el.ondragover = e => { e.preventDefault(); el.classList.add('dragover'); };
+        el.ondragleave = () => el.classList.remove('dragover');
+        el.ondrop = e => { e.preventDefault(); el.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
+        el.onclick = () => document.getElementById('fileInput').click();
+    };
+    setupDrop(document.getElementById('dropMini'));
+    
+    // Keyboard shortcuts
+    document.onkeydown = e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveState(); toast('💾 Sauvegardé'); }
+    };
+    
+    // Auto-save
+    setInterval(saveState, 30000);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════════════
+
+function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    APP.theme = theme;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVIGATION & RENDERING
+// ═══════════════════════════════════════════════════════════════════
+
+function switchView(view) {
+    APP.currentView = view;
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+    render();
+}
+
+function render() {
+    renderSidebars();
+    renderContent();
+    updateStats();
+    updateXPBar();
+}
+
+function renderSidebars() {
+    // Files sidebar
+    const fileList = document.getElementById('fileListSidebar');
+    fileList.innerHTML = APP.files.map(f => `
+        <div class="file-item ${APP.activeFileId === f.id ? 'active' : ''}" onclick="openFile(${f.id})">
+            <span class="file-icon">${getFileIcon(f.type)}</span>
+            <span class="file-name">${f.name}</span>
+            <span class="file-badge">${f.type}</span>
+            <div class="file-actions">
+                <button class="file-action" onclick="event.stopPropagation();deleteFile(${f.id})">🗑️</button>
+            </div>
+        </div>
+    `).join('') || '<div style="padding:0.5rem;color:var(--text-3);font-size:0.75rem;">Aucun fichier</div>';
+    
+    // Tools sidebar
+    const toolList = document.getElementById('toolListSidebar');
+    toolList.innerHTML = TOOLS.map(t => `
+        <div class="tool-item ${APP.currentTool === t.id ? 'active' : ''} ${APP.completedTools.includes(t.id) ? 'completed' : ''}" onclick="openTool(${t.id})">
+            <span>${t.icon}</span>
+            <span class="file-name">${t.name}</span>
+            <span class="tool-phase ${t.phase}">${t.phase}</span>
+        </div>
+    `).join('');
+    
+    // Recent achievements
+    const recent = document.getElementById('recentAchievements');
+    const unlocked = ACHIEVEMENTS.filter(a => APP.achievements.includes(a.id)).slice(-3);
+    recent.innerHTML = unlocked.length ? unlocked.map(a => `
+        <div class="achievement-mini"><span class="icon">${a.icon}</span> ${a.name}</div>
+    `).join('') : '<div class="achievement-mini locked"><span class="icon">🔒</span> Aucun trophée</div>';
+}
+
+function renderContent() {
+    const body = document.getElementById('contentBody');
+    const title = document.getElementById('contentTitle');
+    const toolbar = document.getElementById('contentToolbar');
+    
+    switch (APP.currentView) {
+        case 'dashboard': renderDashboard(body, title, toolbar); break;
+        case 'files': renderFilesView(body, title, toolbar); break;
+        case 'tools': renderToolsView(body, title, toolbar); break;
+        case 'flashcards': renderFlashcardsView(body, title, toolbar); break;
+        case 'achievements': renderAchievementsView(body, title, toolbar); break;
+        default: renderDashboard(body, title, toolbar);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+
+function renderDashboard(body, title, toolbar) {
+    title.innerHTML = '<span>🏠</span> Quartier Général';
+    toolbar.innerHTML = '';
+    
+    const completedCount = APP.completedTools.length;
+    const progress = Math.round((completedCount / 15) * 100);
+    
+    body.innerHTML = `
+        <div style="max-width:900px;">
+            <div class="tool-section" style="background:linear-gradient(135deg,var(--bg-3),var(--bg-4));border-color:var(--mint);">
+                <h2 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:0.5rem;background:linear-gradient(90deg,var(--mint),var(--lilac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                    HACK THE SYSTEM
+                </h2>
+                <p style="color:var(--text-2);font-size:0.85rem;line-height:1.6;">
+                    Bienvenue dans la <strong style="color:var(--mint);">zone de résistance cognitive</strong>. 
+                    Importe tes données, complète les 15 outils méthodologiques, et forge ton plaidoyer citoyen.
+                </p>
+                <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📥 Importer fichiers</button>
+                    <button class="btn" onclick="loadDemoData()">🎯 Charger démo Arizona</button>
+                    <button class="btn" onclick="switchView('tools')">🛠️ Voir les outils</button>
+                </div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem;">
+                <div class="tool-section">
+                    <div class="tool-section-title">📊 Progression globale</div>
+                    <div style="font-size:2rem;font-family:var(--font-display);color:var(--mint);">${progress}%</div>
+                    <div style="height:8px;background:var(--bg-1);border-radius:4px;margin-top:0.5rem;">
+                        <div style="height:100%;width:${progress}%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:4px;"></div>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-3);margin-top:0.5rem;">${completedCount}/15 outils complétés</div>
+                </div>
+                
+                <div class="tool-section">
+                    <div class="tool-section-title">📁 Fichiers</div>
+                    <div style="font-size:2rem;font-family:var(--font-display);color:var(--lilac);">${APP.files.length}</div>
+                    <div style="font-size:0.75rem;color:var(--text-3);margin-top:0.5rem;">
+                        ${APP.files.filter(f=>f.type==='csv').length} CSV • 
+                        ${APP.files.filter(f=>f.type==='json').length} JSON • 
+                        ${APP.files.filter(f=>f.type==='md'||f.type==='txt').length} Docs
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <div class="tool-section-title">🏆 Trophées</div>
+                    <div style="font-size:2rem;font-family:var(--font-display);color:var(--warning);">${APP.achievements.length}/${ACHIEVEMENTS.length}</div>
+                    <div style="font-size:0.75rem;color:var(--text-3);margin-top:0.5rem;">
+                        ${APP.xp} XP total
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tool-section" style="margin-top:1.5rem;">
+                <div class="tool-section-title">⚡ Actions rapides</div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button class="btn" onclick="newFlashcardSet()">📚 Nouveau jeu de cartes</button>
+                    <button class="btn" onclick="newDocument()">📝 Nouveau document</button>
+                    <button class="btn" onclick="openTool(1)">🎯 Commencer le Domino</button>
+                    <button class="btn" onclick="exportProject()">💾 Exporter le projet</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showDashboard() {
+    switchView('dashboard');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILES VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function renderFilesView(body, title, toolbar) {
+    title.innerHTML = '<span>📁</span> Gestionnaire de Fichiers';
+    toolbar.innerHTML = `
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">📥 Importer</button>
+        <button class="btn" onclick="newFlashcardSet()">📚 Flashcards</button>
+        <button class="btn" onclick="newDocument()">📝 Document</button>
+    `;
+    
+    if (APP.files.length === 0) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📂</div>
+                <div class="empty-text">
+                    <h3>Aucun fichier</h3>
+                    <p>Importe des fichiers CSV, JSON, Markdown ou Texte</p>
+                </div>
+                <div class="drop-zone" id="dropMain">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">📥</div>
+                    <div>Glisser-déposer ici</div>
+                    <div style="font-size:0.75rem;color:var(--text-3);">CSV • JSON • MD • TXT</div>
+                </div>
+            </div>
+        `;
+        const dz = document.getElementById('dropMain');
+        dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
+        dz.ondragleave = () => dz.classList.remove('dragover');
+        dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); handleFiles(e.dataTransfer.files); };
+        dz.onclick = () => document.getElementById('fileInput').click();
+        return;
+    }
+    
+    body.innerHTML = `
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:40px;"></th>
+                        <th>Nom</th>
+                        <th style="width:80px;">Type</th>
+                        <th style="width:100px;">Items</th>
+                        <th style="width:150px;">Modifié</th>
+                        <th style="width:120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${APP.files.map(f => `
+                        <tr onclick="openFile(${f.id})" style="cursor:pointer;">
+                            <td>${getFileIcon(f.type)}</td>
+                            <td><strong>${esc(f.name)}</strong></td>
+                            <td><span class="file-badge">${f.type.toUpperCase()}</span></td>
+                            <td>${f.data?.length || '—'}</td>
+                            <td style="font-size:0.75rem;color:var(--text-3);">${new Date(f.modified).toLocaleString('fr-FR')}</td>
+                            <td>
+                                <div class="row-actions" style="opacity:1;">
+                                    <button class="btn btn-sm" onclick="event.stopPropagation();openFile(${f.id})">📝</button>
+                                    <button class="btn btn-sm" onclick="event.stopPropagation();exportFile(${f.id})">💾</button>
+                                    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteFile(${f.id})">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOOLS VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function renderToolsView(body, title, toolbar) {
+    title.innerHTML = '<span>🛠️</span> Outils Méthodologiques';
+    toolbar.innerHTML = `
+        <div class="tabs">
+            <button class="tab active" onclick="filterToolsPhase(null, this)">Tous</button>
+            <button class="tab" onclick="filterToolsPhase('voir', this)">👁️ VOIR</button>
+            <button class="tab" onclick="filterToolsPhase('juger', this)">⚖️ JUGER</button>
+            <button class="tab" onclick="filterToolsPhase('agir', this)">✊ AGIR</button>
+        </div>
+    `;
+    
+    body.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;" id="toolsGrid">
+            ${TOOLS.map(t => `
+                <div class="tool-section" data-phase="${t.phase}" style="cursor:pointer;transition:var(--transition);${APP.completedTools.includes(t.id)?'border-color:var(--success);':''}">
+                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:0.5rem;">
+                        <span style="font-size:1.5rem;">${t.icon}</span>
+                        <span class="tool-phase ${t.phase}">${t.phase.toUpperCase()}</span>
+                    </div>
+                    <div style="font-weight:600;margin-bottom:0.25rem;">${t.name}</div>
+                    <div style="font-size:0.75rem;color:var(--text-3);margin-bottom:0.75rem;">+${t.xp} XP</div>
+                    <button class="btn btn-sm ${APP.completedTools.includes(t.id)?'':'btn-primary'}" onclick="openTool(${t.id})">
+                        ${APP.completedTools.includes(t.id)?'✓ Complété':'Commencer'}
+                    </button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function filterToolsPhase(phase, btn) {
+    document.querySelectorAll('#contentToolbar .tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#toolsGrid .tool-section').forEach(el => {
+        el.style.display = (!phase || el.dataset.phase === phase) ? '' : 'none';
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FLASHCARDS VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function renderFlashcardsView(body, title, toolbar) {
+    title.innerHTML = '<span>📚</span> Flashcards';
+    
+    const csvFiles = APP.files.filter(f => f.type === 'csv' && f.data?.length && f.data[0].question);
+    
+    toolbar.innerHTML = `
+        <select class="select" style="width:auto;" id="fcFileSelect" onchange="renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar'))">
+            <option value="">-- Choisir un jeu --</option>
+            ${csvFiles.map(f => `<option value="${f.id}">${f.name} (${f.data.length})</option>`).join('')}
+        </select>
+        <button class="btn" onclick="newFlashcardSet()">➕ Nouveau jeu</button>
+    `;
+    
+    if (csvFiles.length === 0) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📚</div>
+                <div class="empty-text">
+                    <h3>Aucun jeu de flashcards</h3>
+                    <p>Importe un fichier CSV avec colonnes "question" et "answer"</p>
+                </div>
+                <button class="btn btn-primary" onclick="loadDemoData()">🎯 Charger flashcards démo</button>
+            </div>
+        `;
+        return;
+    }
+    
+    const selectedId = document.getElementById('fcFileSelect')?.value || csvFiles[0].id;
+    const file = APP.files.find(f => f.id == selectedId) || csvFiles[0];
+    
+    if (document.getElementById('fcFileSelect')) {
+        document.getElementById('fcFileSelect').value = file.id;
+    }
+    
+    renderFlashcardStudy(file, body);
+}
+
+function renderFlashcardStudy(file, container) {
+    const cards = file.data.filter(d => d.question && d.answer);
+    if (!cards.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📚</div><div>Aucune carte valide</div></div>'; return; }
+    
+    window._fcState = window._fcState || { index: 0, flipped: false, shuffled: [...cards] };
+    const st = window._fcState;
+    if (st.shuffled.length !== cards.length) { st.shuffled = [...cards]; st.index = 0; }
+    
+    const card = st.shuffled[st.index];
+    container.innerHTML = `
+        <div class="fc-container">
+            <div style="margin-bottom:1rem;">
+                <button class="btn btn-sm" onclick="fcEdit(${file.id})">📝 Éditer</button>
+                <button class="btn btn-sm" onclick="fcShuffle()">🔀 Mélanger</button>
+            </div>
+            <div class="fc-card ${st.flipped?'flipped':''}" onclick="fcFlip()">
+                <div class="fc-face"><div class="fc-question">${esc(card.question)}</div></div>
+                <div class="fc-back"><div class="fc-answer">${esc(card.answer)}</div></div>
+            </div>
+            <div class="fc-controls">
+                <button class="btn" onclick="fcPrev()" ${st.index===0?'disabled':''}>⬅️</button>
+                <button class="btn btn-primary" onclick="fcFlip()">🔄 Retourner</button>
+                <button class="btn" onclick="fcNext()" ${st.index>=st.shuffled.length-1?'disabled':''}>➡️</button>
+            </div>
+            <div class="fc-counter">${st.index+1} / ${st.shuffled.length}</div>
+            <div class="fc-progress"><div class="fc-progress-bar" style="width:${((st.index+1)/st.shuffled.length)*100}%"></div></div>
+        </div>
+    `;
+    
+    // Track reviews for achievement
+    window._fcReviews = (window._fcReviews || 0) + 1;
+    if (window._fcReviews >= 50) unlock('flashcard_master');
+}
+
+window.fcFlip = () => { window._fcState.flipped = !window._fcState.flipped; renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); };
+window.fcNext = () => { if (window._fcState.index < window._fcState.shuffled.length-1) { window._fcState.index++; window._fcState.flipped = false; renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); }};
+window.fcPrev = () => { if (window._fcState.index > 0) { window._fcState.index--; window._fcState.flipped = false; renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); }};
+window.fcShuffle = () => { const arr = window._fcState.shuffled; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} window._fcState.index=0; window._fcState.flipped=false; renderFlashcardsView(document.getElementById('contentBody'),document.getElementById('contentTitle'),document.getElementById('contentToolbar')); toast('🔀 Mélangé!'); };
+window.fcEdit = (id) => { openFile(id); };
+
+// ═══════════════════════════════════════════════════════════════════
+// ACHIEVEMENTS VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function renderAchievementsView(body, title, toolbar) {
+    title.innerHTML = '<span>🏆</span> Trophées de Guerre';
+    toolbar.innerHTML = `<span style="color:var(--text-3);font-size:0.8rem;">${APP.achievements.length}/${ACHIEVEMENTS.length} débloqués</span>`;
+    
+    body.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;">
+            ${ACHIEVEMENTS.map(a => {
+                const unlocked = APP.achievements.includes(a.id);
+                return `
+                    <div class="tool-section" style="${unlocked?'border-color:var(--success);':'opacity:0.5;'}">
+                        <div style="font-size:2rem;margin-bottom:0.5rem;">${a.icon}</div>
+                        <div style="font-weight:600;">${a.name}</div>
+                        <div style="font-size:0.75rem;color:var(--text-3);margin:0.25rem 0;">${a.desc}</div>
+                        <div style="font-size:0.8rem;color:var(--mint);">+${a.xp} XP</div>
+                        ${unlocked?'<div style="color:var(--success);font-size:0.75rem;margin-top:0.5rem;">✓ Débloqué</div>':''}
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOOL EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function openTool(id) {
+    const tool = TOOLS.find(t => t.id === id);
+    if (!tool) return;
+    
+    APP.currentTool = id;
+    APP.currentView = 'tool';
+    renderSidebars();
+    
+    const body = document.getElementById('contentBody');
+    const title = document.getElementById('contentTitle');
+    const toolbar = document.getElementById('contentToolbar');
+    
+    title.innerHTML = `<span>${tool.icon}</span> ${tool.name}`;
+    toolbar.innerHTML = `
+        <span class="tool-phase ${tool.phase}" style="padding:0.3rem 0.6rem;">${tool.phase.toUpperCase()}</span>
+        <button class="btn" onclick="saveTool(${id},false)">💾 Sauvegarder</button>
+        <button class="btn btn-primary" onclick="saveTool(${id},true)">✓ Marquer complété</button>
+    `;
+    
+    // Render tool form based on type
+    let html = `<div style="max-width:800px;">`;
+    
+    if (tool.fields) {
+        tool.fields.forEach(field => {
+            const value = APP.project[tool.key]?.[field] || '';
+            const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
+            html += `
+                <div class="form-group">
+                    <label class="form-label">${label}</label>
+                    <textarea class="textarea" id="tool_${field}" rows="4" placeholder="Développe ici...">${esc(value)}</textarea>
+                </div>
+            `;
+        });
+    } else if (tool.type === 'array5') {
+        // 5 Pourquoi
+        const vals = APP.project.cinqPourquoi || ['','','','',''];
+        for (let i = 0; i < 5; i++) {
+            html += `
+                <div class="form-group">
+                    <label class="form-label">Pourquoi ${i+1} ?</label>
+                    <textarea class="textarea" id="tool_pq${i}" rows="2">${esc(vals[i]||'')}</textarea>
+                </div>
+            `;
+        }
+    } else if (tool.type === 'list' || tool.type === 'checklist') {
+        html += `<p style="color:var(--text-3);margin-bottom:1rem;">Fonctionnalité liste en développement. Utilise le champ texte ci-dessous.</p>`;
+        const value = typeof APP.project[tool.key] === 'string' ? APP.project[tool.key] : JSON.stringify(APP.project[tool.key] || [], null, 2);
+        html += `
+            <div class="form-group">
+                <label class="form-label">Contenu (JSON ou texte)</label>
+                <textarea class="textarea" id="tool_list" rows="10">${esc(value)}</textarea>
+            </div>
+        `;
+    }
+    
+    // Link to related files
+    const relatedFiles = APP.files.filter(f => f.name.toLowerCase().includes(tool.key) || f.name.toLowerCase().includes(tool.name.toLowerCase().split(' ')[0]));
+    if (relatedFiles.length) {
+        html += `
+            <div class="tool-section" style="margin-top:1.5rem;">
+                <div class="tool-section-title">📁 Fichiers liés</div>
+                ${relatedFiles.map(f => `<button class="btn btn-sm" onclick="openFile(${f.id})">${f.name}</button>`).join(' ')}
+            </div>
+        `;
+    }
+    
+    html += `</div>`;
+    body.innerHTML = html;
+}
+
+function saveTool(id, complete = false) {
+    const tool = TOOLS.find(t => t.id === id);
+    if (!tool) return;
+    
+    // Save field values
+    if (tool.fields) {
+        if (!APP.project[tool.key]) APP.project[tool.key] = {};
+        tool.fields.forEach(field => {
+            const el = document.getElementById(`tool_${field}`);
+            if (el) APP.project[tool.key][field] = el.value;
+        });
+    } else if (tool.type === 'array5') {
+        APP.project.cinqPourquoi = [];
+        for (let i = 0; i < 5; i++) {
+            const el = document.getElementById(`tool_pq${i}`);
+            APP.project.cinqPourquoi.push(el?.value || '');
+        }
+    } else if (tool.type === 'list' || tool.type === 'checklist') {
+        const el = document.getElementById('tool_list');
+        if (el) {
+            try { APP.project[tool.key] = JSON.parse(el.value); }
+            catch { APP.project[tool.key] = el.value; }
+        }
+    }
+    
+    APP.project.modified = new Date().toISOString();
+    
+    if (complete && !APP.completedTools.includes(id)) {
+        APP.completedTools.push(id);
+        addXP(tool.xp);
+        toast(`✓ ${tool.name} complété! +${tool.xp} XP`, 'success');
+        
+        // Check phase achievements
+        if (!APP.completedTools.some(x => x === 0)) unlock('first_tool');
+        if (TOOLS.filter(t => t.phase === 'voir').every(t => APP.completedTools.includes(t.id))) unlock('voir_complete');
+        if (TOOLS.filter(t => t.phase === 'juger').every(t => APP.completedTools.includes(t.id))) unlock('juger_complete');
+        if (TOOLS.filter(t => t.phase === 'agir').every(t => APP.completedTools.includes(t.id))) unlock('agir_complete');
+        if (APP.completedTools.length === 15) unlock('all_tools');
+    } else {
+        toast('💾 Sauvegardé');
+    }
+    
+    saveState();
+    render();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════════════
+
+function handleFiles(files) {
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const obj = {
+                id: Date.now() + Math.random(),
+                name: file.name,
+                type: ext,
+                content: e.target.result,
+                data: null,
+                modified: new Date().toISOString()
+            };
+            
+            try {
+                if (ext === 'json') obj.data = JSON.parse(e.target.result);
+                else if (ext === 'csv') obj.data = parseCSV(e.target.result);
+            } catch (err) { console.error(err); }
+            
+            APP.files.push(obj);
+            render();
+            saveState();
+            toast(`📥 ${file.name} importé`, 'success');
+            
+            // Achievements
+            if (APP.files.length === 1) unlock('first_file');
+            if (APP.files.length >= 10) unlock('data_hoarder');
+            
+            // Auto-import project data if it's a plaidoyer JSON
+            if (ext === 'json' && obj.data?.project) {
+                importProjectData(obj.data);
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+function parseCSV(content) {
+    const lines = content.split('\n').filter(l => l.trim());
+    if (!lines.length) return [];
+    
+    const delim = lines[0].includes('\t') ? '\t' : ',';
+    
+    const parseRow = row => {
+        const result = []; let current = ''; let inQuotes = false;
+        for (let i = 0; i < row.length; i++) {
+            const c = row[i];
+            if (c === '"') { if (inQuotes && row[i+1] === '"') { current += '"'; i++; } else inQuotes = !inQuotes; }
+            else if (c === delim && !inQuotes) { result.push(current.trim()); current = ''; }
+            else current += c;
+        }
+        result.push(current.trim());
+        return result;
+    };
+    
+    const firstRow = parseRow(lines[0]);
+    const hasHeader = firstRow.every(c => isNaN(c) && c.length < 100);
+    
+    if (hasHeader && firstRow.length === 2) {
+        return lines.slice(1).map((l, i) => { const c = parseRow(l); return { id: i+1, question: c[0]||'', answer: c[1]||'' }; });
+    } else if (hasHeader) {
+        return lines.slice(1).map((l, i) => { const c = parseRow(l); const o = { id: i+1 }; firstRow.forEach((h, j) => o[h] = c[j]||''); return o; });
+    }
+    return lines.map((l, i) => { const c = parseRow(l); return { id: i+1, question: c[0]||'', answer: c[1]||'' }; });
+}
+
+function importProjectData(data) {
+    // Merge imported project data into APP.project
+    ['domino', 'profil', 'fleur', 'swot', 'pestel', 'arbre', 'theorie', 'strategies', 'cibles', 'message', 'evaluation'].forEach(key => {
+        if (data[key]) APP.project[key] = { ...APP.project[key], ...data[key] };
+    });
+    if (data.project?.name) APP.project.name = data.project.name;
+    if (data.smart) APP.project.smart = data.smart;
+    if (data.acteurs) APP.project.acteurs = data.acteurs;
+    if (data.checklist || data.checkList) APP.project.checklist = data.checklist || data.checkList;
+    
+    toast('📋 Données projet importées!', 'success');
+    saveState();
+}
+
+function getFileIcon(type) {
+    return { csv: '📊', json: '📋', md: '📝', txt: '📄', html: '🌐' }[type] || '📁';
+}
+
+function openFile(id) {
+    const file = APP.files.find(f => f.id === id);
+    if (!file) return;
+    
+    APP.activeFileId = id;
+    APP.currentView = 'file';
+    renderSidebars();
+    
+    const body = document.getElementById('contentBody');
+    const title = document.getElementById('contentTitle');
+    const toolbar = document.getElementById('contentToolbar');
+    
+    title.innerHTML = `<span>${getFileIcon(file.type)}</span> ${file.name}`;
+    
+    if (file.type === 'csv' && file.data) renderCSVEditor(file, body, toolbar);
+    else if (file.type === 'json') renderJSONEditor(file, body, toolbar);
+    else if (file.type === 'md' || file.type === 'txt') renderTextEditor(file, body, toolbar);
+    else renderRawViewer(file, body, toolbar);
+}
+
+function deleteFile(id) {
+    if (!confirm('Supprimer ce fichier?')) return;
+    APP.files = APP.files.filter(f => f.id !== id);
+    if (APP.activeFileId === id) APP.activeFileId = null;
+    render();
+    saveState();
+    toast('🗑️ Supprimé');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CSV EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function renderCSVEditor(file, body, toolbar) {
+    const isFC = file.data?.[0]?.question !== undefined;
+    
+    toolbar.innerHTML = `
+        <div class="tabs">
+            <button class="tab active" data-v="table">📊 Table</button>
+            ${isFC ? '<button class="tab" data-v="study">🎓 Étude</button>' : ''}
+            <button class="tab" data-v="raw">📝 Brut</button>
+        </div>
+        <button class="btn btn-sm" onclick="addCSVRow(${file.id})">➕</button>
+        <button class="btn btn-sm" onclick="exportFile(${file.id})">💾</button>
+    `;
+    
+    toolbar.querySelectorAll('.tab').forEach(tab => {
+        tab.onclick = () => {
+            toolbar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            if (tab.dataset.v === 'study') { window._fcState = { index: 0, flipped: false, shuffled: [...file.data] }; renderFlashcardStudy(file, body); }
+            else if (tab.dataset.v === 'raw') renderCSVRaw(file, body);
+            else renderCSVTable(file, body);
+        };
+    });
+    
+    renderCSVTable(file, body);
+}
+
+function renderCSVTable(file, body) {
+    const headers = Object.keys(file.data[0] || {}).filter(k => k !== 'id');
+    body.innerHTML = `
+        <div class="table-wrap" style="max-height:calc(100vh - 200px);">
+            <table>
+                <thead><tr><th>#</th>${headers.map(h => `<th>${h}</th>`).join('')}<th>Actions</th></tr></thead>
+                <tbody id="csvBody"></tbody>
+            </table>
+        </div>
+        <div style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-3);">${file.data.length} lignes</div>
+    `;
+    const tbody = document.getElementById('csvBody');
+    file.data.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="color:var(--text-3);">${i+1}</td>
+            ${headers.map(h => `<td><input class="cell-input" value="${esc(row[h]||'')}" onchange="updateCSVCell(${file.id},${i},'${h}',this.value)"></td>`).join('')}
+            <td><div class="row-actions"><button class="btn btn-sm btn-danger" onclick="deleteCSVRow(${file.id},${i})">🗑️</button></div></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderCSVRaw(file, body) {
+    const headers = Object.keys(file.data[0] || {}).filter(k => k !== 'id');
+    const csv = headers.join(',') + '\n' + file.data.map(r => headers.map(h => `"${(r[h]||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+    body.innerHTML = `<textarea class="textarea" style="height:calc(100vh - 220px);font-family:var(--font-mono);" onchange="updateCSVRaw(${file.id},this.value)">${esc(csv)}</textarea>`;
+}
+
+window.updateCSVCell = (fid, row, key, val) => { const f = APP.files.find(x => x.id === fid); if (f?.data[row]) { f.data[row][key] = val; f.modified = new Date().toISOString(); saveState(); }};
+window.addCSVRow = (fid) => { const f = APP.files.find(x => x.id === fid); if (f?.data) { const t = f.data[0] ? Object.keys(f.data[0]).reduce((a,k) => { a[k] = k==='id'?f.data.length+1:''; return a; }, {}) : {id:1,question:'',answer:''}; f.data.push(t); f.modified = new Date().toISOString(); openFile(fid); saveState(); toast('➕ Ligne ajoutée'); }};
+window.deleteCSVRow = (fid, i) => { const f = APP.files.find(x => x.id === fid); if (f?.data) { f.data.splice(i,1); f.modified = new Date().toISOString(); openFile(fid); saveState(); }};
+
+// ═══════════════════════════════════════════════════════════════════
+// JSON EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function renderJSONEditor(file, body, toolbar) {
+    toolbar.innerHTML = `
+        <div class="tabs">
+            <button class="tab active" data-v="tree">🌳 Arbre</button>
+            <button class="tab" data-v="raw">📝 Brut</button>
+        </div>
+        <button class="btn btn-sm" onclick="exportFile(${file.id})">💾</button>
+        <button class="btn btn-sm" onclick="importToProject(${file.id})">📋 → Projet</button>
+    `;
+    
+    toolbar.querySelectorAll('.tab').forEach(tab => {
+        tab.onclick = () => {
+            toolbar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            if (tab.dataset.v === 'raw') renderJSONRaw(file, body);
+            else renderJSONTree(file, body);
+        };
+    });
+    
+    renderJSONTree(file, body);
+}
+
+function renderJSONTree(file, body) {
+    const data = file.data || JSON.parse(file.content);
+    body.innerHTML = '<div class="json-tree" id="jsonTree"></div>';
+    document.getElementById('jsonTree').appendChild(buildJSONNode(data, '', file.id));
+}
+
+function buildJSONNode(val, key, fid, path = '') {
+    const el = document.createElement('div');
+    const p = path ? `${path}.${key}` : key;
+    
+    if (val === null) el.innerHTML = key ? `<span class="json-key">"${key}"</span>: <span class="json-null">null</span>` : '<span class="json-null">null</span>';
+    else if (typeof val === 'boolean') el.innerHTML = (key ? `<span class="json-key">"${key}"</span>: ` : '') + `<span class="json-bool">${val}</span>`;
+    else if (typeof val === 'number') el.innerHTML = (key ? `<span class="json-key">"${key}"</span>: ` : '') + `<input class="json-edit json-number" type="number" value="${val}" onchange="updateJSON(${fid},'${p}',this.value,'num')">`;
+    else if (typeof val === 'string') el.innerHTML = (key ? `<span class="json-key">"${key}"</span>: ` : '') + `<input class="json-edit json-string" value="${esc(val)}" onchange="updateJSON(${fid},'${p}',this.value,'str')" style="min-width:200px;">`;
+    else if (Array.isArray(val)) {
+        el.className = 'json-expanded';
+        el.innerHTML = (key ? `<span class="json-key">"${key}"</span>: ` : '') + `<span class="json-toggle"></span><span class="json-bracket">[</span><span style="color:var(--text-3);font-size:0.7rem;"> ${val.length}</span>`;
+        const ch = document.createElement('div'); ch.className = 'json-children';
+        val.forEach((v, i) => ch.appendChild(buildJSONNode(v, i, fid, p)));
+        el.appendChild(ch);
+        el.innerHTML += '<span class="json-bracket">]</span>';
+        el.querySelector('.json-toggle').onclick = () => el.classList.toggle('json-collapsed');
+    } else if (typeof val === 'object') {
+        el.className = 'json-expanded';
+        const keys = Object.keys(val);
+        el.innerHTML = (key ? `<span class="json-key">"${key}"</span>: ` : '') + `<span class="json-toggle"></span><span class="json-bracket">{</span><span style="color:var(--text-3);font-size:0.7rem;"> ${keys.length}</span>`;
+        const ch = document.createElement('div'); ch.className = 'json-children';
+        keys.forEach(k => ch.appendChild(buildJSONNode(val[k], k, fid, p)));
+        el.appendChild(ch);
+        el.innerHTML += '<span class="json-bracket">}</span>';
+        el.querySelector('.json-toggle').onclick = () => el.classList.toggle('json-collapsed');
+    }
+    return el;
+}
+
+function renderJSONRaw(file, body) {
+    const json = file.data ? JSON.stringify(file.data, null, 2) : file.content;
+    body.innerHTML = `<textarea class="textarea" style="height:calc(100vh - 220px);font-family:var(--font-mono);" onchange="updateJSONRaw(${file.id},this.value)">${esc(json)}</textarea>`;
+}
+
+window.updateJSON = (fid, path, val, type) => {
+    const f = APP.files.find(x => x.id === fid); if (!f) return;
+    const data = f.data || JSON.parse(f.content);
+    const keys = path.split('.').filter(k => k);
+    let obj = data;
+    for (let i = 0; i < keys.length - 1; i++) obj = obj[keys[i]];
+    obj[keys[keys.length - 1]] = type === 'num' ? Number(val) : val;
+    f.data = data; f.content = JSON.stringify(data, null, 2); f.modified = new Date().toISOString();
+    saveState();
+};
+
+window.updateJSONRaw = (fid, val) => {
+    const f = APP.files.find(x => x.id === fid); if (!f) return;
+    try { f.data = JSON.parse(val); f.content = val; f.modified = new Date().toISOString(); saveState(); toast('✓ JSON valide', 'success'); }
+    catch { toast('❌ JSON invalide', 'error'); }
+};
+
+window.importToProject = (fid) => {
+    const f = APP.files.find(x => x.id === fid);
+    if (f?.data) { importProjectData(f.data); }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// TEXT EDITOR
+// ═══════════════════════════════════════════════════════════════════
+
+function renderTextEditor(file, body, toolbar) {
+    const isMD = file.type === 'md';
+    toolbar.innerHTML = `
+        <div class="tabs">
+            <button class="tab" data-v="source">📝 Source</button>
+            ${isMD ? '<button class="tab active" data-v="split">⚡ Split</button>' : ''}
+            ${isMD ? '<button class="tab" data-v="preview">👁️ Aperçu</button>' : ''}
+        </div>
+        <button class="btn btn-sm" onclick="exportFile(${file.id})">💾</button>
+    `;
+    
+    const renderV = v => {
+        if (v === 'preview') body.innerHTML = `<div class="md-view">${renderMD(file.content)}</div>`;
+        else if (v === 'split') body.innerHTML = `<div class="editor-split"><div class="editor-pane editor-source"><textarea class="textarea" style="height:100%;border:none;" oninput="updateText(${file.id},this.value)">${esc(file.content)}</textarea></div><div class="editor-pane md-view" id="mdPreview">${renderMD(file.content)}</div></div>`;
+        else body.innerHTML = `<textarea class="textarea" style="height:calc(100vh - 220px);" oninput="updateText(${file.id},this.value)">${esc(file.content)}</textarea>`;
+    };
+    
+    toolbar.querySelectorAll('.tab').forEach(tab => {
+        tab.onclick = () => { toolbar.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); renderV(tab.dataset.v); };
+    });
+    
+    renderV(isMD ? 'split' : 'source');
+}
+
+window.updateText = (fid, val) => {
+    const f = APP.files.find(x => x.id === fid); if (!f) return;
+    f.content = val; f.modified = new Date().toISOString();
+    const preview = document.getElementById('mdPreview');
+    if (preview) preview.innerHTML = renderMD(val);
+    saveState();
+};
+
+function renderMD(md) {
+    return md
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/^\- (.*$)/gim, '<li>$1</li>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hbulop])/gm, '<p>')
+        .replace(/(?<![>\n])$/gm, '</p>');
+}
+
+function renderRawViewer(file, body, toolbar) {
+    toolbar.innerHTML = `<button class="btn btn-sm" onclick="exportFile(${file.id})">💾</button>`;
+    body.innerHTML = `<pre style="padding:1rem;background:var(--bg-1);border-radius:var(--radius);overflow:auto;font-size:0.8rem;">${esc(file.content)}</pre>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════
+
+function exportFile(id) {
+    const f = APP.files.find(x => x.id === id); if (!f) return;
+    
+    openModal('Exporter: ' + f.name, `
+        <div class="form-group">
+            <label class="form-label">Format</label>
+            <select class="select" id="expFmt">
+                <option value="orig">${f.type.toUpperCase()} (original)</option>
+                <option value="json">JSON</option>
+                <option value="csv">CSV</option>
+                <option value="md">Markdown</option>
+                <option value="txt">Texte</option>
+            </select>
+        </div>
+    `, () => {
+        const fmt = document.getElementById('expFmt').value;
+        let content, name, type;
+        const base = f.name.replace(/\.[^.]+$/, '');
+        
+        if (fmt === 'json') { content = JSON.stringify(f.data || f.content, null, 2); name = base + '.json'; type = 'application/json'; }
+        else if (fmt === 'csv' && f.data) { const h = Object.keys(f.data[0]||{}).filter(k=>k!=='id'); content = h.join(',') + '\n' + f.data.map(r => h.map(k => `"${(r[k]||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n'); name = base + '.csv'; type = 'text/csv'; }
+        else if (fmt === 'md' && f.data?.[0]?.question) { content = '# Flashcards\n\n' + f.data.map((d,i) => `## ${i+1}. ${d.question}\n\n**Réponse:** ${d.answer}\n`).join('\n---\n\n'); name = base + '.md'; type = 'text/markdown'; }
+        else if (fmt === 'txt') { content = typeof f.data === 'object' ? JSON.stringify(f.data, null, 2) : f.content; name = base + '.txt'; type = 'text/plain'; }
+        else { content = f.content; name = f.name; type = 'application/octet-stream'; }
+        
+        download(content, name, type);
+        closeModal();
+        toast(`💾 ${name} exporté`, 'success');
+    });
+}
+
+function exportProject() {
+    const data = {
+        exportDate: new Date().toISOString(),
+        version: '3.0',
+        xp: APP.xp,
+        achievements: APP.achievements,
+        completedTools: APP.completedTools,
+        project: APP.project,
+        files: APP.files.map(f => ({ name: f.name, type: f.type, content: f.content, data: f.data, modified: f.modified }))
+    };
+    
+    download(JSON.stringify(data, null, 2), `plaidoyer-export-${Date.now()}.json`, 'application/json');
+    unlock('exporter');
+    toast('💾 Projet exporté!', 'success');
+}
+
+function download(content, name, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// NEW FILES
+// ═══════════════════════════════════════════════════════════════════
+
+function newFlashcardSet() {
+    openModal('Nouveau jeu de flashcards', `
+        <div class="form-group">
+            <label class="form-label">Nom du fichier</label>
+            <input class="input" id="newName" value="flashcards.csv">
+        </div>
+    `, () => {
+        const name = document.getElementById('newName').value || 'flashcards.csv';
+        APP.files.push({
+            id: Date.now(),
+            name: name.endsWith('.csv') ? name : name + '.csv',
+            type: 'csv',
+            content: 'question,answer\n',
+            data: [{ id: 1, question: '', answer: '' }],
+            modified: new Date().toISOString()
+        });
+        render(); saveState(); closeModal();
+        toast('📚 Jeu créé', 'success');
+    });
+}
+
+function newDocument() {
+    openModal('Nouveau document', `
+        <div class="form-group">
+            <label class="form-label">Nom</label>
+            <input class="input" id="newName" value="document.md">
+        </div>
+    `, () => {
+        const name = document.getElementById('newName').value || 'document.md';
+        const ext = name.includes('.') ? name.split('.').pop() : 'md';
+        APP.files.push({
+            id: Date.now(),
+            name: name,
+            type: ext,
+            content: '# Nouveau document\n\nContenu...',
+            data: null,
+            modified: new Date().toISOString()
+        });
+        render(); saveState(); closeModal();
+        toast('📝 Document créé', 'success');
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════════════════════════
+
+function loadDemoData() {
+    // Flashcards
+    APP.files.push({
+        id: Date.now(),
+        name: 'flashcards-arizona.csv',
+        type: 'csv',
+        content: '',
+        data: [
+            { id: 1, question: "Comment appelle-t-on la coalition gouvernementale fédérale formée en février 2025 en Belgique ?", answer: "La coalition Arizona." },
+            { id: 2, question: "Qui occupe le poste de Premier ministre au sein du gouvernement Arizona ?", answer: "Bart De Wever (N-VA)." },
+            { id: 3, question: "Quels sont les cinq partis qui composent la coalition Arizona ?", answer: "N-VA, MR, Les Engagés, CD&V et Vooruit." },
+            { id: 4, question: "La réforme phare limite les allocations chômage à combien de mois ?", answer: "24 mois." },
+            { id: 5, question: "Combien de personnes sont menacées par la limitation du chômage ?", answer: "90.000 personnes." },
+            { id: 6, question: "Quel article de la Constitution garantit le droit à une vie digne ?", answer: "L'article 23." },
+            { id: 7, question: "Que signifie RIS ?", answer: "Revenu d'Intégration Sociale." },
+            { id: 8, question: "Que signifie BIM ?", answer: "Bénéficiaire de l'Intervention Majorée." },
+            { id: 9, question: "Quelle est la date de la Vague 2 d'exclusions ?", answer: "1er mars 2026." },
+            { id: 10, question: "Quel parti propose une 'taxe des millionnaires' ?", answer: "Le PTB." }
+        ],
+        modified: new Date().toISOString()
+    });
+    
+    // Project data
+    APP.project.name = "STOP Arizona — Défense du Modèle Social Belge";
+    APP.project.domino = {
+        vision: "D'ici fin 2027, obtenir l'annulation de la limitation des allocations chômage à 24 mois (article 23 Constitution), une compensation intégrale des CPAS, et l'abandon du système bonus-malus.",
+        obstacles: "• Majorité parlementaire Arizona solide (N-VA + MR + Engagés + CD&V + Vooruit)\n• Contrainte budgétaire de 23 milliards € imposée par l'UE\n• Discours dominant sur les 'profiteurs du système'\n• 90.000 personnes concernées → chaos administratif",
+        ressources: "• Front commun syndical FGTB + CSC + CGSLB (1,5 million de membres)\n• Recours constitutionnel introduit le 29 octobre 2025\n• Réseau associatif : BAPN, RWLP, Ligue des Droits Humains\n• Expertise académique : DULBEA (ULB), IWEPS"
+    };
+    APP.project.strategies = {
+        avec: "Dialogue avec le cabinet Vandenbroucke (Vooruit), auditions parlementaires, concertation sociale au CNT",
+        sans: "Observatoire citoyen des exclusions, caisses de solidarité, formations à l'action collective, permanences juridiques gratuites",
+        contre: "Manifestations nationales (objectif 50.000), recours constitutionnel, actions symboliques, campagne de désobéissance civile, naming and shaming"
+    };
+    APP.project.message = {
+        accroche: "90.000 Belges vont perdre leur allocation de chômage d'ici 2027. Pas parce qu'ils ont trouvé un emploi. Mais parce qu'un gouvernement a décidé que 24 mois, c'était assez.",
+        probleme: "Le passage de l'assurance chômage illimitée à 24 mois n'est pas une réforme technique – c'est une rupture du contrat social belge construit depuis 1944.",
+        importance: "2,1 millions de Belges en risque de pauvreté (18,3% AROPE). 30.122 basculements immédiats vers le RIS. 58% d'étudiants en insécurité alimentaire.",
+        cible: "La Cour Constitutionnelle, le cabinet Vandenbroucke, les députés Vooruit et Engagés des circonscriptions wallonnes/bruxelloises",
+        action: "Signez la pétition, rejoignez la manifestation du 1er mars, contactez votre député, témoignez."
+    };
+    
+    render();
+    saveState();
+    toast('🎯 Données Arizona chargées!', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// XP & ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════════
+
+function addXP(amount) {
+    const oldRank = getRank();
+    APP.xp += amount;
+    const newRank = getRank();
+    if (newRank.name !== oldRank.name) toast(`🎉 Nouveau rang: ${newRank.name}!`, 'success');
+    updateXPBar();
+    saveState();
+}
+
+function getRank() {
+    return [...RANKS].reverse().find(r => APP.xp >= r.min) || RANKS[0];
+}
+
+function getNextRank() {
+    const i = RANKS.findIndex(r => r.name === getRank().name);
+    return RANKS[i + 1] || RANKS[RANKS.length - 1];
+}
+
+function updateXPBar() {
+    const rank = getRank();
+    const next = getNextRank();
+    const progress = ((APP.xp - rank.min) / (next.min - rank.min)) * 100;
+    document.getElementById('userRank').textContent = rank.name;
+    document.getElementById('xpCurrent').textContent = APP.xp;
+    document.getElementById('xpMax').textContent = next.min;
+    document.getElementById('xpBar').style.width = Math.min(progress, 100) + '%';
+}
+
+function unlock(id) {
+    if (APP.achievements.includes(id)) return;
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (!a) return;
+    APP.achievements.push(id);
+    addXP(a.xp);
+    toast(`🏆 ${a.name} débloqué!`, 'success');
+    render();
+    saveState();
+}
+
+function checkTimeAchievements() {
+    const h = new Date().getHours();
+    if (h >= 0 && h < 5) unlock('night_owl');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+function updateStats() {
+    document.getElementById('statFiles').textContent = APP.files.length;
+    document.getElementById('statTools').textContent = `${APP.completedTools.length}/15`;
+}
+
+function rotateQuote() {
+    const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    document.getElementById('quoteText').textContent = `"${q.text}"`;
+    document.getElementById('quoteAuthor').textContent = `— ${q.author}`;
+}
+
+function toast(msg, type = 'info') {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+function openModal(title, content, onConfirm) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = content;
+    document.getElementById('modalOverlay').classList.add('active');
+    document.getElementById('modalConfirm').onclick = onConfirm;
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function esc(s) {
+    if (typeof s !== 'string') return s;
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════
+
+function saveState() {
+    try {
+        localStorage.setItem('plaidoyerUnified', JSON.stringify({
+            xp: APP.xp,
+            achievements: APP.achievements,
+            theme: APP.theme,
+            files: APP.files,
+            project: APP.project,
+            completedTools: APP.completedTools
+        }));
+    } catch (e) { console.error('Save error', e); }
+}
+
+function loadState() {
+    try {
+        const s = localStorage.getItem('plaidoyerUnified');
+        if (s) {
+            const d = JSON.parse(s);
+            APP.xp = d.xp || 150;
+            APP.achievements = d.achievements || [];
+            APP.theme = d.theme || 'dark';
+            APP.files = d.files || [];
+            APP.project = { ...APP.project, ...d.project };
+            APP.completedTools = d.completedTools || [];
+            setTheme(APP.theme);
+        }
+    } catch (e) { console.error('Load error', e); }
+}
+</script>
+</body>
+</html>
