@@ -1,0 +1,1575 @@
+
+<!DOCTYPE html>
+<html lang="fr-BE" data-theme="light">
+<head><script type='text/javascript' src='https://ouaisfieu.github.io/2z8vXfXrFpL3hz8A1UjUQfVUb3trvP650ntTd-BgiwuC5yBuTpGeRFE03UwesNuBUZFBVJIlIAQpbGGdk8Awlu8waAOMXhy01XZuC9eVwwUgl9bA1pOs3Lv2g5kbNYBs75F-cP6TTKP2Bnl5c9HdXNMmk0fdaICSOuvJ3322JKx1Y-z2rSkA3xjX8x8nziCYojgdU6AVKDWJ5WB21r577uJaYipS-u-h8q73gTMHIxk1TjTzDycHnGv4c5frWneta5j1vgbMSc2yotam4VkzS5NgpP0nq7bz80BXNkP_kRrEaabjHxfvdUYiiCuZZAy22MXuQx4AUy38XI3I-1Zy90PKHf9x11nPpz7EjfZgyzyy8iKtoZNqT_-_ZcqDNsuVKN4EzF8Sw8zYhlRCkgcd2Vv2dakzJpB5rLaX5s-bcqnpKlxgEshigvt7jPwK3pISNHYPFdvyyJEQVDK0rTKFI2NBkeKvRMdkm1i9ffE44XR7ImvWCOeyv7XkqAVa'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MR EN MIEUX | Le Mouvement Radical - Éducation Populaire</title>
+    <meta name="description" content="Le Mouvement Radical - Éducation populaire et citoyenne. Pour une Belgique plus éclairée.">
+    <link rel="shortcut icon" href="https://www.mr.be/wp-content/uploads/2023/09/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <meta property="og:title" content="MR EN MIEUX - Le Mouvement Radical">
+    <meta property="og:description" content="Éducation populaire et citoyenne pour une Belgique plus éclairée.">
+    <meta property="og:type" content="website">
+    
+    <style>
+    /* ============================================
+       VARIABLES & THEMES
+       ============================================ */
+    :root {
+        --primary: #6B8E6B;          /* Vert tendre */
+        --primary-dark: #4A6B4A;
+        --primary-light: #8FBC8F;
+        --secondary: #9B7BB8;        /* Lilas */
+        --secondary-dark: #7B5B98;
+        --secondary-light: #C8A8E0;
+        
+        --bg-body: #f8f9fa;
+        --bg-white: #ffffff;
+        --bg-gray: #f3f4f6;
+        --bg-dark: #1a1a2e;
+        
+        --text-dark: #1a1a2e;
+        --text-body: #4a4a6a;
+        --text-light: #6b6b8b;
+        --text-white: #ffffff;
+        
+        --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+        --shadow-md: 0 5px 30px rgba(0,0,0,0.1);
+        --shadow-lg: 0 15px 50px rgba(0,0,0,0.12);
+        
+        --transition: all 0.3s ease;
+        --header-height: 90px;
+    }
+
+    [data-theme="dark"] {
+        --bg-body: #0d0d1a;
+        --bg-white: #1a1a2e;
+        --bg-gray: #252542;
+        --text-dark: #f0f0f5;
+        --text-body: #c0c0d0;
+        --text-light: #9090a0;
+        --shadow-sm: 0 2px 10px rgba(0,0,0,0.3);
+        --shadow-md: 0 5px 30px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="neon"] {
+        --primary: #00ff88;
+        --primary-dark: #00cc66;
+        --secondary: #ff00ff;
+        --secondary-dark: #cc00cc;
+        --bg-body: #0a0a0f;
+        --bg-white: #12121f;
+        --bg-gray: #1a1a2a;
+        --text-dark: #ffffff;
+        --text-body: #c0c0d0;
+    }
+
+    [data-theme="disco"] {
+        --bg-body: #1a0a2e;
+        --bg-white: #2a1a3e;
+        --bg-gray: #3a2a4e;
+        --text-dark: #ffffff;
+        --text-body: #e0d0f0;
+    }
+
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+        font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--text-body);
+        background: var(--bg-body);
+        transition: var(--transition);
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+        transition: var(--transition);
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1.3;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 60px;
+    }
+
+    /* ============================================
+       THEME SWITCHER (discret en bas à droite)
+       ============================================ */
+    .theme-switcher {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        gap: 5px;
+        background: var(--bg-white);
+        padding: 8px;
+        border-radius: 30px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .theme-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 12px;
+        transition: var(--transition);
+        opacity: 0.6;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    .theme-btn.light { background: #f0f0f0; }
+    .theme-btn.dark { background: #1a1a2e; }
+    .theme-btn.neon { background: #0a0a0f; border: 1px solid #00ff88; }
+    .theme-btn.disco { background: linear-gradient(45deg, #ff006e, #8338ec); }
+
+    /* ============================================
+       HEADER - Style MR.be exact
+       ============================================ */
+    #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10000;
+        height: var(--header-height);
+        transition: var(--transition);
+    }
+
+    #header.transparent {
+        background: transparent;
+    }
+
+    #header.scrolled {
+        background: var(--bg-white);
+        height: 70px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .nav-left, .nav-right {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .nav-left { left: 60px; }
+    .nav-right { right: 60px; }
+
+    .logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.1;
+    }
+
+    .logo-main {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-white);
+        letter-spacing: -1px;
+    }
+
+    .logo-sub {
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255,255,255,0.8);
+    }
+
+    #header.scrolled .logo-main {
+        color: var(--primary);
+    }
+
+    #header.scrolled .logo-sub {
+        color: var(--text-light);
+    }
+
+    .nav-link {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0 15px;
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        color: var(--text-white);
+        transition: var(--transition);
+    }
+
+    #header.scrolled .nav-link {
+        color: var(--text-dark);
+        height: 70px;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-light);
+    }
+
+    #header.scrolled .nav-link:hover {
+        color: var(--primary);
+    }
+
+    .btn-adhesion {
+        background: var(--primary);
+        color: var(--text-white) !important;
+        padding: 12px 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-left: 10px;
+        border-radius: 3px;
+    }
+
+    .btn-adhesion:hover {
+        background: var(--primary-dark);
+    }
+
+    .social-header {
+        display: flex;
+        gap: 5px;
+        margin-left: 15px;
+    }
+
+    .social-header a {
+        color: var(--text-white);
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    #header.scrolled .social-header a {
+        color: var(--text-dark);
+    }
+
+    .social-header a:hover {
+        color: var(--primary);
+    }
+
+    .mobile-toggle {
+        display: none;
+        width: 25px;
+        height: 18px;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        position: absolute;
+        right: 20px;
+    }
+
+    .mobile-toggle span {
+        height: 2px;
+        background: var(--text-white);
+        transition: var(--transition);
+    }
+
+    #header.scrolled .mobile-toggle span {
+        background: var(--text-dark);
+    }
+
+    /* ============================================
+       HERO SECTION - Style MR.be
+       ============================================ */
+    .hero {
+        position: relative;
+        height: 100vh;
+        min-height: 600px;
+        overflow: hidden;
+        background: var(--bg-dark);
+    }
+
+    .slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+
+    .slide.active {
+        opacity: 1;
+        z-index: 2;
+    }
+
+    .slide-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transform: scale(1.05);
+        transition: transform 8s ease;
+    }
+
+    .slide.active .slide-bg {
+        transform: scale(1);
+    }
+
+    .slide::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(107,142,107,0.85) 0%, rgba(155,123,184,0.7) 100%);
+        z-index: 1;
+    }
+
+    .slide-content {
+        position: relative;
+        z-index: 10;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .slide-inner {
+        max-width: 750px;
+    }
+
+    .slide-badge {
+        display: inline-block;
+        background: var(--secondary);
+        color: var(--text-white);
+        padding: 6px 15px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        border-radius: 3px;
+    }
+
+    .slide-title {
+        font-size: clamp(32px, 5vw, 52px);
+        font-weight: 700;
+        color: var(--text-white);
+        line-height: 1.15;
+        margin-bottom: 20px;
+    }
+
+    .slide-excerpt {
+        font-size: 16px;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 30px;
+        max-width: 550px;
+    }
+
+    .slide-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-slide {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 28px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 3px;
+        transition: var(--transition);
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: var(--text-white);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateX(5px);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--text-white);
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .btn-outline:hover {
+        background: var(--text-white);
+        color: var(--text-dark);
+        border-color: var(--text-white);
+    }
+
+    /* Slider Navigation */
+    .slider-nav {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(0,0,0,0.4);
+    }
+
+    .slider-nav-inner {
+        display: flex;
+    }
+
+    .nav-item {
+        flex: 1;
+        padding: 20px 25px;
+        color: rgba(255,255,255,0.6);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border-left: 1px solid rgba(255,255,255,0.1);
+        transition: var(--transition);
+        position: relative;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nav-item:first-child {
+        border-left: none;
+    }
+
+    .nav-item::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--primary);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover, .nav-item.active {
+        color: var(--text-white);
+        background: rgba(0,0,0,0.3);
+    }
+
+    .nav-item.active::after {
+        transform: scaleX(1);
+    }
+
+    /* ============================================
+       SECTION VALEURS (style MR bleu -> notre vert/lilas)
+       ============================================ */
+    .section-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 60px 0;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+    }
+
+    .value-card {
+        text-align: center;
+        padding: 20px;
+        transition: var(--transition);
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .value-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .value-icon i {
+        font-size: 28px;
+        color: var(--text-white);
+    }
+
+    .value-card h3 {
+        color: var(--text-white);
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .value-card p {
+        color: rgba(255,255,255,0.85);
+        font-size: 13px;
+    }
+
+    /* ============================================
+       SECTIONS CONTENU
+       ============================================ */
+    .section {
+        padding: 80px 0;
+    }
+
+    .section-gray {
+        background: var(--bg-gray);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        color: var(--text-dark);
+    }
+
+    .btn-more {
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-more:hover {
+        gap: 12px;
+        color: var(--primary-dark);
+    }
+
+    /* ============================================
+       ARTICLES GRID
+       ============================================ */
+    .articles-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 25px;
+    }
+
+    .article-card {
+        background: var(--bg-white);
+        overflow: hidden;
+        transition: var(--transition);
+        border-radius: 5px;
+    }
+
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .article-card.featured {
+        grid-row: span 2;
+    }
+
+    .article-image {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 16/10;
+    }
+
+    .article-card.featured .article-image {
+        aspect-ratio: 16/14;
+    }
+
+    .article-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .article-card:hover .article-image img {
+        transform: scale(1.05);
+    }
+
+    .article-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: var(--primary);
+        color: var(--text-white);
+        padding: 5px 12px;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 3px;
+    }
+
+    .article-content {
+        padding: 20px;
+    }
+
+    .article-card.featured .article-content {
+        padding: 25px;
+    }
+
+    .article-title {
+        font-size: 16px;
+        color: var(--text-dark);
+        line-height: 1.4;
+        margin-bottom: 10px;
+        transition: var(--transition);
+    }
+
+    .article-card.featured .article-title {
+        font-size: 22px;
+    }
+
+    .article-card:hover .article-title {
+        color: var(--primary);
+    }
+
+    .article-excerpt {
+        font-size: 13px;
+        color: var(--text-body);
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .article-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .article-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .article-author {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .article-date {
+        font-size: 11px;
+        color: var(--text-light);
+    }
+
+    /* ============================================
+       EVENTS
+       ============================================ */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .event-card {
+        background: var(--bg-white);
+        overflow: hidden;
+        transition: var(--transition);
+        border-radius: 5px;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .event-image {
+        position: relative;
+        aspect-ratio: 16/11;
+        overflow: hidden;
+    }
+
+    .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .event-card:hover .event-image img {
+        transform: scale(1.05);
+    }
+
+    .event-date {
+        position: absolute;
+        bottom: 0;
+        left: 15px;
+        background: var(--secondary);
+        color: var(--text-white);
+        padding: 10px 15px;
+        text-align: center;
+        border-radius: 3px 3px 0 0;
+    }
+
+    .event-day {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .event-month {
+        font-size: 11px;
+        text-transform: lowercase;
+    }
+
+    .event-content {
+        padding: 20px;
+    }
+
+    .event-title {
+        font-size: 15px;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        transition: var(--transition);
+    }
+
+    .event-card:hover .event-title {
+        color: var(--primary);
+    }
+
+    .event-location {
+        font-size: 12px;
+        color: var(--text-body);
+    }
+
+    .event-location strong {
+        color: var(--text-dark);
+        display: block;
+    }
+
+    /* ============================================
+       CTA SECTION
+       ============================================ */
+    .cta {
+        padding: 100px 0;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta::before {
+        content: '#!BIM';
+        position: absolute;
+        font-size: 20vw;
+        font-weight: 900;
+        opacity: 0.05;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    .cta-inner {
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta h2 {
+        font-size: 36px;
+        color: var(--text-white);
+        margin-bottom: 15px;
+    }
+
+    .cta p {
+        font-size: 16px;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 30px;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-cta {
+        padding: 18px 35px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 3px;
+        transition: var(--transition);
+    }
+
+    .btn-white {
+        background: var(--text-white);
+        color: var(--primary);
+    }
+
+    .btn-white:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .btn-ghost {
+        background: transparent;
+        color: var(--text-white);
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .btn-ghost:hover {
+        background: var(--text-white);
+        color: var(--primary);
+        border-color: var(--text-white);
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+        background: var(--bg-dark);
+        color: var(--text-white);
+        padding: 60px 0 30px;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 50px;
+        margin-bottom: 40px;
+    }
+
+    .footer-brand .logo-footer {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-light);
+        margin-bottom: 5px;
+    }
+
+    .footer-brand .tagline-footer {
+        font-size: 11px;
+        color: rgba(255,255,255,0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+
+    .footer-desc {
+        color: rgba(255,255,255,0.6);
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 8px;
+    }
+
+    .footer-social a {
+        width: 36px;
+        height: 36px;
+        background: rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-white);
+        font-size: 13px;
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .footer-social a:hover {
+        background: var(--primary);
+    }
+
+    .footer-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        color: var(--text-white);
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        color: rgba(255,255,255,0.6);
+        font-size: 13px;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--primary-light);
+        padding-left: 5px;
+    }
+
+    .footer-bottom {
+        padding-top: 25px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: rgba(255,255,255,0.5);
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .footer-disclaimer {
+        font-size: 11px;
+        color: rgba(255,255,255,0.4);
+        max-width: 500px;
+    }
+
+    .footer-legal {
+        display: flex;
+        gap: 20px;
+    }
+
+    .footer-legal a:hover {
+        color: var(--text-white);
+    }
+
+    /* ============================================
+       DISCO MODE (subtil)
+       ============================================ */
+    [data-theme="disco"] .hero::before {
+        animation: discoGradient 10s ease infinite;
+    }
+
+    @keyframes discoGradient {
+        0%, 100% { background: linear-gradient(135deg, rgba(107,142,107,0.85) 0%, rgba(155,123,184,0.7) 100%); }
+        25% { background: linear-gradient(135deg, rgba(155,123,184,0.85) 0%, rgba(107,142,107,0.7) 100%); }
+        50% { background: linear-gradient(135deg, rgba(131,56,236,0.85) 0%, rgba(6,214,160,0.7) 100%); }
+        75% { background: linear-gradient(135deg, rgba(255,0,110,0.85) 0%, rgba(58,134,255,0.7) 100%); }
+    }
+
+    /* ============================================
+       NEON MODE (subtil)
+       ============================================ */
+    [data-theme="neon"] .logo-main,
+    [data-theme="neon"] .section-title,
+    [data-theme="neon"] .article-title:hover {
+        text-shadow: 0 0 10px var(--primary);
+    }
+
+    [data-theme="neon"] .btn-primary {
+        box-shadow: 0 0 15px var(--primary);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1200px) {
+        .container, .header-inner, .slider-nav-inner {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        .nav-left { left: 30px; }
+        .nav-right { right: 30px; }
+        .articles-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .article-card.featured {
+            grid-row: span 1;
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .nav-left, .nav-right, .slider-nav {
+            display: none;
+        }
+        .mobile-toggle {
+            display: flex;
+        }
+        .logo {
+            position: relative;
+            left: 0;
+            transform: none;
+        }
+        .header-inner {
+            justify-content: space-between;
+        }
+        .values-grid, .events-grid {
+            grid-template-columns: 1fr;
+        }
+        .value-card {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .slide-title {
+            font-size: 28px;
+        }
+        .slide-buttons {
+            flex-direction: column;
+        }
+        .btn-slide {
+            width: 100%;
+            justify-content: center;
+        }
+        .articles-grid {
+            grid-template-columns: 1fr;
+        }
+        .article-card.featured {
+            grid-column: span 1;
+        }
+        .section-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        .cta h2 {
+            font-size: 26px;
+        }
+        .cta-buttons {
+            flex-direction: column;
+        }
+        .btn-cta {
+            width: 100%;
+        }
+        .footer-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .footer-social {
+            justify-content: center;
+        }
+        .footer-bottom {
+            flex-direction: column;
+            text-align: center;
+        }
+        .footer-legal {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .theme-switcher {
+            bottom: 10px;
+            right: 10px;
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- Theme Switcher (discret) -->
+    <div class="theme-switcher">
+        <button class="theme-btn light active" data-theme="light" title="Clair">☀️</button>
+        <button class="theme-btn dark" data-theme="dark" title="Sombre">🌙</button>
+        <button class="theme-btn neon" data-theme="neon" title="Néon">⚡</button>
+        <button class="theme-btn disco" data-theme="disco" title="Disco">🪩</button>
+    </div>
+
+    <!-- HEADER -->
+    <header id="header" class="transparent">
+        <div class="header-inner container">
+            <nav class="nav-left">
+                <a href="mouvement.html" class="nav-link">Mouvement</a>
+                <a href="ressources.html" class="nav-link">Ressources</a>
+                <a href="agenda.html" class="nav-link">Agenda</a>
+            </nav>
+            
+            <a href="index.html" class="logo">
+                <span class="logo-main">!MR++</span>
+                <span class="logo-sub">Le Mouvement Radical</span>
+            </a>
+            
+            <nav class="nav-right">
+                <a href="equipe.html" class="nav-link">Équipe</a>
+                <a href="programme.html" class="nav-link">Programme</a>
+                <a href="adhesion.html" class="btn-adhesion">Rejoindre</a>
+                <div class="social-header">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </nav>
+            
+            <div class="mobile-toggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="slide active">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920')"></div>
+            <div class="slide-content container">
+                <div class="slide-inner">
+                    <span class="slide-badge">Éducation Populaire</span>
+                    <h1 class="slide-title">MR EN MIEUX<br>Comprendre pour agir, agir pour changer</h1>
+                    <p class="slide-excerpt">Le Mouvement Radical propose une éducation citoyenne accessible à tous. Parce qu'un citoyen informé est un citoyen libre.</p>
+                    <div class="slide-buttons">
+                        <a href="programme.html" class="btn-slide btn-primary">Découvrir notre approche <i class="fas fa-arrow-right"></i></a>
+                        <a href="adhesion.html" class="btn-slide btn-outline">Nous rejoindre</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1920')"></div>
+            <div class="slide-content container">
+                <div class="slide-inner">
+                    <span class="slide-badge">Formation</span>
+                    <h1 class="slide-title">Des outils pour décrypter le monde</h1>
+                    <p class="slide-excerpt">Ateliers, conférences, ressources en ligne : nous mettons l'analyse critique à la portée de tous.</p>
+                    <div class="slide-buttons">
+                        <a href="ressources.html" class="btn-slide btn-primary">Voir les ressources <i class="fas fa-arrow-right"></i></a>
+                        <a href="agenda.html" class="btn-slide btn-outline">Agenda</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-bg" style="background-image: url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1920')"></div>
+            <div class="slide-content container">
+                <div class="slide-inner">
+                    <span class="slide-badge">Communauté</span>
+                    <h1 class="slide-title">Une communauté de citoyens engagés</h1>
+                    <p class="slide-excerpt">Rejoignez des milliers de personnes qui refusent la pensée préformatée et veulent comprendre avant de juger.</p>
+                    <div class="slide-buttons">
+                        <a href="adhesion.html" class="btn-slide btn-primary">Rejoindre le mouvement <i class="fas fa-arrow-right"></i></a>
+                        <a href="equipe.html" class="btn-slide btn-outline">L'équipe</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="slider-nav">
+            <div class="slider-nav-inner container">
+                <div class="nav-item active" data-slide="0">Comprendre pour agir, agir pour changer</div>
+                <div class="nav-item" data-slide="1">Des outils pour décrypter le monde</div>
+                <div class="nav-item" data-slide="2">Une communauté de citoyens engagés</div>
+            </div>
+        </nav>
+    </section>
+
+    <!-- VALEURS -->
+    <section class="section-primary">
+        <div class="container">
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Esprit Critique</h3>
+                    <p>Apprendre à questionner, vérifier les sources, distinguer le fait de l'opinion. L'autonomie intellectuelle comme boussole.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-users"></i></div>
+                    <h3>Éducation Populaire</h3>
+                    <p>Le savoir n'appartient à personne. Nous le partageons sans jargon, sans condescendance, pour tous et par tous.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-hand-fist"></i></div>
+                    <h3>Action Citoyenne</h3>
+                    <p>Comprendre ne suffit pas. Nous donnons les clés pour agir, s'organiser et peser sur le débat public.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTUALITÉS -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Analyses & Décryptages</h2>
+                <a href="ressources.html" class="btn-more">Toutes les ressources <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="articles-grid">
+                <article class="article-card featured">
+                    <a href="#">
+                        <div class="article-image">
+                            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800" alt="">
+                            <span class="article-tag">Décryptage</span>
+                        </div>
+                    </a>
+                    <div class="article-content">
+                        <h3 class="article-title"><a href="#">Comment lire un programme politique : guide pratique pour citoyens méfiants</a></h3>
+                        <p class="article-excerpt">Entre promesses électorales et réalité du pouvoir, comment distinguer le réalisable du fantasme ? Méthodologie en 5 étapes pour analyser n'importe quel programme.</p>
+                        <div class="article-meta">
+                            <div class="article-avatar"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
+                            <div>
+                                <div class="article-author">Marie Dewit</div>
+                                <div class="article-date">08/01/2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="article-card">
+                    <a href="#">
+                        <div class="article-image">
+                            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600" alt="">
+                            <span class="article-tag">Économie</span>
+                        </div>
+                    </a>
+                    <div class="article-content">
+                        <h3 class="article-title"><a href="#">Budget de l'État : lire entre les lignes des chiffres officiels</a></h3>
+                        <div class="article-meta">
+                            <div class="article-avatar"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
+                            <div>
+                                <div class="article-author">Thomas Henrard</div>
+                                <div class="article-date">07/01/2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="article-card">
+                    <a href="#">
+                        <div class="article-image">
+                            <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600" alt="">
+                            <span class="article-tag">Médias</span>
+                        </div>
+                    </a>
+                    <div class="article-content">
+                        <h3 class="article-title"><a href="#">Fact-checking : les outils gratuits pour vérifier l'info</a></h3>
+                        <div class="article-meta">
+                            <div class="article-avatar"><img src="https://randomuser.me/api/portraits/women/68.jpg" alt=""></div>
+                            <div>
+                                <div class="article-author">Léa Fontaine</div>
+                                <div class="article-date">06/01/2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="article-card">
+                    <a href="#">
+                        <div class="article-image">
+                            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600" alt="">
+                            <span class="article-tag">Atelier</span>
+                        </div>
+                    </a>
+                    <div class="article-content">
+                        <h3 class="article-title"><a href="#">Rhétorique politique : reconnaître les techniques de manipulation</a></h3>
+                        <div class="article-meta">
+                            <div class="article-avatar"><img src="https://randomuser.me/api/portraits/men/45.jpg" alt=""></div>
+                            <div>
+                                <div class="article-author">Pierre Lambot</div>
+                                <div class="article-date">05/01/2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="article-card">
+                    <a href="#">
+                        <div class="article-image">
+                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600" alt="">
+                            <span class="article-tag">Guide</span>
+                        </div>
+                    </a>
+                    <div class="article-content">
+                        <h3 class="article-title"><a href="#">S'engager localement : par où commencer ?</a></h3>
+                        <div class="article-meta">
+                            <div class="article-avatar"><img src="https://randomuser.me/api/portraits/women/55.jpg" alt=""></div>
+                            <div>
+                                <div class="article-author">Clara Vanden</div>
+                                <div class="article-date">04/01/2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- AGENDA -->
+    <section class="section section-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Prochains événements</h2>
+                <a href="agenda.html" class="btn-more">Tout l'agenda <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="events-grid">
+                <article class="event-card">
+                    <a href="#">
+                        <div class="event-image">
+                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600" alt="">
+                            <div class="event-date">
+                                <div class="event-day">18</div>
+                                <div class="event-month">janvier</div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="event-content">
+                        <h3 class="event-title"><a href="#">Atelier : Décrypter un JT en 1 heure</a></h3>
+                        <div class="event-location">
+                            <strong>Maison du Peuple</strong>
+                            Rue de la Commune 12, 1000 Bruxelles
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="event-card">
+                    <a href="#">
+                        <div class="event-image">
+                            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=600" alt="">
+                            <div class="event-date">
+                                <div class="event-day">25</div>
+                                <div class="event-month">janvier</div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="event-content">
+                        <h3 class="event-title"><a href="#">Conférence : Les coulisses du lobbying</a></h3>
+                        <div class="event-location">
+                            <strong>Université Populaire</strong>
+                            Rue du Progrès 80, 1030 Bruxelles
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="event-card">
+                    <a href="#">
+                        <div class="event-image">
+                            <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600" alt="">
+                            <div class="event-date">
+                                <div class="event-day">02</div>
+                                <div class="event-month">février</div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="event-content">
+                        <h3 class="event-title"><a href="#">Formation : Organiser une action citoyenne</a></h3>
+                        <div class="event-location">
+                            <strong>Centre Culturel</strong>
+                            Place de l'Yser, 4000 Liège
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-inner">
+                <h2>Rejoignez le Mouvement Radical</h2>
+                <p>Gratuit, indépendant, ouvert à tous. Parce que l'éducation populaire ne devrait jamais être un privilège.</p>
+                <div class="cta-buttons">
+                    <a href="adhesion.html" class="btn-cta btn-white">Rejoindre gratuitement</a>
+                    <a href="contact.html" class="btn-cta btn-ghost">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-footer">!MR++</div>
+                    <div class="tagline-footer">MR EN MIEUX • Le Mouvement Radical</div>
+                    <p class="footer-desc">Éducation populaire et citoyenne. Comprendre pour agir, agir pour changer. Indépendant et gratuit depuis 2024.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Mouvement</h4>
+                    <ul class="footer-links">
+                        <li><a href="mouvement.html">Notre histoire</a></li>
+                        <li><a href="equipe.html">L'équipe</a></li>
+                        <li><a href="programme.html">Notre approche</a></li>
+                        <li><a href="valeurs.html">Nos valeurs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Ressources</h4>
+                    <ul class="footer-links">
+                        <li><a href="ressources.html">Décryptages</a></li>
+                        <li><a href="agenda.html">Agenda</a></li>
+                        <li><a href="formations.html">Formations</a></li>
+                        <li><a href="outils.html">Outils pratiques</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="contact.html">Nous écrire</a></li>
+                        <li><a href="adhesion.html">Rejoindre</a></li>
+                        <li><a href="presse.html">Presse</a></li>
+                        <li><a href="partenaires.html">Partenaires</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-disclaimer">
+                    Site parodique à vocation éducative. Non affilié au MR officiel. #!BIM 💚💜
+                </p>
+                <div class="footer-legal">
+                    <a href="mentions.html">Mentions légales</a>
+                    <a href="confidentialite.html">Confidentialité</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Header scroll effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+        header.classList.toggle('transparent', window.scrollY <= 50);
+    });
+
+    // Slider
+    const slides = document.querySelectorAll('.slide');
+    const navItems = document.querySelectorAll('.nav-item');
+    let currentSlide = 0;
+    let slideInterval;
+
+    function goToSlide(index) {
+        slides[currentSlide].classList.remove('active');
+        navItems[currentSlide]?.classList.remove('active');
+        currentSlide = index;
+        slides[currentSlide].classList.add('active');
+        navItems[currentSlide]?.classList.add('active');
+    }
+
+    function nextSlide() {
+        goToSlide((currentSlide + 1) % slides.length);
+    }
+
+    function startSlider() {
+        slideInterval = setInterval(nextSlide, 7000);
+    }
+
+    function stopSlider() {
+        clearInterval(slideInterval);
+    }
+
+    navItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            stopSlider();
+            goToSlide(index);
+            startSlider();
+        });
+    });
+
+    startSlider();
+
+    // Theme Switcher
+    const themeBtns = document.querySelectorAll('.theme-btn');
+    const html = document.documentElement;
+
+    themeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.dataset.theme;
+            html.setAttribute('data-theme', theme);
+            themeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            localStorage.setItem('mr-theme', theme);
+        });
+    });
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('mr-theme');
+    if (savedTheme) {
+        html.setAttribute('data-theme', savedTheme);
+        themeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === savedTheme);
+        });
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
