@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 Appel urgent — Deadline 1er février | ARG Citoyen × NLnet</title>
+    <meta name="description" content="On candidate à NLnet NGI Zero Commons (5-50k€). On cherche des partenaires, lettres de soutien, retours. Deadline: 1er février 2026.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text: #1a1a1a;
+            --text-light: #5c5c5c;
+            --bg: #fafafa;
+            --bg-alt: #f5f3f0;
+            --urgent: #d64933;
+            --urgent-light: #fef2f0;
+            --urgent-dark: #b33d2a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #16a34a;
+            --border: #e0dcd4;
+            --radius: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { font-size: 16px; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        h1 { font-size: 1.75rem; }
+        h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        p { margin-bottom: 1rem; }
+        p:last-child { margin-bottom: 0; }
+        strong { font-weight: 600; }
+        a { color: var(--accent); }
+        a:hover { color: var(--accent-hover); }
+
+        /* Urgent Banner */
+        .urgent-banner {
+            background: var(--urgent);
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .urgent-banner a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Header */
+        header {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Source Serif 4', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .header-cta {
+            padding: 0.5rem 1rem;
+            background: var(--urgent);
+            color: white;
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 2.5rem 0 2rem;
+        }
+
+        .deadline-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.875rem;
+            background: var(--urgent-light);
+            border: 1px solid var(--urgent);
+            border-radius: var(--radius);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--urgent);
+            margin-bottom: 1.25rem;
+        }
+
+        .deadline-box .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--urgent);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            margin-bottom: 1rem;
+        }
+
+        .hero .lead {
+            font-size: 1.0625rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Countdown */
+        .countdown {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .countdown-item {
+            text-align: center;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            min-width: 60px;
+        }
+
+        .countdown-number {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--urgent);
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Section */
+        section {
+            padding: 2.5rem 0;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Opportunity Box */
+        .opportunity-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .opportunity-header {
+            background: var(--bg-alt);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .opportunity-header h3 {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        .opportunity-amount {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--success);
+            background: rgba(22, 163, 74, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+        }
+
+        .opportunity-body {
+            padding: 1.25rem;
+        }
+
+        .opportunity-body p {
+            font-size: 0.9375rem;
+            color: var(--text-light);
+        }
+
+        .opportunity-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* What we need */
+        .need-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .need-card:last-child { margin-bottom: 0; }
+
+        .need-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .need-card p {
+            font-size: 0.9375rem;
+            color: var(--text-light);
+            margin-bottom: 0;
+        }
+
+        .need-tag {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+
+        .tag-critical {
+            background: var(--urgent-light);
+            color: var(--urgent);
+        }
+
+        .tag-helpful {
+            background: #f0f9ff;
+            color: var(--accent);
+        }
+
+        /* Project summary */
+        .project-summary {
+            background: var(--bg-alt);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .project-summary h2 {
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-summary p {
+            font-size: 0.9375rem;
+        }
+
+        /* Partners grid */
+        .partners-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .partner-level {
+            margin-bottom: 1.5rem;
+        }
+
+        .partner-level h3 {
+            font-size: 0.8125rem;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .partner-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .partner-tag {
+            font-size: 0.8125rem;
+            padding: 0.375rem 0.75rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-light);
+        }
+
+        /* CTA section */
+        .cta-section {
+            background: var(--text);
+            color: white;
+            padding: 2.5rem 0;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-section p {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--urgent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--urgent-dark);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .cta-note {
+            font-size: 0.8125rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Contact options */
+        .contact-options {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .contact-options h3 {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9375rem;
+        }
+
+        .contact-item:last-child { border-bottom: none; }
+
+        .contact-item:hover { color: rgba(255,255,255,0.8); }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 1.5rem 0;
+            text-align: center;
+            font-size: 0.8125rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (min-width: 480px) {
+            .cta-buttons {
+                flex-direction: row;
+            }
+            .btn {
+                width: auto;
+                flex: 1;
+            }
+        }
+
+        @media (min-width: 640px) {
+            html { font-size: 17px; }
+            .container { padding: 0 2rem; }
+            .hero { padding: 3rem 0 2.5rem; }
+            h1 { font-size: 2rem; }
+            .countdown-item { min-width: 70px; padding: 1rem 1.25rem; }
+            .countdown-number { font-size: 2rem; }
+            
+            .needs-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+            .needs-grid .need-card { margin-bottom: 0; }
+        }
+
+        @media (min-width: 900px) {
+            .container { max-width: 720px; }
+            h1 { font-size: 2.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="urgent-banner">
+    ⏰ <strong>Deadline NLnet : 1er février 2026</strong> — On a besoin de vous maintenant.
+</div>
+
+<header>
+    <div class="container">
+        <div class="header-inner">
+            <a href="#" class="logo">ARG Citoyen</a>
+            <a href="#contact" class="header-cta">Nous aider →</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="deadline-box">
+                <span class="pulse"></span>
+                Deadline : 1er février 2026
+            </div>
+            
+            <h1>On candidate à un financement européen. On a besoin de partenaires.</h1>
+            
+            <p class="lead">
+                Le fonds <strong>NLnet NGI Zero Commons</strong> finance les projets open source 
+                qui renforcent les communs numériques. Notre ARG citoyen coche toutes les cases. 
+                Mais on ne peut pas y aller seuls.
+            </p>
+
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">--</div>
+                    <div class="countdown-label">Jours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">--</div>
+                    <div class="countdown-label">Heures</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">--</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container"><div class="section-divider"></div></div>
+
+    <section>
+        <div class="container">
+            <div class="opportunity-box">
+                <div class="opportunity-header">
+                    <h3>NLnet NGI Zero Commons</h3>
+                    <span class="opportunity-amount">5.000 – 50.000 €</span>
+                </div>
+                <div class="opportunity-body">
+                    <p>
+                        Fonds européen (Commission européenne + NLnet Foundation) pour les projets 
+                        qui contribuent aux <strong>communs numériques</strong> : logiciels open source, 
+                        standards ouverts, infrastructures décentralisées.
+                    </p>
+                    <a href="https://nlnet.nl/commonsfund/" target="_blank" class="opportunity-link">
+                        Voir l'appel officiel →
+                    </a>
+                </div>
+            </div>
+
+            <h2>Ce qu'on cherche (urgemment)</h2>
+            
+            <div class="needs-grid">
+                <div class="need-card">
+                    <h3>
+                        ✉️ Lettres de soutien
+                        <span class="need-tag tag-critical">Critique</span>
+                    </h3>
+                    <p>Un paragraphe de votre organisation disant que le projet vous intéresse. Ça renforce énormément le dossier.</p>
+                </div>
+
+                <div class="need-card">
+                    <h3>
+                        🤝 Partenaires pilotes
+                        <span class="need-tag tag-critical">Critique</span>
+                    </h3>
+                    <p>Des lieux ou structures prêts à tester une première version : MJ, bibliothèque, école, centre culturel...</p>
+                </div>
+
+                <div class="need-card">
+                    <h3>
+                        💻 Expertise technique
+                        <span class="need-tag tag-helpful">Utile</span>
+                    </h3>
+                    <p>Développeurs, designers, spécialistes civic tech intéressés à contribuer ou conseiller.</p>
+                </div>
+
+                <div class="need-card">
+                    <h3>
+                        👀 Regards critiques
+                        <span class="need-tag tag-helpful">Utile</span>
+                    </h3>
+                    <p>Relecture du dossier, questions difficiles, retours honnêtes. On prend tout.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="project-summary">
+                <h2>Le projet en 30 secondes</h2>
+                <p>
+                    <strong>Un ARG (jeu en réalité alternée) d'éducation citoyenne.</strong><br>
+                    Un univers de politique-fiction où les joueurs explorent des futurs possibles, 
+                    expérimentent des systèmes économiques alternatifs, et développent des compétences 
+                    pour agir sur le réel.
+                </p>
+                <p>
+                    <strong>100% open source.</strong> Tout le code, le contenu, les méthodes seront 
+                    publiés sous licence libre. Forkable, adaptable, réutilisable.
+                </p>
+                <p>
+                    <strong>Ancré localement, pensé globalement.</strong> On démarre à Bruxelles (Auderghem), 
+                    mais l'objectif est de créer une infrastructure réplicable partout.
+                </p>
+            </div>
+
+            <div class="partners-section">
+                <h2>Types de partenaires recherchés</h2>
+
+                <div class="partner-level">
+                    <h3>🏠 Micro — Local (1160 Bruxelles et alentours)</h3>
+                    <div class="partner-list">
+                        <span class="partner-tag">Maisons de quartier</span>
+                        <span class="partner-tag">Bibliothèques</span>
+                        <span class="partner-tag">Maisons de jeunes</span>
+                        <span class="partner-tag">Écoles secondaires</span>
+                        <span class="partner-tag">EPN</span>
+                        <span class="partner-tag">Collectifs locaux</span>
+                    </div>
+                </div>
+
+                <div class="partner-level">
+                    <h3>🏛️ Méso — Bruxelles / Belgique</h3>
+                    <div class="partner-list">
+                        <span class="partner-tag">Éducation permanente</span>
+                        <span class="partner-tag">Centres culturels</span>
+                        <span class="partner-tag">Fédérations (FMJ, PAC, CIEP...)</span>
+                        <span class="partner-tag">Fablabs</span>
+                        <span class="partner-tag">Coopcity / incubateurs ESS</span>
+                        <span class="partner-tag">Médias associatifs</span>
+                    </div>
+                </div>
+
+                <div class="partner-level">
+                    <h3>🌍 Macro — Europe / International</h3>
+                    <div class="partner-list">
+                        <span class="partner-tag">P2P Foundation</span>
+                        <span class="partner-tag">Decidim / Metadecidim</span>
+                        <span class="partner-tag">Réseaux civic tech</span>
+                        <span class="partner-tag">RIPESS Europe</span>
+                        <span class="partner-tag">Fondations (Mozilla, OSI...)</span>
+                        <span class="partner-tag">Universités / recherche</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Vous pouvez aider ?</h2>
+            <p>
+                Même 5 minutes de votre temps comptent. Une lettre de soutien, 
+                un contact, une relecture — tout est précieux.
+            </p>
+
+            <div class="cta-buttons">
+                <a href="mailto:contact@exemple.be?subject=Soutien%20NLnet%20ARG%20Citoyen" class="btn btn-primary">
+                    Écrire une lettre de soutien
+                </a>
+                <a href="mailto:contact@exemple.be?subject=Partenariat%20ARG%20Citoyen" class="btn btn-secondary">
+                    Proposer un partenariat
+                </a>
+            </div>
+
+            <p class="cta-note">
+                Réponse garantie sous 24h. On est dessus à plein temps.
+            </p>
+
+            <div class="contact-options">
+                <h3>Autres moyens de nous joindre</h3>
+                
+                <a href="mailto:contact@exemple.be" class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    contact@exemple.be
+                </a>
+                
+                <a href="tel:+32000000000" class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    +32 XXX XX XX XX (appel/SMS/Signal)
+                </a>
+                
+                <a href="#" class="contact-item">
+                    <span class="contact-icon">📄</span>
+                    Télécharger le résumé du projet (PDF)
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>Bruxelles, 1160 — Open source, évidemment — 
+            <a href="https://nlnet.nl/commonsfund/" target="_blank">En savoir plus sur NLnet NGI Zero</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+    // Countdown to February 1st, 2026 at 23:59 CET
+    const deadline = new Date('2026-02-01T23:59:00+01:00').getTime();
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = deadline - now;
+
+        if (distance < 0) {
+            document.getElementById('days').textContent = '0';
+            document.getElementById('hours').textContent = '0';
+            document.getElementById('minutes').textContent = '0';
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+        document.getElementById('days').textContent = days;
+        document.getElementById('hours').textContent = hours;
+        document.getElementById('minutes').textContent = minutes;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000); // Update every minute
+</script>
+
+</body>
+</html>
