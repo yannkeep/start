@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYNERG.IA™ | Disrupting the Association Space</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <title>BROL² | ARG Citoyen — Appel à Partenaires</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-pink: #ff00ff;
-            --neon-cyan: #00ffff;
-            --neon-green: #39ff14;
-            --dark-bg: #0a0a0f;
-            --darker-bg: #050508;
-            --glass: rgba(255,255,255,0.03);
-            --glass-border: rgba(255,255,255,0.08);
-            --honest-bg: #fefdfb;
-            --honest-text: #2d2a26;
-            --honest-accent: #e07b53;
-            --warm-cream: #f5f0e8;
+            --bg: #0a0a0c;
+            --bg-card: #111114;
+            --bg-elevated: #18181c;
+            --text: #f0f0f0;
+            --text-muted: #8a8a8a;
+            --green: #00e87b;
+            --green-dim: rgba(0, 232, 123, 0.15);
+            --lilas: #b794f4;
+            --lilas-dim: rgba(183, 148, 244, 0.15);
+            --border: rgba(255,255,255,0.08);
+            --radius: 12px;
+            --radius-lg: 20px;
         }
 
         * {
@@ -27,978 +29,891 @@
         }
 
         html {
+            font-size: 16px;
             scroll-behavior: smooth;
         }
 
-        /* ============================================
-           PARTIE 1: LE BULLSHIT SILICON VALLEY
-           ============================================ */
-        
-        .hype-section {
-            background: var(--dark-bg);
-            color: white;
-            font-family: 'Space Grotesk', sans-serif;
-            position: relative;
-            overflow: hidden;
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .hype-section::before {
-            content: '';
-            position: absolute;
+        /* Particles Canvas */
+        #particles {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(255,0,255,0.15) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(ellipse 40% 60% at 60% 80%, rgba(57,255,20,0.08) 0%, transparent 50%);
+            width: 100%;
+            height: 100%;
             pointer-events: none;
+            z-index: 0;
         }
 
-        /* Floating geometric shapes */
-        .shape {
-            position: absolute;
-            opacity: 0.4;
-            animation: float 20s ease-in-out infinite;
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .shape-1 {
-            top: 10%;
-            left: 5%;
-            width: 300px;
-            height: 300px;
-            border: 1px solid var(--neon-pink);
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            animation-delay: 0s;
+        section {
+            padding: 5rem 0;
         }
 
-        .shape-2 {
-            top: 60%;
-            right: 10%;
-            width: 200px;
-            height: 200px;
-            border: 1px solid var(--neon-cyan);
-            transform: rotate(45deg);
-            animation-delay: -5s;
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            line-height: 1.15;
         }
 
-        .shape-3 {
-            bottom: 20%;
-            left: 15%;
-            width: 150px;
-            height: 150px;
-            border: 1px solid var(--neon-green);
-            border-radius: 50%;
-            animation-delay: -10s;
-        }
+        h1 { font-size: clamp(2.25rem, 6vw, 3.5rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); margin-bottom: 1rem; }
+        h3 { font-size: 1.25rem; }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(5deg); }
-            50% { transform: translateY(10px) rotate(-3deg); }
-            75% { transform: translateY(-15px) rotate(2deg); }
-        }
+        p { margin-bottom: 1rem; }
 
-        /* Navigation */
-        .nav-hype {
+        .text-green { color: var(--green); }
+        .text-lilas { color: var(--lilas); }
+        .text-muted { color: var(--text-muted); }
+
+        /* Header */
+        header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 1000;
-            padding: 1.5rem 3rem;
+            z-index: 100;
+            padding: 1rem 0;
+            background: rgba(10,10,12,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        header .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(10,10,15,0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
         }
 
-        .logo-hype {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo-hype span {
-            font-size: 0.6em;
-            vertical-align: super;
-            opacity: 0.7;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: rgba(255,255,255,0.7);
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text);
             text-decoration: none;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: all 0.3s;
         }
 
-        .nav-links a:hover {
-            color: var(--neon-cyan);
+        .logo sup {
+            color: var(--green);
+            font-size: 0.7em;
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.25rem;
+            background: var(--green);
+            color: var(--bg);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: 100px;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 232, 123, 0.3);
         }
 
         /* Hero */
-        .hero-hype {
+        .hero {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 8rem 2rem 4rem;
-            position: relative;
+            padding-top: 6rem;
         }
 
-        .badge-hype {
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
+            background: var(--green-dim);
+            border: 1px solid rgba(0, 232, 123, 0.3);
             border-radius: 100px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 2rem;
-            animation: pulse-glow 2s ease-in-out infinite;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--green);
+            margin-bottom: 1.5rem;
         }
 
-        .badge-hype::before {
+        .hero-badge::before {
             content: '';
             width: 8px;
             height: 8px;
-            background: var(--neon-green);
+            background: var(--green);
             border-radius: 50%;
-            animation: blink 1s ease-in-out infinite;
+            animation: pulse 2s infinite;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(0,255,255,0.1); }
-            50% { box-shadow: 0 0 40px rgba(0,255,255,0.2); }
-        }
-
-        .hero-hype h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 800;
-            line-height: 0.95;
+        .hero h1 {
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 50%, var(--neon-cyan) 100%);
+        }
+
+        .hero h1 span {
+            display: block;
+            background: linear-gradient(135deg, var(--green), var(--lilas));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero-hype h1 .highlight {
-            display: block;
-            background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan), var(--neon-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: gradient-shift 3s ease-in-out infinite;
-            background-size: 200% 100%;
+        .hero-lead {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 550px;
         }
 
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: rgba(255,255,255,0.6);
-            max-width: 600px;
-            line-height: 1.7;
-            margin-bottom: 3rem;
-        }
-
-        .cta-group {
+        .hero-ctas {
             display: flex;
-            gap: 1rem;
             flex-wrap: wrap;
-            justify-content: center;
+            gap: 1rem;
         }
 
-        .btn-hype {
-            padding: 1rem 2.5rem;
-            border-radius: 100px;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.75rem;
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            border-radius: 100px;
             text-decoration: none;
-        }
-
-        .btn-primary-hype {
-            background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
-            color: var(--dark-bg);
+            transition: all 0.25s;
+            cursor: pointer;
             border: none;
         }
 
-        .btn-primary-hype:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(255,0,255,0.3);
+        .btn-primary {
+            background: var(--green);
+            color: var(--bg);
         }
 
-        .btn-secondary-hype {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 232, 123, 0.35);
+        }
+
+        .btn-outline {
             background: transparent;
-            color: white;
-            border: 1px solid var(--glass-border);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
-        .btn-secondary-hype:hover {
-            background: var(--glass);
-            border-color: var(--neon-cyan);
+        .btn-outline:hover {
+            background: var(--bg-elevated);
+            border-color: var(--lilas);
         }
 
-        /* Metrics bar */
-        .metrics-bar {
-            display: flex;
-            justify-content: center;
-            gap: 4rem;
-            padding: 3rem 2rem;
-            border-top: 1px solid var(--glass-border);
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
             margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
         }
 
-        .metric {
-            text-align: center;
+        .stat {
+            text-align: left;
         }
 
-        .metric-value {
-            font-family: 'Syne', sans-serif;
-            font-size: 3rem;
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--green);
+            line-height: 1;
+            margin-bottom: 0.25rem;
         }
 
-        .metric-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: rgba(255,255,255,0.5);
-            margin-top: 0.5rem;
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        /* Features */
-        .features-hype {
-            padding: 8rem 2rem;
-            position: relative;
-        }
-
+        /* Section headers */
         .section-header {
             text-align: center;
-            margin-bottom: 5rem;
+            max-width: 600px;
+            margin: 0 auto 3rem;
         }
 
-        .section-header h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            color: rgba(255,255,255,0.5);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0,255,255,0.3);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-card h3 {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            color: rgba(255,255,255,0.6);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-
-        .feature-tag {
+        .section-tag {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(57,255,20,0.1);
-            border: 1px solid rgba(57,255,20,0.3);
+            padding: 0.375rem 0.875rem;
+            background: var(--lilas-dim);
             border-radius: 100px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--lilas);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--neon-green);
-            margin-top: 1.5rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
         }
 
-        /* Pricing parody */
-        .pricing-hype {
-            padding: 8rem 2rem;
-            background: var(--darker-bg);
-            position: relative;
-        }
-
+        /* Pricing Grid */
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
+            gap: 1.5rem;
         }
 
         .pricing-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2.5rem;
-            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
             position: relative;
+            transition: all 0.3s;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(183, 148, 244, 0.3);
+            transform: translateY(-4px);
         }
 
         .pricing-card.featured {
-            border-color: var(--neon-cyan);
-            transform: scale(1.05);
+            border-color: var(--green);
+            background: linear-gradient(180deg, rgba(0, 232, 123, 0.05) 0%, var(--bg-card) 100%);
         }
 
         .pricing-card.featured::before {
-            content: 'MOST SYNERGIZED';
+            content: 'Recommandé';
             position: absolute;
-            top: -12px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
-            color: var(--dark-bg);
-            font-size: 0.65rem;
+            padding: 0.375rem 1rem;
+            background: var(--green);
+            color: var(--bg);
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.05em;
             border-radius: 100px;
         }
 
         .pricing-tier {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 1rem;
-        }
-
-        .pricing-amount {
-            font-family: 'Syne', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
             margin-bottom: 0.5rem;
         }
 
-        .pricing-period {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 2rem;
+        .pricing-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--text-muted);
         }
 
         .pricing-features {
             list-style: none;
-            text-align: left;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .pricing-features li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--glass-border);
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
             font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            color: var(--text-muted);
         }
 
         .pricing-features li::before {
             content: '✓';
-            color: var(--neon-green);
+            position: absolute;
+            left: 0;
+            color: var(--green);
             font-weight: bold;
         }
 
-        /* ============================================
-           PARTIE 2: LA VÉRITÉ (le twist)
-           ============================================ */
-
-        .honest-section {
-            background: var(--honest-bg);
-            font-family: 'Crimson Pro', Georgia, serif;
-            color: var(--honest-text);
-            position: relative;
+        .pricing-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.875rem 1.5rem;
         }
 
-        .honest-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: linear-gradient(to bottom, var(--dark-bg), var(--honest-bg));
+        /* Funding section */
+        .funding-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
         }
 
-        .transition-block {
-            padding: 8rem 2rem;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
+        .funding-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.3s;
         }
 
-        .transition-block .emoji-big {
-            font-size: 5rem;
-            margin-bottom: 2rem;
-            animation: wave 2s ease-in-out infinite;
+        .funding-card:hover {
+            border-color: var(--green);
         }
 
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(20deg); }
-            75% { transform: rotate(-10deg); }
-        }
-
-        .transition-block h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
+        .funding-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--honest-text);
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
+            color: var(--green);
+            margin-bottom: 0.25rem;
         }
 
-        .transition-block .lead {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            color: #5a554d;
-            margin-bottom: 2rem;
-        }
-
-        /* Real content */
-        .real-content {
-            padding: 4rem 2rem 8rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .real-content h3 {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.8rem;
+        .funding-source {
             font-weight: 600;
-            color: var(--honest-text);
-            margin: 3rem 0 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--honest-accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .funding-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .funding-deadline {
             display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.25rem 0.625rem;
+            background: rgba(255, 100, 100, 0.15);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #ff6b6b;
         }
 
-        .real-content p {
-            font-size: 1.15rem;
-            line-height: 1.9;
-            margin-bottom: 1.5rem;
+        /* Network section */
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
 
-        .real-content ul {
-            list-style: none;
-            margin: 2rem 0;
-        }
-
-        .real-content ul li {
-            padding: 1rem 0 1rem 2.5rem;
-            position: relative;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            border-bottom: 1px solid #e8e4dc;
-        }
-
-        .real-content ul li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--honest-accent);
-            font-weight: bold;
-        }
-
-        .highlight-box {
-            background: var(--warm-cream);
-            border-left: 4px solid var(--honest-accent);
-            padding: 2rem;
-            margin: 2.5rem 0;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .highlight-box p {
-            margin: 0;
-            font-style: italic;
-        }
-
-        /* Real CTA */
-        .real-cta {
+        .network-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
             text-align: center;
-            padding: 4rem 2rem;
-            background: var(--warm-cream);
-            margin-top: 4rem;
-            border-radius: 24px;
-        }
-
-        .real-cta h3 {
-            font-family: 'Syne', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            border: none;
-        }
-
-        .real-cta p {
-            font-size: 1.1rem;
-            color: #5a554d;
-            margin-bottom: 2rem;
-        }
-
-        .btn-honest {
-            display: inline-block;
-            padding: 1.25rem 3rem;
-            background: var(--honest-accent);
-            color: white;
-            text-decoration: none;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 100px;
             transition: all 0.3s;
         }
 
-        .btn-honest:hover {
-            background: #c96a45;
+        .network-item:hover {
+            border-color: var(--lilas);
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(224,123,83,0.3);
         }
 
-        .btn-outline-honest {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: transparent;
-            color: var(--honest-text);
-            text-decoration: none;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
-            border: 2px solid var(--honest-text);
-            border-radius: 100px;
-            margin-left: 1rem;
-            transition: all 0.3s;
+        .network-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
         }
 
-        .btn-outline-honest:hover {
-            background: var(--honest-text);
-            color: white;
+        .network-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .network-type {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Quote block */
+        .quote-block {
+            background: var(--bg-elevated);
+            border-left: 3px solid var(--lilas);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .quote-block p {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .quote-block cite {
+            font-size: 0.875rem;
+            color: var(--lilas);
+            font-style: normal;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 0;
+        }
+
+        .cta-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Footer */
         footer {
-            background: var(--honest-text);
-            color: rgba(255,255,255,0.7);
-            padding: 3rem 2rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
             text-align: center;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
+        }
+
+        footer p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
         footer a {
-            color: var(--honest-accent);
+            color: var(--green);
             text-decoration: none;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .nav-hype {
-                padding: 1rem 1.5rem;
-            }
+        @media (max-width: 640px) {
+            section { padding: 3rem 0; }
+            
+            .hero { min-height: auto; padding: 8rem 0 4rem; }
+            
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            
+            .pricing-card.featured { transform: none; }
+            
+            .hero-ctas { flex-direction: column; }
+            .hero-ctas .btn { width: 100%; justify-content: center; }
+        }
 
-            .nav-links {
-                display: none;
-            }
-
-            .metrics-bar {
-                flex-direction: column;
-                gap: 2rem;
-            }
-
+        @media (min-width: 900px) {
+            .pricing-grid { grid-template-columns: repeat(3, 1fr); }
+            
             .pricing-card.featured {
-                transform: scale(1);
+                transform: scale(1.02);
             }
-
-            .btn-outline-honest {
-                margin-left: 0;
-                margin-top: 1rem;
-                display: block;
+            
+            .pricing-card.featured:hover {
+                transform: scale(1.02) translateY(-4px);
             }
-        }
-
-        /* Easter egg cursor */
-        .hype-section * {
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3E🚀%3C/text%3E%3C/svg%3E"), auto;
-        }
-
-        /* Scroll indicator */
-        .scroll-hint {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .scroll-hint::after {
-            content: '↓';
-            font-size: 1.5rem;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
         }
     </style>
 </head>
 <body>
 
-<!-- ============================================
-     PARTIE 1: LE BULLSHIT SILICON VALLEY
-     ============================================ -->
+<canvas id="particles"></canvas>
 
-<div class="hype-section">
-    <!-- Floating shapes -->
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
+<header>
+    <div class="container">
+        <a href="#" class="logo">BROL<sup>²</sup></a>
+        <a href="#contact" class="nav-cta">Devenir partenaire</a>
+    </div>
+</header>
 
-    <!-- Navigation -->
-    <nav class="nav-hype">
-        <div class="logo-hype">SYNERG.IA<span>™</span></div>
-        <div class="nav-links">
-            <a href="#solutions">Solutions</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#truth">La Vérité</a>
-        </div>
-    </nav>
-
+<main>
     <!-- Hero -->
-    <section class="hero-hype">
-        <div class="badge-hype">Now Accepting Series Seed Applications</div>
-        <h1>
-            We're Disrupting<br>
-            <span class="highlight">The Association Space</span>
-        </h1>
-        <p class="hero-subtitle">
-            Leverage our AI-powered, blockchain-adjacent, quantum-ready framework 
-            to synergize your stakeholder engagement and 10x your social impact ROI.
-        </p>
-        <div class="cta-group">
-            <a href="#truth" class="btn-hype btn-primary-hype">Unlock Your Potential</a>
-            <a href="#pricing" class="btn-hype btn-secondary-hype">View Pricing</a>
-        </div>
-
-        <div class="metrics-bar">
-            <div class="metric">
-                <div class="metric-value">∞</div>
-                <div class="metric-label">Synergies Unlocked</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">420%</div>
-                <div class="metric-label">Engagement Uplift</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">69</div>
-                <div class="metric-label">Buzzwords Mastered</div>
-            </div>
-        </div>
-
-        <div class="scroll-hint">Scroll for enlightenment</div>
-    </section>
-
-    <!-- Features -->
-    <section class="features-hype" id="solutions">
-        <div class="section-header">
-            <h2>Our Disruptive Solutions</h2>
-            <p>Enterprise-grade innovation for the third sector, now with 73% more jargon.</p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>NeuroSocial™ AI</h3>
-                <p>Our proprietary machine learning algorithm predicts which bénévoles will ghost your next event with 94.7% accuracy.</p>
-                <span class="feature-tag">Patent Pending</span>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">Appel à partenaires 2026</div>
+                <h1>
+                    On construit le futur.<br>
+                    <span>Rejoignez l'aventure.</span>
+                </h1>
+                <p class="hero-lead">
+                    Un ARG d'empouvoirement citoyen. Open source. Basé à Bruxelles.
+                    On cherche des lieux, des assos, des écoles, des complices.
+                    Tout est à construire — ensemble.
+                </p>
+                <div class="hero-ctas">
+                    <a href="#offres" class="btn btn-primary">Voir les offres →</a>
+                    <a href="#projet" class="btn btn-outline">Découvrir le projet</a>
+                </div>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">⛓️</div>
-                <h3>Blockchain Social</h3>
-                <p>Each heure de bénévolat est tokenisée sur la blockchain pour une traçabilité optimale. NFT de remerciement inclus.</p>
-                <span class="feature-tag">Web3 Ready</span>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h3>Hyper-Targeting Citoyen</h3>
-                <p>Ciblez vos futurs adhérents grâce à notre Big Data éthique™ et notre algorithme de conversion sociale.</p>
-                <span class="feature-tag">RGPD-ish</span>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Growth Hacking Associatif</h3>
-                <p>Appliquez les méthodes de la Silicon Valley à votre tricothèque de quartier. Scalez votre impact.</p>
-                <span class="feature-tag">Disruptive</span>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🔮</div>
-                <h3>Quantum Subsidies</h3>
-                <p>Notre IA prédit les appels à projets avant qu'ils n'existent. Soyez le premier à postuler dans tous les univers parallèles.</p>
-                <span class="feature-tag">Multiverse</span>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">💎</div>
-                <h3>Premium Synergy Suite</h3>
-                <p>Transformez vos réunions CA en stand-up meetings agiles. Kanban board pour la fête de quartier inclus.</p>
-                <span class="feature-tag">Enterprise</span>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-value">100k€</div>
+                    <div class="stat-label">Financements accessibles</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">280+</div>
+                    <div class="stat-label">ASBL partenaires potentielles</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">19</div>
+                    <div class="stat-label">Communes bruxelloises</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">Possibilités</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing parody -->
-    <section class="pricing-hype" id="pricing">
-        <div class="section-header">
-            <h2>Flexible Pricing</h2>
-            <p>Parce que la disruption sociale mérite un business model innovant.</p>
-        </div>
-
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <div class="pricing-tier">Starter</div>
-                <div class="pricing-amount">Gratuit</div>
-                <div class="pricing-period">mais on vous juge un peu</div>
-                <ul class="pricing-features">
-                    <li>1 buzzword par mois</li>
-                    <li>Logo en Comic Sans</li>
-                    <li>Support par pigeon voyageur</li>
-                    <li>Accès au blog (en Comic Sans)</li>
-                </ul>
+    <!-- Projet -->
+    <section id="projet">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Le projet</span>
+                <h2>Politique-fiction pour citoyens actifs</h2>
+                <p class="text-muted">
+                    Un jeu en réalité alternée pour explorer des futurs possibles, 
+                    expérimenter des systèmes alternatifs, et donner aux gens les outils pour agir.
+                </p>
             </div>
 
-            <div class="pricing-card featured">
-                <div class="pricing-tier">Pro</div>
-                <div class="pricing-amount">€∞</div>
-                <div class="pricing-period">par mois / par univers</div>
-                <ul class="pricing-features">
-                    <li>Buzzwords illimités</li>
-                    <li>NFT de remerciement personnalisé</li>
-                    <li>Appel Zoom de 47 secondes</li>
-                    <li>Un slide PowerPoint par an</li>
-                    <li>Sticker "Disrupteur" pour votre laptop</li>
-                </ul>
+            <div class="quote-block">
+                <p>
+                    "On aurait pu vous parler de synergies blockchain-ready et de framework 
+                    d'empowerment disruptif. Mais on préfère construire un truc qui marche 
+                    avec des gens qui y croient."
+                </p>
+                <cite>— La team BROL²</cite>
             </div>
 
-            <div class="pricing-card">
-                <div class="pricing-tier">Enterprise</div>
-                <div class="pricing-amount">LOL</div>
-                <div class="pricing-period">contactez notre "Chief Synergy Officer"</div>
-                <ul class="pricing-features">
-                    <li>Tout le reste, mais en plus cher</li>
-                    <li>Logo animé en 3D</li>
-                    <li>On vous appelle par votre prénom</li>
-                    <li>Place de parking métaverse</li>
-                </ul>
+            <div class="network-grid">
+                <div class="network-item">
+                    <div class="network-icon">🎭</div>
+                    <div class="network-name">Scénarios ARG</div>
+                    <div class="network-type">Politique-fiction jouable</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">⚔️</div>
+                    <div class="network-name">Quêtes citoyennes</div>
+                    <div class="network-type">Actions dans le réel</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">🏛️</div>
+                    <div class="network-name">Raids juridiques</div>
+                    <div class="network-type">Hacking institutionnel</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">💰</div>
+                    <div class="network-name">Économie fictive</div>
+                    <div class="network-type">Prototype monétaire</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">🛡️</div>
+                    <div class="network-name">Guildes</div>
+                    <div class="network-type">Organisation collective</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">📚</div>
+                    <div class="network-name">Arpentage</div>
+                    <div class="network-type">Lecture collaborative</div>
+                </div>
             </div>
         </div>
     </section>
-</div>
 
-<!-- ============================================
-     PARTIE 2: LA VÉRITÉ (le twist)
-     ============================================ -->
+    <!-- Offres partenariat -->
+    <section id="offres">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Offres</span>
+                <h2>Choisissez votre niveau d'implication</h2>
+                <p class="text-muted">
+                    Du simple échange au partenariat structurant. Tout est open source — 
+                    prenez ce qui vous plaît, avec ou sans nous.
+                </p>
+            </div>
 
-<div class="honest-section" id="truth">
-    <div class="transition-block">
-        <div class="emoji-big">👋</div>
-        <h2>Bon, sérieusement maintenant.</h2>
-        <p class="lead">
-            On rigole, mais derrière le bullshit startup, il y a un vrai projet.
-            Et on cherche vraiment des partenaires. Mais pas comme ça.
-        </p>
-    </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-tier">Niveau 1</div>
+                    <div class="pricing-title">Curieux</div>
+                    <div class="pricing-desc">Vous voulez voir, comprendre, peut-être tester.</div>
+                    <div class="pricing-price">Gratuit</div>
+                    <ul class="pricing-features">
+                        <li>Accès à tous nos outils open source</li>
+                        <li>Documentation complète</li>
+                        <li>Newsletter et updates</li>
+                        <li>Invitation aux événements publics</li>
+                        <li>Support communautaire</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline pricing-btn">S'inscrire</a>
+                </div>
 
-    <div class="real-content">
-        <h3>C'est quoi vraiment ?</h3>
-        <p>
-            On développe un <strong>ARG (jeu en réalité alternée) de politique-fiction</strong> 
-            comme outil d'éducation populaire et d'empouvoirement citoyen. Un prototype de société 
-            à construire ensemble, à "forker" (copier et adapter), à faire vivre en famille, 
-            à l'école, dans des animations diverses.
-        </p>
-        <p>
-            Arpentage de textes, création de guildes, "raids juridiques" dans la vraie vie, 
-            exploration de systèmes économiques alternatifs... Le potentiel est infini.
-        </p>
+                <div class="pricing-card featured">
+                    <div class="pricing-tier">Niveau 2</div>
+                    <div class="pricing-title">Co-créateur</div>
+                    <div class="pricing-desc">Vous voulez expérimenter avec votre public.</div>
+                    <div class="pricing-price">Sur projet <span>/ co-finançable</span></div>
+                    <ul class="pricing-features">
+                        <li>Tout le niveau Curieux</li>
+                        <li>Animation pilote sur mesure</li>
+                        <li>Formation de vos équipes</li>
+                        <li>Co-construction de contenus</li>
+                        <li>Support dédié</li>
+                        <li>Accès au réseau de partenaires</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary pricing-btn">Discuter →</a>
+                </div>
 
-        <h3>Ce qu'on cherche</h3>
-        <ul>
-            <li><strong>Des partenaires locaux</strong> — maisons de quartier, bibliothèques, MJ, centres culturels, écoles... pour tester, co-créer, héberger des activités</li>
-            <li><strong>Des organisations d'éducation permanente</strong> — pour la méthodologie, la légitimité, et parce que c'est exactement votre mission</li>
-            <li><strong>Des collectifs, artistes, hackers, rêveurs</strong> — qui veulent expérimenter avec nous</li>
-            <li><strong>Des structures qui ont des sous</strong> — ok celle-là c'est plus classique, mais on assume</li>
-        </ul>
+                <div class="pricing-card">
+                    <div class="pricing-tier">Niveau 3</div>
+                    <div class="pricing-title">Partenaire structurant</div>
+                    <div class="pricing-desc">Vous voulez co-porter le projet à long terme.</div>
+                    <div class="pricing-price">Sur mesure <span>/ multi-annuel</span></div>
+                    <ul class="pricing-features">
+                        <li>Tout le niveau Co-créateur</li>
+                        <li>Co-dépôt de projets (Erasmus+, FWB...)</li>
+                        <li>Gouvernance partagée</li>
+                        <li>Co-branding et visibilité</li>
+                        <li>Développement de modules exclusifs</li>
+                        <li>Place au CA si structure juridique</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline pricing-btn">En parler</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <div class="highlight-box">
+    <!-- Financements -->
+    <section id="financements">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Financements</span>
+                <h2>L'argent existe. On va le chercher.</h2>
+                <p class="text-muted">
+                    Plusieurs dispositifs sont parfaitement alignés avec le projet. 
+                    Un partenariat solide = un dossier plus fort.
+                </p>
+            </div>
+
+            <div class="funding-grid">
+                <div class="funding-card">
+                    <div class="funding-amount">100.000€</div>
+                    <div class="funding-source">Innoviris PYSI</div>
+                    <div class="funding-desc">Innovation sociale à impact bruxellois. 100% des coûts couverts.</div>
+                </div>
+                <div class="funding-card">
+                    <div class="funding-amount">5-50.000€</div>
+                    <div class="funding-source">NLnet NGI Zero</div>
+                    <div class="funding-desc">Communs numériques et open source.</div>
+                    <span class="funding-deadline">Deadline: 1er février 2026</span>
+                </div>
+                <div class="funding-card">
+                    <div class="funding-amount">60.000€</div>
+                    <div class="funding-source">Erasmus+ KA2</div>
+                    <div class="funding-desc">Partenariats européens éducation/jeunesse.</div>
+                    <span class="funding-deadline">Deadline: 5 mars 2026</span>
+                </div>
+                <div class="funding-card">
+                    <div class="funding-amount">15.000€/an</div>
+                    <div class="funding-source">COCOF Innovation</div>
+                    <div class="funding-desc">Bourse cohésion sociale, 2 ans renouvelable.</div>
+                </div>
+                <div class="funding-card">
+                    <div class="funding-amount">20.000€</div>
+                    <div class="funding-source">FWB Culture</div>
+                    <div class="funding-desc">Subventions projets pluridisciplinaires.</div>
+                </div>
+                <div class="funding-card">
+                    <div class="funding-amount">Gratuit</div>
+                    <div class="funding-source">Coopcity SEEDS</div>
+                    <div class="funding-desc">18 mois d'accompagnement + réseau + formations.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Réseau -->
+    <section id="reseau">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Écosystème</span>
+                <h2>Un réseau prêt à activer</h2>
+                <p class="text-muted">
+                    280 ASBL d'éducation permanente, 14 centres culturels bruxellois, 
+                    121 maisons de jeunes, 19 communes. Le terrain est fertile.
+                </p>
+            </div>
+
+            <div class="network-grid">
+                <div class="network-item">
+                    <div class="network-icon">🏠</div>
+                    <div class="network-name">Le Parallèle</div>
+                    <div class="network-type">MQ + MJ Auderghem</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">📚</div>
+                    <div class="network-name">Biblio.brussels</div>
+                    <div class="network-type">Réseau 19 communes</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">✊</div>
+                    <div class="network-name">PAC</div>
+                    <div class="network-type">Éducation permanente</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">🎓</div>
+                    <div class="network-name">Média Animation</div>
+                    <div class="network-type">Éducation aux médias</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">🔧</div>
+                    <div class="network-name">Fablabs.brussels</div>
+                    <div class="network-type">Fabrication</div>
+                </div>
+                <div class="network-item">
+                    <div class="network-icon">🌍</div>
+                    <div class="network-name">P2P Foundation</div>
+                    <div class="network-type">Réseau international</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Prêt à construire avec nous ?</h2>
             <p>
-                <strong>Le deal :</strong> Tout ce qu'on crée est open source. 
-                Vous prenez ce qui vous intéresse, vous l'adaptez, vous le forkez.
-                Avec ou sans nous. On préfère avec, mais on ne va pas pleurer si vous faites mieux tout seuls.
+                Pas de formulaire en 47 étapes. Un mail, on se parle, on voit si ça matche.
             </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="mailto:contact@brol2.be" class="btn btn-primary">contact@brol2.be</a>
+                <a href="https://yannkeep.github.io/start/arizona/town/cryptocoin/room/index.html" target="_blank" class="btn btn-outline">Voir le prototype →</a>
+            </div>
         </div>
-
-        <h3>Ce qu'on propose</h3>
-        <p>
-            Ça dépend de vous, en fait. On peut :
-        </p>
-        <ul>
-            <li>Co-construire des animations sur mesure pour votre public</li>
-            <li>Former vos animateur·ices au format ARG</li>
-            <li>Vous filer nos outils et ressources (et vous laissez tranquilles)</li>
-            <li>Monter des projets ensemble (Erasmus+, FWB, Innoviris...)</li>
-            <li>Juste discuter autour d'un café et voir si ça matche</li>
-        </ul>
-
-        <h3>Ce qu'on ne propose pas</h3>
-        <ul>
-            <li>Du consulting à 800€/jour avec des slides vides</li>
-            <li>Une méthode miracle brevetée</li>
-            <li>Des promesses qu'on ne peut pas tenir</li>
-            <li>Du jargon (enfin, plus maintenant)</li>
-        </ul>
-
-        <div class="real-cta">
-            <h3>Envie de discuter ?</h3>
-            <p>Pas de formulaire à 47 champs. Juste un mail, et on voit.</p>
-            <a href="mailto:contact@exemple.be" class="btn-honest">Nous contacter</a>
-            <a href="#" class="btn-outline-honest">Voir le projet en détail</a>
-        </div>
-    </div>
-</div>
+    </section>
+</main>
 
 <footer>
-    <p>
-        Fait avec 🎭 et un peu de second degré — 
-        <a href="#">1160 Bruxelles</a> — 
-        Open source, évidemment
-    </p>
+    <div class="container">
+        <p>
+            BROL² — Bruxelles 1160 — 
+            <a href="#">Open source</a>, évidemment.
+        </p>
+    </div>
 </footer>
 
 <script>
-    // Easter egg: Konami code reveals a message
-    let konamiCode = [];
-    const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-    
-    document.addEventListener('keydown', (e) => {
-        konamiCode.push(e.keyCode);
-        konamiCode = konamiCode.slice(-10);
-        
-        if (konamiCode.join(',') === konamiSequence.join(',')) {
-            alert('🎉 Achievement Unlocked: "Vous avez trouvé le Konami Code!"\n\nBonus: On vous offre un café si vous venez nous voir.');
-        }
-    });
+// Particles animation
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
 
-    // Smooth scroll to truth section
-    document.querySelectorAll('a[href="#truth"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('truth').scrollIntoView({ behavior: 'smooth' });
+let particles = [];
+const particleCount = 60;
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+function createParticles() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            radius: Math.random() * 2 + 1,
+            color: Math.random() > 0.5 ? 'rgba(0, 232, 123, 0.4)' : 'rgba(183, 148, 244, 0.3)'
+        });
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        
+        // Connect nearby particles
+        particles.slice(i + 1).forEach(p2 => {
+            const dx = p.x - p2.x;
+            const dy = p.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 120) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.03 * (1 - dist / 120)})`;
+                ctx.stroke();
+            }
         });
     });
+    
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', () => {
+    resize();
+    createParticles();
+});
+
+resize();
+createParticles();
+animate();
 </script>
 
 </body>
