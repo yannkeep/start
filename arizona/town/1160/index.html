@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratégie Socioculturelle & Partenariats : Du Local au Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals & Professional Tech -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-bg': '#f8f9fa',
+                        'brand-card': '#ffffff',
+                        'brand-text': '#1f2937',
+                        'brand-accent': '#d97706', // Warm amber/gold
+                        'brand-secondary': '#475569', // Slate
+                        'brand-soft': '#f3f4f6'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #1f2937; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            margin: 0 auto;
+        }
+        .nav-active {
+            border-bottom: 2px solid #d97706;
+            color: #d97706;
+            font-weight: 600;
+        }
+        /* Custom scrollbar for module list */
+        .module-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .module-grid::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .module-grid::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen font-sans">
+
+    <!-- Application Structure Plan:
+         1. Header: Core Mission Statement.
+         2. Dashboard Overview (The Vision): Interactive text explaining the path from 1160 Brussels to Global.
+         3. The Three Dimensions (Micro/Meso/Macro): Interactive Radar Chart to visualize the balance of strategy.
+         4. The Digital Toolkit (BROL 2.0): A filtered grid of the tools available (extracted from source file) to achieve the strategy.
+         5. Impact vs Rentability Matrix: A Bubble Chart to analyze potential partnerships based on the prompt's criteria.
+         6. Footer: Call to Action.
+         Why this structure? It moves from the abstract "Why" (Vision) to the structural "How" (Levels), to the concrete "What" (Tools), and finally the analytical "With Whom" (Partnerships).
+    -->
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🏛️</span>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 tracking-tight">Espace Stratégique Socioculturel</h1>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Éducation Populaire & Permanente</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm">
+                <button onclick="scrollToSection('vision')" class="hover:text-brand-accent transition">Vision</button>
+                <button onclick="scrollToSection('levels')" class="hover:text-brand-accent transition">Niveaux (Micro/Meso/Macro)</button>
+                <button onclick="scrollToSection('toolkit')" class="hover:text-brand-accent transition">BROL 2.0 Toolkit</button>
+                <button onclick="scrollToSection('matrix')" class="hover:text-brand-accent transition">Matrice d'Impact</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
+
+        <!-- SECTION 1: Vision & Context -->
+        <section id="vision" class="bg-white rounded-xl shadow p-6 md:p-8 fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="lg:col-span-2 space-y-4">
+                    <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-brand-accent pl-4">De 1160 Bruxelles au Monde Entier</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ce tableau de bord interactif matérialise une stratégie de partenariat socioculturel ambitieuse. 
+                        L'objectif est de structurer l'éducation populaire à travers un prisme évolutif : 
+                        d'un ancrage local fort à <strong>Auderghem (1160)</strong>, vers une expansion globale facilitée par le numérique.
+                    </p>
+                    <p class="text-gray-600 leading-relaxed">
+                        Nous analysons chaque initiative selon trois critères clés : 
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 mr-1">Accessibilité</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 mr-1">Impact Social</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">Rentabilité/Monétisation</span>
+                    </p>
+                    <div class="flex gap-4 pt-4">
+                        <div class="bg-brand-soft p-3 rounded-lg flex-1 text-center cursor-pointer hover:bg-gray-200 transition" onclick="updateVisionFocus('local')">
+                            <div class="text-xl">📍</div>
+                            <div class="font-semibold text-sm">Local (1160)</div>
+                        </div>
+                        <div class="bg-brand-soft p-3 rounded-lg flex-1 text-center cursor-pointer hover:bg-gray-200 transition" onclick="updateVisionFocus('global')">
+                            <div class="text-xl">🌍</div>
+                            <div class="font-semibold text-sm">Global</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-brand-soft rounded-lg p-6 h-full flex flex-col justify-center items-center text-center">
+                    <h3 class="font-bold text-lg mb-2" id="vision-card-title">Sélectionnez une portée</h3>
+                    <p class="text-sm text-gray-500" id="vision-card-desc">Cliquez sur Local ou Global pour voir les priorités stratégiques.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Micro / Meso / Macro Analysis -->
+        <section id="levels" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="order-2 lg:order-1">
+                <div class="bg-white rounded-xl shadow p-6 h-full flex flex-col">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">Analyse Structurelle des Niveaux</h2>
+                        <p class="text-sm text-gray-500 mt-1">Comparaison des exigences en ressources humaines vs impact technologique.</p>
+                    </div>
+                    <!-- Chart Container for Radar -->
+                    <div class="chart-container flex-grow">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2 space-y-4">
+                <div class="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-md transition border-l-4 border-blue-500" onclick="updateLevelDetails('micro')">
+                    <h3 class="font-bold text-lg flex justify-between">
+                        <span>Niveau Micro : L'Ancrage</span>
+                        <span class="text-gray-400 text-sm">1160 Bruxelles</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mt-2">Actions de terrain, ateliers physiques, lien direct avec le citoyen. La base de la légitimité socioculturelle.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-md transition border-l-4 border-green-500" onclick="updateLevelDetails('meso')">
+                    <h3 class="font-bold text-lg flex justify-between">
+                        <span>Niveau Méso : Le Réseau</span>
+                        <span class="text-gray-400 text-sm">Régional / Communautaire</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mt-2">Partenariats institutionnels, fédérations, mutualisation des outils (Wiki, WebRadio). L'échelle de la coopération.</p>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6 cursor-pointer hover:shadow-md transition border-l-4 border-purple-500" onclick="updateLevelDetails('macro')">
+                    <h3 class="font-bold text-lg flex justify-between">
+                        <span>Niveau Macro : L'Écosystème</span>
+                        <span class="text-gray-400 text-sm">Global / Digital</span>
+                    </h3>
+                    <p class="text-gray-600 text-sm mt-2">Plateformes numériques, tokenisation, MOOCs massifs. L'échelle de la monétisation et de l'influence mondiale.</p>
+                </div>
+                <div id="level-detail-box" class="bg-gray-800 text-white rounded-xl p-6 hidden fade-in">
+                    <h4 class="font-bold text-brand-accent mb-2" id="detail-title">Titre</h4>
+                    <p class="text-sm" id="detail-content">Contenu...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: BROL 2.0 Digital Toolkit -->
+        <section id="toolkit" class="bg-white rounded-xl shadow p-6 md:p-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">La Boîte à Outils (BROL 2.0)</h2>
+                    <p class="text-sm text-gray-500">Infrastructure technique de support à l'éducation permanente.</p>
+                </div>
+                <div class="flex space-x-2 text-sm overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
+                    <button class="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-brand-accent filter-btn active" data-filter="all">Tous</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-brand-accent filter-btn" data-filter="Infrastructure">Infra</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-brand-accent filter-btn" data-filter="Communication">Comms</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-brand-accent filter-btn" data-filter="Collaboration">Collab</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modules-container">
+                <!-- Javascript will populate this based on source file data -->
+            </div>
+        </section>
+
+        <!-- SECTION 4: Strategic Matrix (Impact vs Monetization) -->
+        <section id="matrix" class="bg-white rounded-xl shadow p-6 md:p-8">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Matrice de Priorisation des Partenariats</h2>
+                <p class="text-sm text-gray-500 max-w-2xl">
+                    Visualisation des opportunités selon l'axe <span class="font-bold text-green-600">Impact Social</span> (Axe Y) et 
+                    <span class="font-bold text-blue-600">Rentabilité/Monétisation</span> (Axe X). 
+                    La taille des bulles représente le degré d'accessibilité (Facilité d'accès).
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="chart-container">
+                        <canvas id="bubbleChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-brand-soft rounded-lg p-6 flex flex-col justify-center space-y-4">
+                    <h3 class="font-bold text-gray-700">Légende Stratégique</h3>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-start">
+                            <span class="text-xl mr-2">💎</span>
+                            <div>
+                                <strong>Haute Rentabilité, Haut Impact</strong>
+                                <br>Cibles prioritaires pour la pérénisation (ex: Formations certifiantes hybrides).
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-2">❤️</span>
+                            <div>
+                                <strong>Bas Rentabilité, Haut Impact</strong>
+                                <br>Cœur de mission (ex: Ateliers locaux 1160 gratuits). Nécessite subvention.
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-2">📈</span>
+                            <div>
+                                <strong>Haute Rentabilité, Bas Impact</strong>
+                                <br>Vaches à lait potentielles (ex: Location d'espaces, Services B2B).
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Filtrer par Accessibilité Minima</label>
+                        <input type="range" id="accessSlider" min="1" max="10" value="1" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>Exclusif</span>
+                            <span>Universel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm py-8 border-t border-gray-200 mt-8">
+            <p>Généré à partir de l'analyse "BROL 2.0" & Stratégie 1160.</p>
+            <p class="mt-2 text-xs">Outil d'aide à la décision pour l'éducation permanente.</p>
+        </footer>
+
+    </main>
+
+    <!-- Visualization & Content Choices:
+         - Radar Chart: Chosen to compare the qualitative attributes (Human Cost, Tech Reach, Budget) across the Micro/Meso/Macro levels.
+         - Grid System (Toolkit): Used to display the flat list of items from the source file in a digestible, categorized format.
+         - Bubble Chart: Perfect for 3-dimensional analysis (X=Money, Y=Social Good, Z/Size=Accessibility) required by the prompt's focus on "impact, monetization, accessibility".
+         - Interactive Text (Vision): Simple JS toggles to prevent information overload in the text-heavy sections.
+         -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        // --- DATA SOURCE: BROL 2.0 Modules (Derived from uploaded file) ---
+        const brolModules = [
+            { id: "site-ultime", name: "Site Ultime", category: "Communication", desc: "Portail central et vitrine publique.", status: "Actif" },
+            { id: "nextcloud", name: "Nextcloud", category: "Infrastructure", desc: "Stockage, agenda et documents partagés.", status: "Vital" },
+            { id: "webradio", name: "WebRadio", category: "Communication", desc: "Diffusion de flux audio et podcasts éducatifs.", status: "En dev" },
+            { id: "codimd", name: "CodiMD", category: "Collaboration", desc: "Prise de notes collaborative en temps réel.", status: "Actif" },
+            { id: "trello", name: "Trello/Kanban", category: "Collaboration", desc: "Gestion de projet agile.", status: "Actif" },
+            { id: "discord", name: "Discord", category: "Communication", desc: "Communauté instantanée et salon vocal.", status: "Populaire" },
+            { id: "git", name: "Gitea/Git", category: "Infrastructure", desc: "Gestion de version pour le code et les textes.", status: "Technique" },
+            { id: "peertube", name: "PeerTube", category: "Communication", desc: "Hébergement vidéo décentralisé.", status: "Planifié" },
+            { id: "dolibarr", name: "Dolibarr", category: "Infrastructure", desc: "ERP/CRM pour la gestion des adhérents.", status: "Admin" }
+        ];
+
+        // --- DATA SOURCE: Strategic Levels ---
+        const levelData = {
+            micro: {
+                title: "Micro : 1160 Auderghem",
+                content: "Le point de départ. Ici, la stratégie se concentre sur la proximité. Les partenariats sont avec le Centre Culturel, les maisons de quartier et les commerces locaux. L'objectif est la cohésion sociale immédiate. Rentabilité faible, Impact qualitatif élevé."
+            },
+            meso: {
+                title: "Méso : Bruxelles & Wallonie",
+                content: "L'échelle de la structure. Création de fédérations, échange de pratiques avec d'autres ASBL. Utilisation d'outils comme Nextcloud pour mutualiser les ressources administratives. Accessibilité moyenne, début de standardisation."
+            },
+            macro: {
+                title: "Macro : International & Web",
+                content: "L'échelle de la diffusion. Cours en ligne (MOOCs), WebRadio accessible partout, modèles économiques basés sur la crypto-monnaie ou le micro-don global. Impact quantitatif massif, coût marginal nul."
+            }
+        };
+
+        // --- STATE MANAGEMENT ---
+        const state = {
+            filter: 'all',
+            accessThreshold: 1
+        };
+
+        // --- DOM ELEMENTS ---
+        const modulesContainer = document.getElementById('modules-container');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const visionTitle = document.getElementById('vision-card-title');
+        const visionDesc = document.getElementById('vision-card-desc');
+        const levelDetailBox = document.getElementById('level-detail-box');
+        const detailTitle = document.getElementById('detail-title');
+        const detailContent = document.getElementById('detail-content');
+        const accessSlider = document.getElementById('accessSlider');
+
+        // --- CHART INSTANCES ---
+        let radarChartInstance = null;
+        let bubbleChartInstance = null;
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderModules();
+            initRadarChart();
+            initBubbleChart();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Filter Buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Update UI
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-gray-800', 'text-white');
+                        b.classList.add('bg-gray-100');
+                    });
+                    e.target.classList.remove('bg-gray-100');
+                    e.target.classList.add('bg-gray-800', 'text-white');
+
+                    // Update State & Render
+                    state.filter = e.target.dataset.filter;
+                    renderModules();
+                });
+            });
+
+            // Slider
+            accessSlider.addEventListener('input', (e) => {
+                state.accessThreshold = parseInt(e.target.value);
+                updateBubbleChart();
+            });
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- LOGIC: Modules Grid ---
+        function renderModules() {
+            modulesContainer.innerHTML = '';
+            
+            const filtered = state.filter === 'all' 
+                ? brolModules 
+                : brolModules.filter(m => m.category === state.filter);
+
+            filtered.forEach(mod => {
+                const card = document.createElement('div');
+                card.className = "bg-brand-soft border border-gray-200 rounded-lg p-4 hover:border-brand-accent transition group fade-in";
+                
+                // Icon selection based on category (Unicode)
+                let icon = "📦";
+                if(mod.category === "Communication") icon = "📡";
+                if(mod.category === "Infrastructure") icon = "🏗️";
+                if(mod.category === "Collaboration") icon = "🤝";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="text-2xl bg-white p-2 rounded-md shadow-sm group-hover:scale-110 transition">${icon}</div>
+                        <span class="text-xs font-semibold px-2 py-1 bg-white rounded-full text-gray-500 border border-gray-100">${mod.status}</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-1">${mod.name}</h3>
+                    <p class="text-xs text-gray-600 mb-3 h-8 overflow-hidden">${mod.desc}</p>
+                    <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                        <span class="text-xs text-brand-secondary uppercase font-bold tracking-wider">${mod.category}</span>
+                        <button class="text-brand-accent hover:text-brand-accent/80 text-lg">➔</button>
+                    </div>
+                `;
+                modulesContainer.appendChild(card);
+            });
+        }
+
+        // --- LOGIC: Vision Section ---
+        function updateVisionFocus(scope) {
+            const card = document.querySelector('#vision .bg-brand-soft');
+            card.classList.remove('fade-in');
+            void card.offsetWidth; // trigger reflow
+            card.classList.add('fade-in');
+
+            if (scope === 'local') {
+                visionTitle.textContent = "Focus Local : 1160 Auderghem";
+                visionDesc.innerHTML = "<strong>Priorité :</strong> Inclusion numérique des seniors et jeunes décrocheurs.<br><strong>Action :</strong> Ateliers physiques hebdomadaires.<br><strong>KPI :</strong> Taux de participation présentiel.";
+            } else {
+                visionTitle.textContent = "Focus Global : Expansion";
+                visionDesc.innerHTML = "<strong>Priorité :</strong> Scalabilité des contenus éducatifs.<br><strong>Action :</strong> Plateforme Wiki & Radio accessible 24/7.<br><strong>KPI :</strong> Visiteurs uniques & Dons/Crypto.";
+            }
+        }
+
+        // --- LOGIC: Levels Section ---
+        function updateLevelDetails(level) {
+            levelDetailBox.classList.remove('hidden');
+            levelDetailBox.classList.remove('fade-in');
+            void levelDetailBox.offsetWidth;
+            levelDetailBox.classList.add('fade-in');
+
+            const data = levelData[level];
+            detailTitle.textContent = data.title;
+            detailContent.textContent = data.content;
+
+            // Highlight chart dataset
+            // Reset all opacity
+            radarChartInstance.data.datasets.forEach(ds => {
+                ds.backgroundColor = ds.backgroundColor.replace(/[\d.]+\)$/, '0.1)');
+                ds.borderColor = ds.borderColor.replace(/[\d.]+\)$/, '0.2)');
+            });
+            
+            // Highlight selected
+            const idx = level === 'micro' ? 0 : level === 'meso' ? 1 : 2;
+            const targetColor = level === 'micro' ? 'rgba(59, 130, 246, 1)' : level === 'meso' ? 'rgba(16, 185, 129, 1)' : 'rgba(147, 51, 234, 1)';
+            
+            radarChartInstance.data.datasets[idx].backgroundColor = targetColor.replace('1)', '0.5)');
+            radarChartInstance.data.datasets[idx].borderColor = targetColor;
+            radarChartInstance.update();
+        }
+
+        // --- CHART 1: RADAR (Dimensions) ---
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Coût Humain', 'Portée Technique', 'Rentabilité', 'Complexité', 'Impact Local', 'Innovation'],
+                    datasets: [{
+                        label: 'Micro (Local)',
+                        data: [90, 20, 10, 20, 100, 30],
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
+                    }, {
+                        label: 'Méso (Régional)',
+                        data: [60, 60, 40, 50, 50, 60],
+                        fill: true,
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        pointBackgroundColor: 'rgb(16, 185, 129)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(16, 185, 129)'
+                    }, {
+                        label: 'Macro (Global)',
+                        data: [20, 100, 80, 90, 10, 100],
+                        fill: true,
+                        backgroundColor: 'rgba(147, 51, 234, 0.2)',
+                        borderColor: 'rgb(147, 51, 234)',
+                        pointBackgroundColor: 'rgb(147, 51, 234)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(147, 51, 234)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: { borderWidth: 2 }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Hide numbers for cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // --- CHART 2: BUBBLE (Impact Matrix) ---
+        function initBubbleChart() {
+            const ctx = document.getElementById('bubbleChart').getContext('2d');
+            
+            // Data Structure: x = Monetization, y = Social Impact, r = Accessibility
+            const rawData = [
+                { x: 10, y: 90, r: 25, label: "Ateliers 1160 (Gratuit)" }, // High impact, Low money, High Access
+                { x: 30, y: 60, r: 15, label: "WebRadio (Subvention)" },
+                { x: 80, y: 40, r: 10, label: "Formation Pro (Payant)" },
+                { x: 90, y: 20, r: 5, label: "Consulting B2B" },
+                { x: 50, y: 80, r: 20, label: "MOOC Freemium" },
+                { x: 60, y: 50, r: 12, label: "Vente E-Book" },
+                { x: 20, y: 30, r: 8, label: "Événement Privé" }
+            ];
+
+            bubbleChartInstance = new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Initiatives',
+                        data: rawData,
+                        backgroundColor: function(context) {
+                            const val = context.raw?.x;
+                            // Color gradient based on monetization (Blue to Green)
+                            return val > 60 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 159, 64, 0.7)';
+                        },
+                        borderColor: 'rgba(0,0,0,0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.label + 
+                                           ` (Rent: ${context.raw.x}%, Impact: ${context.raw.y}%)`;
+                                }
+                            }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Rentabilité / Monétisation' },
+                            min: 0, max: 100
+                        },
+                        y: {
+                            title: { display: true, text: 'Impact Social' },
+                            min: 0, max: 100
+                        }
+                    }
+                }
+            });
+
+            // Store raw data for filtering
+            bubbleChartInstance.rawData = rawData;
+        }
+
+        function updateBubbleChart() {
+            // Filter logic based on Slider (Accessibility ~ Radius)
+            // Note: In visual scale, we are treating 'r' as accessibility score.
+            // Mapping: r=5 (Exclusive) to r=25 (Universal)
+            
+            // Convert slider 1-10 to radius equivalent roughly
+            const threshold = state.accessThreshold * 2.5; 
+
+            const filteredData = bubbleChartInstance.rawData.filter(d => d.r >= threshold);
+            
+            bubbleChartInstance.data.datasets[0].data = filteredData;
+            bubbleChartInstance.update();
+        }
+
+    </script>
+</body>
+</html>
