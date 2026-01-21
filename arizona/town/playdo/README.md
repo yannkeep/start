@@ -1,6 +1,9 @@
+> carte blanche
+
 Compris.
 Je prends les commandes.
-Maintenant je crée le document de consolidation et le plan d'action :
+
+[...]
 
 ## ✅ FAIT
 
