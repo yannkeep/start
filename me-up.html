@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Poste de Travail Plaidoyer Citoyen - Outil de médiactivisme et participation démocratique">
+    <meta name="theme-color" content="#0a1628">
+    <title>⚖️ PLAIDOYER CITOYEN — Poste de Travail v4.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --bg-base: #0a1628;
+    --bg-surface: #0f1f35;
+    --bg-elevated: #142740;
+    --bg-card: #18304d;
+    --bg-interactive: #1d3a5c;
+    --bg-input: #0c1a2e;
+    --civic-primary: #4a9eff;
+    --civic-primary-light: #7cb8ff;
+    --civic-primary-dark: #2d7ad4;
+    --civic-success: #34d399;
+    --civic-success-light: #6ee7b7;
+    --civic-warning: #fbbf24;
+    --civic-warning-light: #fcd34d;
+    --civic-danger: #f87171;
+    --civic-danger-dark: #dc2626;
+    --civic-purple: #a78bfa;
+    --civic-teal: #2dd4bf;
+    --civic-orange: #fb923c;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverse: #0f172a;
+    --border-subtle: rgba(148, 163, 184, 0.08);
+    --border-default: rgba(148, 163, 184, 0.15);
+    --border-strong: rgba(148, 163, 184, 0.25);
+    --border-focus: var(--civic-primary);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+    --shadow-glow: 0 0 30px rgba(74, 158, 255, 0.15);
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast: 150ms;
+    --duration-base: 250ms;
+    --sidebar-width: 280px;
+    --sidebar-collapsed: 68px;
+    --header-height: 64px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; height: 100%; }
+body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: all var(--duration-base) var(--ease-out);
+}
+
+.sidebar.collapsed { width: var(--sidebar-collapsed); }
+.sidebar-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 72px;
+}
+
+.logo {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--civic-primary) 0%, var(--civic-teal) 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-glow);
+}
+
+.logo-text { display: flex; flex-direction: column; overflow: hidden; }
+.logo-title { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1rem; color: var(--text-primary); }
+.logo-subtitle { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.sidebar.collapsed .logo-text { opacity: 0; width: 0; }
+
+.nav-container { flex: 1; overflow-y: auto; padding: 0.75rem 0; }
+.nav-container::-webkit-scrollbar { width: 4px; }
+.nav-container::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--radius-full); }
+
+.nav-group { padding: 0.5rem 0.75rem; }
+.nav-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-fast);
+}
+.nav-group-header:hover { background: var(--border-subtle); }
+.nav-group-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+.sidebar.collapsed .nav-group-title { display: none; }
+.nav-group-toggle { width: 18px; height: 18px; color: var(--text-muted); transition: transform var(--duration-fast); }
+.nav-group.collapsed .nav-group-toggle { transform: rotate(-90deg); }
+.nav-group.collapsed .nav-items { display: none; }
+.sidebar.collapsed .nav-group-toggle { display: none; }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+.nav-item:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.nav-item.active { background: var(--bg-interactive); color: var(--civic-primary-light); }
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--civic-primary);
+    border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+}
+.nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.nav-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar.collapsed .nav-label { opacity: 0; width: 0; }
+.nav-badge {
+    margin-left: auto;
+    background: var(--civic-primary);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-full);
+}
+.sidebar.collapsed .nav-badge { display: none; }
+
+.sidebar-footer { padding: 0.75rem; border-top: 1px solid var(--border-subtle); }
+.sidebar-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.sidebar-toggle:hover { background: var(--bg-interactive); color: var(--text-primary); }
+.sidebar.collapsed .sidebar-toggle span:last-child { display: none; }
+
+.main {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--duration-base) var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.sidebar.collapsed ~ .main { margin-left: var(--sidebar-collapsed); }
+
+.topbar {
+    height: var(--header-height);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+}
+.topbar-left { display: flex; align-items: center; gap: 1rem; }
+.breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-muted); }
+.breadcrumb-item.current { color: var(--text-primary); font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--duration-fast);
+    border: none;
+    text-decoration: none;
+    font-family: inherit;
+}
+.btn-icon { padding: 0.5rem; width: 36px; height: 36px; }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+.btn-primary {
+    background: linear-gradient(135deg, var(--civic-primary) 0%, var(--civic-primary-dark) 100%);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-secondary { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-default); }
+.btn-secondary:hover { background: var(--bg-interactive); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.btn-success { background: linear-gradient(135deg, var(--civic-success) 0%, #059669 100%); color: white; }
+
+.content { flex: 1; padding: 1.5rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+.page { display: none; animation: fadeIn var(--duration-base) var(--ease-out); }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-header { margin-bottom: 2rem; }
+.page-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.page-description { color: var(--text-secondary); font-size: 0.9375rem; max-width: 65ch; }
+
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--duration-fast);
+}
+.card:hover { border-color: var(--border-default); }
+.card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.card-title { font-size: 0.9375rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+.card-body { padding: 1.25rem; }
+.card-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border-subtle); background: var(--bg-base); }
+
+.grid { display: grid; gap: 1.5rem; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-auto { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+@media (max-width: 1024px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+.form-group { margin-bottom: 1.25rem; }
+.form-label { display: block; font-size: 0.8125rem; font-weight: 600; margin-bottom: 0.5rem; }
+.form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.375rem; }
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-family: inherit;
+    transition: all var(--duration-fast);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--civic-primary);
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all var(--duration-fast);
+}
+.stat-card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+.stat-icon.blue { background: rgba(74, 158, 255, 0.15); color: var(--civic-primary); }
+.stat-icon.green { background: rgba(52, 211, 153, 0.15); color: var(--civic-success); }
+.stat-icon.orange { background: rgba(251, 146, 60, 0.15); color: var(--civic-orange); }
+.stat-icon.purple { background: rgba(167, 139, 250, 0.15); color: var(--civic-purple); }
+.stat-value { font-family: 'Fraunces', Georgia, serif; font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+.stat-label { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+.phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.phase-voir { background: rgba(74, 158, 255, 0.15); color: var(--civic-primary); }
+.phase-juger { background: rgba(251, 191, 36, 0.15); color: var(--civic-warning); }
+.phase-agir { background: rgba(52, 211, 153, 0.15); color: var(--civic-success); }
+
+.swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.swot-cell { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; }
+.swot-cell-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+.swot-cell-title { font-size: 0.875rem; font-weight: 700; }
+.swot-cell.strengths { border-top: 3px solid var(--civic-success); }
+.swot-cell.weaknesses { border-top: 3px solid var(--civic-danger); }
+.swot-cell.opportunities { border-top: 3px solid var(--civic-primary); }
+.swot-cell.threats { border-top: 3px solid var(--civic-warning); }
+.swot-cell.strengths .swot-cell-title { color: var(--civic-success); }
+.swot-cell.weaknesses .swot-cell-title { color: var(--civic-danger); }
+.swot-cell.opportunities .swot-cell-title { color: var(--civic-primary); }
+.swot-cell.threats .swot-cell-title { color: var(--civic-warning); }
+
+.actor-canvas {
+    background: var(--bg-input);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    min-height: 400px;
+}
+.actor-canvas-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 400px; }
+.actor-quadrant { border: 1px dashed var(--border-subtle); padding: 1rem; display: flex; flex-direction: column; }
+.actor-quadrant-label { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+.actor-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    margin: 0.25rem;
+}
+.actor-node.ally { border-color: var(--civic-success); }
+.actor-node.opponent { border-color: var(--civic-danger); }
+
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--civic-primary), var(--civic-success)); }
+.timeline-item { position: relative; padding-bottom: 1.5rem; }
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.25rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 3px solid var(--civic-primary);
+}
+.timeline-item.completed::before { background: var(--civic-success); border-color: var(--civic-success); }
+.timeline-date { font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); margin-bottom: 0.25rem; }
+.timeline-content { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.875rem; }
+.timeline-title { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; }
+.timeline-description { font-size: 0.8125rem; color: var(--text-secondary); }
+
+.io-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border-subtle);
+    z-index: 2000;
+    transform: translateX(100%);
+    transition: transform var(--duration-base) var(--ease-out);
+    display: flex;
+    flex-direction: column;
+}
+.io-panel.open { transform: translateX(0); }
+.io-panel-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.io-panel-title { font-size: 1rem; font-weight: 700; }
+.io-panel-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-sm); }
+.io-panel-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.io-panel-body { flex: 1; overflow-y: auto; padding: 1.25rem; }
+.io-section { margin-bottom: 2rem; }
+.io-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+.io-format-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+.io-format-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+}
+.io-format-btn:hover { background: var(--bg-interactive); border-color: var(--civic-primary); }
+.io-format-icon { font-size: 1.5rem; }
+.io-format-label { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); }
+.io-format-ext { font-size: 0.625rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+.drop-zone {
+    border: 2px dashed var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+    transition: all var(--duration-fast);
+    cursor: pointer;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--civic-primary); background: rgba(74, 158, 255, 0.05); }
+.drop-zone-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+.drop-zone-text { font-size: 0.875rem; color: var(--text-secondary); }
+.drop-zone-hint { font-size: 0.75rem; color: var(--text-muted); }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 22, 40, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--duration-base);
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95);
+    transition: transform var(--duration-base) var(--ease-spring);
+}
+.modal-overlay.open .modal { transform: scale(1); }
+.modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 1.125rem; font-weight: 700; }
+.modal-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-sm); }
+.modal-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+.toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 4000; display: flex; flex-direction: column; gap: 0.75rem; }
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    animation: slideIn var(--duration-base) var(--ease-spring);
+    max-width: 400px;
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.success { border-left: 3px solid var(--civic-success); }
+.toast.warning { border-left: 3px solid var(--civic-warning); }
+.toast.error { border-left: 3px solid var(--civic-danger); }
+.toast.info { border-left: 3px solid var(--civic-primary); }
+.toast-icon { font-size: 1.25rem; }
+.toast-message { font-size: 0.875rem; flex: 1; }
+.toast-close { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
+
+.tag { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; background: var(--bg-elevated); border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 500; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.font-bold { font-weight: 700; }
+
+@media (max-width: 1024px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .io-panel { width: 100%; }
+}
+@media (max-width: 768px) {
+    .content { padding: 1rem; }
+    .swot-grid { grid-template-columns: 1fr; }
+}
+@media print {
+    .sidebar, .topbar, .io-panel, .toast-container { display: none !important; }
+    .main { margin-left: 0; }
+    body { background: white; color: black; }
+}
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">⚖️</div>
+                <div class="logo-text">
+                    <span class="logo-title">Plaidoyer Citoyen</span>
+                    <span class="logo-subtitle">v4.0 • USB Ready</span>
+                </div>
+            </div>
+            <nav class="nav-container">
+                <div class="nav-group">
+                    <div class="nav-group-header"><span class="nav-group-title">Accueil</span></div>
+                    <div class="nav-items">
+                        <a class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span><span class="nav-label">Tableau de bord</span></a>
+                        <a class="nav-item" data-page="projets"><span class="nav-icon">📁</span><span class="nav-label">Mes projets</span><span class="nav-badge" id="projectCount">0</span></a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-header"><span class="nav-group-title">👁️ Phase 1 — VOIR</span><span class="nav-group-toggle">▼</span></div>
+                    <div class="nav-items">
+                        <a class="nav-item" data-page="tool-vision"><span class="nav-icon">🎯</span><span class="nav-label">Domino du changement</span></a>
+                        <a class="nav-item" data-page="tool-profil"><span class="nav-icon">👤</span><span class="nav-label">Profil d'engagement</span></a>
+                        <a class="nav-item" data-page="tool-pouvoir"><span class="nav-icon">🌸</span><span class="nav-label">Fleur de pouvoir</span></a>
+                        <a class="nav-item" data-page="tool-acteurs"><span class="nav-icon">🗺️</span><span class="nav-label">Cartographie acteurs</span></a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-header"><span class="nav-group-title">⚖️ Phase 2 — JUGER</span><span class="nav-group-toggle">▼</span></div>
+                    <div class="nav-items">
+                        <a class="nav-item" data-page="tool-theorie"><span class="nav-icon">💡</span><span class="nav-label">Théorie du changement</span></a>
+                        <a class="nav-item" data-page="tool-swot"><span class="nav-icon">📐</span><span class="nav-label">Analyse SWOT</span></a>
+                        <a class="nav-item" data-page="tool-pestel"><span class="nav-icon">🌍</span><span class="nav-label">Analyse PESTEL</span></a>
+                        <a class="nav-item" data-page="tool-arbre"><span class="nav-icon">🌳</span><span class="nav-label">Arbre à problèmes</span></a>
+                        <a class="nav-item" data-page="tool-pourquoi"><span class="nav-icon">❓</span><span class="nav-label">Les 5 Pourquoi</span></a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-header"><span class="nav-group-title">✊ Phase 3 — AGIR</span><span class="nav-group-toggle">▼</span></div>
+                    <div class="nav-items">
+                        <a class="nav-item" data-page="tool-modes"><span class="nav-icon">🔄</span><span class="nav-label">Modes d'action</span></a>
+                        <a class="nav-item" data-page="tool-smart"><span class="nav-icon">🎯</span><span class="nav-label">Objectifs SMART</span></a>
+                        <a class="nav-item" data-page="tool-cibles"><span class="nav-icon">🎪</span><span class="nav-label">Cibles et alliances</span></a>
+                        <a class="nav-item" data-page="tool-message"><span class="nav-icon">💬</span><span class="nav-label">Construction message</span></a>
+                        <a class="nav-item" data-page="tool-checklist"><span class="nav-icon">✅</span><span class="nav-label">Check-list rencontre</span></a>
+                        <a class="nav-item" data-page="tool-suivi"><span class="nav-icon">📈</span><span class="nav-label">Suivi-évaluation</span></a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-header"><span class="nav-group-title">📚 Ressources</span><span class="nav-group-toggle">▼</span></div>
+                    <div class="nav-items">
+                        <a class="nav-item" data-page="journal"><span class="nav-icon">📓</span><span class="nav-label">Journal d'actions</span></a>
+                        <a class="nav-item" data-page="contacts"><span class="nav-icon">👥</span><span class="nav-label">Carnet d'adresses</span></a>
+                        <a class="nav-item" data-page="guide"><span class="nav-icon">📖</span><span class="nav-label">Guide méthodologique</span></a>
+                    </div>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="sidebar-toggle" id="sidebarToggle"><span>◀</span><span>Réduire</span></button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-icon btn-ghost" id="mobileMenuToggle">☰</button>
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">Plaidoyer</span>
+                        <span style="color: var(--text-muted);">/</span>
+                        <span class="breadcrumb-item current" id="currentPageTitle">Tableau de bord</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-secondary btn-sm" id="importBtn"><span>📥</span> Importer</button>
+                    <button class="btn btn-primary btn-sm" id="exportBtn"><span>📤</span> Exporter</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- DASHBOARD -->
+                <div class="page active" id="page-dashboard">
+                    <div class="page-header">
+                        <h1 class="page-title"><span>📊</span> Tableau de bord</h1>
+                        <p class="page-description">Vue d'ensemble de votre stratégie de plaidoyer citoyen. Suivez votre progression à travers les 15 outils méthodologiques VOIR-JUGER-AGIR.</p>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon blue">📋</div><div class="stat-content"><div class="stat-value" id="stat-projets">0</div><div class="stat-label">Projets</div></div></div>
+                        <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-content"><div class="stat-value" id="stat-outils">0/15</div><div class="stat-label">Outils complétés</div></div></div>
+                        <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-content"><div class="stat-value" id="stat-acteurs">0</div><div class="stat-label">Acteurs identifiés</div></div></div>
+                        <div class="stat-card"><div class="stat-icon purple">📝</div><div class="stat-content"><div class="stat-value" id="stat-actions">0</div><div class="stat-label">Actions planifiées</div></div></div>
+                    </div>
+                    <div class="grid grid-3">
+                        <div class="card"><div class="card-header"><h3 class="card-title">👁️ VOIR</h3><span class="phase-badge phase-voir">Phase 1</span></div><div class="card-body"><p class="text-secondary mb-3" style="font-size: 0.875rem;">Analysez votre contexte et identifiez les acteurs clés.</p><div class="flex flex-col gap-2"><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-vision')">🎯 Domino du changement</button><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-acteurs')">🗺️ Cartographie acteurs</button></div></div></div>
+                        <div class="card"><div class="card-header"><h3 class="card-title">⚖️ JUGER</h3><span class="phase-badge phase-juger">Phase 2</span></div><div class="card-body"><p class="text-secondary mb-3" style="font-size: 0.875rem;">Analysez forces, faiblesses et construisez votre stratégie.</p><div class="flex flex-col gap-2"><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-swot')">📐 Analyse SWOT</button><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-arbre')">🌳 Arbre à problèmes</button></div></div></div>
+                        <div class="card"><div class="card-header"><h3 class="card-title">✊ AGIR</h3><span class="phase-badge phase-agir">Phase 3</span></div><div class="card-body"><p class="text-secondary mb-3" style="font-size: 0.875rem;">Définissez vos objectifs et passez à l'action.</p><div class="flex flex-col gap-2"><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-smart')">🎯 Objectifs SMART</button><button class="btn btn-secondary btn-sm" onclick="navigateTo('tool-message')">💬 Construction message</button></div></div></div>
+                    </div>
+                </div>
+
+                <!-- PROJETS -->
+                <div class="page" id="page-projets">
+                    <div class="page-header">
+                        <h1 class="page-title"><span>📁</span> Mes projets</h1>
+                        <p class="page-description">Gérez vos différentes campagnes de plaidoyer citoyen.</p>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="openModal('newProjectModal')"><span>➕</span> Nouveau projet</button>
+                    </div>
+                    <div class="grid grid-auto" id="projectsGrid"><div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">📁</div><h3 style="margin-bottom: 0.5rem;">Aucun projet</h3><p class="text-muted mb-3">Créez votre premier projet pour commencer.</p><button class="btn btn-primary" onclick="openModal('newProjectModal')">➕ Créer un projet</button></div></div>
+                </div>
+
+                <!-- TOOL: Vision -->
+                <div class="page" id="page-tool-vision">
+                    <div class="page-header"><h1 class="page-title"><span>🎯</span> Domino du changement</h1><p class="page-description">Définissez votre vision du changement et les étapes pour y parvenir.</p></div>
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">🌟 Ma vision</h3><span class="phase-badge phase-voir">VOIR</span></div>
+                        <div class="card-body">
+                            <div class="form-group"><label class="form-label">Situation actuelle problématique</label><textarea class="form-textarea" id="vision-actuelle" placeholder="Décrivez la situation actuelle..." rows="3"></textarea><p class="form-hint">Quel est le problème ? Qui est affecté ?</p></div>
+                            <div class="form-group"><label class="form-label">Situation souhaitée (Vision)</label><textarea class="form-textarea" id="vision-souhaitee" placeholder="Décrivez le monde que vous voulez voir..." rows="3"></textarea></div>
+                            <div class="form-group"><label class="form-label">Premiers dominos</label><textarea class="form-textarea" id="vision-dominos" placeholder="Quelles étapes pour passer de A à B ?" rows="4"></textarea></div>
+                        </div>
+                        <div class="card-footer flex justify-between"><button class="btn btn-ghost">← Précédent</button><button class="btn btn-primary" onclick="saveToolData('vision')">💾 Sauvegarder</button></div>
+                    </div>
+                </div>
+
+                <!-- TOOL: SWOT -->
+                <div class="page" id="page-tool-swot">
+                    <div class="page-header"><h1 class="page-title"><span>📐</span> Analyse SWOT</h1><p class="page-description">Identifiez vos Forces, Faiblesses, Opportunités et Menaces.</p></div>
+                    <div class="swot-grid">
+                        <div class="swot-cell strengths"><div class="swot-cell-header"><span>💪</span><h4 class="swot-cell-title">Forces</h4></div><textarea class="form-textarea" id="swot-strengths" placeholder="• Expertise du groupe&#10;• Réseau de contacts..." rows="5"></textarea></div>
+                        <div class="swot-cell weaknesses"><div class="swot-cell-header"><span>⚠️</span><h4 class="swot-cell-title">Faiblesses</h4></div><textarea class="form-textarea" id="swot-weaknesses" placeholder="• Ressources limitées&#10;• Manque de visibilité..." rows="5"></textarea></div>
+                        <div class="swot-cell opportunities"><div class="swot-cell-header"><span>🌟</span><h4 class="swot-cell-title">Opportunités</h4></div><textarea class="form-textarea" id="swot-opportunities" placeholder="• Élections à venir&#10;• Couverture médiatique..." rows="5"></textarea></div>
+                        <div class="swot-cell threats"><div class="swot-cell-header"><span>⛈️</span><h4 class="swot-cell-title">Menaces</h4></div><textarea class="form-textarea" id="swot-threats" placeholder="• Opposition organisée&#10;• Contexte économique..." rows="5"></textarea></div>
+                    </div>
+                    <div class="card mt-4"><div class="card-footer flex justify-between"><button class="btn btn-ghost" onclick="navigateTo('tool-theorie')">← Théorie du changement</button><button class="btn btn-primary" onclick="saveToolData('swot')">💾 Sauvegarder</button></div></div>
+                </div>
+
+                <!-- TOOL: Acteurs -->
+                <div class="page" id="page-tool-acteurs">
+                    <div class="page-header"><h1 class="page-title"><span>🗺️</span> Cartographie des acteurs</h1><p class="page-description">Identifiez et positionnez les acteurs clés selon leur pouvoir et position.</p></div>
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">➕ Ajouter un acteur</h3></div>
+                            <div class="card-body">
+                                <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="actor-name" placeholder="Ex: Ministre de l'Environnement"></div>
+                                <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="actor-type"><option value="institution">🏛️ Institution</option><option value="politician">👔 Élu·e</option><option value="ngo">🤝 ONG</option><option value="media">📺 Média</option><option value="business">🏢 Entreprise</option><option value="citizen">👥 Collectif</option><option value="expert">🎓 Expert</option></select></div>
+                                <div class="form-group"><label class="form-label">Position</label><select class="form-select" id="actor-position"><option value="strong-ally">🟢 Allié fort</option><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option><option value="strong-opponent">🔴 Opposant fort</option></select></div>
+                                <div class="form-group"><label class="form-label">Pouvoir (1-5)</label><input type="range" id="actor-power" min="1" max="5" value="3" style="width:100%;"></div>
+                                <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="actor-notes" rows="2" placeholder="Informations utiles..."></textarea></div>
+                                <button class="btn btn-primary" style="width: 100%;" onclick="addActor()">➕ Ajouter</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">📊 Matrice Pouvoir/Position</h3></div>
+                            <div class="card-body">
+                                <div class="actor-canvas"><div class="actor-canvas-grid">
+                                    <div class="actor-quadrant" id="quadrant-ally-high"><span class="actor-quadrant-label">🟢 Alliés influents</span><div class="actor-nodes"></div></div>
+                                    <div class="actor-quadrant" id="quadrant-opponent-high"><span class="actor-quadrant-label">🔴 Opposants influents</span><div class="actor-nodes"></div></div>
+                                    <div class="actor-quadrant" id="quadrant-ally-low"><span class="actor-quadrant-label">🟢 Alliés potentiels</span><div class="actor-nodes"></div></div>
+                                    <div class="actor-quadrant" id="quadrant-opponent-low"><span class="actor-quadrant-label">🟡 À convaincre</span><div class="actor-nodes"></div></div>
+                                </div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mt-4"><div class="card-header"><h3 class="card-title">📋 Liste des acteurs</h3><span class="nav-badge" id="actorCount">0</span></div><div class="card-body" id="actorsList"><p class="text-muted" style="text-align: center; padding: 2rem;">Aucun acteur ajouté.</p></div></div>
+                </div>
+
+                <!-- TOOL: SMART -->
+                <div class="page" id="page-tool-smart">
+                    <div class="page-header"><h1 class="page-title"><span>🎯</span> Objectifs SMART</h1><p class="page-description">Définissez des objectifs Spécifiques, Mesurables, Atteignables, Réalistes et Temporellement définis.</p></div>
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">🎯 Définir un objectif</h3><span class="phase-badge phase-agir">AGIR</span></div>
+                        <div class="card-body">
+                            <div class="form-group"><label class="form-label"><strong>S</strong>pécifique</label><textarea class="form-textarea" id="smart-specific" rows="2" placeholder="Que voulez-vous accomplir ?"></textarea></div>
+                            <div class="form-group"><label class="form-label"><strong>M</strong>esurable</label><textarea class="form-textarea" id="smart-measurable" rows="2" placeholder="Comment saurez-vous que c'est atteint ?"></textarea></div>
+                            <div class="form-group"><label class="form-label"><strong>A</strong>tteignable</label><textarea class="form-textarea" id="smart-achievable" rows="2" placeholder="Est-ce réaliste avec vos ressources ?"></textarea></div>
+                            <div class="form-group"><label class="form-label"><strong>R</strong>éaliste</label><textarea class="form-textarea" id="smart-relevant" rows="2" placeholder="Est-ce pertinent pour votre vision ?"></textarea></div>
+                            <div class="form-group"><label class="form-label"><strong>T</strong>emporel</label><div class="flex gap-3"><input type="date" class="form-input" id="smart-deadline"><input type="text" class="form-input" placeholder="Ex: Avant fin session" id="smart-deadline-text"></div></div>
+                        </div>
+                        <div class="card-footer flex justify-between"><button class="btn btn-ghost" onclick="navigateTo('tool-modes')">← Modes d'action</button><button class="btn btn-primary" onclick="saveToolData('smart')">💾 Sauvegarder</button></div>
+                    </div>
+                </div>
+
+                <!-- TOOL: Message -->
+                <div class="page" id="page-tool-message">
+                    <div class="page-header"><h1 class="page-title"><span>💬</span> Construction de message</h1><p class="page-description">Construisez un message percutant avec les 5 composants essentiels.</p></div>
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">✍️ Les 5 composants</h3><span class="phase-badge phase-agir">AGIR</span></div>
+                        <div class="card-body">
+                            <div class="form-group"><label class="form-label">1️⃣ L'accroche</label><textarea class="form-textarea" id="message-accroche" rows="2" placeholder="Une phrase choc..."></textarea></div>
+                            <div class="form-group"><label class="form-label">2️⃣ Le problème</label><textarea class="form-textarea" id="message-probleme" rows="3" placeholder="Exposez le problème..."></textarea></div>
+                            <div class="form-group"><label class="form-label">3️⃣ L'importance</label><textarea class="form-textarea" id="message-importance" rows="3" placeholder="Pourquoi agir maintenant..."></textarea></div>
+                            <div class="form-group"><label class="form-label">4️⃣ La cible</label><textarea class="form-textarea" id="message-cible" rows="2" placeholder="À qui vous adressez-vous ?"></textarea></div>
+                            <div class="form-group"><label class="form-label">5️⃣ L'action demandée</label><textarea class="form-textarea" id="message-action" rows="2" placeholder="Quelle action concrète ?"></textarea></div>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header"><h3 class="card-title">📝 Aperçu</h3><button class="btn btn-sm btn-secondary" onclick="copyMessage()">📋 Copier</button></div>
+                        <div class="card-body"><div id="messagePreview" style="background: var(--bg-input); padding: 1.5rem; border-radius: var(--radius-md); border-left: 3px solid var(--civic-primary);"><p class="text-muted">Remplissez les champs pour voir l'aperçu...</p></div></div>
+                        <div class="card-footer flex justify-between"><button class="btn btn-ghost" onclick="navigateTo('tool-cibles')">← Cibles et alliances</button><button class="btn btn-primary" onclick="saveToolData('message')">💾 Sauvegarder</button></div>
+                    </div>
+                </div>
+
+                <!-- TOOL: Journal -->
+                <div class="page" id="page-journal">
+                    <div class="page-header"><h1 class="page-title"><span>📓</span> Journal d'actions</h1><p class="page-description">Documentez vos actions et suivez l'évolution de votre plaidoyer.</p></div>
+                    <div class="flex justify-between items-center mb-4"><div></div><button class="btn btn-primary" onclick="addJournalEntry()">➕ Nouvelle entrée</button></div>
+                    <div class="card"><div class="card-body"><div class="timeline" id="journalTimeline"><div class="timeline-item"><div class="timeline-date">Bienvenue</div><div class="timeline-content"><div class="timeline-title">Démarrez votre journal</div><div class="timeline-description">Cliquez sur "Nouvelle entrée" pour documenter vos actions.</div></div></div></div></div></div>
+                </div>
+
+                <!-- TOOL: Guide -->
+                <div class="page" id="page-guide">
+                    <div class="page-header"><h1 class="page-title"><span>📖</span> Guide méthodologique</h1><p class="page-description">Ressources pour maîtriser les 15 outils du plaidoyer citoyen.</p></div>
+                    <div class="grid grid-3">
+                        <div class="card"><div class="card-header"><h3 class="card-title">👁️ VOIR</h3><span class="phase-badge phase-voir">Analyse</span></div><div class="card-body"><ul style="font-size: 0.875rem; color: var(--text-secondary); list-style: none;"><li class="mb-3">🎯 <strong>Domino</strong> - Définir la vision</li><li class="mb-3">👤 <strong>Profil</strong> - Auto-évaluation</li><li class="mb-3">🌸 <strong>Fleur</strong> - Analyse privilèges</li><li>🗺️ <strong>Cartographie</strong> - Mapping acteurs</li></ul></div></div>
+                        <div class="card"><div class="card-header"><h3 class="card-title">⚖️ JUGER</h3><span class="phase-badge phase-juger">Stratégie</span></div><div class="card-body"><ul style="font-size: 0.875rem; color: var(--text-secondary); list-style: none;"><li class="mb-3">💡 <strong>Théorie</strong> - Modèle logique</li><li class="mb-3">📐 <strong>SWOT</strong> - Forces/faiblesses</li><li class="mb-3">🌍 <strong>PESTEL</strong> - Contexte macro</li><li class="mb-3">🌳 <strong>Arbre</strong> - Causes/effets</li><li>❓ <strong>5 Pourquoi</strong> - Causes racines</li></ul></div></div>
+                        <div class="card"><div class="card-header"><h3 class="card-title">✊ AGIR</h3><span class="phase-badge phase-agir">Action</span></div><div class="card-body"><ul style="font-size: 0.875rem; color: var(--text-secondary); list-style: none;"><li class="mb-3">🔄 <strong>Modes</strong> - Avec/sans/contre</li><li class="mb-3">🎯 <strong>SMART</strong> - Objectifs</li><li class="mb-3">🎪 <strong>Cibles</strong> - Alliances</li><li class="mb-3">💬 <strong>Message</strong> - 5 composants</li><li class="mb-3">✅ <strong>Check-list</strong> - Préparation</li><li>📈 <strong>Suivi</strong> - Évaluation</li></ul></div></div>
+                    </div>
+                    <div class="card mt-4"><div class="card-header"><h3 class="card-title">🔗 Ressources</h3></div><div class="card-body"><div class="grid grid-2"><a href="https://www.justicepaix.be" target="_blank" class="btn btn-secondary">🌐 Justice et Paix</a><a href="https://voxpublic.org" target="_blank" class="btn btn-secondary">📚 VoxPublic</a></div></div></div>
+                </div>
+
+                <!-- Placeholder pages -->
+                <div class="page" id="page-tool-profil"><div class="page-header"><h1 class="page-title"><span>👤</span> Profil d'engagement</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-pouvoir"><div class="page-header"><h1 class="page-title"><span>🌸</span> Fleur de pouvoir</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-theorie"><div class="page-header"><h1 class="page-title"><span>💡</span> Théorie du changement</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-pestel"><div class="page-header"><h1 class="page-title"><span>🌍</span> Analyse PESTEL</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-arbre"><div class="page-header"><h1 class="page-title"><span>🌳</span> Arbre à problèmes</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-pourquoi"><div class="page-header"><h1 class="page-title"><span>❓</span> Les 5 Pourquoi</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-modes"><div class="page-header"><h1 class="page-title"><span>🔄</span> Modes d'action</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-cibles"><div class="page-header"><h1 class="page-title"><span>🎪</span> Cibles et alliances</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-checklist"><div class="page-header"><h1 class="page-title"><span>✅</span> Check-list rencontre</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-tool-suivi"><div class="page-header"><h1 class="page-title"><span>📈</span> Suivi-évaluation</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+                <div class="page" id="page-contacts"><div class="page-header"><h1 class="page-title"><span>👥</span> Carnet d'adresses</h1></div><div class="card"><div class="card-body"><p class="text-muted">Outil disponible prochainement...</p></div></div></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- IO Panel -->
+    <aside class="io-panel" id="ioPanel">
+        <div class="io-panel-header"><h3 class="io-panel-title" id="ioPanelTitle">Import / Export</h3><button class="io-panel-close" onclick="closeIOPanel()">✕</button></div>
+        <div class="io-panel-body">
+            <div class="io-section" id="importSection">
+                <h4 class="io-section-title">📥 Importer</h4>
+                <div class="drop-zone" id="dropZone"><div class="drop-zone-icon">📁</div><div class="drop-zone-text">Glissez un fichier ici</div><div class="drop-zone-hint">JSON, CSV, Markdown</div><input type="file" id="fileInput" accept=".json,.csv,.md" style="display: none;"></div>
+            </div>
+            <div class="io-section" id="exportSection">
+                <h4 class="io-section-title">📤 Exporter</h4>
+                <div class="io-format-grid">
+                    <button class="io-format-btn" onclick="exportData('json')"><span class="io-format-icon">📋</span><span class="io-format-label">JSON</span><span class="io-format-ext">.json</span></button>
+                    <button class="io-format-btn" onclick="exportData('csv')"><span class="io-format-icon">📊</span><span class="io-format-label">CSV</span><span class="io-format-ext">.csv</span></button>
+                    <button class="io-format-btn" onclick="exportData('markdown')"><span class="io-format-icon">📝</span><span class="io-format-label">Markdown</span><span class="io-format-ext">.md</span></button>
+                    <button class="io-format-btn" onclick="exportData('html')"><span class="io-format-icon">🌐</span><span class="io-format-label">HTML</span><span class="io-format-ext">.html</span></button>
+                </div>
+            </div>
+            <div class="io-section"><h4 class="io-section-title">💾 Sauvegarde</h4><button class="btn btn-secondary" style="width: 100%;" onclick="backupAll()">📦 Sauvegarder tout</button></div>
+        </div>
+    </aside>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="newProjectModal">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">➕ Nouveau projet</h3><button class="modal-close" onclick="closeModal('newProjectModal')">✕</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Nom du projet</label><input type="text" class="form-input" id="newProjectName" placeholder="Ex: Campagne Arizona 2025"></div>
+                <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="newProjectDesc" rows="3" placeholder="Décrivez l'objectif..."></textarea></div>
+                <div class="form-group"><label class="form-label">Thématique</label><select class="form-select" id="newProjectTheme"><option value="social">🏠 Protection sociale</option><option value="environnement">🌱 Environnement</option><option value="droits">⚖️ Droits humains</option><option value="democratie">🗳️ Démocratie</option><option value="economie">💰 Économie</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newProjectModal')">Annuler</button><button class="btn btn-primary" onclick="createProject()">Créer</button></div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// PLAIDOYER CITOYEN - APPLICATION v4.0
+// Offline-first, USB-ready advocacy workstation
+// ═══════════════════════════════════════════════════════════════════════════
+
+const APP_VERSION = '4.0.0';
+const DB_NAME = 'PlaidoyerCitoyenDB';
+const DB_VERSION = 1;
+
+let db;
+let state = {
+    currentPage: 'dashboard',
+    projects: [],
+    actors: [],
+    actions: [],
+    tools: { vision: {}, profil: {}, pouvoir: {}, acteurs: {}, theorie: {}, swot: {}, pestel: {}, arbre: {}, pourquoi: {}, modes: {}, smart: {}, cibles: {}, message: {}, checklist: {}, suivi: {} }
+};
+
+// IndexedDB
+async function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => { db = request.result; resolve(db); };
+        request.onupgradeneeded = (e) => {
+            const d = e.target.result;
+            if (!d.objectStoreNames.contains('data')) d.createObjectStore('data', { keyPath: 'id' });
+        };
+    });
+}
+
+async function saveData(key, data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(['data'], 'readwrite');
+        tx.objectStore('data').put({ id: key, data });
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+async function loadData(key) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(['data'], 'readonly');
+        const req = tx.objectStore('data').get(key);
+        req.onsuccess = () => resolve(req.result?.data || null);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+// Navigation
+function navigateTo(pageId) {
+    state.currentPage = pageId;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(`page-${pageId}`);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.page === pageId) item.classList.add('active');
+    });
+    const title = target?.querySelector('.page-title')?.textContent || pageId;
+    document.getElementById('currentPageTitle').textContent = title.replace(/^[^\w\s]+\s*/, '');
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+// Sidebar
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+    document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const pageId = item.dataset.page;
+            if (pageId) navigateTo(pageId);
+        });
+    });
+    document.querySelectorAll('.nav-group-header').forEach(header => {
+        header.addEventListener('click', () => header.parentElement.classList.toggle('collapsed'));
+    });
+}
+
+// IO Panel
+function openIOPanel(mode = 'export') {
+    const panel = document.getElementById('ioPanel');
+    const title = document.getElementById('ioPanelTitle');
+    panel.classList.add('open');
+    if (mode === 'import') {
+        title.textContent = '📥 Importer';
+        document.getElementById('importSection').style.display = 'block';
+        document.getElementById('exportSection').style.display = 'none';
+    } else {
+        title.textContent = '📤 Exporter';
+        document.getElementById('importSection').style.display = 'none';
+        document.getElementById('exportSection').style.display = 'block';
+    }
+}
+
+function closeIOPanel() {
+    document.getElementById('ioPanel').classList.remove('open');
+}
+
+// Export
+async function gatherAllData() {
+    return {
+        meta: { app: 'PlaidoyerCitoyen', version: APP_VERSION, exportDate: new Date().toISOString() },
+        tools: state.tools, actors: state.actors, actions: state.actions, projects: state.projects
+    };
+}
+
+async function exportData(format) {
+    const data = await gatherAllData();
+    let content, filename, mimeType;
+    switch (format) {
+        case 'json':
+            content = JSON.stringify(data, null, 2);
+            filename = `plaidoyer-${Date.now()}.json`;
+            mimeType = 'application/json';
+            break;
+        case 'csv':
+            content = 'Section,Clé,Valeur\n';
+            Object.entries(data.tools).forEach(([tool, d]) => {
+                Object.entries(d).forEach(([k, v]) => {
+                    content += `"${tool}","${k}","${String(v).replace(/"/g, '""')}"\n`;
+                });
+            });
+            filename = `plaidoyer-${Date.now()}.csv`;
+            mimeType = 'text/csv';
+            break;
+        case 'markdown':
+            content = `# Plaidoyer Citoyen\n\n`;
+            if (data.tools.vision?.actuelle) content += `## Vision\n\n**Situation actuelle:** ${data.tools.vision.actuelle}\n\n**Situation souhaitée:** ${data.tools.vision.souhaitee || ''}\n\n`;
+            if (data.tools.swot?.strengths) content += `## SWOT\n\n**Forces:** ${data.tools.swot.strengths}\n\n**Faiblesses:** ${data.tools.swot.weaknesses || ''}\n\n**Opportunités:** ${data.tools.swot.opportunities || ''}\n\n**Menaces:** ${data.tools.swot.threats || ''}\n\n`;
+            if (data.tools.message?.accroche) content += `## Message\n\n${data.tools.message.accroche}\n\n${data.tools.message.probleme || ''}\n\n${data.tools.message.importance || ''}\n\n**Action:** ${data.tools.message.action || ''}\n\n`;
+            if (data.actors.length) {
+                content += `## Acteurs\n\n| Nom | Type | Position | Pouvoir |\n|-----|------|----------|--------|\n`;
+                data.actors.forEach(a => content += `| ${a.name} | ${a.type} | ${a.position} | ${'★'.repeat(a.power)} |\n`);
+            }
+            content += `\n---\n*Exporté le ${new Date().toLocaleDateString('fr-FR')} • Plaidoyer Citoyen v${APP_VERSION}*`;
+            filename = `plaidoyer-${Date.now()}.md`;
+            mimeType = 'text/markdown';
+            break;
+        case 'html':
+            content = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Plaidoyer Citoyen</title><style>body{font-family:system-ui;max-width:800px;margin:2rem auto;padding:1rem;line-height:1.6}h1,h2{color:#1a365d}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:0.5rem;text-align:left}th{background:#f0f4f8}</style></head><body><h1>📊 Plaidoyer Citoyen</h1>`;
+            if (data.tools.vision?.actuelle) content += `<h2>🎯 Vision</h2><p><strong>Actuelle:</strong> ${data.tools.vision.actuelle}</p><p><strong>Souhaitée:</strong> ${data.tools.vision.souhaitee || ''}</p>`;
+            if (data.tools.swot?.strengths) content += `<h2>📐 SWOT</h2><p><strong>Forces:</strong> ${data.tools.swot.strengths}</p><p><strong>Faiblesses:</strong> ${data.tools.swot.weaknesses || ''}</p><p><strong>Opportunités:</strong> ${data.tools.swot.opportunities || ''}</p><p><strong>Menaces:</strong> ${data.tools.swot.threats || ''}</p>`;
+            if (data.actors.length) {
+                content += `<h2>🗺️ Acteurs</h2><table><tr><th>Nom</th><th>Type</th><th>Position</th><th>Pouvoir</th></tr>`;
+                data.actors.forEach(a => content += `<tr><td>${a.name}</td><td>${a.type}</td><td>${a.position}</td><td>${'★'.repeat(a.power)}</td></tr>`);
+                content += `</table>`;
+            }
+            content += `<footer><p><em>Exporté le ${new Date().toLocaleDateString('fr-FR')} • Plaidoyer Citoyen v${APP_VERSION}</em></p></footer></body></html>`;
+            filename = `plaidoyer-${Date.now()}.html`;
+            mimeType = 'text/html';
+            break;
+    }
+    downloadFile(content, filename, mimeType);
+    showToast(`Export ${format.toUpperCase()} réussi !`, 'success');
+    closeIOPanel();
+}
+
+function downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function backupAll() {
+    await exportData('json');
+    showToast('Sauvegarde complète effectuée !', 'success');
+}
+
+// Import
+function initDropZone() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) handleFileImport(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) handleFileImport(e.target.files[0]);
+    });
+}
+
+async function handleFileImport(file) {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const content = e.target.result;
+            if (file.name.endsWith('.json')) {
+                const data = JSON.parse(content);
+                if (data.tools) state.tools = { ...state.tools, ...data.tools };
+                if (data.actors) state.actors = data.actors;
+                if (data.projects) state.projects = data.projects;
+                await saveData('state', state);
+                restoreToolFields();
+                renderActors();
+                renderProjects();
+                updateDashboard();
+                showToast('Import réussi !', 'success');
+                closeIOPanel();
+            }
+        } catch (error) {
+            showToast('Erreur: ' + error.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Tools
+async function saveToolData(toolName) {
+    const toolData = {};
+    switch (toolName) {
+        case 'vision':
+            toolData.actuelle = document.getElementById('vision-actuelle')?.value || '';
+            toolData.souhaitee = document.getElementById('vision-souhaitee')?.value || '';
+            toolData.dominos = document.getElementById('vision-dominos')?.value || '';
+            break;
+        case 'swot':
+            toolData.strengths = document.getElementById('swot-strengths')?.value || '';
+            toolData.weaknesses = document.getElementById('swot-weaknesses')?.value || '';
+            toolData.opportunities = document.getElementById('swot-opportunities')?.value || '';
+            toolData.threats = document.getElementById('swot-threats')?.value || '';
+            break;
+        case 'smart':
+            toolData.specific = document.getElementById('smart-specific')?.value || '';
+            toolData.measurable = document.getElementById('smart-measurable')?.value || '';
+            toolData.achievable = document.getElementById('smart-achievable')?.value || '';
+            toolData.relevant = document.getElementById('smart-relevant')?.value || '';
+            toolData.deadline = document.getElementById('smart-deadline')?.value || '';
+            break;
+        case 'message':
+            toolData.accroche = document.getElementById('message-accroche')?.value || '';
+            toolData.probleme = document.getElementById('message-probleme')?.value || '';
+            toolData.importance = document.getElementById('message-importance')?.value || '';
+            toolData.cible = document.getElementById('message-cible')?.value || '';
+            toolData.action = document.getElementById('message-action')?.value || '';
+            break;
+    }
+    state.tools[toolName] = toolData;
+    await saveData('state', state);
+    showToast(`${toolName.charAt(0).toUpperCase() + toolName.slice(1)} sauvegardé !`, 'success');
+    updateDashboard();
+}
+
+function restoreToolFields() {
+    const v = state.tools.vision || {};
+    if (document.getElementById('vision-actuelle')) document.getElementById('vision-actuelle').value = v.actuelle || '';
+    if (document.getElementById('vision-souhaitee')) document.getElementById('vision-souhaitee').value = v.souhaitee || '';
+    if (document.getElementById('vision-dominos')) document.getElementById('vision-dominos').value = v.dominos || '';
+    
+    const s = state.tools.swot || {};
+    if (document.getElementById('swot-strengths')) document.getElementById('swot-strengths').value = s.strengths || '';
+    if (document.getElementById('swot-weaknesses')) document.getElementById('swot-weaknesses').value = s.weaknesses || '';
+    if (document.getElementById('swot-opportunities')) document.getElementById('swot-opportunities').value = s.opportunities || '';
+    if (document.getElementById('swot-threats')) document.getElementById('swot-threats').value = s.threats || '';
+    
+    const sm = state.tools.smart || {};
+    if (document.getElementById('smart-specific')) document.getElementById('smart-specific').value = sm.specific || '';
+    if (document.getElementById('smart-measurable')) document.getElementById('smart-measurable').value = sm.measurable || '';
+    if (document.getElementById('smart-achievable')) document.getElementById('smart-achievable').value = sm.achievable || '';
+    if (document.getElementById('smart-relevant')) document.getElementById('smart-relevant').value = sm.relevant || '';
+    if (document.getElementById('smart-deadline')) document.getElementById('smart-deadline').value = sm.deadline || '';
+    
+    const m = state.tools.message || {};
+    if (document.getElementById('message-accroche')) document.getElementById('message-accroche').value = m.accroche || '';
+    if (document.getElementById('message-probleme')) document.getElementById('message-probleme').value = m.probleme || '';
+    if (document.getElementById('message-importance')) document.getElementById('message-importance').value = m.importance || '';
+    if (document.getElementById('message-cible')) document.getElementById('message-cible').value = m.cible || '';
+    if (document.getElementById('message-action')) document.getElementById('message-action').value = m.action || '';
+}
+
+// Actors
+function addActor() {
+    const name = document.getElementById('actor-name').value.trim();
+    if (!name) { showToast('Entrez un nom', 'warning'); return; }
+    const actor = {
+        id: Date.now().toString(),
+        name,
+        type: document.getElementById('actor-type').value,
+        position: document.getElementById('actor-position').value,
+        power: parseInt(document.getElementById('actor-power').value),
+        notes: document.getElementById('actor-notes').value
+    };
+    state.actors.push(actor);
+    renderActors();
+    saveData('state', state);
+    document.getElementById('actor-name').value = '';
+    document.getElementById('actor-notes').value = '';
+    showToast(`Acteur "${name}" ajouté !`, 'success');
+    updateDashboard();
+}
+
+function deleteActor(id) {
+    state.actors = state.actors.filter(a => a.id !== id);
+    renderActors();
+    saveData('state', state);
+    showToast('Acteur supprimé', 'info');
+    updateDashboard();
+}
+
+function renderActors() {
+    const list = document.getElementById('actorsList');
+    document.getElementById('actorCount').textContent = state.actors.length;
+    if (!state.actors.length) {
+        list.innerHTML = '<p class="text-muted" style="text-align: center; padding: 2rem;">Aucun acteur ajouté.</p>';
+        return;
+    }
+    const icons = { institution: '🏛️', politician: '👔', ngo: '🤝', media: '📺', business: '🏢', citizen: '👥', expert: '🎓' };
+    const posLabels = { 'strong-ally': 'Allié fort', ally: 'Allié', neutral: 'Neutre', opponent: 'Opposant', 'strong-opponent': 'Opposant fort' };
+    list.innerHTML = state.actors.map(a => `
+        <div class="card" style="padding: 0.75rem; margin-bottom: 0.5rem;">
+            <div class="flex items-center gap-3">
+                <span style="font-size: 1.5rem;">${icons[a.type] || '📌'}</span>
+                <div style="flex: 1;"><div class="font-bold">${a.name}</div><div class="text-muted" style="font-size: 0.75rem;">${a.type} • ${'★'.repeat(a.power)}${'☆'.repeat(5-a.power)}</div></div>
+                <span class="tag">${posLabels[a.position] || a.position}</span>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="deleteActor('${a.id}')">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+    updateActorQuadrants();
+}
+
+function updateActorQuadrants() {
+    const q = { 'ally-high': [], 'ally-low': [], 'opponent-high': [], 'opponent-low': [] };
+    state.actors.forEach(a => {
+        const isAlly = a.position.includes('ally');
+        const isHigh = a.power >= 3;
+        if (isAlly && isHigh) q['ally-high'].push(a);
+        else if (isAlly) q['ally-low'].push(a);
+        else if (a.position !== 'neutral' && isHigh) q['opponent-high'].push(a);
+        else q['opponent-low'].push(a);
+    });
+    const icons = { institution: '🏛️', politician: '👔', ngo: '🤝', media: '📺', business: '🏢', citizen: '👥', expert: '🎓' };
+    Object.entries(q).forEach(([qid, actors]) => {
+        const container = document.querySelector(`#quadrant-${qid} .actor-nodes`);
+        if (container) container.innerHTML = actors.map(a => `<span class="actor-node ${a.position.includes('ally') ? 'ally' : 'opponent'}">${icons[a.type] || '📌'} ${a.name}</span>`).join('');
+    });
+}
+
+// Projects
+function createProject() {
+    const name = document.getElementById('newProjectName').value.trim();
+    if (!name) { showToast('Entrez un nom', 'warning'); return; }
+    state.projects.push({
+        id: Date.now().toString(),
+        name,
+        description: document.getElementById('newProjectDesc').value,
+        theme: document.getElementById('newProjectTheme').value,
+        createdAt: new Date().toISOString()
+    });
+    saveData('state', state);
+    renderProjects();
+    closeModal('newProjectModal');
+    showToast(`Projet "${name}" créé !`, 'success');
+    updateDashboard();
+}
+
+function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    document.getElementById('projectCount').textContent = state.projects.length;
+    if (!state.projects.length) {
+        grid.innerHTML = '<div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">📁</div><h3>Aucun projet</h3><p class="text-muted mb-3">Créez votre premier projet.</p><button class="btn btn-primary" onclick="openModal(\'newProjectModal\')">➕ Créer un projet</button></div>';
+        return;
+    }
+    const icons = { social: '🏠', environnement: '🌱', droits: '⚖️', democratie: '🗳️', economie: '💰' };
+    grid.innerHTML = state.projects.map(p => `
+        <div class="card" style="cursor: pointer;">
+            <div class="card-body">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="stat-icon blue" style="width: 48px; height: 48px;">${icons[p.theme] || '📁'}</div>
+                    <div><h3 style="font-size: 1rem; font-weight: 600;">${p.name}</h3><span class="text-muted" style="font-size: 0.75rem;">${new Date(p.createdAt).toLocaleDateString('fr-FR')}</span></div>
+                </div>
+                <p class="text-secondary" style="font-size: 0.875rem;">${p.description || 'Aucune description'}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Journal
+function addJournalEntry() {
+    const title = prompt('Titre de l\'entrée:');
+    if (!title) return;
+    const desc = prompt('Description:');
+    state.actions.push({ id: Date.now().toString(), title, description: desc || '', date: new Date().toISOString() });
+    saveData('state', state);
+    renderJournal();
+    showToast('Entrée ajoutée !', 'success');
+    updateDashboard();
+}
+
+function renderJournal() {
+    const timeline = document.getElementById('journalTimeline');
+    if (!state.actions.length) {
+        timeline.innerHTML = '<div class="timeline-item"><div class="timeline-date">Bienvenue</div><div class="timeline-content"><div class="timeline-title">Démarrez votre journal</div><div class="timeline-description">Cliquez sur "Nouvelle entrée".</div></div></div>';
+        return;
+    }
+    timeline.innerHTML = state.actions.map(a => `
+        <div class="timeline-item completed">
+            <div class="timeline-date">${new Date(a.date).toLocaleDateString('fr-FR')}</div>
+            <div class="timeline-content">
+                <div class="timeline-title">${a.title}</div>
+                <div class="timeline-description">${a.description}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Message Preview
+function updateMessagePreview() {
+    const preview = document.getElementById('messagePreview');
+    if (!preview) return;
+    const accroche = document.getElementById('message-accroche')?.value || '';
+    const probleme = document.getElementById('message-probleme')?.value || '';
+    const importance = document.getElementById('message-importance')?.value || '';
+    const cible = document.getElementById('message-cible')?.value || '';
+    const action = document.getElementById('message-action')?.value || '';
+    if (!accroche && !probleme && !importance) {
+        preview.innerHTML = '<p class="text-muted">Remplissez les champs pour voir l\'aperçu...</p>';
+        return;
+    }
+    preview.innerHTML = `
+        ${accroche ? `<p style="font-size: 1.1rem; font-weight: 600; color: var(--civic-primary); margin-bottom: 1rem;">${accroche}</p>` : ''}
+        ${probleme ? `<p style="margin-bottom: 0.75rem;">${probleme}</p>` : ''}
+        ${importance ? `<p style="margin-bottom: 0.75rem;">${importance}</p>` : ''}
+        ${cible ? `<p style="color: var(--text-secondary);"><em>À: ${cible}</em></p>` : ''}
+        ${action ? `<p style="font-weight: 600; color: var(--civic-success);">➡️ ${action}</p>` : ''}
+    `;
+}
+
+function copyMessage() {
+    const preview = document.getElementById('messagePreview');
+    navigator.clipboard.writeText(preview.innerText).then(() => showToast('Copié !', 'success')).catch(() => showToast('Erreur', 'error'));
+}
+
+// Dashboard
+function updateDashboard() {
+    let completed = 0;
+    Object.values(state.tools).forEach(t => { if (Object.keys(t).length && Object.values(t).some(v => v && v.length)) completed++; });
+    document.getElementById('stat-projets').textContent = state.projects.length || 0;
+    document.getElementById('stat-outils').textContent = `${completed}/15`;
+    document.getElementById('stat-acteurs').textContent = state.actors.length;
+    document.getElementById('stat-actions').textContent = state.actions.length;
+}
+
+// Modals
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Toast
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-message">${message}</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
+    container.appendChild(toast);
+    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
+}
+
+// Keyboard
+function initKeyboard() {
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); backupAll(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') { e.preventDefault(); openIOPanel('export'); }
+        if (e.key === 'Escape') { closeIOPanel(); document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); }
+    });
+}
+
+// Init
+async function init() {
+    try {
+        await initDB();
+        const saved = await loadData('state');
+        if (saved) {
+            state = { ...state, ...saved };
+        }
+        initSidebar();
+        initDropZone();
+        initKeyboard();
+        restoreToolFields();
+        renderActors();
+        renderProjects();
+        renderJournal();
+        updateDashboard();
+        
+        document.getElementById('importBtn').addEventListener('click', () => openIOPanel('import'));
+        document.getElementById('exportBtn').addEventListener('click', () => openIOPanel('export'));
+        
+        ['message-accroche', 'message-probleme', 'message-importance', 'message-cible', 'message-action'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', updateMessagePreview);
+        });
+        
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+        });
+        
+        console.log(`🚀 Plaidoyer Citoyen v${APP_VERSION} initialisé`);
+        showToast('Application prête !', 'success');
+    } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur de chargement', 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
