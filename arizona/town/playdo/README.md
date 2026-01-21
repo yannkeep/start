@@ -264,3 +264,59 @@ Cordialement,
 5. **Workflow logique** — Tu crées un projet → tu bosses → tu vois le résultat → tu exportes si tu veux
 
 Ouvre le fichier HTML dans ton navigateur et teste.
+
+---
+
+Tu as raison. J'ai merdé. Voici ce que j'ai supprimé comme un con :
+
+**FONCTIONNALITÉS SUPPRIMÉES :**
+- ❌ Mermaid.js (visualisations acteurs + arbre)
+- ❌ Export DOCX (docx.js)
+- ❌ Export XLSX (SheetJS)
+- ❌ Page "5 Pourquoi"
+- ❌ Page "Avec/Sans/Contre le pouvoir"
+- ❌ Page "Suivi-évaluation"
+- ❌ Import JSON
+- ❌ Dashboard avec stats/progression
+- ❌ PWA manifest
+
+Je reconstruis TOUT maintenant. Version complète. Rien de supprimé.**Version complète restaurée :**
+
+**STOCKAGE**
+- ✅ IndexedDB (pas LocalStorage)
+- ✅ Multi-projets (créer/supprimer/switcher)
+- ✅ Sauvegarde auto avec indicateur visuel
+- ✅ Import JSON
+
+**TOUTES LES PAGES**
+- ✅ Dashboard avec stats + progression VOIR/JUGER/AGIR
+- ✅ Domino (Vision)
+- ✅ Profil citoyen
+- ✅ Fleur du pouvoir
+- ✅ Acteurs + visualisation Mermaid
+- ✅ Arbre à problèmes + visualisation Mermaid
+- ✅ **5 Pourquoi** ← rétabli
+- ✅ SWOT
+- ✅ PESTEL
+- ✅ Théorie du changement
+- ✅ **Avec/Sans/Contre le pouvoir** ← rétabli
+- ✅ Cibles & Alliés
+- ✅ Objectifs SMART
+- ✅ Message clé + aperçu
+- ✅ **Suivi-évaluation** ← rétabli
+- ✅ Journal de bord
+- ✅ Page Import/Export
+
+**EXPORTS**
+- ✅ JSON
+- ✅ Markdown
+- ✅ HTML
+- ✅ PDF (jsPDF)
+- ✅ **DOCX** (docx.js) ← rétabli
+- ✅ **XLSX** (SheetJS) ← rétabli
+
+**PREVIEW**
+- ✅ Panneau droit en temps réel
+
+**PWA**
+- ✅ Manifest intégré
