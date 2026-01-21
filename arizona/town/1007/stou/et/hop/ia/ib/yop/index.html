@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAARG Platform — Civic Engagement Infrastructure for Organizations</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --light: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            background: var(--white);
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        .btn-gradient {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--off-white) 0%, var(--white) 100%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .hero-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .hero-note strong {
+            color: var(--success);
+        }
+
+        /* Logos */
+        .logos-section {
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logos-label {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .logos-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            opacity: 0.6;
+        }
+
+        .logo-item {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: 4rem 0;
+            background: var(--text);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Features */
+        .features-section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Use cases */
+        .usecases-section {
+            padding: 6rem 0;
+            background: var(--off-white);
+        }
+
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .usecase-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .usecase-header {
+            padding: 2rem;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .usecase-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .usecase-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .usecase-body {
+            padding: 2rem;
+        }
+
+        .usecase-body ul {
+            list-style: none;
+        }
+
+        .usecase-body li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .usecase-body li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Pricing */
+        .pricing-section {
+            padding: 6rem 0;
+        }
+
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            align-items: center;
+        }
+
+        .pricing-toggle span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .pricing-toggle span.active {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            right: 3px;
+            transition: 0.2s;
+        }
+
+        .save-badge {
+            background: var(--success);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .pricing-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            background: white;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 8px 40px rgba(99, 102, 241, 0.15);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+        }
+
+        .pricing-tier {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-price {
+            margin-bottom: 1.5rem;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .price-period {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .pricing-features li.disabled {
+            color: var(--text-secondary);
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .pricing-features li.disabled::before {
+            content: '✗';
+            color: var(--text-secondary);
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Enterprise */
+        .enterprise-section {
+            padding: 4rem 0;
+            background: var(--text);
+            color: white;
+        }
+
+        .enterprise-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .enterprise-content h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .enterprise-content p {
+            opacity: 0.8;
+            max-width: 500px;
+        }
+
+        .enterprise-features {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .enterprise-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .enterprise-feature::before {
+            content: '✓';
+            color: var(--success);
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            padding: 6rem 0;
+            background: var(--off-white);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .testimonial-stars {
+            color: var(--warning);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .testimonial-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .testimonial-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(4, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            max-width: 250px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-col a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-legal a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+            .pricing-card.featured { transform: none; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-links { display: none; }
+            .features-grid { grid-template-columns: 1fr; }
+            .usecases-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .enterprise-inner { flex-direction: column; text-align: center; }
+        }
+
+        /* Comparison table */
+        .comparison-section {
+            padding: 4rem 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border);
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--off-white);
+        }
+
+        .check { color: var(--success); }
+        .cross { color: var(--text-secondary); opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <div class="container nav-inner">
+        <a href="#" class="logo">AAARG</a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#usecases">Use Cases</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#">Resources</a>
+            <a href="#">Login</a>
+            <a href="#" class="btn btn-primary">Start Free Trial</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">🚀 Now with AI-powered scenario generation</div>
+        <h1>Transform your audience into <span class="gradient-text">engaged citizens</span></h1>
+        <p>The all-in-one platform for civic organizations to create immersive alternate reality games that drive real-world action.</p>
+        <div class="hero-ctas">
+            <a href="#" class="btn btn-gradient btn-large">Start 14-day free trial</a>
+            <a href="#" class="btn btn-secondary btn-large">Book a demo</a>
+        </div>
+        <p class="hero-note">No credit card required · <strong>4.9/5 on G2</strong> · Setup in minutes</p>
+    </div>
+</section>
+
+<!-- Logos -->
+<section class="logos-section">
+    <div class="container">
+        <p class="logos-label">Trusted by 500+ organizations worldwide</p>
+        <div class="logos-grid">
+            <span class="logo-item">UNICEF</span>
+            <span class="logo-item">WWF</span>
+            <span class="logo-item">Amnesty</span>
+            <span class="logo-item">Greenpeace</span>
+            <span class="logo-item">Red Cross</span>
+            <span class="logo-item">UNESCO</span>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>2.5M+</h3>
+                <p>Citizens engaged</p>
+            </div>
+            <div class="stat-item">
+                <h3>500+</h3>
+                <p>Organizations</p>
+            </div>
+            <div class="stat-item">
+                <h3>47%</h3>
+                <p>Avg. engagement increase</p>
+            </div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>Customer satisfaction</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features-section" id="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Everything you need to create impact</h2>
+            <p>Our platform combines narrative design, gamification, and analytics to maximize civic engagement.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Scenario Builder</h3>
+                <p>Drag-and-drop interface to create branching narratives. No coding required. AI-assisted writing suggestions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Virtual Economy</h3>
+                <p>Built-in token system for rewards and incentives. Gamify actions, track contributions, drive engagement.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-time Analytics</h3>
+                <p>Track participation, measure impact, optimize campaigns. Export reports for stakeholders and funders.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Multi-instance Federation</h3>
+                <p>Connect multiple campaigns across organizations. Shared leaderboards, cross-pollination, network effects.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Multilingual Support</h3>
+                <p>Deploy in 40+ languages. Automatic translation. Cultural adaptation tools for global reach.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Enterprise Security</h3>
+                <p>SOC 2 Type II certified. GDPR compliant. SSO, audit logs, role-based access control.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Use cases -->
+<section class="usecases-section" id="usecases">
+    <div class="container">
+        <div class="section-header">
+            <h2>Built for every civic mission</h2>
+            <p>From voter education to climate action, AAARG adapts to your goals.</p>
+        </div>
+        <div class="usecases-grid">
+            <div class="usecase-card">
+                <div class="usecase-header">
+                    <h3>🗳️ Voter Education</h3>
+                    <p>Prepare citizens for elections</p>
+                </div>
+                <div class="usecase-body">
+                    <ul>
+                        <li>Interactive candidate comparison tools</li>
+                        <li>Simulated voting experiences</li>
+                        <li>Policy impact scenarios</li>
+                        <li>Fact-checking gamification</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-header">
+                    <h3>🌱 Climate Action</h3>
+                    <p>Drive sustainable behavior change</p>
+                </div>
+                <div class="usecase-body">
+                    <ul>
+                        <li>Carbon footprint challenges</li>
+                        <li>Community action coordination</li>
+                        <li>Future scenario visualization</li>
+                        <li>Impact tracking dashboards</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-header">
+                    <h3>📚 Media Literacy</h3>
+                    <p>Combat misinformation at scale</p>
+                </div>
+                <div class="usecase-body">
+                    <ul>
+                        <li>Fake news detection games</li>
+                        <li>Source verification training</li>
+                        <li>Critical thinking exercises</li>
+                        <li>Peer-to-peer learning</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-header">
+                    <h3>🤝 Community Building</h3>
+                    <p>Strengthen local engagement</p>
+                </div>
+                <div class="usecase-body">
+                    <ul>
+                        <li>Neighborhood challenges</li>
+                        <li>Local issue crowdsourcing</li>
+                        <li>Participatory budgeting</li>
+                        <li>Civic skill development</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing-section" id="pricing">
+    <div class="container">
+        <div class="section-header">
+            <h2>Simple, transparent pricing</h2>
+            <p>Start free, scale as you grow. No hidden fees.</p>
+        </div>
+
+        <div class="pricing-toggle">
+            <span>Monthly</span>
+            <div class="toggle-switch"></div>
+            <span class="active">Annual</span>
+            <span class="save-badge">Save 20%</span>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Starter -->
+            <div class="pricing-card">
+                <div class="pricing-tier">Starter</div>
+                <h3>For small organizations</h3>
+                <p class="pricing-desc">Perfect for getting started with civic engagement.</p>
+                <div class="pricing-price">
+                    <span class="price-amount">€49</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Up to 500 participants</li>
+                    <li>3 active scenarios</li>
+                    <li>Basic analytics</li>
+                    <li>Email support</li>
+                    <li>Community templates</li>
+                    <li class="disabled">Custom branding</li>
+                    <li class="disabled">API access</li>
+                    <li class="disabled">SSO</li>
+                </ul>
+                <a href="#" class="btn btn-secondary">Start free trial</a>
+            </div>
+
+            <!-- Pro -->
+            <div class="pricing-card featured">
+                <div class="pricing-tier">Professional</div>
+                <h3>For growing teams</h3>
+                <p class="pricing-desc">Everything you need to scale your impact.</p>
+                <div class="pricing-price">
+                    <span class="price-amount">€199</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Up to 5,000 participants</li>
+                    <li>Unlimited scenarios</li>
+                    <li>Advanced analytics</li>
+                    <li>Priority support</li>
+                    <li>Custom branding</li>
+                    <li>API access</li>
+                    <li>Team collaboration</li>
+                    <li class="disabled">Dedicated CSM</li>
+                </ul>
+                <a href="#" class="btn btn-gradient">Start free trial</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="pricing-card">
+                <div class="pricing-tier">Enterprise</div>
+                <h3>For large organizations</h3>
+                <p class="pricing-desc">Custom solutions for maximum impact.</p>
+                <div class="pricing-price">
+                    <span class="price-amount">Custom</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>Unlimited participants</li>
+                    <li>Unlimited everything</li>
+                    <li>Custom integrations</li>
+                    <li>24/7 phone support</li>
+                    <li>White-label option</li>
+                    <li>SSO / SAML</li>
+                    <li>Dedicated CSM</li>
+                    <li>On-premise available</li>
+                </ul>
+                <a href="#" class="btn btn-secondary">Contact sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enterprise CTA -->
+<section class="enterprise-section">
+    <div class="container">
+        <div class="enterprise-inner">
+            <div class="enterprise-content">
+                <h2>Need a custom solution?</h2>
+                <p>Our enterprise team will design a tailored engagement strategy for your organization's unique needs.</p>
+            </div>
+            <div>
+                <div class="enterprise-features">
+                    <span class="enterprise-feature">Dedicated success manager</span>
+                    <span class="enterprise-feature">Custom development</span>
+                    <span class="enterprise-feature">SLA guarantee</span>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a href="#" class="btn btn-primary btn-large">Talk to sales</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Loved by civic innovators</h2>
+            <p>See what our customers are saying about AAARG.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"AAARG transformed our voter education campaign. We reached 3x more young people than any previous initiative. The ROI was incredible."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SL</div>
+                    <div class="testimonial-info">
+                        <h4>Sarah Lindqvist</h4>
+                        <p>Director, Nordic Democracy Foundation</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The platform is incredibly intuitive. Our team was up and running in days, not months. Support is world-class."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">MK</div>
+                    <div class="testimonial-info">
+                        <h4>Marco Kowalski</h4>
+                        <p>Program Manager, EU Citizens Lab</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"We've tried other platforms. Nothing comes close to AAARG's combination of power and ease of use. It's a game-changer."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">AD</div>
+                    <div class="testimonial-info">
+                        <h4>Amara Diallo</h4>
+                        <p>Innovation Lead, African Civic Tech Hub</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to transform civic engagement?</h2>
+        <p>Join 500+ organizations already using AAARG to create meaningful impact.</p>
+        <div class="cta-buttons">
+            <a href="#" class="btn btn-gradient btn-large">Start your free trial</a>
+            <a href="#" class="btn btn-secondary btn-large">Schedule a demo</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">AAARG</div>
+                <p>Empowering organizations to create meaningful civic engagement through immersive experiences.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Use Cases</a></li>
+                    <li><a href="#">Integrations</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Webinars</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">GDPR</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 AAARG Inc. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Settings</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
