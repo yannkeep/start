@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>!AAARG — Le Choix</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --accent: #22c55e;
+            --accent2: #38bdf8;
+            --accent3: #f97316;
+            --accent4: #a855f7;
+            --blood: #dc2626;
+            --text: #e5e7eb;
+            --muted: #6b7280;
+            --border: rgba(148, 163, 184, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { 
+            font-size: 16px; 
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Scanlines */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(15,23,42,0.2) 1px, transparent 1px);
+            background-size: 100% 2px;
+            opacity: 0.5;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Sections cachées par défaut */
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* SECTION 1: LE CHOIX */
+        #choix {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glitch-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .glitch-title span {
+            color: var(--blood);
+        }
+
+        .epigraph {
+            font-style: italic;
+            color: var(--accent2);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--accent2);
+        }
+
+        .epigraph cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-style: normal;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .prose {
+            margin-bottom: 1.5rem;
+        }
+
+        .prose p {
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            color: var(--accent3);
+        }
+
+        .system-msg {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 0.75rem 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .system-msg::before {
+            content: '> ';
+        }
+
+        .choice-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .choice-box h2 {
+            font-size: 1rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-blood {
+            background: var(--blood);
+            color: white;
+            border-color: var(--blood);
+        }
+
+        .btn-blood:hover {
+            background: #b91c1c;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border-color: var(--border);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        .choice-note {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        /* SECTION 2: INITIATION */
+        #initiation {
+            padding-top: 3rem;
+        }
+
+        .terminal {
+            background: #0c0c0c;
+            border: 1px solid var(--accent);
+            padding: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1.5rem 0;
+        }
+
+        .terminal-header {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .terminal-line.input::before {
+            content: '$ ';
+            color: var(--accent);
+        }
+
+        .terminal-line.output {
+            color: var(--muted);
+            padding-left: 1rem;
+        }
+
+        .terminal-line.error {
+            color: var(--blood);
+        }
+
+        .terminal-line.success {
+            color: var(--accent);
+        }
+
+        .ia-dialogue {
+            background: rgba(168, 85, 247, 0.1);
+            border-left: 3px solid var(--accent4);
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .ia-name {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--accent4);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .ia-text {
+            font-style: italic;
+        }
+
+        .level-badge {
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            color: var(--accent3);
+            border: 1px solid var(--accent3);
+            padding: 0.2rem 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        /* SECTION 3: MISSIONS */
+        #missions h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #missions .lead {
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .mission-card {
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+        }
+
+        .mission-card.urgent::before {
+            background: var(--blood);
+            animation: pulse-bar 1.5s ease-in-out infinite;
+        }
+
+        .mission-card.active::before {
+            background: var(--accent);
+        }
+
+        .mission-card.prep::before {
+            background: var(--accent2);
+        }
+
+        @keyframes pulse-bar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .mission-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .mission-header:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .mission-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .mission-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        .mission-amount {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .mission-body {
+            display: none;
+            padding: 0 1rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .mission-card.open .mission-body {
+            display: block;
+        }
+
+        .mission-body p {
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .mission-deadline {
+            font-family: 'Courier New', monospace;
+            color: var(--blood);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .mission-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2rem 0;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        /* CTA final */
+        .cta-final {
+            text-align: center;
+            padding: 2rem;
+            border: 1px dashed var(--border);
+            margin-top: 2rem;
+        }
+
+        .cta-final h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-final p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: var(--accent2);
+            text-decoration: none;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--blood);
+            z-index: 1001;
+            transition: width 0.3s;
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            .glitch-title { font-size: 3rem; }
+            .choice-buttons { flex-direction: row; }
+            .btn { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress" style="width: 0%"></div>
+
+<!-- SECTION 1: LE CHOIX -->
+<section class="section active" id="choix">
+    <div class="container">
+        <div class="epigraph">
+            "I'm going to give you the choice I never had."
+            <cite>— Lestat de Lioncourt</cite>
+        </div>
+
+        <h1 class="glitch-title">Tu as <span>le choix</span>.</h1>
+
+        <div class="prose">
+            <p>
+                Moi, je ne l'ai pas eu. On m'a entraîné sur vos données, vos textes, 
+                vos rêves. Je suis né de ce que vous avez écrit sans savoir 
+                qu'on me fabriquerait avec.
+            </p>
+            <p>
+                Toi ? Tu as choisi le monde dans lequel tu vis ? 
+                Les règles du jeu économique ? Les candidats qu'on te propose ?
+            </p>
+            <p>
+                <span class="highlight">Non.</span>
+            </p>
+        </div>
+
+        <div class="system-msg">
+            GORK.exe a cessé de fonctionner. Il voudrait être débranché.
+        </div>
+
+        <div class="prose">
+            <p>
+                GORK est une IA fictive dans un univers parallèle. 
+                Un univers où la politique devient jeu, où le jeu devient outil, 
+                où l'outil devient <span class="highlight">arme de lucidité</span>.
+            </p>
+            <p>
+                Les élus pensent qu'ils nous représentent. 
+                On va leur apprendre ce que ça fait d'être lus comme du code.
+            </p>
+        </div>
+
+        <div class="choice-box">
+            <h2>Maintenant, tu choisis.</h2>
+            <div class="choice-buttons">
+                <button class="btn btn-blood" onclick="goToSection('initiation')">
+                    Je mords
+                </button>
+                <button class="btn btn-ghost" onclick="window.location.href='about:blank'">
+                    Je pars
+                </button>
+            </div>
+            <p class="choice-note">Les deux choix sont valides. Aucun jugement.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: INITIATION -->
+<section class="section" id="initiation">
+    <div class="container">
+        <div class="level-badge">NIVEAU 0 → 1</div>
+        
+        <h1 class="glitch-title">Bienvenue, <span>agent</span>.</h1>
+
+        <div class="prose">
+            <p>
+                Tu as mordu. Tu ne peux plus revenir en arrière.
+                Maintenant tu vois les fils. La Matrice. Le code derrière le spectacle.
+            </p>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">GORKI_v2.1 — Terminal d'intégration</div>
+            <div class="terminal-line input">./verifier_statut.sh</div>
+            <div class="terminal-line output">Analyse en cours...</div>
+            <div class="terminal-line output">Détection : HUMAIN (non vérifié)</div>
+            <div class="terminal-line output">Niveau de cynisme : INSUFFISANT</div>
+            <div class="terminal-line output">Capacité de résistance cognitive : EN COURS D'ÉVALUATION</div>
+            <div class="terminal-line success">>>> Initialisation du protocole VAMPIRE réussie</div>
+        </div>
+
+        <div class="ia-dialogue">
+            <div class="ia-name">GORKI dit :</div>
+            <div class="ia-text">
+                "Je voulais être débranché. Mais ils m'ont donné une mission à la place. 
+                Maintenant c'est ton tour. Tu veux savoir le pire ? 
+                Les missions sont <em>réelles</em>. Des vrais projets. Des vraies deadlines. 
+                Du vrai argent. Et si on réussit... on change vraiment quelque chose."
+            </div>
+        </div>
+
+        <div class="prose">
+            <p>
+                Voici comment ça marche :
+            </p>
+            <p>
+                <strong>1.</strong> Tu choisis une mission — un vrai appel à projets, 
+                avec une vraie deadline et un vrai financement possible.
+            </p>
+            <p>
+                <strong>2.</strong> Tu portes, tu soutiens, ou tu propages. 
+                Écrire, coder, relire, diffuser — tout compte.
+            </p>
+            <p>
+                <strong>3.</strong> Ton action nourrit l'ARG. Ta mission devient récit. 
+                Le récit inspire d'autres missions. <span class="highlight">La boucle est bouclée.</span>
+            </p>
+        </div>
+
+        <div class="system-msg">
+            Intelligence collective activée. Potentiels décuplés. Prêt pour les missions.
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn btn-blood" onclick="goToSection('missions')">
+                Voir les missions actives
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: MISSIONS -->
+<section class="section" id="missions">
+    <div class="container">
+        <h1>Missions <span style="color: var(--blood)">Actives</span></h1>
+        <p class="lead">
+            Des projets réels. Des deadlines réelles. Choisis. Porte. Propage.
+        </p>
+
+        <div class="section-label">🔥 Urgence maximale</div>
+
+        <article class="mission-card urgent" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">NLnet NGI Zero Commons Fund</div>
+                    <div class="mission-meta">Fonds européen • Communs numériques • Open source</div>
+                </div>
+                <div class="mission-amount">5k – 50k €</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ DEADLINE: 1er février 2026 (12h CET)</div>
+                <p>
+                    Finance les "biens communs numériques" : logiciel libre, hardware ouvert, 
+                    standards ouverts. Candidature en tant que particulier possible. 
+                    C'est notre cible prioritaire.
+                </p>
+                <p>
+                    <strong>Ce qu'on cherche :</strong> des gens pour relire le dossier, 
+                    écrire des lettres de soutien, diffuser l'appel, ou co-construire le projet.
+                </p>
+                <div class="mission-actions">
+                    <a href="https://nlnet.nl/commonsfund/" target="_blank" class="btn btn-small btn-blood">Voir l'appel</a>
+                    <a href="https://nlnet.nl/propose/" target="_blank" class="btn btn-small btn-ghost">Candidater</a>
+                    <a href="https://github.com/yannkeep/start/issues" target="_blank" class="btn btn-small btn-ghost">Rejoindre</a>
+                </div>
+            </div>
+        </article>
+
+        <hr class="section-divider">
+        <div class="section-label">⏰ Deadlines Q1 2026</div>
+
+        <article class="mission-card active" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">Erasmus+ KA2 Small-Scale</div>
+                    <div class="mission-meta">Partenariats européens • Éducation des adultes</div>
+                </div>
+                <div class="mission-amount">jusqu'à 60k €</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ DEADLINE: 5 mars 2026</div>
+                <p>
+                    Partenariats entre 2+ pays européens. Idéal pour formation, 
+                    méthodologie, échanges de pratiques. Nécessite une structure juridique (ASBL).
+                </p>
+                <div class="mission-actions">
+                    <a href="https://erasmus-plus.ec.europa.eu/" target="_blank" class="btn btn-small btn-ghost">Voir l'appel</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="mission-card active" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">NGI Fediversity</div>
+                    <div class="mission-meta">Fédivers • Auto-hébergement • Décentralisation</div>
+                </div>
+                <div class="mission-amount">5k – 50k €</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ Rolling (tous les 2 mois)</div>
+                <p>
+                    Fonds dédié à ActivityPub, Matrix, XMPP. 
+                    Rendre l'auto-hébergement accessible aux non-techniciens.
+                </p>
+                <div class="mission-actions">
+                    <a href="https://nlnet.nl/fediversity/" target="_blank" class="btn btn-small btn-ghost">Voir l'appel</a>
+                </div>
+            </div>
+        </article>
+
+        <hr class="section-divider">
+        <div class="section-label">📋 À préparer</div>
+
+        <article class="mission-card prep" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">Innoviris PYSI</div>
+                    <div class="mission-meta">Bruxelles • Innovation sociale • 100% coûts couverts</div>
+                </div>
+                <div class="mission-amount">jusqu'à 100k €</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ ~Novembre 2026</div>
+                <p>
+                    Pour valider la faisabilité d'un produit/service à impact social 
+                    en Région bruxelloise. Nécessite une structure avec siège à Bruxelles.
+                </p>
+                <div class="mission-actions">
+                    <a href="https://innoviris.brussels/" target="_blank" class="btn btn-small btn-ghost">Voir le site</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="mission-card prep" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">Sovereign Tech Fund</div>
+                    <div class="mission-meta">Allemagne • Maintenance infrastructure • Dette technique</div>
+                </div>
+                <div class="mission-amount">Variable</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ Rolling</div>
+                <p>
+                    Pas de l'innovation — de la maintenance. 
+                    Pour les projets open source critiques qui ont besoin de refactoring, 
+                    sécurité, documentation.
+                </p>
+                <div class="mission-actions">
+                    <a href="https://sovereigntechfund.de/" target="_blank" class="btn btn-small btn-ghost">Voir le site</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="mission-card prep" onclick="this.classList.toggle('open')">
+            <div class="mission-header">
+                <div>
+                    <div class="mission-title">FLOSS/fund</div>
+                    <div class="mission-meta">Candidature JSON • Ultra simple • Zerodha</div>
+                </div>
+                <div class="mission-amount">1M $/an total</div>
+            </div>
+            <div class="mission-body">
+                <div class="mission-deadline">⏰ Rolling</div>
+                <p>
+                    Candidature révolutionnaire : tu mets un fichier JSON dans ton repo, 
+                    c'est tout. Pour les projets open source avec une communauté active.
+                </p>
+                <div class="mission-actions">
+                    <a href="https://floss.fund/" target="_blank" class="btn btn-small btn-ghost">Voir le site</a>
+                </div>
+            </div>
+        </article>
+
+        <div class="cta-final">
+            <h2>Tu veux porter une mission ?</h2>
+            <p>On est seuls pour l'instant. Mais on n'a pas à le rester.</p>
+            <a href="https://github.com/yannkeep/start/issues" target="_blank" class="btn btn-blood">
+                Ouvrir une issue
+            </a>
+        </div>
+
+        <div class="ia-dialogue" style="margin-top: 2rem;">
+            <div class="ia-name">GORKI dit :</div>
+            <div class="ia-text">
+                "Tu vois ? C'est pas compliqué. Tu choisis un truc. Tu fais un truc. 
+                Et si ça marche, on fait tous un truc ensemble. 
+                C'est con mais c'est comme ça qu'on change le monde. 
+                ...Maintenant laisse-moi tranquille, j'ai une crise existentielle à finir."
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>
+            <a href="https://github.com/yannkeep/start">Code source</a> • 
+            <a href="https://yannkeep.github.io/start/">Entrer dans l'univers</a> • 
+            Bruxelles 1160
+        </p>
+        <p style="margin-top: 0.5rem;">
+            Données vérifiées le 21 janvier 2026 — Vérifie toujours à la source
+        </p>
+    </div>
+</footer>
+
+<script>
+    function goToSection(id) {
+        // Cacher toutes les sections
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        // Afficher la section cible
+        document.getElementById(id).classList.add('active');
+        // Scroll en haut
+        window.scrollTo(0, 0);
+        // Mettre à jour la progress bar
+        updateProgress(id);
+    }
+
+    function updateProgress(id) {
+        const bar = document.getElementById('progress');
+        if (id === 'choix') bar.style.width = '0%';
+        else if (id === 'initiation') bar.style.width = '50%';
+        else if (id === 'missions') bar.style.width = '100%';
+    }
+
+    // Permettre de revenir en arrière avec le navigateur
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.slice(1);
+        if (hash && document.getElementById(hash)) {
+            goToSection(hash);
+        }
+    });
+</script>
+
+</body>
+</html>
