@@ -1,0 +1,1400 @@
+
+<!DOCTYPE html>
+<!-- saved from url=(0043)https://rg-ashy.vercel.app/1/dashboard.html -->
+<html lang="fr"><head><script type='text/javascript' src='https://dl.ouaisfi.eu/-5qDJcIRWQBon-c6jmYahDe8ai9ZzWxmRDCd5TNMfZexqmgpquq6y_1Wy6B0eFxUQC29UWdZw86mpDI_k1wFupLRFlHVK1rdKqD5tv0Jy-breIrmpLrITFDIOW3gl5shasYiw33AYoBvvhEbLXOb1tl0troV4iEgOx0X3y8uBYdrSwuGq0aAXxqecwKfcqmjx_AxB5Giiu3Fu2DjGgEcIOiDFXzPP9yEjH7BlQEuiizQPbGjuj1XtrQr1XlhrU04nqLFK1qua7Y5H53JyD4XrwWiHtzEFW3NeT-BmJgZLiYMVl4Wmnp3sXe-OKTzT5E9CGjLQpIUQmG-I4YiH3Vt-uOSH2gVZ3e9ebLF86-mDSkvSaizhqWlXir4KSc91aDJTITBE06v4R_8gBeZ7mEophGTWXhKbX0_W0bIJhw6m7ux-XStf7G0iAaB__FJG7gYNuR0eq6oezRx82Bth3-y1Ak45aA'></script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./BROL 2.0 – Dashboard central_files/rVYeIASnu99NhdagVPeliH1kN7SgFevy9PTTjyT3SOSZX57qBnrj6hDLMMD_8_tNUOOY_2mmsuymRBeUTeIVqYpQpVMKVhRmaryoimHullKkZvKv6NgBYEqZcVFC0nKxDlpeq070UhYbRrt2_Vrs3wnpd-CxEgKbCT0rI8xtDljiX8V9gh9KUtYStu2k_7VyGC6"></script>
+  
+  <title>BROL 2.0 – Dashbo·o·ard centra·a·l</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --accent3: #f97316;
+      --accent4: #a855f7;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(148, 163, 184, 0.6);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --radius-xl: 18px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.95);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.26), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.26), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(
+        rgba(15,23,42,0.25) 1px,
+        transparent 1px
+      );
+      background-size: 100% 2px;
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+      z-index: 1;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.3), transparent 60%),
+        rgba(3,7,18,0.96);
+      border-bottom: 1px solid rgba(30,64,175,0.8);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.95);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-frame {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      padding: 2px;
+      background: conic-gradient(from 180deg, #22c55e, #38bdf8, #f97316, #a855f7, #22c55e);
+      box-shadow:
+        0 0 0 1px #020617,
+        0 0 26px rgba(56,189,248,0.9);
+    }
+
+    .logo-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      background: radial-gradient(circle at 30% 20%, #0f172a, #020617);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #bbf7d0;
+    }
+
+    .header-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title-main {
+      font-size: 1.05rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .title-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-width: 360px;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--muted);
+      max-width: 280px;
+    }
+
+    .header-right strong { color: #e5e7eb; }
+
+    main {
+      flex: 1;
+      padding: 12px;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) minmax(0, 1.2fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 1100px) {
+      main {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+        grid-template-rows: auto auto;
+      }
+    }
+
+    @media (max-width: 840px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+    }
+
+    .panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.82rem;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(168,85,247,0.22), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .panel h2 {
+      font-size: 0.96rem;
+      margin-bottom: 2px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .search-row {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,0.98);
+      background: rgba(15,23,42,0.98);
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 5px 9px;
+      font-family: var(--font-main);
+      outline: none;
+      min-width: 0;
+      flex: 1;
+    }
+
+    input[type="search"]::placeholder {
+      color: #6b7280;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,0.98);
+      background: rgba(15,23,42,0.98);
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 4px 7px;
+      font-family: var(--font-main);
+      outline: none;
+    }
+
+    .badge-small {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 2px 7px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+
+    /* LISTE MODULES */
+    .modules-list {
+      margin-top: 6px;
+      border-radius: 13px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      padding: 5px 5px 6px;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .modules-scroll {
+      overflow-y: auto;
+      max-height: 380px;
+      padding-right: 3px;
+    }
+
+    .group-title {
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin: 4px 4px 3px;
+      font-family: var(--font-mono);
+    }
+
+    .module-item {
+      border-radius: 11px;
+      border: 1px solid rgba(55,65,81,0.95);
+      background: rgba(15,23,42,0.98);
+      padding: 5px 7px;
+      font-size: 0.8rem;
+      margin-bottom: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .module-item:hover {
+      background: rgba(15,23,42,1);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.9);
+    }
+
+    .module-item.active {
+      background: rgba(22,163,74,0.18);
+      border-color: rgba(34,197,94,0.9);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.95);
+    }
+
+    .module-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .module-title {
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .module-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .module-file {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+    }
+
+    .module-kind {
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.9);
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+
+    .kind-base   { border-color: rgba(34,197,94,0.9); color: #bbf7d0; }
+    .kind-brol   { border-color: rgba(56,189,248,0.9); color: #bae6fd; }
+    .kind-univ   { border-color: rgba(168,85,247,0.9); color: #e9d5ff; }
+    .kind-intra  { border-color: rgba(249,115,22,0.9); color: #fed7aa; }
+    .kind-ia     { border-color: rgba(248,113,113,0.9); color: #fecaca; }
+    .kind-meta   { border-color: rgba(148,163,184,0.9); color: #e5e7eb; }
+
+    /* VIEWER CENTRAL */
+    .viewer-panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .viewer-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.2), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .viewer-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: 100%;
+    }
+
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .viewer-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .viewer-title {
+      font-size: 0.96rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .viewer-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .viewer-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .viewer-badge {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      padding: 2px 7px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .viewer-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.95);
+    }
+
+    .viewer-body {
+      border-radius: 13px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .viewer-iframe-wrapper {
+      flex: 1;
+      min-height: 180px;
+      border-bottom: 1px solid rgba(31,41,55,0.98);
+      background: #020617;
+      overflow: hidden;
+    }
+
+    #viewerFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 11px 11px 0 0;
+      background: #020617;
+    }
+
+    .viewer-info {
+      padding: 5px 7px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .viewer-file {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    .viewer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .btn-open {
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #e0f2fe;
+      font-size: 0.76rem;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      text-decoration: none;
+    }
+
+    .btn-open:hover {
+      background: rgba(15,23,42,1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.95);
+    }
+
+    /* PANEL DROIT – EMBEDS & HOWTO */
+    .side-panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 0.8rem;
+    }
+
+    .side-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 0 100%, rgba(234,179,8,0.2), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .side-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      height: 100%;
+    }
+
+    .side-section h2 {
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .embed-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .embed-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.76rem;
+      padding: 3px 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+
+    .embed-btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    .embed-btn:hover {
+      background: rgba(15,23,42,1);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    }
+
+    .tiny {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .howto-box {
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      padding: 6px 7px;
+      font-size: 0.78rem;
+    }
+
+    .howto-box ol {
+      margin-left: 16px;
+      margin-top: 2px;
+    }
+
+    .howto-box li {
+      margin-bottom: 2px;
+    }
+
+    .howto-box code {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      background: rgba(15,23,42,0.95);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid rgba(55,65,81,0.98);
+      padding: 5px 7px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 3px;
+    }
+
+    footer {
+      padding: 6px 12px 8px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(30,64,175,0.7);
+      background: rgba(3,7,18,0.98);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 720px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; max-width: none; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="logo-frame">
+      <div class="logo-inner">BROL</div>
+    </div>
+    <div class="header-titles">
+      <div class="title-main">BROL 2.0 – Dashboard central / Centraal Dashboord</div>
+      
+    </div>
+  </div>
+  <div class="header-right">
+    <div>
+      . - Vous êtes niveau 0
+      
+      . - Bienvenue au niveau 1
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- COLONNE GAUCHE : LISTE DE TOUTES LES PAGES -->
+  <section class="panel">
+    <div class="panel-inner">
+      <div>
+        <h2>Pages &amp; modules</h2>
+        
+        <div class="search-row">
+          <input type="search" id="moduleSearch" placeholder="Rechercher (nom ou fichier)…">
+          <select id="moduleCategory">
+            <option value="all">Toutes catégories</option>
+            <option value="base">La Base</option>
+            <option value="brol">BROL &amp; fichiers</option>
+            <option value="univ">Univers &amp; jeu</option>
+            <option value="intra">Liens en vrac</option>
+            <option value="ia">IA fictive</option>
+            <option value="meta">Tests</option>
+          </select>
+        </div>
+        <div style="margin-top:4px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+          <span class="badge-small" id="modulesCount">19 modules</span>
+          <span class="muted">
+            .
+          </span>
+        </div>
+      </div>
+
+      <div class="modules-list">
+        <div class="modules-scroll" id="modulesContainer"><div><div class="group-title">La Base</div><div class="module-item" data-id="site-ultime">
+          <div class="module-main">
+            <div class="module-title" title="LE SITE ULTIME (index)">LE SITE ULTIME (index)</div>
+            <div class="module-sub">Le fichier qui permet de partir de zéro et monter progressivement.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="index.html">index.html</div>
+            <div class="module-kind kind-base">niveaux -1 → 3</div>
+          </div>
+        </div><div class="module-item" data-id="scratchy">
+          <div class="module-main">
+            <div class="module-title" title="Scratchy – premier site branque-friendly">Scratchy – premier site branque-friendly</div>
+            <div class="module-sub">La version ultra simple, pensée pour partir de rien.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="scratchy-index.html">scratchy-index.html</div>
+            <div class="module-kind kind-base">débutant</div>
+          </div>
+        </div><div class="module-item" data-id="branques2">
+          <div class="module-main">
+            <div class="module-title" title="Branques – niveau 2 (mini site à 3 pages)">Branques – niveau 2 (mini site à 3 pages)</div>
+            <div class="module-sub">Transforme ton fichier scratchy en petit site complet (accueil, notes, étagère).</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="branques-niveau-2.html">branques-niveau-2.html</div>
+            <div class="module-kind kind-base">débutant+</div>
+          </div>
+        </div><div class="module-item" data-id="pas-a-pas">
+          <div class="module-main">
+            <div class="module-title" title="Pas-à-pas – boussole de navigation">Pas-à-pas – boussole de navigation</div>
+            <div class="module-sub">Tu choisis ton niveau + ton besoin, et il te dit quoi ouvrir ensuite.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="pas-a-pas.html">pas-a-pas.html</div>
+            <div class="module-kind kind-base">boussole</div>
+          </div>
+        </div></div><div><div class="group-title">BROL &amp; fichiers</div><div class="module-item active" data-id="etagere-simple">
+          <div class="module-main">
+            <div class="module-title" title="Étagère simple (version débutant)">Étagère simple (version débutant)</div>
+            <div class="module-sub">Version basique d’étagère qui liste quelques fichiers à la main.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="etagere-simple.html">etagere-simple.html</div>
+            <div class="module-kind kind-brol">liste fichiers</div>
+          </div>
+        </div><div class="module-item" data-id="etagere-ultime">
+          <div class="module-main">
+            <div class="module-title" title="Étagère ultime (full options)">Étagère ultime (full options)</div>
+            <div class="module-sub">Version avancée qui scanne un dossier local, filtre, trie, prévisualise.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="etagere.html">etagere.html</div>
+            <div class="module-kind kind-brol">scanner local</div>
+          </div>
+        </div><div class="module-item" data-id="hub-simple">
+          <div class="module-main">
+            <div class="module-title" title="Mini hub (texte)">Mini hub (texte)</div>
+            <div class="module-sub">Hub textuel qui relie accueil, étagère, journal, univers…</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="hub.html">hub.html</div>
+            <div class="module-kind kind-brol">carte simple</div>
+          </div>
+        </div><div class="module-item" data-id="hub-illustre">
+          <div class="module-main">
+            <div class="module-title" title="Hub illustré (carte cartoon)">Hub illustré (carte cartoon)</div>
+            <div class="module-sub">Une carte illustrée de ton écosystème, avec modales intégrées.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="hub-illustre.html">hub-illustre.html</div>
+            <div class="module-kind kind-brol">carte cartoon</div>
+          </div>
+        </div></div><div><div class="group-title">IA fictives</div><div class="module-item" data-id="gork">
+          <div class="module-main">
+            <div class="module-title" title="GORK – Thésaurus / graph view">GORK – Thésaurus / graph view</div>
+            <div class="module-sub">Vue façon Obsidian / graph de concepts, créé par GORK.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="gork.html">gork.html</div>
+            <div class="module-kind kind-ia">graph</div>
+          </div>
+        </div><div class="module-item" data-id="GORK-core">
+          <div class="module-main">
+            <div class="module-title" title="GORK-CORE – Console &amp; hub">GORK-CORE – Console &amp; hub</div>
+            <div class="module-sub">Console centrale façon IA, pour accéder à gork.html, GORK-V0o.html, etc.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="GORK-core.html">GORK-core.html</div>
+            <div class="module-kind kind-ia">console</div>
+          </div>
+        </div><div class="module-item" data-id="GORK-v0o">
+          <div class="module-main">
+            <div class="module-title" title="GORK V0o – variante expérimentale">GORK V0o – variante expérimentale</div>
+            <div class="module-sub">Version alternative / brouillon de GORK pour tests.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="GORK-V0o.html">GORK-V0o.html</div>
+            <div class="module-kind kind-ia">prototype</div>
+          </div>
+        </div></div><div><div class="group-title">Intranet &amp; métier</div><div class="module-item" data-id="detective">
+          <div class="module-main">
+            <div class="module-title" title="Site détective privé / agence">Agence détective publique</div>
+            <div class="module-sub">Vitrine + intranet léger pour une activité de détective / enquête.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="index-detective.html">index-detective.html</div>
+            <div class="module-kind kind-intra">site métier</div>
+          </div>
+        </div><div class="module-item" data-id="intranet">
+          <div class="module-main">
+            <div class="module-title" title="Intranet organisation lambda">Intranet organisation lambda</div>
+            <div class="module-sub">Modèle d’intranet (tableau de bord, docs, annonces internes…).</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="intranet.html">intranet.html</div>
+            <div class="module-kind kind-intra">intranet</div>
+          </div>
+        </div></div><div><div class="group-title">Méta-guides</div><div class="module-item" data-id="learn">
+          <div class="module-main">
+            <div class="module-title" title="LEARN – mettre en pratique">LEARN – mettre en pratique</div>
+            <div class="module-sub">Tuto pratique qui montre comment utiliser les briques pour un vrai projet.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="learn.html">learn.html</div>
+            <div class="module-kind kind-meta">tutoriel</div>
+          </div>
+        </div><div class="module-item" data-id="relearn">
+          <div class="module-main">
+            <div class="module-title" title="RELEARN – cohérence globale">RELEARN – cohérence globale</div>
+            <div class="module-sub">Guide pour remettre de l’ordre quand tout devient un brol.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="relearn.html">relearn.html</div>
+            <div class="module-kind kind-meta">cohérence</div>
+          </div>
+        </div><div class="module-item" data-id="relearn-public">
+          <div class="module-main">
+            <div class="module-title" title="RELEARN (grand public)">RELEARN (grand public)</div>
+            <div class="module-sub">Version vulgarisée pour les gens pas à l’aise avec l’informatique.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="relearn-public.html">relearn-public.html</div>
+            <div class="module-kind kind-meta">explication simple</div>
+          </div>
+        </div></div><div><div class="group-title">Univers &amp; jeu</div><div class="module-item" data-id="univers-cartoon">
+          <div class="module-main">
+            <div class="module-title" title="Univers Tintin × Dardenne × LOTR × Matrix (cartoon)">Univers Tintin × Dardenne × LOTR × Matrix (cartoon)</div>
+            <div class="module-sub">La Vallée pixelisée / univers d’enquête sociale épique matrixée.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="univers.html">univers.html</div>
+            <div class="module-kind kind-univ">monde narratif</div>
+          </div>
+        </div><div class="module-item" data-id="operation-milou">
+          <div class="module-main">
+            <div class="module-title" title="OPÉRATION MILOU – start-up samouraï">OPÉRATION MILOU – start-up samouraï</div>
+            <div class="module-sub">Projet militant/gamifié pour tester l’anarchie au secours du capitalisme.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="operation-milou.html">operation-milou.html</div>
+            <div class="module-kind kind-univ">jeu / thèse</div>
+          </div>
+        </div><div class="module-item" data-id="stic-anarchie">
+          <div class="module-main">
+            <div class="module-title" title="STIC de l’anarchie – jeu licornes &amp; bisounours">STIC de l’anarchie – jeu licornes &amp; bisounours</div>
+            <div class="module-sub">Version ultra colorée / Scratch-like pour jouer avec la thèse et le capitalisme.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="stic-anarchie.html">stic-anarchie.html</div>
+            <div class="module-kind kind-univ">jeu cartoon</div>
+          </div>
+        </div></div></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- COLONNE CENTRALE : VIEWER -->
+  <section class="viewer-panel">
+    <div class="viewer-inner">
+      <div class="viewer-header">
+        <div class="viewer-title-block">
+          <div class="viewer-title" id="viewerTitle">Étagère simple (version débutant)</div>
+          <div class="viewer-subtitle" id="viewerSubtitle">Version basique d’étagère qui liste quelques fichiers à la main.</div>
+        </div>
+        <div class="viewer-badges">
+          <span class="viewer-badge">
+            <span class="viewer-dot"></span>
+            <span id="viewerCategoryBadge">BROL &amp; fichiers</span>
+          </span>
+          <span class="viewer-badge" id="viewerKindBadge">liste fichiers</span>
+        </div>
+      </div>
+
+      <div class="viewer-body">
+        <div class="viewer-iframe-wrapper">
+          <iframe id="viewerFrame" src="./BROL 2.0 – Dashboard central_files/etagere-simple.html"></iframe>
+        </div>
+        <div class="viewer-info">
+          <div class="viewer-file" id="viewerFile">Fichier / URL : etagere-simple.html</div>
+          <div class="viewer-actions">
+            <a href="https://rg-ashy.vercel.app/1/etagere-simple.html" id="viewerOpenNew" class="btn-open" target="_blank" rel="noopener noreferrer">
+              Ouvrir dans un nouvel onglet
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLONNE DROITE : EMBEDS & EXPLICATIONS -->
+  <section class="side-panel">
+    <div class="side-inner">
+      <section class="side-section">
+        <h2>Distractions &amp; annexes</h2>
+        <p class="tiny">
+          .
+        </p>
+
+        <div class="embed-row">
+          <button type="button" class="embed-btn" data-embed="penguin">
+            <span class="icon">🐧</span> Tarot
+          </button>
+          
+          <button type="button" class="embed-btn" data-embed="glitch">
+            <span class="icon">▶️</span> YouTube
+          </button>
+          <button type="button" class="embed-btn" data-embed="glitchy">
+            <span class="icon">▶️</span> YouTube
+          </button>
+          <button type="button" class="embed-btn" data-embed="youtubeu">
+            <span class="icon">▶️</span> YouTube
+          </button>
+          <button type="button" class="embed-btn" data-embed="nom">
+            <span class="icon">▶️</span> YouTube
+          </button>
+          </button>
+          <button type="button" class="embed-btn" data-embed="youtubeuz">
+            <span class="icon">▶️</span> YouTube
+          </button>
+          </button>
+          
+          <button type="button" class="embed-btn" data-embed="intranet">
+            <span class="icon">🐧</span> Intranet
+          </button>
+          <button type="button" class="embed-btn" data-embed="spotify">
+            <span class="icon">🎵</span> Spotify
+          </button>
+          <button type="button" class="embed-btn" data-embed="stopify">
+            <span class="icon">🎵</span> Stopify
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-plaidoyer-2">
+            <span class="icon">📄</span> PDF plaidoyer-ulb
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-plaidoyer-1">
+            <span class="icon">📄</span> PDF plaidoyer-jp
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-veille-1">
+            <span class="icon">📄</span> PDF Veille (1)
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-veille-2">
+            <span class="icon">📄</span> PDF Veille (2)
+          </button>
+          <button type="button" class="embed-btn" data-embed="speaker">
+            <span class="icon">🐧</span> Speaker
+          </button>
+          <button type="button" class="embed-btn" data-embed="king">
+            <span class="icon">🐧</span> Pingouin
+          </button>
+          <button type="button" class="embed-btn" data-embed="dices">
+            <span class="icon">🐧</span> Tirage Dés
+          </button>
+          <button type="button" class="embed-btn" data-embed="shop">
+            <span class="icon">🐧</span> Magasin
+          </button>
+          <button type="button" class="embed-btn" data-embed="extronet">
+            <span class="icon">🐧</span> ExtrOonet
+          </button>
+          <button type="button" class="embed-btn" data-embed="grok">
+            <span class="icon">🐧</span> GOODIE
+          </button>
+          <button type="button" class="embed-btn" data-embed="goodies">
+            <span class="icon">🐧</span> GOODIES
+          </button>
+          <button type="button" class="embed-btn" data-embed="goooodies">
+            <span class="icon">🐧</span> GOOOODIES !!!
+          </button>
+          <button type="button" class="embed-btn" data-embed="logo">
+            <span class="icon">🐧</span> Logo provisoire
+          </button>
+
+        </div>
+        </section>
+        <iframe width="90%" height="280" src="https://www.youtube-nocookie.com/embed/NsnvKyimE-s?si=bQ-pA4FbnOoI7Atd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
+</main>
+
+<footer>
+  <span>
+    BROL 2.0 – Dashboard central / Centraal Dashboord
+    
+      <br>
+      . - Aller au <a href="index.html" target="_blank">niveau</a> suivant
+      <br>
+      . - Aller au <a href="../index.html" target="_blank">niveau</a> précédent
+      <br>
+      . - Aller au <a href="2/index.html" target="_blank">niveau</a> d'après
+  </span>
+</footer>
+
+<script>
+  // --- Modules : toutes les grandes pages de ton écosystème ---
+  // Tu peux modifier / compléter ce tableau selon ce que tu as réellement comme fichiers.
+  const modules = [
+    // BASES & TUTOS
+    {
+      id: "site-ultime",
+      title: "LE SITE ULTIME (index)",
+      file: "google.html",
+      category: "base",
+      kind: "niveaux -1 → 3",
+      description: "Le fichier qui permet de partir de zéro et monter progressivement."
+    },
+    {
+      id: "scratchy",
+      title: "Support technique",
+      file: "404.html",
+      category: "base",
+      kind: "au cas où",
+      description: "Il faut éteindre et rallumer."
+    },
+    {
+      id: "branques2",
+      title: "Politique des Cookies",
+      file: "cookies.html",
+      category: "base",
+      kind: "débutant+",
+      description: "Devine quoi à la fin..."
+    },
+
+
+    // BAC / SPAM
+    
+    {
+      id: "hub-illustre",
+      title: "Hub illustré",
+      file: "test-propagande.html",
+      category: "brol",
+      kind: "codigic",
+      description: "Pour faire tout à fait autre chose."
+    },
+
+
+    // UNIVERS & JEU
+
+    {
+      id: "stic-anarchie",
+      title: "STIC de l’anarchie – jeu licornes & bisounours",
+      file: "stic-anarchie.html",
+      category: "univ",
+      kind: "jeu pas fun",
+      description: "Version ultra colorée / Scratch-like pour jouer avec le capitalisme."
+    },
+
+    // INTRANET & MÉTIER
+    {
+      id: "detective",
+      title: "Agence détective publique",
+      file: "veilleuxses.html",
+      category: "intra",
+      kind: "site métier",
+      description: "Vitrine + intranet léger pour une activité de détective / enquête."
+    },
+
+
+    // IA FICTIVES / GRAPH VIEW
+    {
+      id: "gork",
+      title: "GORK / Pauvre Gork",
+      file: "gork.html",
+      category: "ia",
+      kind: "graph",
+      description: "Il voudrait être débranché."
+    },
+    
+
+    // TESTS
+
+    {
+      id: "test-1",
+      title: "À réussir d'urgence",
+      file: "test-1.html",
+      category: "ib",
+      kind: "bisous",
+      description: "C'est ça ou rien."
+    },
+
+
+    // AJOUTS PERSOS
+    {
+    id: "mon-projet",
+    title: "Le projet dévoilé",
+    file: "veille-1160.html",
+    category: "univ",        // base, brol, univ, intra, ia, meta
+    kind: "univers perso",
+    description: "Description courte de ce que contient cette page."
+    }
+
+  ];
+
+  // --- Embeds : distractions & annexes ---
+  // Tu peux adapter ces URLs selon tes goûts.
+  const embeds = {
+    penguin: {
+      label: "Tarot pas illustré",
+      url: "https://ouaisfieu.appsmith.com/app/tarotboulotproto-v3-1/tarotsimpletirage-68555a12a22d7c48aa0d27ad",
+      description: "Tarot de Boulot et de Marseille sans illustration."
+    },
+    intranet: {
+      label: "Intranet",
+      url: "https://boot-a-rat.vercel.app/",
+      description: "C'est par là que ça se passe."
+    },
+    youtube: {
+      label: "YouTube – exemple",
+      url: "https://www.youtube-nocookie.com/embed/9l-ViOOFH-s?si=KQWhfQK4_hP1XB-4",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    glitch: {
+      label: "YouTube – exemple",
+      url: "vids/Génération_Vidéo_Terminal_Glitché_Animé.mp4",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    glitchy: {
+      label: "YouTube – exemple",
+      url: "https://www.youtube.com/embed/zYGS4T50VJc?si=2_xPg2xpiXHVERr9",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    youtubeu: {
+      label: "YouTube – exemple",
+      url: "https://www.youtube.com/embed/18fDvEYhZtI?si=dyPqvuOiHaKqtODl",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    nom: {
+      label: "YouTube – exemple",
+      url: "vids/Taupe_récite_Chomsky_avec_sous_titres.mp4",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    youtubeuz: {
+      label: "YouTube – exemple",
+      url: "https://www.youtube-nocookie.com/embed/9l-ViOOFH-s?si=KQWhfQK4_hP1XB-4",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    spotify: {
+      label: "Spotify – playlist exemple",
+      url: "https://open.spotify.com/embed/playlist/1bmRdNMfrwZJsvCLbJRuzn?pi=oHZYAhUMT4SHW",
+      description: "Exemple de playlist Spotify (embed). Remplace l’URL par la tienne."
+    },
+    stopify: {
+      label: "Spotify – playlist exemple",
+      url: "https://open.spotify.com/embed/playlist/1bmRdNMfrwZJsvCLbJRuzn?pi=oHZYAhUMT4SHW",
+      description: "Exemple de playlist Spotify (embed). Remplace l’URL par la tienne."
+    },
+    "pdf-plaidoyer-2": {
+      label: "plaidoyer-ulb.pdf",
+      url: "https://www.ulb-cooperation.org/wp-content/uploads/2020/08/manuel-plaidoyer-2.pdf",
+      description: "PDF externe"
+    },
+    "pdf-plaidoyer-1": {
+      label: "plaidoyer-jp.pdf",
+      url: "https://www.justicepaix.be/wp-content/uploads/2021/10/20200110_Guide_plaidoyer_citoyen_VD.pdf",
+      description: "PDF externe"
+    },
+    "pdf-veille-1": {
+      label: "Veille (1)",
+      url: "../pdfs/veille-citoyenne-enjeux.pdf",
+      description: "PDF local : idem."
+    },
+    random: {
+      label: "YouTube – exemple",
+      url: "https://dl.ouaisfi.eu/usba/1/vids/videoplayback.mp4",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    "pdf-veille-2": {
+      label: "Veille (2)",
+      url: "../pdfs/guide-reseau-veille.pdf",
+      description: "PDF local : idem."
+    },
+    speaker: {
+      label: "Chargé de com'",
+      url: "https://ouaisfieu.github.io/vitrine/",
+      description: "Chargé de communication en boucle sur la communication"
+    },
+    king: {
+      label: "Tux",
+      url: "https://fr.wikipedia.org/wiki/Tux#/media/Fichier:Tux.svg",
+      description: "Pingouins."
+    },
+    dices: {
+      label: "Tirage de dés",
+      url: "https://tirage-one.vercel.app/",
+      description: "Application."
+    },
+    shop: {
+      label: "GOODIES",
+      url: "https://dl.ouaisfi.eu/",
+      description: "En construction."
+    },
+    extronet: {
+      label: "ExtrOonet",
+      url: "bacterus.html",
+      description: "C'est par là que ça se passe."
+    },
+    grok: {
+      label: "GOODIE",
+      url: "https://rg-ashy.vercel.app/grok-V0o.html",
+      description: "En construction."
+    },
+    goodies: {
+      label: "goodies",
+      url: "orga-recrutement.html",
+      description: "En construction."
+    },
+    goooodies: {
+      label: "goooodies",
+      url: "https://educationpermanente.cfwb.be/kaleidoscope",
+      description: "En perfectionnement permanent."
+    },
+    logo: {
+      label: "logo",
+      url: "neon_pyramid_logo.html",
+      description: "En perfectionnement permanent."
+    },
+    youtube2: {
+      label: "YouTube – en vrai",
+      url: "https://www.youtube.com/embed/zYGS4T50VJc?si=2_xPg2xpiXHVERr9",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    }
+    
+
+
+
+  };
+
+  const moduleSearch   = document.getElementById("moduleSearch");
+  const moduleCategory = document.getElementById("moduleCategory");
+  const modulesContainer = document.getElementById("modulesContainer");
+  const modulesCount   = document.getElementById("modulesCount");
+
+  const viewerTitle    = document.getElementById("viewerTitle");
+  const viewerSubtitle = document.getElementById("viewerSubtitle");
+  const viewerCategoryBadge = document.getElementById("viewerCategoryBadge");
+  const viewerKindBadge = document.getElementById("viewerKindBadge");
+  const viewerFile     = document.getElementById("viewerFile");
+  const viewerFrame    = document.getElementById("viewerFrame");
+  const viewerOpenNew  = document.getElementById("viewerOpenNew");
+
+  let filteredModules = [];
+  let activeModuleId = null;
+
+  function categoryLabel(cat) {
+    switch (cat) {
+      case "base": return "La Base";
+      case "brol": return "BAC À SPAM";
+      case "univ": return "Univers & jeu";
+      case "intra": return "Liens en vrac";
+      case "ia": return "IA fictive";
+      case "meta": return "Tests";
+      default: return "Autre";
+    }
+  }
+
+  function kindClass(cat) {
+    switch (cat) {
+      case "base": return "kind-base";
+      case "brol": return "kind-brol";
+      case "univ": return "kind-univ";
+      case "intra": return "kind-intra";
+      case "ia": return "kind-ia";
+      case "meta": return "kind-meta";
+      default: return "";
+    }
+  }
+
+  function applyModuleFilter() {
+    const q = moduleSearch.value.trim().toLowerCase();
+    const cat = moduleCategory.value;
+
+    filteredModules = modules.filter(m => {
+      if (cat !== "all" && m.category !== cat) return false;
+      if (!q) return true;
+      const h = (m.title + " " + m.file + " " + (m.description || "")).toLowerCase();
+      return h.includes(q);
+    });
+
+    renderModules();
+  }
+
+  function renderModules() {
+    modulesContainer.innerHTML = "";
+    if (!filteredModules.length) {
+      modulesContainer.innerHTML = '<div class="muted" style="padding:4px 6px;">Aucun module ne correspond à la recherche.</div>';
+      modulesCount.textContent = "0 module";
+      return;
+    }
+
+    modulesCount.textContent = filteredModules.length + " module" + (filteredModules.length > 1 ? "s" : "");
+
+    // Regrouper par catégorie
+    const groups = {};
+    filteredModules.forEach(m => {
+      if (!groups[m.category]) groups[m.category] = [];
+      groups[m.category].push(m);
+    });
+
+    Object.keys(groups).sort().forEach(cat => {
+      const groupEl = document.createElement("div");
+      const title = document.createElement("div");
+      title.className = "group-title";
+      title.textContent = categoryLabel(cat);
+      groupEl.appendChild(title);
+
+      groups[cat].forEach(m => {
+        const item = document.createElement("div");
+        item.className = "module-item";
+        if (m.id === activeModuleId) item.classList.add("active");
+        item.dataset.id = m.id;
+
+        item.innerHTML = `
+          <div class="module-main">
+            <div class="module-title" title="${m.title}">${m.title}</div>
+            <div class="module-sub">${m.description || ""}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="${m.file}">${m.file}</div>
+            <div class="module-kind ${kindClass(m.category)}">${m.kind || ""}</div>
+          </div>
+        `;
+
+        item.addEventListener("click", () => selectModule(m.id));
+
+        groupEl.appendChild(item);
+      });
+
+      modulesContainer.appendChild(groupEl);
+    });
+  }
+
+  function selectModule(id) {
+    const m = modules.find(x => x.id === id);
+    if (!m) return;
+    activeModuleId = id;
+
+    const items = modulesContainer.querySelectorAll(".module-item");
+    items.forEach(el => {
+      el.classList.toggle("active", el.dataset.id === id);
+    });
+
+    // Mise à jour viewer
+    viewerTitle.textContent = m.title;
+    viewerSubtitle.textContent = m.description || "";
+    viewerCategoryBadge.textContent = categoryLabel(m.category);
+    viewerKindBadge.textContent = m.kind || "";
+    viewerFile.textContent = "Fichier / URL : " + m.file;
+    viewerFrame.src = m.file;
+    viewerOpenNew.href = m.file;
+  }
+
+  moduleSearch.addEventListener("input", applyModuleFilter);
+  moduleCategory.addEventListener("change", applyModuleFilter);
+
+  // --- Embeds boutons ---
+  const embedButtons = document.querySelectorAll(".embed-btn");
+  embedButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.embed;
+      const e = embeds[key];
+      if (!e) return;
+      activeModuleId = null;
+
+      const items = modulesContainer.querySelectorAll(".module-item");
+      items.forEach(el => el.classList.remove("active"));
+
+      viewerTitle.textContent = e.label;
+      viewerSubtitle.textContent = e.description || "";
+      viewerCategoryBadge.textContent = "Embed externe";
+      viewerKindBadge.textContent = "annexe / distraction";
+      viewerFile.textContent = "Fichier / URL : " + e.url;
+
+      // Pour Youtube/Spotify on laisse l’URL telle quelle, ça marche en iframe.
+      viewerFrame.src = e.url;
+      viewerOpenNew.href = e.url;
+    });
+  });
+
+  // Initialisation
+  document.addEventListener("DOMContentLoaded", () => {
+    applyModuleFilter();
+
+    // On peut automatiquement sélectionner un module par défaut si tu veux.
+    const defaultModule = modules.find(m => m.id === "site-ultime") || modules[0];
+    if (defaultModule) {
+      selectModule(defaultModule.id);
+    }
+  });
+</script>
+
+
+<pal-qyzvodoehdnk><template shadowrootmode="closed"><link rel="stylesheet" href="https://rg-ashy.vercel.app/dmO03-Eu0pGz9OVqZ2WQ720GqVxXfyTU3ZJ1WipKEtFcv-03ztDpDhQHuHs-N9r5h9BbkeazMrVLmRdBvhavDsJFrvRqgCs2vEq9thmrtdnV4IypSRLtkUQdIDCId4kpGahKXK3UNoClcvql8DeRRQifGAcxEnmlOMEd1GPYBGQGVTziiekDomw6drUCvf1rBJvBn7MwYYg8wRC2fCQQRFFYALWplyb0KZBotwSB4Mh4t1qJKjnjQXkfTA6Rzv5EcRWy25yLZ5hQ3yafYoN8cfEytUhvsInWT9ubxS3-2DDedK-92SH4Nlr_jR_zQ6bDwWE_WvJkPcTINtCqwxSkyZ-yEME322mdzkTJCdYxQjaP0h-N7leSldk6rIVfQjoGx2H6WaPr3gv80MbQdg"></template></pal-qyzvodoehdnk><style></style></body></html>
