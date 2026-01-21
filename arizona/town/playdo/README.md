@@ -411,4 +411,42 @@ Tu as raison. Je refais mobile-first avec sidebar en drawer et preview en modale
 
 **Nouvelle DB v3** — évite les conflits avec les anciennes versions corrompues.
 
+---
+
+Parfait. Je construis la version définitive.**v8 — Version complète (97 KB)**
+
+## ✅ Implémenté
+
+### 🔴 Priorité haute
+- **PWA** : Manifest intégré, installable, badge online/offline
+- **Duplication de projet** : Bouton 📋 sur chaque projet
+- **Templates** : Projet vierge + "Stop Arizona" pré-rempli comme exemple
+- **Matrice pouvoir/intérêt** : Visualisation 2D des acteurs (Champions / À convaincre / À surveiller / À mobiliser)
+- **Export PDF complet** : Vrai dossier de plaidoyer avec toutes les sections (VOIR/JUGER/AGIR)
+
+### 🟡 Priorité moyenne
+- **Score global** : Anneau de progression "Plaidoyer prêt à X%"
+- **Aide contextuelle** : Boutons "?" sur chaque outil avec explications
+- **Recherche globale** : Ctrl+K pour chercher dans tout le projet
+- **Thème clair/sombre** : Toggle persistant
+
+### 🟢 Nice to have
+- **Page Ressources** : Liens vers Justice et Paix, CNCD, contacts
+- **Raccourcis clavier** : Ctrl+K pour recherche
+- **Indicateur offline** : Badge vert/rouge
+
+### 📱 Mobile-first
+- Drawer sidebar avec gestion projets
+- Bottom sheet preview
+- Bottom nav (Voir/Juger/Agir/Outils)
+- Safe area iPhone
+- Desktop 3 colonnes automatique
+
+### 💾 Data
+- Import JSON avec conversion automatique des anciens formats
+- 6 exports : JSON, MD, HTML, PDF (complet), DOCX, XLSX
+- IndexedDB v4 (nouvelle base propre)
+
+Teste l'import de ton fichier Arizona et le template pré-rempli !
+
 Teste sur ton téléphone ou redimensionne ton navigateur.
