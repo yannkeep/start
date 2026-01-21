@@ -1,0 +1,7 @@
+main:
+  - title: "Accueil"
+    url: /
+  - title: "GitHub"
+    url: https://github.com/ouaisfieu
+  - title: "Bluesky"
+    url: https://bsky.app/profile/ouaisfi.eu

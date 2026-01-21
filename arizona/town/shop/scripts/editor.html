@@ -1,0 +1,41 @@
+<!doctype html><html lang="fr"><meta charset="utf-8">
+<title>Éditeur d’item</title>
+<style>body{font:14px/1.5 system-ui;margin:2rem auto;max-width:900px} fieldset{border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem}</style>
+<h1>Éditeur d’item</h1>
+<form id="f">
+<fieldset><legend>Champs principaux</legend>
+<label>id <input name="id"></label> · 
+<label>title* <input name="title" required></label> · 
+<label>type <select name="type"><option></option><option>pdf</option><option>image</option><option>video</option><option>audio</option><option>zip</option><option>md</option><option>script</option><option>other</option></select></label><br>
+<label>url* <input name="url" required style="width:80%"></label><br>
+<label>info <input name="info" style="width:80%"></label><br>
+<label>run <input name="run" style="width:80%"></label>
+</fieldset>
+<fieldset><legend>Méta</legend>
+<label>description<br><textarea name="description" style="width:100%;height:80px"></textarea></label><br>
+<label>note <input name="note"></label> · 
+<label>thumb <input name="thumb" style="width:60%"></label><br>
+<label>size (octets) <input name="size" type="number"></label> · 
+<label>created (YYYY-MM-DD) <input name="created" placeholder="2025-07-30"></label><br>
+<label>tags (séparés par des virgules) <input name="tags" style="width:60%"></label><br>
+<label>badges (séparés par des virgules) <input name="badges" style="width:60%"></label><br>
+<label>descFx (séparés par des virgules) <input name="descFx" style="width:60%"></label>
+</fieldset>
+<button type="submit">Générer JSON</button>
+<button id="copy" type="button">Copier</button>
+</form>
+<h2>JSON</h2>
+<pre id="out"></pre>
+<script>
+function val(e){ e.preventDefault(); const fd=new FormData(document.getElementById('f')); const it={}; for(const [k,v] of fd.entries()){ if(!v) continue; it[k]=v; }
+if(it.size) it.size=Number(it.size);
+if(it.tags) it.tags=it.tags.split(',').map(s=>s.trim()).filter(Boolean);
+if(it.badges) it.badges=it.badges.split(',').map(s=>s.trim()).filter(Boolean);
+if(it.descFx) it.descFx=it.descFx.split(',').map(s=>s.trim()).filter(Boolean);
+document.getElementById('out').textContent=JSON.stringify(it,null,2);
+}
+document.getElementById('f').addEventListener('submit', val);
+document.getElementById('copy').addEventListener('click', ()=>{
+  const txt=document.getElementById('out').textContent; navigator.clipboard.writeText(txt||'{}');
+});
+</script>

@@ -1,0 +1,172 @@
+/* ========= ouaisfi·eu — FX de texte (mise en avant ponctuelle) ========= */
+/* Pensé pour titres & courts fragments. Évite sur de très longs paragraphes. */
+
+/* --- Variables de couleur (s'accordent avec light/dark) --- */
+:root{
+  --fx-mint-1:#a7f3d0; --fx-mint-2:#34d399;  /* vert tendre */
+  --fx-lilac-1:#e9d5ff; --fx-lilac-2:#a78bfa;/* lilas doux */
+  --fx-orange:#ff7b00; --fx-blood:#b30000;   /* Halloween */
+  --fx-ink:#111827; --fx-paper:#f8fafc;      /* surlignage */
+  --fx-text:#0f172a; --fx-text-inv:#e9eef3;
+}
+[data-theme="dark"]{
+  --fx-ink:#0b0c0f; --fx-paper:#e5e7eb;
+  --fx-text:#e9eef3; --fx-text-inv:#0b0c0f;
+}
+
+/* --- Utilitaire de base --- */
+.fx { font-weight: 800; letter-spacing: .2px; }
+
+/* ---------- Surlignage doux (accessibles) ---------- */
+.fx-highlight {
+  color: var(--fx-text);
+  background:
+    linear-gradient(transparent 55%, color-mix(in srgb, var(--fx-paper) 70%, var(--fx-mint-1) 30%) 55%) no-repeat;
+  padding-inline: .15em;
+  border-radius: .2em;
+}
+.fx-highlight--lilac {
+  background:
+    linear-gradient(transparent 55%, color-mix(in srgb, var(--fx-paper) 65%, var(--fx-lilac-1) 35%) 55%) no-repeat;
+}
+
+/* ---------- Néons mint / lilas (glow léger) ---------- */
+.fx-neon-mint {
+  color: var(--fx-mint-2);
+  text-shadow:
+     0 0 2px color-mix(in srgb, var(--fx-mint-2) 80%, transparent),
+     0 0 10px color-mix(in srgb, var(--fx-mint-2) 60%, transparent),
+     0 0 20px color-mix(in srgb, var(--fx-mint-2) 40%, transparent);
+}
+.fx-neon-lilac {
+  color: var(--fx-lilac-2);
+  text-shadow:
+     0 0 2px color-mix(in srgb, var(--fx-lilac-2) 80%, transparent),
+     0 0 10px color-mix(in srgb, var(--fx-lilac-2) 60%, transparent),
+     0 0 20px color-mix(in srgb, var(--fx-lilac-2) 40%, transparent);
+}
+
+/* Option : scintillement (à appliquer en plus)
+   Désactivé avec prefers-reduced-motion */
+.fx-flicker { animation: fx-flicker 2.8s infinite steps(1) both; }
+@keyframes fx-flicker {
+  0%,7%,9%,11%,100% { text-shadow: inherit; opacity: 1; }
+  8%,10% { opacity: .72; }
+  45% { opacity: .88; }
+  46% { opacity: .6; }
+}
+@media (prefers-reduced-motion: reduce){
+  .fx-flicker { animation: none; }
+}
+
+/* ---------- Halloween 🎃 (orange + “sang” subtil, option wobble) ---------- */
+.fx-halloween {
+  color: var(--fx-orange);
+  text-shadow:
+    0 1px 0 #0005,
+    0 0 8px color-mix(in srgb, var(--fx-orange) 65%, transparent),
+    0 0 18px color-mix(in srgb, var(--fx-orange) 45%, transparent);
+  position: relative;
+}
+.fx-halloween.fx-blood::after{
+  content:"";
+  position:absolute; left:0; right:0; top:100%;
+  height:.12em; background: linear-gradient(180deg, var(--fx-blood), transparent 70%);
+  filter: blur(.6px); opacity:.65;
+}
+.fx-wobble { display:inline-block; animation: fx-wobble 2.6s infinite ease-in-out; }
+@keyframes fx-wobble {
+  0%,100% { transform: rotate(0deg); }
+  40% { transform: rotate(.8deg); }
+  70% { transform: rotate(-.7deg); }
+}
+@media (prefers-reduced-motion: reduce){
+  .fx-wobble { animation: none; }
+}
+
+/* ---------- Glitch RGB (pour titres courts) ---------- */
+.fx-glitch{
+  position: relative; display:inline-block;
+  /* légère ombre centrale */
+  text-shadow: 0 0 1px #0008;
+}
+.fx-glitch::before,
+.fx-glitch::after{
+  content: attr(data-text);
+  position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
+  clip-path: inset(0 0 0 0);
+}
+.fx-glitch::before{ color:#f00; transform: translate(0,0); }
+.fx-glitch::after { color:#0ff; transform: translate(0,0); }
+.fx-glitch.fx-anim::before{ animation: fx-glitch-h 2.2s infinite linear; }
+.fx-glitch.fx-anim::after { animation: fx-glitch-h 2.2s infinite linear reverse; }
+@keyframes fx-glitch-h {
+  0%{ transform: translate(0,0); }
+  10%{ transform: translate(-1px, 0); }
+  20%{ transform: translate(1px, 0); }
+  30%{ transform: translate(-2px, 0); }
+  40%{ transform: translate(2px, 0); }
+  50%{ transform: translate(-1px, 0); }
+  60%{ transform: translate(1px, 0); }
+  70%{ transform: translate(-2px, 0); }
+  80%{ transform: translate(2px, 0); }
+  90%{ transform: translate(-1px, 0); }
+  100%{ transform: translate(0,0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .fx-glitch.fx-anim::before,
+  .fx-glitch.fx-anim::after{ animation:none; }
+}
+
+/* ---------- CRT (scans + lueur cathodique, sur titres) ---------- */
+.fx-crt {
+  position: relative;
+  color: var(--fx-text-inv);
+  text-shadow:
+    0 0 2px #0ff8,
+    0 0 8px #0ff6,
+    0 0 18px #0ff4;
+}
+.fx-crt::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay; pointer-events:none;
+  opacity:.4; border-radius:.1em;
+}
+
+/* ---------- Dégradés de texte (vaporwave/lilas/mint) ---------- */
+.fx-gradient-lilac,
+.fx-gradient-mint{
+  background-clip:text; -webkit-background-clip:text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+.fx-gradient-lilac{ background-image: linear-gradient(135deg, var(--fx-lilac-1), var(--fx-lilac-2)); }
+.fx-gradient-mint { background-image: linear-gradient(135deg, var(--fx-mint-1),  var(--fx-mint-2)); }
+
+/* ---------- Accent “marque” discret ---------- */
+.fx-brand {
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--fx-lilac-2) 25%, transparent), transparent 60%) no-repeat;
+  padding-inline:.15em; border-radius:.2em;
+}
+/* ---------- Bouton retour haut ---------- */
+
+.toTop{
+  position: fixed; right: 20px; bottom: 20px; z-index: 50;
+  width: 44px; height: 44px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff; font-weight: 800; box-shadow: var(--shadow);
+  display: grid; place-items: center; cursor: pointer;
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease, background .2s ease;
+}
+.toTop.show{
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+.toTop:hover{ filter: brightness(1.05); }
+html{ scroll-behavior: smooth; }  /* scroll doux natif */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+}

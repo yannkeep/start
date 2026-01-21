@@ -1,0 +1,34 @@
+<!doctype html><html lang="fr"><meta charset="utf-8">
+<title>Validateur de manifest</title>
+<style>body{font:14px/1.5 system-ui;margin:2rem auto;max-width:900px} pre{background:#111827;color:#e5e7eb;padding:1rem;border-radius:8px;overflow:auto}</style>
+<h1>Validateur de manifest</h1>
+<input type="file" id="file" accept=".json"> <button id="run">Valider</button>
+<p id="status"></p>
+<textarea id="src" style="width:100%;height:220px"></textarea>
+<h2>Résultats</h2>
+<pre id="out"></pre>
+<script>
+function validate(man){
+  const errors=[];
+  if(!man || typeof man!=='object') return ['Manifest doit être un objet'];
+  if(!Array.isArray(man.items)) errors.push('`items` manquant ou non-array');
+  else man.items.forEach((it,idx)=>{
+    const p = (k)=> (k in it);
+    if(!p('title')) errors.push(`#${idx}: title requis`);
+    if(!p('url')) errors.push(`#${idx}: url requis`);
+    if(it.type && !['pdf','image','video','audio','zip','md','script','other'].includes(it.type)) errors.push(`#${idx}: type invalide: ${it.type}`);
+    if(it.created && !/^\d{4}-\d{2}-\d{2}$/.test(it.created)) errors.push(`#${idx}: created invalide (YYYY-MM-DD)`);
+  });
+  return errors;
+}
+async function readFile(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsText(f); }); }
+document.getElementById('run').onclick=()=>{
+  const src=document.getElementById('src').value.trim();
+  try{ const json=JSON.parse(src||'{}'); const errs=validate(json); document.getElementById('out').textContent=errs.length?errs.join('\n'):'OK ✅'; }
+  catch(e){ document.getElementById('out').textContent='JSON invalide: '+e.message; }
+};
+document.getElementById('file').onchange=async (e)=>{
+  const f=e.target.files[0]; if(!f) return;
+  const txt=await readFile(f); document.getElementById('src').value=txt;
+};
+</script>
