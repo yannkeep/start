@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plaidoyer Citoyen — Poste de Travail v5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CDN fiables et testés -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.2.0/build/index.umd.min.js"></script>
+    <style>
+:root{--bg:#0a0a0b;--bg-panel:#12141a;--bg-card:#1a1d24;--bg-input:#22262f;--border:#2a2f3a;--border-light:#363c4a;--text:#f4f4f5;--text-muted:#71717a;--accent:#f59e0b;--accent-dim:#b45309;--success:#22c55e;--danger:#ef4444;--info:#3b82f6;--voir:#0ea5e9;--juger:#f59e0b;--agir:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow:hidden}
+.app{display:grid;grid-template-columns:260px 1fr 380px;height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg-panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:0.6rem}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.logo-text{font-weight:700;font-size:1rem}
+.logo-sub{font-size:0.65rem;color:var(--text-muted)}
+
+.projects-section{padding:0.75rem;border-bottom:1px solid var(--border)}
+.section-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);padding:0.5rem}
+.project-list{max-height:180px;overflow-y:auto}
+.project-item{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:background 0.15s}
+.project-item:hover{background:var(--bg-card)}
+.project-item.active{background:var(--accent-dim);color:white}
+.project-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-item-delete{opacity:0;background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.8rem;padding:0.2rem}
+.project-item:hover .project-item-delete{opacity:0.7}
+.btn-new-project{width:100%;padding:0.5rem;margin-top:0.5rem;background:var(--bg-card);border:1px dashed var(--border-light);border-radius:6px;color:var(--text-muted);font-size:0.8rem;cursor:pointer}
+.btn-new-project:hover{background:var(--bg-input);color:var(--text);border-color:var(--accent)}
+
+.nav-section{flex:1;overflow-y:auto;padding:0.5rem}
+.nav-group-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);padding:0.75rem 0.5rem 0.25rem}
+.nav-group-title.voir{color:var(--voir)}
+.nav-group-title.juger{color:var(--juger)}
+.nav-group-title.agir{color:var(--agir)}
+.nav-item{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg-card);color:var(--text)}
+.nav-item.active{background:var(--bg-card);color:var(--accent)}
+
+.sidebar-footer{padding:0.75rem 1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);display:flex;justify-content:space-between}
+.save-status{display:flex;align-items:center;gap:0.4rem}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
+.save-dot.saving{background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* EDITOR */
+.editor{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.editor-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--bg-panel)}
+.editor-title{font-size:1.1rem;font-weight:600}
+.editor-content{flex:1;overflow-y:auto;padding:1.5rem}
+
+.page{display:none;max-width:900px}
+.page.active{display:block;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-intro{color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem}
+.card-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem}
+.card-body{padding:1rem}
+
+.form-group{margin-bottom:1rem}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:0.8rem;font-weight:500;margin-bottom:0.4rem;color:var(--text-muted)}
+.form-input,.form-textarea,.form-select{width:100%;padding:0.6rem 0.8rem;background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:0.9rem}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--accent)}
+.form-textarea{min-height:100px;resize:vertical;line-height:1.6}
+.form-hint{font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem}
+.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.5rem 1rem;font-family:inherit;font-size:0.8rem;font-weight:500;border-radius:6px;border:none;cursor:pointer;transition:all 0.15s}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent-dim)}
+.btn-secondary{background:var(--bg-input);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg-card)}
+.btn-sm{padding:0.35rem 0.7rem;font-size:0.75rem}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:0.75rem}
+.stat-value{font-size:1.5rem;font-weight:700}
+.stat-label{font-size:0.75rem;color:var(--text-muted)}
+
+.progress-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.progress-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.progress-title{font-size:0.85rem;font-weight:600;margin-bottom:0.75rem}
+.progress-bar{height:8px;background:var(--bg-input);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.3s}
+.progress-label{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-muted);margin-top:0.4rem}
+
+/* ACTORS */
+.actor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+.actor-column{background:var(--bg-input);border-radius:8px;padding:0.75rem;min-height:150px}
+.actor-column-title{font-size:0.75rem;font-weight:600;margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.actor-column.ally .actor-column-title{color:var(--success)}
+.actor-column.neutral .actor-column-title{color:var(--text-muted)}
+.actor-column.opponent .actor-column-title{color:var(--danger)}
+.actor-chip{display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.5rem;background:var(--bg-card);border-radius:4px;font-size:0.75rem;margin-bottom:0.4rem}
+.actor-chip-power{color:var(--accent);font-size:0.65rem}
+.actor-chip-delete{margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.7rem}
+.actor-chip-delete:hover{color:var(--danger)}
+
+.mermaid-container{background:var(--bg-input);border-radius:8px;padding:1rem;margin-top:1rem;overflow-x:auto}
+.mermaid{text-align:center}
+
+/* SMART & JOURNAL */
+.smart-item,.journal-entry{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem;background:var(--bg-input);border-radius:6px;margin-bottom:0.5rem}
+.smart-checkbox{margin-top:0.2rem;width:16px;height:16px}
+.smart-content,.journal-content{flex:1}
+.smart-text,.journal-text{font-size:0.85rem}
+.smart-text.done{text-decoration:line-through;opacity:0.6}
+.smart-meta,.journal-date{font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem}
+.journal-icon{font-size:1.2rem}
+
+/* EXPORT */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.export-option{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1.25rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s}
+.export-option:hover{border-color:var(--accent);background:var(--bg-card)}
+.export-option.disabled{opacity:0.5;cursor:not-allowed}
+.export-icon{font-size:2rem}
+.export-label{font-weight:600;font-size:0.9rem}
+.export-desc{font-size:0.7rem;color:var(--text-muted)}
+
+/* PREVIEW */
+.preview{background:var(--bg-panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:0.9rem;font-weight:600}
+.preview-content{flex:1;overflow-y:auto;padding:1.25rem}
+.preview-doc{background:#13151a;border-radius:8px;padding:1.5rem;font-size:0.85rem;line-height:1.7}
+.preview-doc h1{font-size:1.3rem;color:var(--accent);margin-bottom:0.25rem;padding-bottom:0.75rem;border-bottom:2px solid var(--border)}
+.preview-doc .doc-meta{font-size:0.75rem;color:var(--text-muted);margin-bottom:1.5rem}
+.preview-doc h2{font-size:1rem;margin-top:1.5rem;margin-bottom:0.75rem}
+.preview-doc h2.voir{color:var(--voir)}
+.preview-doc h2.juger{color:var(--juger)}
+.preview-doc h2.agir{color:var(--agir)}
+.preview-doc h3{font-size:0.9rem;color:var(--text);margin-top:1rem;margin-bottom:0.5rem}
+.preview-doc p{margin-bottom:0.75rem;color:var(--text-muted)}
+.preview-doc p.filled{color:var(--text)}
+.preview-doc .empty{font-style:italic;opacity:0.5}
+.preview-doc .actor-badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:100px;font-size:0.7rem;margin:0.15rem}
+.preview-doc .actor-badge.ally{background:rgba(34,197,94,0.2);color:var(--success)}
+.preview-doc .actor-badge.neutral{background:rgba(113,113,122,0.2);color:var(--text-muted)}
+.preview-doc .actor-badge.opponent{background:rgba(239,68,68,0.2);color:var(--danger)}
+.preview-doc table{width:100%;border-collapse:collapse;margin:0.75rem 0;font-size:0.8rem}
+.preview-doc th,.preview-doc td{padding:0.5rem;border:1px solid var(--border);text-align:left}
+.preview-doc th{background:var(--bg-input)}
+.preview-actions{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap}
+.preview-actions .btn{flex:1;min-width:60px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;width:450px;max-width:90vw}
+.modal-title{font-size:1.1rem;font-weight:600;margin-bottom:1rem}
+.modal-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.5rem}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:1001;display:flex;flex-direction:column;gap:0.5rem}
+.toast{background:var(--bg-card);border:1px solid var(--border);padding:0.75rem 1.25rem;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;gap:0.5rem;box-shadow:0 10px 40px rgba(0,0,0,0.4);animation:toastIn 0.3s ease}
+.toast.success{border-left:3px solid var(--success)}
+.toast.error{border-left:3px solid var(--danger)}
+.toast.warning{border-left:3px solid var(--accent)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-muted)}
+.empty-state-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+.empty-state-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:0.5rem}
+.empty-state-text{font-size:0.85rem;margin-bottom:1.5rem}
+
+/* STATUS BAR */
+.status-bar{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap;font-size:0.75rem}
+.status-item{display:flex;align-items:center;gap:0.4rem}
+.status-ok{color:var(--success)}
+.status-error{color:var(--danger)}
+
+@media(max-width:1100px){.app{grid-template-columns:240px 1fr 320px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar,.preview{display:none}}
+    </style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <div class="logo-icon">⚖️</div>
+            <div>
+                <div class="logo-text">Plaidoyer Citoyen</div>
+                <div class="logo-sub">v5 — Poste de Travail</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="projects-section">
+        <div class="section-title">📁 Mes projets</div>
+        <div class="project-list" id="project-list"></div>
+        <button class="btn-new-project" onclick="createProject()">+ Nouveau projet</button>
+    </div>
+    
+    <nav class="nav-section">
+        <div class="nav-group-title">📊 Général</div>
+        <button class="nav-item active" data-page="dashboard">📊 Tableau de bord</button>
+        
+        <div class="nav-group-title voir">👁️ VOIR</div>
+        <button class="nav-item" data-page="domino">🎯 Vision (Domino)</button>
+        <button class="nav-item" data-page="profil">👤 Profil citoyen</button>
+        <button class="nav-item" data-page="fleur">🌸 Fleur du pouvoir</button>
+        
+        <div class="nav-group-title juger">⚖️ JUGER</div>
+        <button class="nav-item" data-page="acteurs">👥 Acteurs</button>
+        <button class="nav-item" data-page="arbre">🌳 Arbre à problèmes</button>
+        <button class="nav-item" data-page="pourquoi">❓ 5 Pourquoi</button>
+        <button class="nav-item" data-page="swot">📐 SWOT</button>
+        <button class="nav-item" data-page="pestel">🌍 PESTEL</button>
+        <button class="nav-item" data-page="tdc">🔄 Théorie du changement</button>
+        
+        <div class="nav-group-title agir">✊ AGIR</div>
+        <button class="nav-item" data-page="pouvoir">⚡ Avec/Sans/Contre</button>
+        <button class="nav-item" data-page="cibles">🎯 Cibles & Alliés</button>
+        <button class="nav-item" data-page="smart">📋 Objectifs SMART</button>
+        <button class="nav-item" data-page="message">💬 Message clé</button>
+        <button class="nav-item" data-page="evaluation">📈 Suivi-évaluation</button>
+        <button class="nav-item" data-page="journal">📓 Journal de bord</button>
+        
+        <div class="nav-group-title">🔧 Outils</div>
+        <button class="nav-item" data-page="export">💾 Import / Export</button>
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="save-status">
+            <span class="save-dot" id="save-dot"></span>
+            <span id="save-text">Prêt</span>
+        </div>
+        <span id="storage-info">IndexedDB</span>
+    </div>
+</aside>
+
+<!-- EDITOR -->
+<main class="editor">
+    <header class="editor-header">
+        <h1 class="editor-title" id="editor-title">Tableau de bord</h1>
+    </header>
+    
+    <div class="editor-content" id="editor-content">
+        <!-- EMPTY STATE -->
+        <div class="page active" id="page-empty">
+            <div class="status-bar" id="libs-status"></div>
+            <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <div class="empty-state-title">Bienvenue dans Plaidoyer Citoyen</div>
+                <div class="empty-state-text">Créez un nouveau projet pour commencer</div>
+                <button class="btn btn-primary" onclick="createProject()">+ Créer un projet</button>
+            </div>
+        </div>
+        
+        <!-- DASHBOARD -->
+        <div class="page" id="page-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon" style="background:rgba(14,165,233,0.2);color:var(--voir)">📝</div><div class="stat-value" id="stat-fields">0</div><div class="stat-label">Champs remplis</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,0.2);color:var(--success)">👥</div><div class="stat-value" id="stat-actors">0</div><div class="stat-label">Acteurs</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.2);color:var(--accent)">🎯</div><div class="stat-value" id="stat-smart">0</div><div class="stat-label">Objectifs SMART</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:rgba(59,130,246,0.2);color:var(--info)">📓</div><div class="stat-value" id="stat-journal">0</div><div class="stat-label">Entrées journal</div></div>
+            </div>
+            <div class="progress-grid">
+                <div class="progress-card"><div class="progress-title" style="color:var(--voir)">👁️ Phase VOIR</div><div class="progress-bar"><div class="progress-fill" id="progress-voir" style="background:var(--voir);width:0%"></div></div><div class="progress-label"><span>Analyse</span><span id="progress-voir-pct">0%</span></div></div>
+                <div class="progress-card"><div class="progress-title" style="color:var(--juger)">⚖️ Phase JUGER</div><div class="progress-bar"><div class="progress-fill" id="progress-juger" style="background:var(--juger);width:0%"></div></div><div class="progress-label"><span>Stratégie</span><span id="progress-juger-pct">0%</span></div></div>
+                <div class="progress-card"><div class="progress-title" style="color:var(--agir)">✊ Phase AGIR</div><div class="progress-bar"><div class="progress-fill" id="progress-agir" style="background:var(--agir);width:0%"></div></div><div class="progress-label"><span>Action</span><span id="progress-agir-pct">0%</span></div></div>
+            </div>
+            <div class="card"><div class="card-header">📌 Informations du projet</div><div class="card-body">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Nom du projet</label><input type="text" class="form-input" id="project-name-input" data-field="meta.name" placeholder="Ex: Campagne Stop Arizona"></div>
+                    <div class="form-group"><label class="form-label">Organisation</label><input type="text" class="form-input" data-field="meta.organization" placeholder="Ex: Collectif citoyen"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" data-field="meta.description" rows="2" placeholder="Résumez votre projet..."></textarea></div>
+            </div></div>
+        </div>
+        
+        <!-- DOMINO -->
+        <div class="page" id="page-domino">
+            <p class="page-intro">Clarifiez votre vision du changement.</p>
+            <div class="card"><div class="card-header">🎯 Vision du changement</div><div class="card-body"><textarea class="form-textarea" data-field="domino.vision" rows="4" placeholder="Décrivez le changement que vous souhaitez voir advenir..."></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🚧 Obstacles</div><div class="card-body"><textarea class="form-textarea" data-field="domino.obstacles" rows="5" placeholder="Obstacles politiques, administratifs..."></textarea></div></div>
+                <div class="card"><div class="card-header">💪 Ressources</div><div class="card-body"><textarea class="form-textarea" data-field="domino.ressources" rows="5" placeholder="Réseaux, expertise, légitimité..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- PROFIL -->
+        <div class="page" id="page-profil">
+            <p class="page-intro">Définissez votre profil citoyen.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">❤️ Motivations</div><div class="card-body"><textarea class="form-textarea" data-field="profil.motivations" rows="4" placeholder="Pourquoi vous engagez-vous ?"></textarea></div></div>
+                <div class="card"><div class="card-header">🛠️ Compétences</div><div class="card-body"><textarea class="form-textarea" data-field="profil.competences" rows="4" placeholder="Vos compétences utiles..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">⏰ Temps disponible</div><div class="card-body"><textarea class="form-textarea" data-field="profil.temps" rows="4" placeholder="Disponibilités..."></textarea></div></div>
+                <div class="card"><div class="card-header">⚠️ Limites</div><div class="card-body"><textarea class="form-textarea" data-field="profil.limites" rows="4" placeholder="Contraintes, lignes rouges..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- FLEUR -->
+        <div class="page" id="page-fleur">
+            <p class="page-intro">Analysez les rapports de pouvoir et de privilège.</p>
+            <div class="card"><div class="card-header">👥 Personnes concernées</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.identites" rows="3" placeholder="Profils des personnes touchées..."></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">✅ Privilèges</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.privileges" rows="4" placeholder="Accès, capital social..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">🎯 Oppressions</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.oppressions" rows="4" placeholder="Discriminations, violences..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- ACTEURS -->
+        <div class="page" id="page-acteurs">
+            <p class="page-intro">Cartographiez les acteurs clés.</p>
+            <div class="card"><div class="card-header">➕ Ajouter un acteur</div><div class="card-body">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="actor-name" placeholder="Nom"></div>
+                    <div class="form-group"><label class="form-label">Rôle</label><input type="text" class="form-input" id="actor-role" placeholder="Fonction..."></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Position</label><select class="form-select" id="actor-position"><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option></select></div>
+                    <div class="form-group"><label class="form-label">Pouvoir</label><select class="form-select" id="actor-power"><option value="1">1★</option><option value="2">2★★</option><option value="3" selected>3★★★</option><option value="4">4★★★★</option><option value="5">5★★★★★</option></select></div>
+                </div>
+                <button class="btn btn-primary" onclick="addActor()">Ajouter</button>
+            </div></div>
+            <div class="actor-grid">
+                <div class="actor-column ally"><div class="actor-column-title">🟢 Alliés</div><div id="actors-ally"></div></div>
+                <div class="actor-column neutral"><div class="actor-column-title">🟡 Neutres</div><div id="actors-neutral"></div></div>
+                <div class="actor-column opponent"><div class="actor-column-title">🔴 Opposants</div><div id="actors-opponent"></div></div>
+            </div>
+            <div class="card" style="margin-top:1rem"><div class="card-header">📊 Visualisation</div><div class="card-body">
+                <div class="mermaid-container"><pre class="mermaid" id="actors-mermaid"></pre></div>
+                <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="renderActorsMermaid()">🔄 Rafraîchir</button>
+            </div></div>
+        </div>
+        
+        <!-- ARBRE -->
+        <div class="page" id="page-arbre">
+            <p class="page-intro">Identifiez le problème central, ses causes et effets.</p>
+            <div class="card"><div class="card-header">🎯 Problème central</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.probleme" rows="2" placeholder="Quel est le problème ?"></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🌱 Causes</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.causes" rows="5" placeholder="Une cause par ligne..."></textarea><p class="form-hint">Une cause par ligne</p></div></div>
+                <div class="card"><div class="card-header">🍃 Effets</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.effets" rows="5" placeholder="Un effet par ligne..."></textarea><p class="form-hint">Un effet par ligne</p></div></div>
+            </div>
+            <div class="card"><div class="card-header">🌳 Visualisation</div><div class="card-body">
+                <div class="mermaid-container"><pre class="mermaid" id="tree-mermaid"></pre></div>
+                <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="renderTreeMermaid()">🔄 Rafraîchir</button>
+            </div></div>
+        </div>
+        
+        <!-- 5 POURQUOI -->
+        <div class="page" id="page-pourquoi">
+            <p class="page-intro">Remontez à la cause racine avec la méthode des 5 Pourquoi.</p>
+            <div class="card"><div class="card-header">❓ Problème de départ</div><div class="card-body"><textarea class="form-textarea" data-field="pourquoi.probleme" rows="2" placeholder="Symptôme observé..."></textarea></div></div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">1️⃣ Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why1" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">2️⃣ Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why2" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">3️⃣ Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why3" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">4️⃣ Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why4" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">5️⃣ Pourquoi ? → <strong style="color:var(--accent)">Cause racine</strong></label><textarea class="form-textarea" data-field="pourquoi.why5" rows="2" style="border-color:var(--accent)"></textarea></div>
+            </div></div>
+        </div>
+        
+        <!-- SWOT -->
+        <div class="page" id="page-swot">
+            <p class="page-intro">Analysez Forces, Faiblesses, Opportunités, Menaces.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">💪 Forces</div><div class="card-body"><textarea class="form-textarea" data-field="swot.forces" rows="4" placeholder="Atouts internes..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">😰 Faiblesses</div><div class="card-body"><textarea class="form-textarea" data-field="swot.faiblesses" rows="4" placeholder="Limites internes..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--info)">🌟 Opportunités</div><div class="card-body"><textarea class="form-textarea" data-field="swot.opportunites" rows="4" placeholder="Facteurs favorables..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--accent)">⚠️ Menaces</div><div class="card-body"><textarea class="form-textarea" data-field="swot.menaces" rows="4" placeholder="Facteurs défavorables..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- PESTEL -->
+        <div class="page" id="page-pestel">
+            <p class="page-intro">Analysez le macro-environnement PESTEL.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🏛️ Politique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.politique" rows="3" placeholder="Gouvernance..."></textarea></div></div>
+                <div class="card"><div class="card-header">💶 Économique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.economique" rows="3" placeholder="Conjoncture..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">👥 Social</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.social" rows="3" placeholder="Tendances..."></textarea></div></div>
+                <div class="card"><div class="card-header">💻 Technologique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.technologique" rows="3" placeholder="Innovations..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🌱 Environnemental</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.environnemental" rows="3" placeholder="Écologie..."></textarea></div></div>
+                <div class="card"><div class="card-header">⚖️ Légal</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.legal" rows="3" placeholder="Juridique..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- TDC -->
+        <div class="page" id="page-tdc">
+            <p class="page-intro">Théorie du Changement : comment le changement se produit.</p>
+            <div class="card"><div class="card-header">🎯 Impact final</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.impact" rows="2" placeholder="Changement ultime visé..."></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🔹 Individuel interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_interne" rows="3" placeholder="Connaissances, attitudes..."></textarea></div></div>
+                <div class="card"><div class="card-header">🔹 Individuel externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_externe" rows="3" placeholder="Comportements..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🔸 Collectif interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_interne" rows="3" placeholder="Culture, normes..."></textarea></div></div>
+                <div class="card"><div class="card-header">🔸 Collectif externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_externe" rows="3" placeholder="Politiques, lois..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- POUVOIR -->
+        <div class="page" id="page-pouvoir">
+            <p class="page-intro">Positionnement stratégique par rapport au pouvoir.</p>
+            <div class="form-row-3">
+                <div class="card"><div class="card-header" style="color:var(--success);border-bottom:3px solid var(--success)">🤝 AVEC</div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.avec" rows="6" placeholder="Collaboration, dialogue..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--accent);border-bottom:3px solid var(--accent)">🔄 SANS</div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.sans" rows="6" placeholder="Actions autonomes..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger);border-bottom:3px solid var(--danger)">✊ CONTRE</div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.contre" rows="6" placeholder="Opposition, mobilisation..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- CIBLES -->
+        <div class="page" id="page-cibles">
+            <p class="page-intro">Identifiez vos cibles et alliés stratégiques.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🎯 Cible principale</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.principale" rows="3" placeholder="Qui décide ?"></textarea></div></div>
+                <div class="card"><div class="card-header">🎯 Cibles secondaires</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.secondaires" rows="3" placeholder="Qui influence ?"></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">🤝 Alliés</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.allies" rows="3" placeholder="Organisations alliées..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">⚔️ Opposants</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.opposants" rows="3" placeholder="Qui s'oppose ?"></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- SMART -->
+        <div class="page" id="page-smart">
+            <p class="page-intro">Objectifs SMART : Spécifiques, Mesurables, Atteignables, Réalistes, Temporels.</p>
+            <div class="card"><div class="card-header">➕ Ajouter un objectif</div><div class="card-body">
+                <div class="form-group"><textarea class="form-textarea" id="smart-text" rows="2" placeholder="Ex: Obtenir 50 000 signatures d'ici le 1er mars"></textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Indicateur</label><input type="text" class="form-input" id="smart-indicator" placeholder="Ex: Nombre de signatures"></div>
+                    <div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" id="smart-deadline"></div>
+                </div>
+                <button class="btn btn-primary" onclick="addSmart()">Ajouter</button>
+            </div></div>
+            <div class="card"><div class="card-header">📋 Objectifs</div><div class="card-body" id="smart-list"><p style="color:var(--text-muted);text-align:center">Aucun objectif</p></div></div>
+        </div>
+        
+        <!-- MESSAGE -->
+        <div class="page" id="page-message">
+            <p class="page-intro">Construisez votre message de plaidoyer.</p>
+            <div class="card"><div class="card-header">💬 Message</div><div class="card-body">
+                <div class="form-group"><label class="form-label">🎣 Accroche</label><textarea class="form-textarea" data-field="message.accroche" rows="2" placeholder="Phrase percutante..."></textarea></div>
+                <div class="form-group"><label class="form-label">❗ Problème</label><textarea class="form-textarea" data-field="message.probleme" rows="2" placeholder="Le problème..."></textarea></div>
+                <div class="form-group"><label class="form-label">⚡ Importance</label><textarea class="form-textarea" data-field="message.importance" rows="2" placeholder="Pourquoi agir ?"></textarea></div>
+                <div class="form-group"><label class="form-label">👉 Appel à l'action</label><textarea class="form-textarea" data-field="message.action" rows="2" placeholder="Que demandez-vous ?"></textarea></div>
+            </div></div>
+            <div class="card"><div class="card-header">📝 Aperçu</div><div class="card-body" id="message-preview" style="background:var(--bg-input);border-radius:6px;padding:1rem;font-style:italic;color:var(--text-muted)">Remplissez les champs...</div></div>
+        </div>
+        
+        <!-- EVALUATION -->
+        <div class="page" id="page-evaluation">
+            <p class="page-intro">Suivi et évaluation de l'impact.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">📊 Indicateurs</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.indicateurs" rows="5" placeholder="Indicateurs quantitatifs et qualitatifs..."></textarea></div></div>
+                <div class="card"><div class="card-header">🔍 Méthodes</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.methodes" rows="5" placeholder="Sondages, entretiens..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">📅 Calendrier</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.calendrier" rows="5" placeholder="Fréquence, jalons..."></textarea></div></div>
+                <div class="card"><div class="card-header">📚 Leçons apprises</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.lecons" rows="5" placeholder="Apprentissages..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- JOURNAL -->
+        <div class="page" id="page-journal">
+            <p class="page-intro">Journal de bord de vos actions.</p>
+            <div class="card"><div class="card-header">➕ Nouvelle entrée</div><div class="card-body">
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="journal-date"></div>
+                    <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="journal-type"><option value="action">🎯 Action</option><option value="rencontre">🤝 Rencontre</option><option value="victoire">🏆 Victoire</option><option value="difficulte">⚠️ Difficulté</option><option value="note">📝 Note</option></select></div>
+                </div>
+                <div class="form-group"><textarea class="form-textarea" id="journal-content" rows="2" placeholder="Décrivez..."></textarea></div>
+                <button class="btn btn-primary" onclick="addJournal()">Ajouter</button>
+            </div></div>
+            <div class="card"><div class="card-header">📓 Historique</div><div class="card-body" id="journal-list"><p style="color:var(--text-muted);text-align:center">Aucune entrée</p></div></div>
+        </div>
+        
+        <!-- EXPORT -->
+        <div class="page" id="page-export">
+            <div class="card"><div class="card-header">📤 Exporter</div><div class="card-body">
+                <p style="margin-bottom:1rem;color:var(--text-muted)">Exportez votre projet :</p>
+                <div class="export-grid">
+                    <div class="export-option" onclick="exportJSON()"><span class="export-icon">📄</span><span class="export-label">JSON</span><span class="export-desc">Sauvegarde complète</span></div>
+                    <div class="export-option" onclick="exportMD()"><span class="export-icon">📝</span><span class="export-label">Markdown</span><span class="export-desc">Document texte</span></div>
+                    <div class="export-option" onclick="exportHTML()"><span class="export-icon">🌐</span><span class="export-label">HTML</span><span class="export-desc">Page web</span></div>
+                    <div class="export-option" onclick="exportPDF()"><span class="export-icon">📕</span><span class="export-label">PDF</span><span class="export-desc">Document</span></div>
+                    <div class="export-option" id="docx-export" onclick="exportDOCX()"><span class="export-icon">📘</span><span class="export-label">Word</span><span class="export-desc">Document éditable</span></div>
+                    <div class="export-option" id="xlsx-export" onclick="exportXLSX()"><span class="export-icon">📊</span><span class="export-label">Excel</span><span class="export-desc">Tableur</span></div>
+                </div>
+            </div></div>
+            <div class="card"><div class="card-header">📥 Importer</div><div class="card-body">
+                <p style="margin-bottom:0.75rem;color:var(--text-muted)">Chargez un projet JSON :</p>
+                <input type="file" id="import-file" accept=".json" class="form-input" onchange="importJSON(event)">
+            </div></div>
+        </div>
+    </div>
+</main>
+
+<!-- PREVIEW -->
+<aside class="preview">
+    <header class="preview-header">👁️ Aperçu en direct</header>
+    <div class="preview-content"><div class="preview-doc" id="preview-doc"></div></div>
+    <div class="preview-actions">
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()">JSON</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportMD()">MD</button>
+        <button class="btn btn-primary btn-sm" onclick="exportPDF()">PDF</button>
+    </div>
+</aside>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h2 class="modal-title">Nouveau projet</h2>
+        <div class="form-group"><label class="form-label">Nom du projet</label><input type="text" class="form-input" id="new-project-name" placeholder="Ex: Campagne Stop Arizona"></div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="new-project-desc" rows="2" placeholder="Description..."></textarea></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-primary" onclick="confirmCreate()">Créer</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// VÉRIFICATION DES LIBS AU CHARGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+const LIBS = {
+    mermaid: () => typeof mermaid !== 'undefined',
+    jspdf: () => typeof window.jspdf !== 'undefined',
+    xlsx: () => typeof XLSX !== 'undefined',
+    docx: () => typeof window.docx !== 'undefined'
+};
+
+function checkLibs() {
+    const status = document.getElementById('libs-status');
+    if (!status) return;
+    let html = '';
+    for (const [name, check] of Object.entries(LIBS)) {
+        const ok = check();
+        html += `<span class="status-item ${ok ? 'status-ok' : 'status-error'}">${ok ? '✓' : '✗'} ${name}</span>`;
+    }
+    status.innerHTML = html;
+    console.log('Libs status:', Object.fromEntries(Object.entries(LIBS).map(([k, v]) => [k, v()])));
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INDEXEDDB
+// ══════════════════════════════════════════════════════════════════════════════
+const DB_NAME = 'PlaidoyerCitoyenDB', DB_VERSION = 1;
+let db, currentId = null, current = null, saveTimer = null;
+
+async function initDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onerror = () => { console.error('IndexedDB error:', req.error); reject(req.error); };
+        req.onsuccess = () => { db = req.result; console.log('IndexedDB ready'); resolve(db); };
+        req.onupgradeneeded = (e) => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains('projects')) {
+                database.createObjectStore('projects', { keyPath: 'id' });
+            }
+        };
+    });
+}
+
+const dbSave = (p) => new Promise((res, rej) => { const req = db.transaction('projects', 'readwrite').objectStore('projects').put(p); req.onsuccess = () => res(); req.onerror = () => rej(req.error); });
+const dbGet = (id) => new Promise((res, rej) => { const req = db.transaction('projects').objectStore('projects').get(id); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); });
+const dbAll = () => new Promise((res, rej) => { const req = db.transaction('projects').objectStore('projects').getAll(); req.onsuccess = () => res(req.result || []); req.onerror = () => rej(req.error); });
+const dbDel = (id) => new Promise((res, rej) => { const req = db.transaction('projects', 'readwrite').objectStore('projects').delete(id); req.onsuccess = () => res(); req.onerror = () => rej(req.error); });
+
+function newProject(name, desc = '') {
+    const now = new Date().toISOString();
+    return {
+        id: Date.now().toString(),
+        meta: { name, description: desc, organization: '' },
+        modified: now,
+        domino: { vision: '', obstacles: '', ressources: '' },
+        profil: { motivations: '', competences: '', temps: '', limites: '' },
+        fleur: { identites: '', privileges: '', oppressions: '' },
+        acteurs: [],
+        arbre: { probleme: '', causes: '', effets: '' },
+        pourquoi: { probleme: '', why1: '', why2: '', why3: '', why4: '', why5: '' },
+        swot: { forces: '', faiblesses: '', opportunites: '', menaces: '' },
+        pestel: { politique: '', economique: '', social: '', technologique: '', environnemental: '', legal: '' },
+        tdc: { impact: '', individuel_interne: '', individuel_externe: '', collectif_interne: '', collectif_externe: '' },
+        pouvoir: { avec: '', sans: '', contre: '' },
+        cibles: { principale: '', secondaires: '', allies: '', opposants: '' },
+        smart: [],
+        message: { accroche: '', probleme: '', importance: '', action: '' },
+        evaluation: { indicateurs: '', methodes: '', calendrier: '', lecons: '' },
+        journal: []
+    };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initDB();
+        if (LIBS.mermaid()) {
+            mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
+        }
+        await renderList();
+        initNav();
+        initAutoSave();
+        document.getElementById('journal-date').value = new Date().toISOString().split('T')[0];
+        checkLibs();
+        toast('Application prête', 'success');
+    } catch (err) {
+        console.error('Init error:', err);
+        toast('Erreur initialisation: ' + err.message, 'error');
+    }
+});
+
+function initNav() {
+    document.querySelectorAll('.nav-item').forEach(el => {
+        el.addEventListener('click', () => {
+            if (!currentId && el.dataset.page !== 'empty') {
+                toast('Sélectionnez un projet', 'warning');
+                return;
+            }
+            showPage(el.dataset.page);
+        });
+    });
+}
+
+function initAutoSave() {
+    document.querySelectorAll('[data-field]').forEach(el => {
+        el.addEventListener('input', () => {
+            if (!current) return;
+            const [a, b] = el.dataset.field.split('.');
+            if (!current[a]) current[a] = {};
+            current[a][b] = el.value;
+            if (a === 'meta' && b === 'name') renderList();
+            scheduleSave();
+            updatePreview();
+            updateStats();
+            if (el.dataset.field.startsWith('message.')) updateMessagePreview();
+        });
+    });
+}
+
+function scheduleSave() {
+    document.getElementById('save-dot').classList.add('saving');
+    document.getElementById('save-text').textContent = 'Sauvegarde...';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+        if (current) {
+            current.modified = new Date().toISOString();
+            await dbSave(current);
+            document.getElementById('save-dot').classList.remove('saving');
+            document.getElementById('save-text').textContent = 'Sauvegardé';
+        }
+    }, 400);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PROJECTS
+// ══════════════════════════════════════════════════════════════════════════════
+async function renderList() {
+    const list = await dbAll();
+    const el = document.getElementById('project-list');
+    if (!list.length) {
+        el.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;padding:0.5rem;text-align:center">Aucun projet</p>';
+        return;
+    }
+    el.innerHTML = list.map(p => `
+        <div class="project-item ${p.id === currentId ? 'active' : ''}" onclick="selectProject('${p.id}')">
+            <span>📁</span>
+            <span class="project-item-name">${esc(p.meta?.name || 'Sans nom')}</span>
+            <button class="project-item-delete" onclick="event.stopPropagation();delProject('${p.id}')">✕</button>
+        </div>
+    `).join('');
+}
+
+function createProject() {
+    document.getElementById('modal').classList.add('show');
+    document.getElementById('new-project-name').focus();
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+    document.getElementById('new-project-name').value = '';
+    document.getElementById('new-project-desc').value = '';
+}
+
+async function confirmCreate() {
+    const name = document.getElementById('new-project-name').value.trim();
+    const desc = document.getElementById('new-project-desc').value.trim();
+    if (!name) { toast('Entrez un nom', 'error'); return; }
+    const p = newProject(name, desc);
+    await dbSave(p);
+    closeModal();
+    await renderList();
+    await selectProject(p.id);
+    toast('Projet créé', 'success');
+}
+
+async function selectProject(id) {
+    currentId = id;
+    current = await dbGet(id);
+    await renderList();
+    populate();
+    renderActors();
+    renderSmart();
+    renderJournal();
+    updatePreview();
+    updateStats();
+    showPage('dashboard');
+}
+
+async function delProject(id) {
+    if (!confirm('Supprimer ce projet ?')) return;
+    await dbDel(id);
+    if (currentId === id) { currentId = null; current = null; showPage('empty'); document.getElementById('preview-doc').innerHTML = ''; }
+    await renderList();
+    toast('Projet supprimé', 'success');
+}
+
+function populate() {
+    document.querySelectorAll('[data-field]').forEach(el => {
+        const [a, b] = el.dataset.field.split('.');
+        el.value = current?.[a]?.[b] || '';
+    });
+    updateMessagePreview();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════════════════
+const PAGE_TITLES = { empty: 'Bienvenue', dashboard: 'Tableau de bord', domino: 'Vision (Domino)', profil: 'Profil citoyen', fleur: 'Fleur du pouvoir', acteurs: 'Acteurs', arbre: 'Arbre à problèmes', pourquoi: '5 Pourquoi', swot: 'SWOT', pestel: 'PESTEL', tdc: 'Théorie du changement', pouvoir: 'Avec/Sans/Contre', cibles: 'Cibles & Alliés', smart: 'Objectifs SMART', message: 'Message clé', evaluation: 'Suivi-évaluation', journal: 'Journal de bord', export: 'Import / Export' };
+
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${id}`)?.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === id));
+    document.getElementById('editor-title').textContent = PAGE_TITLES[id] || id;
+    if (id === 'acteurs') renderActorsMermaid();
+    if (id === 'arbre') renderTreeMermaid();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════════════════════
+function updateStats() {
+    if (!current) return;
+    let filled = 0;
+    const count = (obj) => { Object.values(obj || {}).forEach(v => { if (typeof v === 'string' && v.trim()) filled++; }); };
+    ['domino', 'profil', 'fleur', 'arbre', 'pourquoi', 'swot', 'pestel', 'tdc', 'pouvoir', 'cibles', 'message', 'evaluation'].forEach(k => count(current[k]));
+    
+    document.getElementById('stat-fields').textContent = filled;
+    document.getElementById('stat-actors').textContent = current.acteurs?.length || 0;
+    document.getElementById('stat-smart').textContent = current.smart?.length || 0;
+    document.getElementById('stat-journal').textContent = current.journal?.length || 0;
+    
+    const calcPct = (fields) => {
+        let f = 0;
+        fields.forEach(path => {
+            if (path === 'acteurs') { if (current.acteurs?.length) f++; }
+            else if (path === 'smart') { if (current.smart?.length) f++; }
+            else { const [a, b] = path.split('.'); if (current[a]?.[b]?.trim()) f++; }
+        });
+        return Math.round((f / fields.length) * 100);
+    };
+    
+    const vp = calcPct(['domino.vision', 'profil.motivations', 'fleur.identites']);
+    const jp = calcPct(['arbre.probleme', 'swot.forces', 'pestel.politique', 'tdc.impact', 'acteurs']);
+    const ap = calcPct(['pouvoir.avec', 'cibles.principale', 'message.accroche', 'smart']);
+    
+    document.getElementById('progress-voir').style.width = vp + '%';
+    document.getElementById('progress-voir-pct').textContent = vp + '%';
+    document.getElementById('progress-juger').style.width = jp + '%';
+    document.getElementById('progress-juger-pct').textContent = jp + '%';
+    document.getElementById('progress-agir').style.width = ap + '%';
+    document.getElementById('progress-agir-pct').textContent = ap + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ACTORS
+// ══════════════════════════════════════════════════════════════════════════════
+function addActor() {
+    if (!current) return;
+    const name = document.getElementById('actor-name').value.trim();
+    const role = document.getElementById('actor-role').value.trim();
+    const position = document.getElementById('actor-position').value;
+    const power = +document.getElementById('actor-power').value;
+    if (!name) { toast('Entrez un nom', 'error'); return; }
+    current.acteurs.push({ id: Date.now(), name, role, position, power });
+    renderActors(); scheduleSave(); updatePreview(); updateStats();
+    document.getElementById('actor-name').value = '';
+    document.getElementById('actor-role').value = '';
+    toast('Acteur ajouté', 'success');
+}
+
+function removeActor(id) {
+    if (!current) return;
+    current.acteurs = current.acteurs.filter(a => a.id !== id);
+    renderActors(); scheduleSave(); updatePreview(); updateStats();
+}
+
+function renderActors() {
+    if (!current) return;
+    ['ally', 'neutral', 'opponent'].forEach(pos => {
+        const c = document.getElementById(`actors-${pos}`);
+        const actors = current.acteurs.filter(a => a.position === pos);
+        c.innerHTML = actors.length ? actors.map(a => `
+            <div class="actor-chip">
+                <span>${esc(a.name)}</span>
+                <span class="actor-chip-power">${'★'.repeat(a.power)}</span>
+                <button class="actor-chip-delete" onclick="removeActor(${a.id})">✕</button>
+            </div>
+        `).join('') : '<p style="color:var(--text-muted);font-size:0.75rem;text-align:center">—</p>';
+    });
+}
+
+async function renderActorsMermaid() {
+    if (!current || !LIBS.mermaid()) return;
+    const allies = current.acteurs.filter(a => a.position === 'ally');
+    const neutrals = current.acteurs.filter(a => a.position === 'neutral');
+    const opponents = current.acteurs.filter(a => a.position === 'opponent');
+    let code = 'graph LR\n';
+    if (allies.length) { code += '    subgraph Alliés\n'; allies.forEach((a, i) => code += `    A${i}["${a.name.replace(/"/g, "'")}"]\n`); code += '    end\n'; }
+    if (neutrals.length) { code += '    subgraph Neutres\n'; neutrals.forEach((a, i) => code += `    N${i}["${a.name.replace(/"/g, "'")}"]\n`); code += '    end\n'; }
+    if (opponents.length) { code += '    subgraph Opposants\n'; opponents.forEach((a, i) => code += `    O${i}["${a.name.replace(/"/g, "'")}"]\n`); code += '    end\n'; }
+    if (!allies.length && !neutrals.length && !opponents.length) code += '    X[Ajoutez des acteurs]\n';
+    const el = document.getElementById('actors-mermaid');
+    el.textContent = code;
+    el.removeAttribute('data-processed');
+    try { await mermaid.run({ nodes: [el] }); } catch (e) { console.error('Mermaid error:', e); }
+}
+
+async function renderTreeMermaid() {
+    if (!current || !LIBS.mermaid()) return;
+    const prob = (current.arbre?.probleme || 'Problème').substring(0, 30).replace(/"/g, "'");
+    const causes = (current.arbre?.causes || '').split('\n').filter(c => c.trim());
+    const effects = (current.arbre?.effets || '').split('\n').filter(e => e.trim());
+    let code = 'graph TB\n';
+    causes.forEach((c, i) => code += `    C${i}["${c.trim().substring(0, 25).replace(/"/g, "'")}"] --> P\n`);
+    code += `    P["🎯 ${prob}"]\n`;
+    effects.forEach((e, i) => code += `    P --> E${i}["${e.trim().substring(0, 25).replace(/"/g, "'")}"\n`);
+    if (!causes.length && !effects.length) code = 'graph TB\n    P[Remplissez causes et effets]\n';
+    const el = document.getElementById('tree-mermaid');
+    el.textContent = code;
+    el.removeAttribute('data-processed');
+    try { await mermaid.run({ nodes: [el] }); } catch (e) { console.error('Mermaid error:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SMART
+// ══════════════════════════════════════════════════════════════════════════════
+function addSmart() {
+    if (!current) return;
+    const text = document.getElementById('smart-text').value.trim();
+    const indicator = document.getElementById('smart-indicator').value.trim();
+    const deadline = document.getElementById('smart-deadline').value;
+    if (!text) { toast('Décrivez l\'objectif', 'error'); return; }
+    current.smart.push({ id: Date.now(), text, indicator, deadline, done: false });
+    renderSmart(); scheduleSave(); updatePreview(); updateStats();
+    document.getElementById('smart-text').value = '';
+    document.getElementById('smart-indicator').value = '';
+    document.getElementById('smart-deadline').value = '';
+    toast('Objectif ajouté', 'success');
+}
+
+function toggleSmart(id) { if (!current) return; const s = current.smart.find(x => x.id === id); if (s) s.done = !s.done; renderSmart(); scheduleSave(); updatePreview(); }
+function removeSmart(id) { if (!current) return; current.smart = current.smart.filter(x => x.id !== id); renderSmart(); scheduleSave(); updatePreview(); updateStats(); }
+
+function renderSmart() {
+    if (!current) return;
+    const c = document.getElementById('smart-list');
+    if (!current.smart.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center">Aucun objectif</p>'; return; }
+    c.innerHTML = current.smart.map(s => `
+        <div class="smart-item">
+            <input type="checkbox" class="smart-checkbox" ${s.done ? 'checked' : ''} onchange="toggleSmart(${s.id})">
+            <div class="smart-content">
+                <div class="smart-text ${s.done ? 'done' : ''}">${esc(s.text)}</div>
+                <div class="smart-meta">${s.indicator ? '📊 ' + esc(s.indicator) : ''} ${s.deadline ? '📅 ' + s.deadline : ''}</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="removeSmart(${s.id})">✕</button>
+        </div>
+    `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// JOURNAL
+// ══════════════════════════════════════════════════════════════════════════════
+function addJournal() {
+    if (!current) return;
+    const date = document.getElementById('journal-date').value;
+    const type = document.getElementById('journal-type').value;
+    const content = document.getElementById('journal-content').value.trim();
+    if (!content) { toast('Décrivez l\'entrée', 'error'); return; }
+    current.journal.unshift({ id: Date.now(), date, type, content });
+    renderJournal(); scheduleSave(); updatePreview(); updateStats();
+    document.getElementById('journal-content').value = '';
+    toast('Entrée ajoutée', 'success');
+}
+
+function removeJournal(id) { if (!current) return; current.journal = current.journal.filter(x => x.id !== id); renderJournal(); scheduleSave(); updatePreview(); updateStats(); }
+
+function renderJournal() {
+    if (!current) return;
+    const c = document.getElementById('journal-list');
+    const icons = { action: '🎯', rencontre: '🤝', victoire: '🏆', difficulte: '⚠️', note: '📝' };
+    if (!current.journal.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center">Aucune entrée</p>'; return; }
+    c.innerHTML = current.journal.map(j => `
+        <div class="journal-entry">
+            <span class="journal-icon">${icons[j.type] || '📝'}</span>
+            <div class="journal-content">
+                <div class="journal-text">${esc(j.content)}</div>
+                <div class="journal-date">${j.date}</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="removeJournal(${j.id})">✕</button>
+        </div>
+    `).join('');
+}
+
+function updateMessagePreview() {
+    if (!current) return;
+    const m = current.message || {};
+    const el = document.getElementById('message-preview');
+    if (!m.accroche && !m.probleme && !m.importance && !m.action) {
+        el.innerHTML = '<span style="color:var(--text-muted)">Remplissez les champs...</span>';
+        return;
+    }
+    let html = '';
+    if (m.accroche) html += `<strong>${esc(m.accroche)}</strong><br><br>`;
+    if (m.probleme) html += `${esc(m.probleme)}<br><br>`;
+    if (m.importance) html += `<em>${esc(m.importance)}</em><br><br>`;
+    if (m.action) html += `<strong>→ ${esc(m.action)}</strong>`;
+    el.innerHTML = html || '<span style="color:var(--text-muted)">Aucun contenu</span>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PREVIEW
+// ══════════════════════════════════════════════════════════════════════════════
+function updatePreview() {
+    if (!current) { document.getElementById('preview-doc').innerHTML = '<p style="color:var(--text-muted);text-align:center">Aucun projet</p>'; return; }
+    const p = current;
+    const f = v => v ? `<p class="filled">${esc(v)}</p>` : '<p class="empty">Non renseigné</p>';
+    let h = `<h1>${esc(p.meta?.name || 'Sans nom')}</h1>`;
+    h += `<div class="doc-meta">Modifié le ${new Date(p.modified).toLocaleDateString('fr-FR')}</div>`;
+    h += `<h2 class="voir">👁️ VOIR</h2>`;
+    h += `<h3>🎯 Vision</h3>${f(p.domino?.vision)}`;
+    h += `<h2 class="juger">⚖️ JUGER</h2>`;
+    h += `<h3>🌳 Problème</h3>${f(p.arbre?.probleme)}`;
+    if (p.acteurs?.length) {
+        h += '<h3>👥 Acteurs</h3><p>';
+        p.acteurs.forEach(a => h += `<span class="actor-badge ${a.position}">${esc(a.name)}</span>`);
+        h += '</p>';
+    }
+    h += `<h2 class="agir">✊ AGIR</h2>`;
+    h += `<h3>💬 Message</h3>`;
+    if (p.message?.accroche) h += `<p class="filled"><strong>${esc(p.message.accroche)}</strong></p>`;
+    if (p.message?.action) h += `<p class="filled"><strong>→ ${esc(p.message.action)}</strong></p>`;
+    if (!p.message?.accroche && !p.message?.action) h += '<p class="empty">Non renseigné</p>';
+    document.getElementById('preview-doc').innerHTML = h;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EXPORTS
+// ══════════════════════════════════════════════════════════════════════════════
+function exportJSON() {
+    if (!current) return;
+    dl(JSON.stringify(current, null, 2), `${slug(current.meta?.name)}.json`, 'application/json');
+    toast('Export JSON OK', 'success');
+}
+
+function exportMD() {
+    if (!current) return;
+    const p = current;
+    let md = `# ${p.meta?.name || 'Projet'}\n\n---\n\n`;
+    md += `## 👁️ VOIR\n\n### Vision\n${p.domino?.vision || '*—*'}\n\n`;
+    md += `## ⚖️ JUGER\n\n### Problème\n${p.arbre?.probleme || '*—*'}\n\n`;
+    md += `## ✊ AGIR\n\n### Message\n${p.message?.accroche ? '**' + p.message.accroche + '**\n\n' : ''}`;
+    if (p.message?.action) md += `→ **${p.message.action}**\n`;
+    dl(md, `${slug(p.meta?.name)}.md`, 'text/markdown');
+    toast('Export Markdown OK', 'success');
+}
+
+function exportHTML() {
+    if (!current) return;
+    const p = current;
+    let html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${esc(p.meta?.name)}</title><style>body{font-family:system-ui;max-width:800px;margin:2rem auto;padding:0 1rem}h1{color:#1e40af;border-bottom:3px solid #f59e0b;padding-bottom:0.5rem}</style></head><body>`;
+    html += `<h1>${esc(p.meta?.name)}</h1>`;
+    html += `<h2>Vision</h2><p>${esc(p.domino?.vision) || '—'}</p>`;
+    html += `<h2>Problème</h2><p>${esc(p.arbre?.probleme) || '—'}</p>`;
+    html += `<h2>Message</h2><p><strong>${esc(p.message?.accroche) || ''}</strong></p>`;
+    html += `</body></html>`;
+    dl(html, `${slug(p.meta?.name)}.html`, 'text/html');
+    toast('Export HTML OK', 'success');
+}
+
+function exportPDF() {
+    if (!current) { toast('Aucun projet', 'error'); return; }
+    if (!LIBS.jspdf()) { toast('Bibliothèque PDF non chargée', 'error'); return; }
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const p = current;
+        doc.setFontSize(18); doc.text(p.meta?.name || 'Projet', 20, 20);
+        doc.setFontSize(10); doc.setTextColor(100); doc.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 20, 28);
+        let y = 40;
+        const addSection = (title, content) => {
+            if (y > 260) { doc.addPage(); y = 20; }
+            doc.setFontSize(12); doc.setTextColor(0); doc.text(title, 20, y); y += 7;
+            doc.setFontSize(10); doc.setTextColor(60);
+            const lines = doc.splitTextToSize(content || 'Non renseigné', 170);
+            doc.text(lines, 20, y); y += lines.length * 5 + 8;
+        };
+        addSection('VISION', p.domino?.vision);
+        addSection('PROBLÈME', p.arbre?.probleme);
+        addSection('MESSAGE', (p.message?.accroche || '') + '\n\n→ ' + (p.message?.action || ''));
+        doc.save(`${slug(p.meta?.name)}.pdf`);
+        toast('Export PDF OK', 'success');
+    } catch (e) {
+        console.error('PDF error:', e);
+        toast('Erreur PDF: ' + e.message, 'error');
+    }
+}
+
+function exportDOCX() {
+    if (!current) { toast('Aucun projet', 'error'); return; }
+    if (!LIBS.docx()) { toast('Bibliothèque DOCX non chargée', 'error'); return; }
+    try {
+        const { Document, Paragraph, TextRun, HeadingLevel, Packer } = window.docx;
+        const p = current;
+        const doc = new Document({
+            sections: [{
+                children: [
+                    new Paragraph({ text: p.meta?.name || 'Projet', heading: HeadingLevel.TITLE }),
+                    new Paragraph({ text: '' }),
+                    new Paragraph({ text: 'VISION', heading: HeadingLevel.HEADING_1 }),
+                    new Paragraph({ text: p.domino?.vision || 'Non renseigné' }),
+                    new Paragraph({ text: '' }),
+                    new Paragraph({ text: 'PROBLÈME', heading: HeadingLevel.HEADING_1 }),
+                    new Paragraph({ text: p.arbre?.probleme || 'Non renseigné' }),
+                    new Paragraph({ text: '' }),
+                    new Paragraph({ text: 'MESSAGE', heading: HeadingLevel.HEADING_1 }),
+                    new Paragraph({ children: [new TextRun({ text: p.message?.accroche || '', bold: true })] }),
+                    new Paragraph({ children: [new TextRun({ text: '→ ' + (p.message?.action || '') })] })
+                ]
+            }]
+        });
+        Packer.toBlob(doc).then(blob => {
+            dlBlob(blob, `${slug(p.meta?.name)}.docx`);
+            toast('Export Word OK', 'success');
+        });
+    } catch (e) {
+        console.error('DOCX error:', e);
+        toast('Erreur DOCX: ' + e.message, 'error');
+    }
+}
+
+function exportXLSX() {
+    if (!current) { toast('Aucun projet', 'error'); return; }
+    if (!LIBS.xlsx()) { toast('Bibliothèque Excel non chargée', 'error'); return; }
+    try {
+        const p = current;
+        const wb = XLSX.utils.book_new();
+        const summary = [
+            ['Projet Plaidoyer Citoyen'], [''],
+            ['Nom', p.meta?.name || ''], ['Description', p.meta?.description || ''],
+            [''], ['VOIR'], ['Vision', p.domino?.vision || ''],
+            [''], ['JUGER'], ['Problème', p.arbre?.probleme || ''],
+            [''], ['AGIR'], ['Message', p.message?.accroche || ''], ['Action', p.message?.action || '']
+        ];
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Résumé');
+        if (p.acteurs?.length) {
+            const actors = [['Nom', 'Rôle', 'Position', 'Pouvoir'], ...p.acteurs.map(a => [a.name, a.role, a.position, a.power])];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(actors), 'Acteurs');
+        }
+        if (p.smart?.length) {
+            const smart = [['Objectif', 'Indicateur', 'Échéance', 'Fait'], ...p.smart.map(s => [s.text, s.indicator, s.deadline, s.done ? 'Oui' : 'Non'])];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(smart), 'Objectifs');
+        }
+        if (p.journal?.length) {
+            const journal = [['Date', 'Type', 'Contenu'], ...p.journal.map(j => [j.date, j.type, j.content])];
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(journal), 'Journal');
+        }
+        XLSX.writeFile(wb, `${slug(p.meta?.name)}.xlsx`);
+        toast('Export Excel OK', 'success');
+    } catch (e) {
+        console.error('XLSX error:', e);
+        toast('Erreur Excel: ' + e.message, 'error');
+    }
+}
+
+function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+        try {
+            const imported = JSON.parse(ev.target.result);
+            imported.id = Date.now().toString();
+            imported.modified = new Date().toISOString();
+            await dbSave(imported);
+            await renderList();
+            await selectProject(imported.id);
+            toast('Projet importé', 'success');
+        } catch (err) {
+            console.error('Import error:', err);
+            toast('Fichier JSON invalide', 'error');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function esc(s) { return s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') : ''; }
+function slug(s) { return (s || 'projet').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function dl(content, name, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type })); a.download = name; a.click(); URL.revokeObjectURL(a.href); }
+function dlBlob(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href); }
+function toast(msg, type = 'info') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${{ success: '✓', error: '✕', warning: '⚠', info: 'ℹ' }[type] || 'ℹ'}</span> ${msg}`;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+</script>
+</body>
+</html>
