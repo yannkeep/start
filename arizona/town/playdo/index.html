@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Plaidoyer Citoyen</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
@@ -17,511 +17,605 @@
 --accent:#f59e0b;--accent2:#d97706;
 --success:#22c55e;--danger:#ef4444;--info:#3b82f6;
 --voir:#0ea5e9;--juger:#eab308;--agir:#22c55e;
+--header-h:56px;--bottom-h:64px;
 }
-html,body{height:100%;overflow:hidden}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+html,body{height:100%;overflow:hidden;touch-action:manipulation}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px}
 
-/* === LAYOUT === */
-#app{display:grid;grid-template-columns:270px 1fr 400px;height:100vh}
+/* === MOBILE-FIRST LAYOUT === */
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 
-/* === SIDEBAR === */
-#sidebar{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column}
-#sidebar-header{padding:1.2rem;border-bottom:1px solid var(--border)}
-#logo{display:flex;align-items:center;gap:0.7rem}
-#logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
-#logo-text{font-weight:700;font-size:1rem}
-#logo-sub{font-size:0.65rem;color:var(--muted)}
+/* === HEADER === */
+#header{
+  height:var(--header-h);min-height:var(--header-h);
+  background:var(--panel);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 1rem;gap:0.75rem;
+  position:sticky;top:0;z-index:100;
+}
+#btn-menu{
+  width:40px;height:40px;border:none;background:var(--card);border-radius:8px;
+  color:var(--text);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+#header-title{flex:1;font-weight:600;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#btn-preview{
+  width:40px;height:40px;border:none;background:var(--accent);border-radius:8px;
+  color:#000;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
 
-#projects-box{padding:0.8rem;border-bottom:1px solid var(--border)}
-.sidebar-title{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);margin-bottom:0.5rem}
-#projects-list{max-height:160px;overflow-y:auto;margin-bottom:0.5rem}
-.project-row{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.85rem;margin-bottom:2px}
+/* === MAIN CONTENT === */
+#main{flex:1;overflow-y:auto;padding:1rem;padding-bottom:calc(var(--bottom-h) + 1rem)}
+
+.page{display:none}
+.page.active{display:block;animation:fadeIn 0.2s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* === BOTTOM NAV === */
+#bottom-nav{
+  height:var(--bottom-h);min-height:var(--bottom-h);
+  background:var(--panel);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  padding:0.5rem 0;padding-bottom:max(0.5rem,env(safe-area-inset-bottom));
+}
+.bottom-btn{
+  display:flex;flex-direction:column;align-items:center;gap:0.2rem;
+  background:none;border:none;color:var(--muted);font-size:0.65rem;cursor:pointer;
+  padding:0.3rem 0.8rem;border-radius:8px;min-width:60px;
+}
+.bottom-btn span{font-size:1.3rem}
+.bottom-btn:hover,.bottom-btn.active{color:var(--accent);background:var(--card)}
+
+/* === DRAWER SIDEBAR === */
+#drawer-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;
+  opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s;
+}
+#drawer-overlay.open{opacity:1;visibility:visible}
+#drawer{
+  position:fixed;top:0;left:0;bottom:0;width:280px;max-width:85vw;
+  background:var(--panel);z-index:201;
+  transform:translateX(-100%);transition:transform 0.25s ease;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#drawer-overlay.open #drawer{transform:translateX(0)}
+
+#drawer-header{padding:1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem}
+#drawer-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+#drawer-title{font-weight:700;font-size:0.95rem}
+#drawer-sub{font-size:0.65rem;color:var(--muted)}
+#btn-close-drawer{margin-left:auto;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer}
+
+#projects-section{padding:0.75rem;border-bottom:1px solid var(--border)}
+.section-label{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);margin-bottom:0.4rem;padding-left:0.3rem}
+#projects-list{max-height:150px;overflow-y:auto;margin-bottom:0.5rem}
+.project-row{
+  display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.6rem;
+  border-radius:6px;cursor:pointer;font-size:0.85rem;margin-bottom:2px;
+}
 .project-row:hover{background:var(--card)}
 .project-row.selected{background:var(--accent2);color:#000}
-.project-row span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.project-row button{background:none;border:none;color:var(--danger);cursor:pointer;opacity:0;font-size:0.75rem;padding:2px 5px}
+.project-row span:first-child{flex-shrink:0}
+.project-row span:last-of-type{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.project-row button{background:none;border:none;color:var(--danger);cursor:pointer;opacity:0;font-size:0.7rem;padding:4px 6px}
 .project-row:hover button{opacity:0.8}
 #btn-new-project{width:100%;padding:0.5rem;background:var(--card);border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-size:0.8rem;cursor:pointer}
 #btn-new-project:hover{border-color:var(--accent);color:var(--text)}
 
-#nav{flex:1;overflow-y:auto;padding:0.5rem}
-.nav-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:0.8rem 0.6rem 0.3rem}
-.nav-title.c-voir{color:var(--voir)}
-.nav-title.c-juger{color:var(--juger)}
-.nav-title.c-agir{color:var(--agir)}
-.nav-btn{display:block;width:100%;text-align:left;padding:0.5rem 0.7rem;border:none;background:none;color:var(--muted);font-size:0.82rem;border-radius:6px;cursor:pointer;margin-bottom:1px}
+#nav-section{flex:1;overflow-y:auto;padding:0.5rem}
+.nav-group{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:0.75rem 0.5rem 0.3rem}
+.nav-group.c-voir{color:var(--voir)}
+.nav-group.c-juger{color:var(--juger)}
+.nav-group.c-agir{color:var(--agir)}
+.nav-btn{
+  display:block;width:100%;text-align:left;padding:0.55rem 0.7rem;
+  border:none;background:none;color:var(--muted);font-size:0.85rem;
+  border-radius:6px;cursor:pointer;margin-bottom:1px;
+}
 .nav-btn:hover{background:var(--card);color:var(--text)}
 .nav-btn.active{background:var(--card);color:var(--accent)}
 
-#sidebar-footer{padding:0.7rem 1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-#save-indicator{display:flex;align-items:center;gap:0.4rem}
-#save-dot{width:7px;height:7px;border-radius:50%;background:var(--success)}
-#save-dot.saving{background:var(--accent);animation:blink 0.8s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+/* === PREVIEW MODAL === */
+#preview-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;
+  display:none;align-items:flex-end;justify-content:center;
+}
+#preview-modal.open{display:flex}
+#preview-sheet{
+  background:var(--panel);width:100%;max-width:600px;max-height:85vh;
+  border-radius:16px 16px 0 0;display:flex;flex-direction:column;
+  animation:slideUp 0.25s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#preview-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0.75rem auto}
+#preview-header{padding:0 1.25rem 0.75rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+#preview-header h2{font-size:1rem}
+#btn-close-preview{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer}
+#preview-body{flex:1;overflow-y:auto;padding:1.25rem}
+#preview-doc{font-size:0.9rem;line-height:1.7}
+#preview-doc h1{font-size:1.2rem;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:0.5rem;margin-bottom:0.3rem}
+#preview-doc .pmeta{font-size:0.72rem;color:var(--muted);margin-bottom:1rem}
+#preview-doc h2{font-size:1rem;margin-top:1.2rem;margin-bottom:0.5rem}
+#preview-doc h2.c-voir{color:var(--voir)}
+#preview-doc h2.c-juger{color:var(--juger)}
+#preview-doc h2.c-agir{color:var(--agir)}
+#preview-doc h3{font-size:0.9rem;margin-top:0.8rem;margin-bottom:0.35rem}
+#preview-doc p{margin-bottom:0.5rem;color:var(--muted)}
+#preview-doc p.filled{color:var(--text)}
+#preview-doc .empty{font-style:italic;opacity:0.5}
+#preview-doc .badge{display:inline-block;padding:0.1rem 0.4rem;border-radius:100px;font-size:0.68rem;margin:0.1rem}
+#preview-doc .badge.ally{background:rgba(34,197,94,0.2);color:var(--success)}
+#preview-doc .badge.neutral{background:rgba(136,136,136,0.2);color:var(--muted)}
+#preview-doc .badge.opponent{background:rgba(239,68,68,0.2);color:var(--danger)}
+#preview-actions{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap}
+#preview-actions .btn{flex:1;min-width:70px}
 
-/* === MAIN === */
-#main{display:flex;flex-direction:column;overflow:hidden}
-#main-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--panel)}
-#main-header h1{font-size:1.15rem;font-weight:600}
-#main-content{flex:1;overflow-y:auto;padding:1.5rem}
-
-.page{display:none}
-.page.active{display:block;animation:fadeIn 0.2s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-.intro{color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem}
+/* === CARDS & FORMS === */
+.intro{color:var(--muted);font-size:0.9rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:1rem}
 .card-head{padding:0.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem}
 .card-body{padding:1rem}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
 
 .field{margin-bottom:1rem}
 .field:last-child{margin-bottom:0}
-.field label{display:block;font-size:0.78rem;font-weight:500;color:var(--muted);margin-bottom:0.35rem}
-.field input,.field textarea,.field select{width:100%;padding:0.55rem 0.75rem;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:0.88rem}
+.field label{display:block;font-size:0.8rem;font-weight:500;color:var(--muted);margin-bottom:0.4rem}
+.field input,.field textarea,.field select{
+  width:100%;padding:0.65rem 0.85rem;
+  background:var(--input);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:inherit;font-size:1rem;
+  -webkit-appearance:none;
+}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent)}
-.field textarea{min-height:100px;resize:vertical;line-height:1.55}
+.field textarea{min-height:110px;resize:vertical;line-height:1.55}
 .field small{display:block;font-size:0.7rem;color:var(--muted);margin-top:0.25rem}
 
-.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border:none;border-radius:6px;font-family:inherit;font-size:0.8rem;font-weight:500;cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem}
+@media(max-width:500px){.row2,.row3{grid-template-columns:1fr}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
+  padding:0.6rem 1.1rem;border:none;border-radius:8px;
+  font-family:inherit;font-size:0.9rem;font-weight:500;cursor:pointer;
+}
 .btn-primary{background:var(--accent);color:#000}
 .btn-primary:hover{background:var(--accent2)}
 .btn-secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}
 .btn-secondary:hover{background:var(--card)}
-.btn-sm{padding:0.35rem 0.7rem;font-size:0.75rem}
+.btn-sm{padding:0.4rem 0.8rem;font-size:0.8rem}
+.btn-block{width:100%}
 
-/* Stats */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
-.stat-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem}
-.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:0.6rem}
-.stat-val{font-size:1.6rem;font-weight:700}
-.stat-lbl{font-size:0.72rem;color:var(--muted)}
+/* === STATS === */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.9rem}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:0.5rem}
+.stat-val{font-size:1.4rem;font-weight:700}
+.stat-lbl{font-size:0.7rem;color:var(--muted)}
 
-.progress-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
-.progress-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem}
-.progress-title{font-size:0.85rem;font-weight:600;margin-bottom:0.6rem}
+.progress-list{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem}
+.progress-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.9rem}
+.progress-title{font-size:0.85rem;font-weight:600;margin-bottom:0.5rem}
 .progress-bar{height:8px;background:var(--input);border-radius:4px;overflow:hidden}
-.progress-fill{height:100%;border-radius:4px}
-.progress-lbl{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted);margin-top:0.35rem}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.3s}
+.progress-lbl{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted);margin-top:0.3rem}
 
-/* Actors */
-.actor-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
-.actor-col{background:var(--input);border-radius:8px;padding:0.75rem;min-height:120px}
+/* === ACTORS === */
+.actor-cols{display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem}
+.actor-col{background:var(--input);border-radius:8px;padding:0.75rem}
 .actor-col-title{font-size:0.75rem;font-weight:600;margin-bottom:0.5rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border)}
 .actor-col.c-ally .actor-col-title{color:var(--success)}
 .actor-col.c-neutral .actor-col-title{color:var(--muted)}
 .actor-col.c-opponent .actor-col-title{color:var(--danger)}
-.actor-chip{display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.5rem;background:var(--card);border-radius:4px;font-size:0.75rem;margin-bottom:0.35rem}
+.actor-chip{display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.5rem;background:var(--card);border-radius:6px;font-size:0.8rem;margin-bottom:0.35rem}
 .actor-chip .stars{color:var(--accent);font-size:0.65rem;margin-left:auto}
-.actor-chip .del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.7rem;margin-left:0.3rem}
-.actor-chip .del:hover{color:var(--danger)}
+.actor-chip .del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;margin-left:0.3rem;padding:2px 4px}
 
 .mermaid-box{background:var(--input);border-radius:8px;padding:1rem;margin-top:1rem;overflow-x:auto}
 
-/* Smart & Journal */
-.list-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem;background:var(--input);border-radius:6px;margin-bottom:0.5rem}
-.list-item input[type="checkbox"]{margin-top:0.2rem}
-.list-item .content{flex:1}
-.list-item .text{font-size:0.85rem}
+/* === LISTS === */
+.list-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.7rem;background:var(--input);border-radius:8px;margin-bottom:0.5rem}
+.list-item input[type="checkbox"]{margin-top:0.25rem;width:18px;height:18px}
+.list-item .content{flex:1;min-width:0}
+.list-item .text{font-size:0.9rem;word-break:break-word}
 .list-item .text.done{text-decoration:line-through;opacity:0.5}
-.list-item .meta{font-size:0.7rem;color:var(--muted);margin-top:0.2rem}
-.list-item .icon{font-size:1.1rem}
+.list-item .meta{font-size:0.72rem;color:var(--muted);margin-top:0.2rem}
+.list-item .icon{font-size:1.2rem;flex-shrink:0}
+.list-item .btn{flex-shrink:0}
 
-/* Export */
-.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.export-box{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1.2rem;background:var(--input);border:2px solid var(--border);border-radius:10px;cursor:pointer}
-.export-box:hover{border-color:var(--accent);background:var(--card)}
-.export-box .icon{font-size:2rem}
-.export-box .label{font-weight:600;font-size:0.9rem}
-.export-box .desc{font-size:0.7rem;color:var(--muted)}
-
-/* === PREVIEW === */
-#preview{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column}
-#preview-header{padding:1rem 1.2rem;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem}
-#preview-content{flex:1;overflow-y:auto;padding:1.2rem}
-#preview-doc{background:#0d0f12;border-radius:8px;padding:1.5rem;font-size:0.85rem;line-height:1.7}
-#preview-doc h1{font-size:1.25rem;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:0.6rem;margin-bottom:0.3rem}
-#preview-doc .pmeta{font-size:0.72rem;color:var(--muted);margin-bottom:1.2rem}
-#preview-doc h2{font-size:1rem;margin-top:1.3rem;margin-bottom:0.6rem}
-#preview-doc h2.c-voir{color:var(--voir)}
-#preview-doc h2.c-juger{color:var(--juger)}
-#preview-doc h2.c-agir{color:var(--agir)}
-#preview-doc h3{font-size:0.9rem;margin-top:0.9rem;margin-bottom:0.4rem}
-#preview-doc p{margin-bottom:0.6rem;color:var(--muted)}
-#preview-doc p.filled{color:var(--text)}
-#preview-doc .empty{font-style:italic;opacity:0.5}
-#preview-doc .badge{display:inline-block;padding:0.12rem 0.45rem;border-radius:100px;font-size:0.68rem;margin:0.1rem}
-#preview-doc .badge.ally{background:rgba(34,197,94,0.2);color:var(--success)}
-#preview-doc .badge.neutral{background:rgba(136,136,136,0.2);color:var(--muted)}
-#preview-doc .badge.opponent{background:rgba(239,68,68,0.2);color:var(--danger)}
-#preview-actions{padding:1rem 1.2rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap}
-#preview-actions .btn{flex:1}
+/* === EXPORT === */
+.export-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem}
+.export-box{
+  display:flex;flex-direction:column;align-items:center;gap:0.4rem;
+  padding:1.1rem 0.75rem;background:var(--input);border:2px solid var(--border);
+  border-radius:10px;cursor:pointer;
+}
+.export-box:hover,.export-box:active{border-color:var(--accent);background:var(--card)}
+.export-box .icon{font-size:1.8rem}
+.export-box .label{font-weight:600;font-size:0.85rem}
+.export-box .desc{font-size:0.68rem;color:var(--muted)}
 
 /* === MODAL === */
-#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000}
-#modal-overlay.show{display:flex}
-#modal{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;width:420px;max-width:90vw}
+#modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:400;
+  display:none;align-items:center;justify-content:center;padding:1rem;
+}
+#modal-overlay.open{display:flex}
+#modal{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:1.5rem;width:100%;max-width:400px;
+}
 #modal h2{font-size:1.1rem;margin-bottom:1rem}
-#modal-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.2rem}
+#modal-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.25rem}
 
 /* === TOAST === */
-#toasts{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:1001;display:flex;flex-direction:column;gap:0.5rem}
-.toast{background:var(--card);border:1px solid var(--border);padding:0.7rem 1.2rem;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;gap:0.5rem;box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:toastIn 0.25s}
+#toasts{position:fixed;bottom:calc(var(--bottom-h) + 0.75rem);left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:0.5rem;width:90%;max-width:350px}
+.toast{
+  background:var(--card);border:1px solid var(--border);
+  padding:0.75rem 1rem;border-radius:10px;font-size:0.85rem;
+  display:flex;align-items:center;gap:0.5rem;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);animation:toastIn 0.25s;
+}
 .toast.success{border-left:3px solid var(--success)}
 .toast.error{border-left:3px solid var(--danger)}
 .toast.warning{border-left:3px solid var(--accent)}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.empty-state{text-align:center;padding:3rem;color:var(--muted)}
-.empty-state .icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
-.empty-state h3{font-size:1.1rem;color:var(--text);margin-bottom:0.5rem}
-.empty-state p{font-size:0.85rem;margin-bottom:1.5rem}
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty-state .icon{font-size:3rem;margin-bottom:0.75rem;opacity:0.5}
+.empty-state h3{font-size:1.1rem;color:var(--text);margin-bottom:0.4rem}
+.empty-state p{font-size:0.9rem;margin-bottom:1.25rem}
+.empty-state .btns{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap}
 
-@media(max-width:1100px){#app{grid-template-columns:250px 1fr 340px}.stats-row{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:900px){#app{grid-template-columns:1fr}#sidebar,#preview{display:none}}
+/* === DESKTOP (>768px) === */
+@media(min-width:769px){
+  #app{flex-direction:row}
+  #header{display:none}
+  #bottom-nav{display:none}
+  #main{padding:2rem;padding-bottom:2rem}
+  
+  #drawer-overlay{position:static;opacity:1;visibility:visible;width:270px;flex-shrink:0;background:none}
+  #drawer{position:static;transform:none;width:100%;border-right:1px solid var(--border)}
+  #btn-close-drawer{display:none}
+  
+  #preview-panel{
+    display:flex;flex-direction:column;width:380px;flex-shrink:0;
+    background:var(--panel);border-left:1px solid var(--border);
+  }
+  #preview-panel-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem}
+  #preview-panel-body{flex:1;overflow-y:auto;padding:1.25rem}
+  #preview-panel-actions{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.5rem}
+  #preview-panel-actions .btn{flex:1}
+  
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .progress-list{flex-direction:row}
+  .progress-item{flex:1}
+  .actor-cols{flex-direction:row}
+  .actor-col{flex:1}
+  .export-grid{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
 
 <div id="app">
-<!-- ========== SIDEBAR ========== -->
-<aside id="sidebar">
-  <div id="sidebar-header">
-    <div id="logo">
-      <div id="logo-icon">⚖️</div>
-      <div><div id="logo-text">Plaidoyer Citoyen</div><div id="logo-sub">Poste de Travail v6</div></div>
+<!-- === HEADER (Mobile) === -->
+<header id="header">
+  <button id="btn-menu">☰</button>
+  <span id="header-title">Plaidoyer Citoyen</span>
+  <button id="btn-preview">👁️</button>
+</header>
+
+<!-- === DRAWER OVERLAY === -->
+<div id="drawer-overlay">
+  <nav id="drawer">
+    <div id="drawer-header">
+      <div id="drawer-logo">⚖️</div>
+      <div><div id="drawer-title">Plaidoyer Citoyen</div><div id="drawer-sub">v7 Mobile</div></div>
+      <button id="btn-close-drawer">×</button>
     </div>
-  </div>
-  
-  <div id="projects-box">
-    <div class="sidebar-title">📁 Mes projets</div>
-    <div id="projects-list"></div>
-    <button id="btn-new-project">+ Nouveau projet</button>
-  </div>
-  
-  <nav id="nav">
-    <div class="nav-title">📊 Général</div>
-    <button class="nav-btn active" data-page="dashboard">📊 Tableau de bord</button>
     
-    <div class="nav-title c-voir">👁️ VOIR</div>
-    <button class="nav-btn" data-page="domino">🎯 Vision (Domino)</button>
-    <button class="nav-btn" data-page="profil">👤 Profil citoyen</button>
-    <button class="nav-btn" data-page="fleur">🌸 Fleur du pouvoir</button>
+    <div id="projects-section">
+      <div class="section-label">📁 Mes projets</div>
+      <div id="projects-list"></div>
+      <button id="btn-new-project">+ Nouveau projet</button>
+    </div>
     
-    <div class="nav-title c-juger">⚖️ JUGER</div>
-    <button class="nav-btn" data-page="acteurs">👥 Cartographie acteurs</button>
-    <button class="nav-btn" data-page="arbre">🌳 Arbre à problèmes</button>
-    <button class="nav-btn" data-page="pourquoi">❓ 5 Pourquoi</button>
-    <button class="nav-btn" data-page="swot">📐 SWOT</button>
-    <button class="nav-btn" data-page="pestel">🌍 PESTEL</button>
-    <button class="nav-btn" data-page="tdc">🔄 Théorie du changement</button>
-    
-    <div class="nav-title c-agir">✊ AGIR</div>
-    <button class="nav-btn" data-page="pouvoir">⚡ Avec/Sans/Contre</button>
-    <button class="nav-btn" data-page="cibles">🎯 Cibles & Alliés</button>
-    <button class="nav-btn" data-page="smart">📋 Objectifs SMART</button>
-    <button class="nav-btn" data-page="message">💬 Message clé</button>
-    <button class="nav-btn" data-page="evaluation">📈 Suivi-évaluation</button>
-    <button class="nav-btn" data-page="journal">📓 Journal de bord</button>
-    
-    <div class="nav-title">🔧 Outils</div>
-    <button class="nav-btn" data-page="export">💾 Import / Export</button>
+    <div id="nav-section">
+      <div class="nav-group">📊 Général</div>
+      <button class="nav-btn active" data-page="dashboard">📊 Tableau de bord</button>
+      
+      <div class="nav-group c-voir">👁️ VOIR</div>
+      <button class="nav-btn" data-page="domino">🎯 Vision</button>
+      <button class="nav-btn" data-page="profil">👤 Profil</button>
+      <button class="nav-btn" data-page="fleur">🌸 Fleur du pouvoir</button>
+      
+      <div class="nav-group c-juger">⚖️ JUGER</div>
+      <button class="nav-btn" data-page="acteurs">👥 Acteurs</button>
+      <button class="nav-btn" data-page="arbre">🌳 Arbre problèmes</button>
+      <button class="nav-btn" data-page="pourquoi">❓ 5 Pourquoi</button>
+      <button class="nav-btn" data-page="swot">📐 SWOT</button>
+      <button class="nav-btn" data-page="pestel">🌍 PESTEL</button>
+      <button class="nav-btn" data-page="tdc">🔄 Théorie changement</button>
+      
+      <div class="nav-group c-agir">✊ AGIR</div>
+      <button class="nav-btn" data-page="pouvoir">⚡ Avec/Sans/Contre</button>
+      <button class="nav-btn" data-page="cibles">🎯 Cibles & Alliés</button>
+      <button class="nav-btn" data-page="smart">📋 Objectifs SMART</button>
+      <button class="nav-btn" data-page="message">💬 Message clé</button>
+      <button class="nav-btn" data-page="evaluation">📈 Suivi-évaluation</button>
+      <button class="nav-btn" data-page="journal">📓 Journal</button>
+      
+      <div class="nav-group">🔧 Outils</div>
+      <button class="nav-btn" data-page="export">💾 Import/Export</button>
+    </div>
   </nav>
-  
-  <div id="sidebar-footer">
-    <div id="save-indicator"><span id="save-dot"></span><span id="save-text">Prêt</span></div>
-    <span>IndexedDB</span>
-  </div>
-</aside>
-
-<!-- ========== MAIN ========== -->
-<main id="main">
-  <header id="main-header"><h1 id="page-title">Tableau de bord</h1></header>
-  <div id="main-content">
-  
-    <!-- PAGE: Empty -->
-    <section class="page active" id="p-empty">
-      <div class="empty-state">
-        <div class="icon">📂</div>
-        <h3>Bienvenue</h3>
-        <p>Créez un projet ou importez-en un existant</p>
-        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
-          <button class="btn btn-primary" id="btn-new-empty">+ Créer un projet</button>
-          <label class="btn btn-secondary" style="cursor:pointer">
-            📥 Importer JSON
-            <input type="file" accept=".json" id="import-home" style="display:none">
-          </label>
-        </div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Dashboard -->
-    <section class="page" id="p-dashboard">
-      <div class="stats-row">
-        <div class="stat-box"><div class="stat-icon" style="background:rgba(14,165,233,0.15);color:var(--voir)">📝</div><div class="stat-val" id="s-fields">0</div><div class="stat-lbl">Champs remplis</div></div>
-        <div class="stat-box"><div class="stat-icon" style="background:rgba(34,197,94,0.15);color:var(--success)">👥</div><div class="stat-val" id="s-actors">0</div><div class="stat-lbl">Acteurs</div></div>
-        <div class="stat-box"><div class="stat-icon" style="background:rgba(245,158,11,0.15);color:var(--accent)">🎯</div><div class="stat-val" id="s-smart">0</div><div class="stat-lbl">Objectifs</div></div>
-        <div class="stat-box"><div class="stat-icon" style="background:rgba(59,130,246,0.15);color:var(--info)">📓</div><div class="stat-val" id="s-journal">0</div><div class="stat-lbl">Entrées</div></div>
-      </div>
-      <div class="progress-row">
-        <div class="progress-box"><div class="progress-title" style="color:var(--voir)">👁️ VOIR</div><div class="progress-bar"><div class="progress-fill" id="prog-voir" style="width:0%;background:var(--voir)"></div></div><div class="progress-lbl"><span>Analyse</span><span id="prog-voir-pct">0%</span></div></div>
-        <div class="progress-box"><div class="progress-title" style="color:var(--juger)">⚖️ JUGER</div><div class="progress-bar"><div class="progress-fill" id="prog-juger" style="width:0%;background:var(--juger)"></div></div><div class="progress-lbl"><span>Stratégie</span><span id="prog-juger-pct">0%</span></div></div>
-        <div class="progress-box"><div class="progress-title" style="color:var(--agir)">✊ AGIR</div><div class="progress-bar"><div class="progress-fill" id="prog-agir" style="width:0%;background:var(--agir)"></div></div><div class="progress-lbl"><span>Action</span><span id="prog-agir-pct">0%</span></div></div>
-      </div>
-      <div class="card"><div class="card-head">📌 Informations du projet</div><div class="card-body">
-        <div class="row2">
-          <div class="field"><label>Nom du projet</label><input type="text" data-field="meta.name" placeholder="Ex: Stop Arizona"></div>
-          <div class="field"><label>Organisation</label><input type="text" data-field="meta.organization" placeholder="Collectif..."></div>
-        </div>
-        <div class="field"><label>Description</label><textarea data-field="meta.description" rows="2" placeholder="Résumé du projet..."></textarea></div>
-      </div></div>
-    </section>
-    
-    <!-- PAGE: Domino -->
-    <section class="page" id="p-domino">
-      <p class="intro">Clarifiez votre vision du changement : quel est l'horizon de votre plaidoyer ?</p>
-      <div class="card"><div class="card-head">🎯 Vision du changement</div><div class="card-body"><div class="field"><textarea data-field="domino.vision" rows="4" placeholder="Décrivez le changement souhaité..."></textarea></div></div></div>
-      <div class="row2">
-        <div class="card"><div class="card-head">🚧 Obstacles</div><div class="card-body"><div class="field"><textarea data-field="domino.obstacles" rows="5" placeholder="Obstacles politiques, administratifs..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">💪 Ressources</div><div class="card-body"><div class="field"><textarea data-field="domino.ressources" rows="5" placeholder="Réseaux, expertise, alliés..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Profil -->
-    <section class="page" id="p-profil">
-      <p class="intro">Définissez votre profil en tant que citoyen·ne engagé·e.</p>
-      <div class="row2">
-        <div class="card"><div class="card-head">❤️ Motivations</div><div class="card-body"><div class="field"><textarea data-field="profil.motivations" rows="4" placeholder="Pourquoi vous engagez-vous ?"></textarea></div></div></div>
-        <div class="card"><div class="card-head">🛠️ Compétences</div><div class="card-body"><div class="field"><textarea data-field="profil.competences" rows="4" placeholder="Vos compétences utiles..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head">⏰ Temps disponible</div><div class="card-body"><div class="field"><textarea data-field="profil.temps" rows="4" placeholder="Disponibilités..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">⚠️ Limites</div><div class="card-body"><div class="field"><textarea data-field="profil.limites" rows="4" placeholder="Contraintes, lignes rouges..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Fleur -->
-    <section class="page" id="p-fleur">
-      <p class="intro">Analysez les rapports de domination et de privilège (Fleur du Pouvoir).</p>
-      <div class="card"><div class="card-head">👥 Personnes concernées</div><div class="card-body"><div class="field"><textarea data-field="fleur.identites" rows="3" placeholder="Profils des personnes touchées..."></textarea></div></div></div>
-      <div class="row2">
-        <div class="card"><div class="card-head" style="color:var(--success)">✅ Privilèges</div><div class="card-body"><div class="field"><textarea data-field="fleur.privileges" rows="4" placeholder="Accès, capital social..."></textarea></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--danger)">🎯 Oppressions</div><div class="card-body"><div class="field"><textarea data-field="fleur.oppressions" rows="4" placeholder="Discriminations..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Acteurs -->
-    <section class="page" id="p-acteurs">
-      <p class="intro">Cartographiez les acteurs clés de votre plaidoyer.</p>
-      <div class="card"><div class="card-head">➕ Ajouter un acteur</div><div class="card-body">
-        <div class="row2">
-          <div class="field"><label>Nom</label><input type="text" id="a-name" placeholder="Nom"></div>
-          <div class="field"><label>Rôle</label><input type="text" id="a-role" placeholder="Fonction..."></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>Position</label><select id="a-pos"><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option></select></div>
-          <div class="field"><label>Pouvoir (1-5)</label><select id="a-power"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
-        </div>
-        <button class="btn btn-primary" id="btn-add-actor">Ajouter</button>
-      </div></div>
-      <div class="actor-cols">
-        <div class="actor-col c-ally"><div class="actor-col-title">🟢 Alliés</div><div id="col-ally"></div></div>
-        <div class="actor-col c-neutral"><div class="actor-col-title">🟡 Neutres</div><div id="col-neutral"></div></div>
-        <div class="actor-col c-opponent"><div class="actor-col-title">🔴 Opposants</div><div id="col-opponent"></div></div>
-      </div>
-      <div class="card" style="margin-top:1rem"><div class="card-head">📊 Visualisation</div><div class="card-body">
-        <div class="mermaid-box"><pre class="mermaid" id="mermaid-actors"></pre></div>
-        <button class="btn btn-secondary btn-sm" style="margin-top:0.7rem" id="btn-refresh-actors">🔄 Rafraîchir</button>
-      </div></div>
-    </section>
-    
-    <!-- PAGE: Arbre -->
-    <section class="page" id="p-arbre">
-      <p class="intro">Identifiez le problème central, ses causes (racines) et effets (branches).</p>
-      <div class="card"><div class="card-head">🎯 Problème central</div><div class="card-body"><div class="field"><textarea data-field="arbre.probleme" rows="2" placeholder="Quel est le problème ?"></textarea></div></div></div>
-      <div class="row2">
-        <div class="card"><div class="card-head">🌱 Causes</div><div class="card-body"><div class="field"><textarea data-field="arbre.causes" rows="5" placeholder="Une cause par ligne..."></textarea><small>Une cause par ligne</small></div></div></div>
-        <div class="card"><div class="card-head">🍃 Effets</div><div class="card-body"><div class="field"><textarea data-field="arbre.effets" rows="5" placeholder="Un effet par ligne..."></textarea><small>Un effet par ligne</small></div></div></div>
-      </div>
-      <div class="card"><div class="card-head">🌳 Visualisation</div><div class="card-body">
-        <div class="mermaid-box"><pre class="mermaid" id="mermaid-tree"></pre></div>
-        <button class="btn btn-secondary btn-sm" style="margin-top:0.7rem" id="btn-refresh-tree">🔄 Rafraîchir</button>
-      </div></div>
-    </section>
-    
-    <!-- PAGE: 5 Pourquoi -->
-    <section class="page" id="p-pourquoi">
-      <p class="intro">Remontez à la cause racine avec la méthode des 5 Pourquoi.</p>
-      <div class="card"><div class="card-head">❓ Problème de départ</div><div class="card-body"><div class="field"><textarea data-field="pourquoi.probleme" rows="2" placeholder="Symptôme observé..."></textarea></div></div></div>
-      <div class="card"><div class="card-body">
-        <div class="field"><label>1️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why1" rows="2"></textarea></div>
-        <div class="field"><label>2️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why2" rows="2"></textarea></div>
-        <div class="field"><label>3️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why3" rows="2"></textarea></div>
-        <div class="field"><label>4️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why4" rows="2"></textarea></div>
-        <div class="field"><label>5️⃣ Cause racine</label><textarea data-field="pourquoi.why5" rows="2" style="border-color:var(--accent)"></textarea></div>
-      </div></div>
-    </section>
-    
-    <!-- PAGE: SWOT -->
-    <section class="page" id="p-swot">
-      <p class="intro">Analysez vos Forces, Faiblesses, Opportunités et Menaces.</p>
-      <div class="row2">
-        <div class="card"><div class="card-head" style="color:var(--success)">💪 Forces</div><div class="card-body"><div class="field"><textarea data-field="swot.forces" rows="4" placeholder="Atouts internes..."></textarea></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--danger)">😰 Faiblesses</div><div class="card-body"><div class="field"><textarea data-field="swot.faiblesses" rows="4" placeholder="Limites internes..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head" style="color:var(--info)">🌟 Opportunités</div><div class="card-body"><div class="field"><textarea data-field="swot.opportunites" rows="4" placeholder="Facteurs favorables..."></textarea></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--accent)">⚠️ Menaces</div><div class="card-body"><div class="field"><textarea data-field="swot.menaces" rows="4" placeholder="Risques externes..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: PESTEL -->
-    <section class="page" id="p-pestel">
-      <p class="intro">Analysez le macro-environnement PESTEL.</p>
-      <div class="row2">
-        <div class="card"><div class="card-head">🏛️ Politique</div><div class="card-body"><div class="field"><textarea data-field="pestel.politique" rows="3" placeholder="Gouvernance, élections..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">💶 Économique</div><div class="card-body"><div class="field"><textarea data-field="pestel.economique" rows="3" placeholder="Conjoncture, budgets..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head">👥 Social</div><div class="card-body"><div class="field"><textarea data-field="pestel.social" rows="3" placeholder="Tendances, opinions..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">💻 Technologique</div><div class="card-body"><div class="field"><textarea data-field="pestel.technologique" rows="3" placeholder="Innovations..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head">🌱 Environnemental</div><div class="card-body"><div class="field"><textarea data-field="pestel.environnemental" rows="3" placeholder="Écologie, climat..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">⚖️ Légal</div><div class="card-body"><div class="field"><textarea data-field="pestel.legal" rows="3" placeholder="Cadre juridique..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: TdC -->
-    <section class="page" id="p-tdc">
-      <p class="intro">Théorie du Changement : comment le changement se produit.</p>
-      <div class="card"><div class="card-head">🎯 Impact final visé</div><div class="card-body"><div class="field"><textarea data-field="tdc.impact" rows="2" placeholder="Changement ultime..."></textarea></div></div></div>
-      <div class="row2">
-        <div class="card"><div class="card-head">🔹 Individuel interne</div><div class="card-body"><div class="field"><textarea data-field="tdc.individuel_interne" rows="3" placeholder="Connaissances, attitudes..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">🔹 Individuel externe</div><div class="card-body"><div class="field"><textarea data-field="tdc.individuel_externe" rows="3" placeholder="Comportements..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head">🔸 Collectif interne</div><div class="card-body"><div class="field"><textarea data-field="tdc.collectif_interne" rows="3" placeholder="Culture, normes..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">🔸 Collectif externe</div><div class="card-body"><div class="field"><textarea data-field="tdc.collectif_externe" rows="3" placeholder="Politiques, lois..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Pouvoir -->
-    <section class="page" id="p-pouvoir">
-      <p class="intro">Définissez votre positionnement par rapport au pouvoir.</p>
-      <div class="row3">
-        <div class="card"><div class="card-head" style="color:var(--success);border-bottom:3px solid var(--success)">🤝 AVEC</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.avec" rows="6" placeholder="Collaboration, dialogue..."></textarea><small>Ex: Auditions, commissions</small></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--accent);border-bottom:3px solid var(--accent)">🔄 SANS</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.sans" rows="6" placeholder="Actions autonomes..."></textarea><small>Ex: Projets pilotes, médias alternatifs</small></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--danger);border-bottom:3px solid var(--danger)">✊ CONTRE</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.contre" rows="6" placeholder="Opposition, mobilisation..."></textarea><small>Ex: Manifs, pétitions</small></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Cibles -->
-    <section class="page" id="p-cibles">
-      <p class="intro">Identifiez vos cibles de plaidoyer et alliés stratégiques.</p>
-      <div class="row2">
-        <div class="card"><div class="card-head">🎯 Cible principale</div><div class="card-body"><div class="field"><textarea data-field="cibles.principale" rows="3" placeholder="Qui décide ?"></textarea></div></div></div>
-        <div class="card"><div class="card-head">🎯 Cibles secondaires</div><div class="card-body"><div class="field"><textarea data-field="cibles.secondaires" rows="3" placeholder="Qui influence ?"></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head" style="color:var(--success)">🤝 Alliés</div><div class="card-body"><div class="field"><textarea data-field="cibles.allies" rows="3" placeholder="Organisations alliées..."></textarea></div></div></div>
-        <div class="card"><div class="card-head" style="color:var(--danger)">⚔️ Opposants</div><div class="card-body"><div class="field"><textarea data-field="cibles.opposants" rows="3" placeholder="Qui s'oppose ?"></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: SMART -->
-    <section class="page" id="p-smart">
-      <p class="intro">Objectifs SMART : Spécifiques, Mesurables, Atteignables, Réalistes, Temporels.</p>
-      <div class="card"><div class="card-head">➕ Ajouter un objectif</div><div class="card-body">
-        <div class="field"><textarea id="sm-text" rows="2" placeholder="Ex: Obtenir 50 000 signatures d'ici le 1er mars"></textarea></div>
-        <div class="row2">
-          <div class="field"><label>Indicateur</label><input type="text" id="sm-indicator" placeholder="Ex: Nombre de signatures"></div>
-          <div class="field"><label>Échéance</label><input type="date" id="sm-deadline"></div>
-        </div>
-        <button class="btn btn-primary" id="btn-add-smart">Ajouter</button>
-      </div></div>
-      <div class="card"><div class="card-head">📋 Objectifs</div><div class="card-body" id="smart-list"><p style="color:var(--muted);text-align:center">Aucun objectif</p></div></div>
-    </section>
-    
-    <!-- PAGE: Message -->
-    <section class="page" id="p-message">
-      <p class="intro">Construisez votre message de plaidoyer percutant.</p>
-      <div class="card"><div class="card-head">💬 Message</div><div class="card-body">
-        <div class="field"><label>🎣 Accroche</label><textarea data-field="message.accroche" rows="2" placeholder="Phrase percutante..."></textarea></div>
-        <div class="field"><label>❗ Problème</label><textarea data-field="message.probleme" rows="2" placeholder="Le problème..."></textarea></div>
-        <div class="field"><label>⚡ Importance</label><textarea data-field="message.importance" rows="2" placeholder="Pourquoi agir ?"></textarea></div>
-        <div class="field"><label>👉 Appel à l'action</label><textarea data-field="message.action" rows="2" placeholder="Que demandez-vous ?"></textarea></div>
-      </div></div>
-      <div class="card"><div class="card-head">📝 Aperçu</div><div class="card-body" id="message-preview" style="background:var(--input);border-radius:6px;padding:1rem;color:var(--muted);font-style:italic">Remplissez les champs...</div></div>
-    </section>
-    
-    <!-- PAGE: Evaluation -->
-    <section class="page" id="p-evaluation">
-      <p class="intro">Définissez comment suivre et évaluer l'impact de votre plaidoyer.</p>
-      <div class="row2">
-        <div class="card"><div class="card-head">📊 Indicateurs</div><div class="card-body"><div class="field"><textarea data-field="evaluation.indicateurs" rows="5" placeholder="Indicateurs quantitatifs et qualitatifs..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">🔍 Méthodes de collecte</div><div class="card-body"><div class="field"><textarea data-field="evaluation.methodes" rows="5" placeholder="Sondages, entretiens..."></textarea></div></div></div>
-      </div>
-      <div class="row2">
-        <div class="card"><div class="card-head">📅 Calendrier</div><div class="card-body"><div class="field"><textarea data-field="evaluation.calendrier" rows="5" placeholder="Fréquence, jalons..."></textarea></div></div></div>
-        <div class="card"><div class="card-head">📚 Leçons apprises</div><div class="card-body"><div class="field"><textarea data-field="evaluation.lecons" rows="5" placeholder="Apprentissages..."></textarea></div></div></div>
-      </div>
-    </section>
-    
-    <!-- PAGE: Journal -->
-    <section class="page" id="p-journal">
-      <p class="intro">Tenez un journal de vos actions, rencontres, avancées.</p>
-      <div class="card"><div class="card-head">➕ Nouvelle entrée</div><div class="card-body">
-        <div class="row2">
-          <div class="field"><label>Date</label><input type="date" id="j-date"></div>
-          <div class="field"><label>Type</label><select id="j-type"><option value="action">🎯 Action</option><option value="rencontre">🤝 Rencontre</option><option value="victoire">🏆 Victoire</option><option value="difficulte">⚠️ Difficulté</option><option value="note">📝 Note</option></select></div>
-        </div>
-        <div class="field"><textarea id="j-content" rows="2" placeholder="Décrivez..."></textarea></div>
-        <button class="btn btn-primary" id="btn-add-journal">Ajouter</button>
-      </div></div>
-      <div class="card"><div class="card-head">📓 Historique</div><div class="card-body" id="journal-list"><p style="color:var(--muted);text-align:center">Aucune entrée</p></div></div>
-    </section>
-    
-    <!-- PAGE: Export -->
-    <section class="page" id="p-export">
-      <div class="card"><div class="card-head">📤 Exporter le projet</div><div class="card-body">
-        <p style="margin-bottom:1rem;color:var(--muted)">Exportez votre projet dans le format souhaité :</p>
-        <div class="export-grid">
-          <div class="export-box" id="exp-json"><span class="icon">📄</span><span class="label">JSON</span><span class="desc">Sauvegarde complète</span></div>
-          <div class="export-box" id="exp-md"><span class="icon">📝</span><span class="label">Markdown</span><span class="desc">Document texte</span></div>
-          <div class="export-box" id="exp-html"><span class="icon">🌐</span><span class="label">HTML</span><span class="desc">Page web</span></div>
-          <div class="export-box" id="exp-pdf"><span class="icon">📕</span><span class="label">PDF</span><span class="desc">Document</span></div>
-          <div class="export-box" id="exp-docx"><span class="icon">📘</span><span class="label">Word</span><span class="desc">Document éditable</span></div>
-          <div class="export-box" id="exp-xlsx"><span class="icon">📊</span><span class="label">Excel</span><span class="desc">Tableur</span></div>
-        </div>
-      </div></div>
-      <div class="card"><div class="card-head">📥 Importer un projet</div><div class="card-body">
-        <p style="margin-bottom:0.7rem;color:var(--muted)">Chargez un fichier JSON :</p>
-        <input type="file" id="import-file" accept=".json" class="field input">
-      </div></div>
-    </section>
-    
-  </div>
-</main>
-
-<!-- ========== PREVIEW ========== -->
-<aside id="preview">
-  <header id="preview-header">👁️ Aperçu en direct</header>
-  <div id="preview-content"><div id="preview-doc"></div></div>
-  <div id="preview-actions">
-    <button class="btn btn-secondary btn-sm" id="prev-json">JSON</button>
-    <button class="btn btn-secondary btn-sm" id="prev-md">MD</button>
-    <button class="btn btn-primary btn-sm" id="prev-pdf">PDF</button>
-  </div>
-</aside>
 </div>
 
-<!-- ========== MODAL ========== -->
+<!-- === MAIN === -->
+<main id="main">
+
+<!-- Empty State -->
+<section class="page active" id="p-empty">
+  <div class="empty-state">
+    <div class="icon">📂</div>
+    <h3>Bienvenue</h3>
+    <p>Créez ou importez un projet</p>
+    <div class="btns">
+      <button class="btn btn-primary" id="btn-new-empty">+ Créer</button>
+      <label class="btn btn-secondary" style="cursor:pointer">📥 Importer<input type="file" accept=".json" id="import-home" style="display:none"></label>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard -->
+<section class="page" id="p-dashboard">
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-icon" style="background:rgba(14,165,233,0.15);color:var(--voir)">📝</div><div class="stat-val" id="s-fields">0</div><div class="stat-lbl">Champs</div></div>
+    <div class="stat-box"><div class="stat-icon" style="background:rgba(34,197,94,0.15);color:var(--success)">👥</div><div class="stat-val" id="s-actors">0</div><div class="stat-lbl">Acteurs</div></div>
+    <div class="stat-box"><div class="stat-icon" style="background:rgba(245,158,11,0.15);color:var(--accent)">🎯</div><div class="stat-val" id="s-smart">0</div><div class="stat-lbl">Objectifs</div></div>
+    <div class="stat-box"><div class="stat-icon" style="background:rgba(59,130,246,0.15);color:var(--info)">📓</div><div class="stat-val" id="s-journal">0</div><div class="stat-lbl">Entrées</div></div>
+  </div>
+  <div class="progress-list">
+    <div class="progress-item"><div class="progress-title" style="color:var(--voir)">👁️ VOIR</div><div class="progress-bar"><div class="progress-fill" id="prog-voir" style="width:0%;background:var(--voir)"></div></div><div class="progress-lbl"><span>Analyse</span><span id="prog-voir-pct">0%</span></div></div>
+    <div class="progress-item"><div class="progress-title" style="color:var(--juger)">⚖️ JUGER</div><div class="progress-bar"><div class="progress-fill" id="prog-juger" style="width:0%;background:var(--juger)"></div></div><div class="progress-lbl"><span>Stratégie</span><span id="prog-juger-pct">0%</span></div></div>
+    <div class="progress-item"><div class="progress-title" style="color:var(--agir)">✊ AGIR</div><div class="progress-bar"><div class="progress-fill" id="prog-agir" style="width:0%;background:var(--agir)"></div></div><div class="progress-lbl"><span>Action</span><span id="prog-agir-pct">0%</span></div></div>
+  </div>
+  <div class="card"><div class="card-head">📌 Projet</div><div class="card-body">
+    <div class="field"><label>Nom</label><input type="text" data-field="meta.name" placeholder="Ex: Stop Arizona"></div>
+    <div class="field"><label>Organisation</label><input type="text" data-field="meta.organization" placeholder="Collectif..."></div>
+    <div class="field"><label>Description</label><textarea data-field="meta.description" rows="2" placeholder="Résumé..."></textarea></div>
+  </div></div>
+</section>
+
+<!-- Domino -->
+<section class="page" id="p-domino">
+  <p class="intro">Clarifiez votre vision du changement.</p>
+  <div class="card"><div class="card-head">🎯 Vision</div><div class="card-body"><div class="field"><textarea data-field="domino.vision" rows="4" placeholder="Le changement souhaité..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🚧 Obstacles</div><div class="card-body"><div class="field"><textarea data-field="domino.obstacles" rows="4" placeholder="Freins politiques, administratifs..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">💪 Ressources</div><div class="card-body"><div class="field"><textarea data-field="domino.ressources" rows="4" placeholder="Réseaux, expertise, alliés..."></textarea></div></div></div>
+</section>
+
+<!-- Profil -->
+<section class="page" id="p-profil">
+  <p class="intro">Votre profil citoyen.</p>
+  <div class="card"><div class="card-head">❤️ Motivations</div><div class="card-body"><div class="field"><textarea data-field="profil.motivations" rows="3" placeholder="Pourquoi ?"></textarea></div></div></div>
+  <div class="card"><div class="card-head">🛠️ Compétences</div><div class="card-body"><div class="field"><textarea data-field="profil.competences" rows="3" placeholder="Savoir-faire..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">⏰ Temps</div><div class="card-body"><div class="field"><textarea data-field="profil.temps" rows="3" placeholder="Disponibilités..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">⚠️ Limites</div><div class="card-body"><div class="field"><textarea data-field="profil.limites" rows="3" placeholder="Contraintes..."></textarea></div></div></div>
+</section>
+
+<!-- Fleur -->
+<section class="page" id="p-fleur">
+  <p class="intro">Rapports de pouvoir et privilège.</p>
+  <div class="card"><div class="card-head">👥 Personnes concernées</div><div class="card-body"><div class="field"><textarea data-field="fleur.identites" rows="3" placeholder="Profils touchés..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--success)">✅ Privilèges</div><div class="card-body"><div class="field"><textarea data-field="fleur.privileges" rows="3" placeholder="Accès, capital..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--danger)">🎯 Oppressions</div><div class="card-body"><div class="field"><textarea data-field="fleur.oppressions" rows="3" placeholder="Discriminations..."></textarea></div></div></div>
+</section>
+
+<!-- Acteurs -->
+<section class="page" id="p-acteurs">
+  <p class="intro">Cartographie des acteurs.</p>
+  <div class="card"><div class="card-head">➕ Ajouter</div><div class="card-body">
+    <div class="row2">
+      <div class="field"><label>Nom</label><input type="text" id="a-name" placeholder="Nom"></div>
+      <div class="field"><label>Rôle</label><input type="text" id="a-role" placeholder="Fonction"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Position</label><select id="a-pos"><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option></select></div>
+      <div class="field"><label>Pouvoir</label><select id="a-power"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+    </div>
+    <button class="btn btn-primary btn-block" id="btn-add-actor">Ajouter</button>
+  </div></div>
+  <div class="actor-cols">
+    <div class="actor-col c-ally"><div class="actor-col-title">🟢 Alliés</div><div id="col-ally"></div></div>
+    <div class="actor-col c-neutral"><div class="actor-col-title">🟡 Neutres</div><div id="col-neutral"></div></div>
+    <div class="actor-col c-opponent"><div class="actor-col-title">🔴 Opposants</div><div id="col-opponent"></div></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><div class="card-head">📊 Visualisation</div><div class="card-body">
+    <div class="mermaid-box"><pre class="mermaid" id="mermaid-actors"></pre></div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" id="btn-refresh-actors">🔄 Rafraîchir</button>
+  </div></div>
+</section>
+
+<!-- Arbre -->
+<section class="page" id="p-arbre">
+  <p class="intro">Problème central, causes et effets.</p>
+  <div class="card"><div class="card-head">🎯 Problème</div><div class="card-body"><div class="field"><textarea data-field="arbre.probleme" rows="2" placeholder="Le problème central..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🌱 Causes</div><div class="card-body"><div class="field"><textarea data-field="arbre.causes" rows="4" placeholder="Une par ligne..."></textarea><small>Une cause par ligne</small></div></div></div>
+  <div class="card"><div class="card-head">🍃 Effets</div><div class="card-body"><div class="field"><textarea data-field="arbre.effets" rows="4" placeholder="Un par ligne..."></textarea><small>Un effet par ligne</small></div></div></div>
+  <div class="card"><div class="card-head">🌳 Visualisation</div><div class="card-body">
+    <div class="mermaid-box"><pre class="mermaid" id="mermaid-tree"></pre></div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" id="btn-refresh-tree">🔄 Rafraîchir</button>
+  </div></div>
+</section>
+
+<!-- 5 Pourquoi -->
+<section class="page" id="p-pourquoi">
+  <p class="intro">Méthode des 5 Pourquoi.</p>
+  <div class="card"><div class="card-head">❓ Problème</div><div class="card-body"><div class="field"><textarea data-field="pourquoi.probleme" rows="2" placeholder="Symptôme..."></textarea></div></div></div>
+  <div class="card"><div class="card-body">
+    <div class="field"><label>1️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why1" rows="2"></textarea></div>
+    <div class="field"><label>2️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why2" rows="2"></textarea></div>
+    <div class="field"><label>3️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why3" rows="2"></textarea></div>
+    <div class="field"><label>4️⃣ Pourquoi ?</label><textarea data-field="pourquoi.why4" rows="2"></textarea></div>
+    <div class="field"><label>5️⃣ Cause racine</label><textarea data-field="pourquoi.why5" rows="2" style="border-color:var(--accent)"></textarea></div>
+  </div></div>
+</section>
+
+<!-- SWOT -->
+<section class="page" id="p-swot">
+  <p class="intro">Forces, Faiblesses, Opportunités, Menaces.</p>
+  <div class="card"><div class="card-head" style="color:var(--success)">💪 Forces</div><div class="card-body"><div class="field"><textarea data-field="swot.forces" rows="3" placeholder="Atouts..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--danger)">😰 Faiblesses</div><div class="card-body"><div class="field"><textarea data-field="swot.faiblesses" rows="3" placeholder="Limites..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--info)">🌟 Opportunités</div><div class="card-body"><div class="field"><textarea data-field="swot.opportunites" rows="3" placeholder="Facteurs favorables..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--accent)">⚠️ Menaces</div><div class="card-body"><div class="field"><textarea data-field="swot.menaces" rows="3" placeholder="Risques..."></textarea></div></div></div>
+</section>
+
+<!-- PESTEL -->
+<section class="page" id="p-pestel">
+  <p class="intro">Analyse PESTEL.</p>
+  <div class="card"><div class="card-head">🏛️ Politique</div><div class="card-body"><div class="field"><textarea data-field="pestel.politique" rows="3"></textarea></div></div></div>
+  <div class="card"><div class="card-head">💶 Économique</div><div class="card-body"><div class="field"><textarea data-field="pestel.economique" rows="3"></textarea></div></div></div>
+  <div class="card"><div class="card-head">👥 Social</div><div class="card-body"><div class="field"><textarea data-field="pestel.social" rows="3"></textarea></div></div></div>
+  <div class="card"><div class="card-head">💻 Technologique</div><div class="card-body"><div class="field"><textarea data-field="pestel.technologique" rows="3"></textarea></div></div></div>
+  <div class="card"><div class="card-head">🌱 Environnemental</div><div class="card-body"><div class="field"><textarea data-field="pestel.environnemental" rows="3"></textarea></div></div></div>
+  <div class="card"><div class="card-head">⚖️ Légal</div><div class="card-body"><div class="field"><textarea data-field="pestel.legal" rows="3"></textarea></div></div></div>
+</section>
+
+<!-- TdC -->
+<section class="page" id="p-tdc">
+  <p class="intro">Théorie du Changement.</p>
+  <div class="card"><div class="card-head">🎯 Impact final</div><div class="card-body"><div class="field"><textarea data-field="tdc.impact" rows="2" placeholder="Changement ultime..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🔹 Individuel interne</div><div class="card-body"><div class="field"><textarea data-field="tdc.individuel_interne" rows="3" placeholder="Connaissances, attitudes..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🔹 Individuel externe</div><div class="card-body"><div class="field"><textarea data-field="tdc.individuel_externe" rows="3" placeholder="Comportements..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🔸 Collectif interne</div><div class="card-body"><div class="field"><textarea data-field="tdc.collectif_interne" rows="3" placeholder="Culture, normes..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🔸 Collectif externe</div><div class="card-body"><div class="field"><textarea data-field="tdc.collectif_externe" rows="3" placeholder="Politiques, lois..."></textarea></div></div></div>
+</section>
+
+<!-- Pouvoir -->
+<section class="page" id="p-pouvoir">
+  <p class="intro">Positionnement par rapport au pouvoir.</p>
+  <div class="card"><div class="card-head" style="color:var(--success);border-bottom:3px solid var(--success)">🤝 AVEC</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.avec" rows="4" placeholder="Collaboration..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--accent);border-bottom:3px solid var(--accent)">🔄 SANS</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.sans" rows="4" placeholder="Actions autonomes..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--danger);border-bottom:3px solid var(--danger)">✊ CONTRE</div><div class="card-body"><div class="field"><textarea data-field="pouvoir.contre" rows="4" placeholder="Opposition..."></textarea></div></div></div>
+</section>
+
+<!-- Cibles -->
+<section class="page" id="p-cibles">
+  <p class="intro">Cibles et alliés stratégiques.</p>
+  <div class="card"><div class="card-head">🎯 Cible principale</div><div class="card-body"><div class="field"><textarea data-field="cibles.principale" rows="3" placeholder="Qui décide ?"></textarea></div></div></div>
+  <div class="card"><div class="card-head">🎯 Cibles secondaires</div><div class="card-body"><div class="field"><textarea data-field="cibles.secondaires" rows="3" placeholder="Qui influence ?"></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--success)">🤝 Alliés</div><div class="card-body"><div class="field"><textarea data-field="cibles.allies" rows="3" placeholder="Organisations alliées..."></textarea></div></div></div>
+  <div class="card"><div class="card-head" style="color:var(--danger)">⚔️ Opposants</div><div class="card-body"><div class="field"><textarea data-field="cibles.opposants" rows="3" placeholder="Qui s'oppose ?"></textarea></div></div></div>
+</section>
+
+<!-- SMART -->
+<section class="page" id="p-smart">
+  <p class="intro">Objectifs SMART.</p>
+  <div class="card"><div class="card-head">➕ Ajouter</div><div class="card-body">
+    <div class="field"><textarea id="sm-text" rows="2" placeholder="Objectif..."></textarea></div>
+    <div class="row2">
+      <div class="field"><label>Indicateur</label><input type="text" id="sm-indicator" placeholder="Mesure..."></div>
+      <div class="field"><label>Échéance</label><input type="date" id="sm-deadline"></div>
+    </div>
+    <button class="btn btn-primary btn-block" id="btn-add-smart">Ajouter</button>
+  </div></div>
+  <div class="card"><div class="card-head">📋 Objectifs</div><div class="card-body" id="smart-list"><p style="color:var(--muted);text-align:center">Aucun</p></div></div>
+</section>
+
+<!-- Message -->
+<section class="page" id="p-message">
+  <p class="intro">Message de plaidoyer.</p>
+  <div class="card"><div class="card-body">
+    <div class="field"><label>🎣 Accroche</label><textarea data-field="message.accroche" rows="2" placeholder="Phrase percutante..."></textarea></div>
+    <div class="field"><label>❗ Problème</label><textarea data-field="message.probleme" rows="2" placeholder="Le problème..."></textarea></div>
+    <div class="field"><label>⚡ Importance</label><textarea data-field="message.importance" rows="2" placeholder="Pourquoi agir ?"></textarea></div>
+    <div class="field"><label>👉 Appel à l'action</label><textarea data-field="message.action" rows="2" placeholder="Que demandez-vous ?"></textarea></div>
+  </div></div>
+  <div class="card"><div class="card-head">📝 Aperçu</div><div class="card-body" id="message-preview" style="background:var(--input);border-radius:6px;padding:1rem;color:var(--muted);font-style:italic">Remplissez les champs...</div></div>
+</section>
+
+<!-- Evaluation -->
+<section class="page" id="p-evaluation">
+  <p class="intro">Suivi et évaluation.</p>
+  <div class="card"><div class="card-head">📊 Indicateurs</div><div class="card-body"><div class="field"><textarea data-field="evaluation.indicateurs" rows="4" placeholder="Quantitatifs et qualitatifs..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">🔍 Méthodes</div><div class="card-body"><div class="field"><textarea data-field="evaluation.methodes" rows="4" placeholder="Collecte des données..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">📅 Calendrier</div><div class="card-body"><div class="field"><textarea data-field="evaluation.calendrier" rows="4" placeholder="Fréquence, jalons..."></textarea></div></div></div>
+  <div class="card"><div class="card-head">📚 Leçons</div><div class="card-body"><div class="field"><textarea data-field="evaluation.lecons" rows="4" placeholder="Apprentissages..."></textarea></div></div></div>
+</section>
+
+<!-- Journal -->
+<section class="page" id="p-journal">
+  <p class="intro">Journal de bord.</p>
+  <div class="card"><div class="card-head">➕ Ajouter</div><div class="card-body">
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="j-date"></div>
+      <div class="field"><label>Type</label><select id="j-type"><option value="action">🎯 Action</option><option value="rencontre">🤝 Rencontre</option><option value="victoire">🏆 Victoire</option><option value="difficulte">⚠️ Difficulté</option><option value="note">📝 Note</option></select></div>
+    </div>
+    <div class="field"><textarea id="j-content" rows="2" placeholder="Décrivez..."></textarea></div>
+    <button class="btn btn-primary btn-block" id="btn-add-journal">Ajouter</button>
+  </div></div>
+  <div class="card"><div class="card-head">📓 Historique</div><div class="card-body" id="journal-list"><p style="color:var(--muted);text-align:center">Aucune entrée</p></div></div>
+</section>
+
+<!-- Export -->
+<section class="page" id="p-export">
+  <div class="card"><div class="card-head">📤 Exporter</div><div class="card-body">
+    <div class="export-grid">
+      <div class="export-box" id="exp-json"><span class="icon">📄</span><span class="label">JSON</span><span class="desc">Sauvegarde</span></div>
+      <div class="export-box" id="exp-md"><span class="icon">📝</span><span class="label">Markdown</span><span class="desc">Texte</span></div>
+      <div class="export-box" id="exp-html"><span class="icon">🌐</span><span class="label">HTML</span><span class="desc">Web</span></div>
+      <div class="export-box" id="exp-pdf"><span class="icon">📕</span><span class="label">PDF</span><span class="desc">Document</span></div>
+      <div class="export-box" id="exp-docx"><span class="icon">📘</span><span class="label">Word</span><span class="desc">Éditable</span></div>
+      <div class="export-box" id="exp-xlsx"><span class="icon">📊</span><span class="label">Excel</span><span class="desc">Tableur</span></div>
+    </div>
+  </div></div>
+  <div class="card"><div class="card-head">📥 Importer</div><div class="card-body">
+    <input type="file" id="import-file" accept=".json" style="width:100%">
+  </div></div>
+</section>
+
+</main>
+
+<!-- === PREVIEW PANEL (Desktop) === -->
+<aside id="preview-panel" style="display:none">
+  <header id="preview-panel-header">👁️ Aperçu</header>
+  <div id="preview-panel-body"><div id="preview-doc-desktop"></div></div>
+  <div id="preview-panel-actions">
+    <button class="btn btn-secondary btn-sm" id="prev-json-d">JSON</button>
+    <button class="btn btn-secondary btn-sm" id="prev-md-d">MD</button>
+    <button class="btn btn-primary btn-sm" id="prev-pdf-d">PDF</button>
+  </div>
+</aside>
+
+<!-- === BOTTOM NAV (Mobile) === -->
+<nav id="bottom-nav">
+  <button class="bottom-btn active" data-tab="voir"><span>👁️</span>Voir</button>
+  <button class="bottom-btn" data-tab="juger"><span>⚖️</span>Juger</button>
+  <button class="bottom-btn" data-tab="agir"><span>✊</span>Agir</button>
+  <button class="bottom-btn" data-tab="tools"><span>🔧</span>Outils</button>
+</nav>
+
+</div>
+
+<!-- === PREVIEW MODAL (Mobile) === -->
+<div id="preview-modal">
+  <div id="preview-sheet">
+    <div id="preview-handle"></div>
+    <header id="preview-header"><h2>Aperçu</h2><button id="btn-close-preview">×</button></header>
+    <div id="preview-body"><div id="preview-doc"></div></div>
+    <div id="preview-actions">
+      <button class="btn btn-secondary btn-sm" id="prev-json">JSON</button>
+      <button class="btn btn-secondary btn-sm" id="prev-md">MD</button>
+      <button class="btn btn-primary btn-sm" id="prev-pdf">PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- === CREATE MODAL === -->
 <div id="modal-overlay">
   <div id="modal">
     <h2>Nouveau projet</h2>
-    <div class="field"><label>Nom du projet</label><input type="text" id="m-name" placeholder="Ex: Stop Arizona"></div>
+    <div class="field"><label>Nom</label><input type="text" id="m-name" placeholder="Ex: Stop Arizona"></div>
     <div class="field"><label>Description</label><textarea id="m-desc" rows="2" placeholder="Description..."></textarea></div>
     <div id="modal-actions">
       <button class="btn btn-secondary" id="m-cancel">Annuler</button>
@@ -533,1115 +627,374 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
 <div id="toasts"></div>
 
 <script>
-// ============================================================================
-// APPLICATION PLAIDOYER CITOYEN v6 - FROM SCRATCH
-// ============================================================================
-
-(function() {
+(function(){
 'use strict';
 
-// --- CONFIG ---
-const DB_NAME = 'PlaidoyerDB_v2';
-const STORE_NAME = 'projects';
+const DB_NAME='PlaidoyerDB_v3',STORE='projects';
+let db=null,currentId=null,current=null,saveTimer=null;
 
-// --- STATE ---
-let db = null;
-let currentProjectId = null;
-let currentProject = null;
-let saveTimeout = null;
+const $=id=>document.getElementById(id);
+const $$=sel=>document.querySelectorAll(sel);
+const esc=s=>s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'):'';
+const slug=s=>(s||'projet').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 
-// --- UTILS ---
-const $ = id => document.getElementById(id);
-const $$ = sel => document.querySelectorAll(sel);
-const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') : '';
-const slug = s => (s||'projet').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-
-function toast(msg, type='info') {
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  const icons = {success:'✓',error:'✗',warning:'⚠',info:'ℹ'};
-  t.innerHTML = `<span>${icons[type]||'ℹ'}</span> ${msg}`;
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML=`<span>${{success:'✓',error:'✗',warning:'⚠',info:'ℹ'}[type]||'ℹ'}</span> ${msg}`;
   $('toasts').appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000);
 }
 
-function download(content, filename, mime) {
-  const a = document.createElement('a');
-  const blob = new Blob([content], {type: mime});
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+function download(c,f,m){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:m}));a.download=f;a.click();URL.revokeObjectURL(a.href)}
+function downloadBlob(b,f){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f;a.click();URL.revokeObjectURL(a.href)}
 
-function downloadBlob(blob, filename) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-// --- INDEXEDDB ---
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    
-    request.onerror = () => {
-      console.error('DB Error:', request.error);
-      reject(request.error);
-    };
-    
-    request.onsuccess = () => {
-      db = request.result;
-      console.log('DB opened successfully');
-      resolve(db);
-    };
-    
-    request.onupgradeneeded = (e) => {
-      const database = e.target.result;
-      if (!database.objectStoreNames.contains(STORE_NAME)) {
-        database.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        console.log('Object store created');
-      }
-    };
+// === DB ===
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,1);
+    r.onerror=()=>rej(r.error);
+    r.onsuccess=()=>{db=r.result;res(db)};
+    r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id'})};
   });
 }
+const dbPut=p=>new Promise((res,rej)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).put(p);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
+const dbGet=id=>new Promise((res,rej)=>{const r=db.transaction(STORE).objectStore(STORE).get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const dbAll=()=>new Promise((res,rej)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)});
+const dbDel=id=>new Promise((res,rej)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)});
 
-function dbPut(project) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.put(project);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
+function newProject(n,d){
+  return{id:Date.now().toString(),modified:new Date().toISOString(),
+    meta:{name:n||'Nouveau projet',description:d||'',organization:''},
+    domino:{vision:'',obstacles:'',ressources:''},
+    profil:{motivations:'',competences:'',temps:'',limites:''},
+    fleur:{identites:'',privileges:'',oppressions:''},
+    acteurs:[],arbre:{probleme:'',causes:'',effets:''},
+    pourquoi:{probleme:'',why1:'',why2:'',why3:'',why4:'',why5:''},
+    swot:{forces:'',faiblesses:'',opportunites:'',menaces:''},
+    pestel:{politique:'',economique:'',social:'',technologique:'',environnemental:'',legal:''},
+    tdc:{impact:'',individuel_interne:'',individuel_externe:'',collectif_interne:'',collectif_externe:''},
+    pouvoir:{avec:'',sans:'',contre:''},
+    cibles:{principale:'',secondaires:'',allies:'',opposants:''},
+    smart:[],message:{accroche:'',probleme:'',importance:'',action:''},
+    evaluation:{indicateurs:'',methodes:'',calendrier:'',lecons:''},
+    journal:[]};
 }
 
-function dbGet(id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.get(id);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+// === PROJECTS ===
+async function renderProjects(){
+  const list=await dbAll();
+  const c=$('projects-list');
+  if(!list.length){c.innerHTML='<p style="color:var(--muted);font-size:0.8rem;text-align:center;padding:0.5rem">Aucun projet</p>';return}
+  c.innerHTML=list.map(p=>`<div class="project-row ${p.id===currentId?'selected':''}" data-id="${p.id}"><span>📁</span><span>${esc(p.meta?.name||'Sans nom')}</span><button data-del="${p.id}">✕</button></div>`).join('');
+  c.querySelectorAll('.project-row').forEach(r=>r.addEventListener('click',e=>{if(e.target.tagName==='BUTTON')return;selectProject(r.dataset.id);closeDrawer()}));
+  c.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();deleteProject(b.dataset.del)}));
 }
 
-function dbGetAll() {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.getAll();
-    req.onsuccess = () => resolve(req.result || []);
-    req.onerror = () => reject(req.error);
-  });
+async function selectProject(id){
+  currentId=id;current=await dbGet(id);
+  await renderProjects();populate();renderActors();renderSmart();renderJournal();updatePreview();updateStats();showPage('dashboard');
+  $('header-title').textContent=current.meta?.name||'Projet';
 }
 
-function dbDelete(id) {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.delete(id);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
+async function deleteProject(id){
+  if(!confirm('Supprimer ?'))return;
+  await dbDel(id);
+  if(currentId===id){currentId=null;current=null;showPage('empty');$('header-title').textContent='Plaidoyer Citoyen'}
+  await renderProjects();toast('Supprimé','success');
 }
 
-// --- PROJECT TEMPLATE ---
-function createEmptyProject(name, desc) {
-  return {
-    id: Date.now().toString(),
-    modified: new Date().toISOString(),
-    meta: { name: name || 'Nouveau projet', description: desc || '', organization: '' },
-    domino: { vision: '', obstacles: '', ressources: '' },
-    profil: { motivations: '', competences: '', temps: '', limites: '' },
-    fleur: { identites: '', privileges: '', oppressions: '' },
-    acteurs: [],
-    arbre: { probleme: '', causes: '', effets: '' },
-    pourquoi: { probleme: '', why1: '', why2: '', why3: '', why4: '', why5: '' },
-    swot: { forces: '', faiblesses: '', opportunites: '', menaces: '' },
-    pestel: { politique: '', economique: '', social: '', technologique: '', environnemental: '', legal: '' },
-    tdc: { impact: '', individuel_interne: '', individuel_externe: '', collectif_interne: '', collectif_externe: '' },
-    pouvoir: { avec: '', sans: '', contre: '' },
-    cibles: { principale: '', secondaires: '', allies: '', opposants: '' },
-    smart: [],
-    message: { accroche: '', probleme: '', importance: '', action: '' },
-    evaluation: { indicateurs: '', methodes: '', calendrier: '', lecons: '' },
-    journal: []
-  };
-}
-
-// --- RENDER PROJECTS LIST ---
-async function renderProjectsList() {
-  const list = await dbGetAll();
-  const container = $('projects-list');
-  
-  if (list.length === 0) {
-    container.innerHTML = '<p style="color:var(--muted);font-size:0.8rem;text-align:center;padding:0.5rem">Aucun projet</p>';
-    return;
-  }
-  
-  container.innerHTML = list.map(p => `
-    <div class="project-row ${p.id === currentProjectId ? 'selected' : ''}" data-id="${p.id}">
-      <span>📁</span>
-      <span>${esc(p.meta?.name || 'Sans nom')}</span>
-      <button data-del="${p.id}">✕</button>
-    </div>
-  `).join('');
-  
-  // Click handlers
-  container.querySelectorAll('.project-row').forEach(row => {
-    row.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON') return;
-      selectProject(row.dataset.id);
-    });
-  });
-  
-  container.querySelectorAll('[data-del]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      deleteProject(btn.dataset.del);
-    });
-  });
-}
-
-// --- SELECT PROJECT ---
-async function selectProject(id) {
-  currentProjectId = id;
-  currentProject = await dbGet(id);
-  
-  await renderProjectsList();
-  populateFields();
-  renderActors();
-  renderSmartList();
-  renderJournalList();
-  updatePreview();
-  updateStats();
-  showPage('dashboard');
-}
-
-// --- DELETE PROJECT ---
-async function deleteProject(id) {
-  if (!confirm('Supprimer ce projet ?')) return;
-  await dbDelete(id);
-  
-  if (currentProjectId === id) {
-    currentProjectId = null;
-    currentProject = null;
-    $('preview-doc').innerHTML = '';
-    showPage('empty');
-  }
-  
-  await renderProjectsList();
-  toast('Projet supprimé', 'success');
-}
-
-// --- POPULATE FIELDS ---
-function populateFields() {
-  if (!currentProject) return;
-  
-  $$('[data-field]').forEach(el => {
-    const [section, key] = el.dataset.field.split('.');
-    el.value = currentProject[section]?.[key] || '';
-  });
-  
+function populate(){
+  if(!current)return;
+  $$('[data-field]').forEach(el=>{const[a,b]=el.dataset.field.split('.');el.value=current[a]?.[b]||''});
   updateMessagePreview();
 }
 
-// --- SAVE ---
-function scheduleSave() {
-  if (!currentProject) return;
-  
-  $('save-dot').classList.add('saving');
-  $('save-text').textContent = 'Sauvegarde...';
-  
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(async () => {
-    currentProject.modified = new Date().toISOString();
-    await dbPut(currentProject);
-    $('save-dot').classList.remove('saving');
-    $('save-text').textContent = 'Sauvegardé';
-  }, 500);
+function scheduleSave(){
+  if(!current)return;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{current.modified=new Date().toISOString();await dbPut(current)},500);
 }
 
-// --- NAVIGATION ---
-const PAGE_TITLES = {
-  empty: 'Bienvenue',
-  dashboard: 'Tableau de bord',
-  domino: 'Vision (Domino)',
-  profil: 'Profil citoyen',
-  fleur: 'Fleur du pouvoir',
-  acteurs: 'Cartographie des acteurs',
-  arbre: 'Arbre à problèmes',
-  pourquoi: '5 Pourquoi',
-  swot: 'Analyse SWOT',
-  pestel: 'Analyse PESTEL',
-  tdc: 'Théorie du changement',
-  pouvoir: 'Avec/Sans/Contre le pouvoir',
-  cibles: 'Cibles & Alliés',
-  smart: 'Objectifs SMART',
-  message: 'Message clé',
-  evaluation: 'Suivi-évaluation',
-  journal: 'Journal de bord',
-  export: 'Import / Export'
-};
+// === NAV ===
+const TITLES={empty:'Bienvenue',dashboard:'Tableau de bord',domino:'Vision',profil:'Profil',fleur:'Fleur du pouvoir',acteurs:'Acteurs',arbre:'Arbre problèmes',pourquoi:'5 Pourquoi',swot:'SWOT',pestel:'PESTEL',tdc:'Théorie changement',pouvoir:'Avec/Sans/Contre',cibles:'Cibles',smart:'Objectifs SMART',message:'Message',evaluation:'Évaluation',journal:'Journal',export:'Import/Export'};
 
-function showPage(pageId) {
-  // Hide all pages
-  $$('.page').forEach(p => p.classList.remove('active'));
-  
-  // Show target page
-  const target = $('p-' + pageId);
-  if (target) target.classList.add('active');
-  
-  // Update nav buttons
-  $$('.nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.page === pageId);
+function showPage(p){
+  $$('.page').forEach(x=>x.classList.remove('active'));
+  $('p-'+p)?.classList.add('active');
+  $$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
+  $('header-title').textContent=current?.meta?.name?`${current.meta.name} — ${TITLES[p]||p}`:TITLES[p]||p;
+  if(p==='acteurs')refreshActorsMermaid();
+  if(p==='arbre')refreshTreeMermaid();
+}
+
+// === DRAWER ===
+function openDrawer(){$('drawer-overlay').classList.add('open')}
+function closeDrawer(){$('drawer-overlay').classList.remove('open')}
+
+// === PREVIEW ===
+function openPreview(){$('preview-modal').classList.add('open');updatePreview()}
+function closePreview(){$('preview-modal').classList.remove('open')}
+
+function updatePreview(){
+  if(!current){const h='<p style="color:var(--muted);text-align:center">Aucun projet</p>';$('preview-doc').innerHTML=h;if($('preview-doc-desktop'))$('preview-doc-desktop').innerHTML=h;return}
+  const p=current,f=v=>v?`<p class="filled">${esc(v)}</p>`:'<p class="empty">Non renseigné</p>';
+  let h=`<h1>${esc(p.meta?.name||'Sans nom')}</h1><p class="pmeta">${p.meta?.description?esc(p.meta.description)+' — ':''}${new Date(p.modified).toLocaleDateString('fr-FR')}</p>`;
+  h+=`<h2 class="c-voir">👁️ VOIR</h2><h3>Vision</h3>${f(p.domino?.vision)}`;
+  h+=`<h2 class="c-juger">⚖️ JUGER</h2><h3>Problème</h3>${f(p.arbre?.probleme)}`;
+  if(p.acteurs?.length){h+='<h3>Acteurs</h3><p>';p.acteurs.forEach(a=>h+=`<span class="badge ${a.position}">${esc(a.name)}</span> `);h+='</p>'}
+  h+=`<h2 class="c-agir">✊ AGIR</h2><h3>Message</h3>`;
+  if(p.message?.accroche)h+=`<p class="filled"><strong>${esc(p.message.accroche)}</strong></p>`;
+  if(p.message?.action)h+=`<p class="filled">→ ${esc(p.message.action)}</p>`;
+  if(!p.message?.accroche&&!p.message?.action)h+='<p class="empty">Non renseigné</p>';
+  $('preview-doc').innerHTML=h;
+  if($('preview-doc-desktop'))$('preview-doc-desktop').innerHTML=h;
+}
+
+// === STATS ===
+function updateStats(){
+  if(!current)return;
+  let filled=0;const cnt=o=>{if(!o)return;Object.values(o).forEach(v=>{if(typeof v==='string'&&v.trim())filled++})};
+  ['domino','profil','fleur','arbre','pourquoi','swot','pestel','tdc','pouvoir','cibles','message','evaluation'].forEach(k=>cnt(current[k]));
+  $('s-fields').textContent=filled;
+  $('s-actors').textContent=current.acteurs?.length||0;
+  $('s-smart').textContent=current.smart?.length||0;
+  $('s-journal').textContent=current.journal?.length||0;
+  const pct=fs=>{let d=0;fs.forEach(f=>{if(f==='acteurs'){if(current.acteurs?.length)d++}else if(f==='smart'){if(current.smart?.length)d++}else{const[a,b]=f.split('.');if(current[a]?.[b]?.trim())d++}});return Math.round(d/fs.length*100)};
+  const vp=pct(['domino.vision','profil.motivations','fleur.identites']);
+  const jp=pct(['arbre.probleme','swot.forces','pestel.politique','acteurs']);
+  const ap=pct(['pouvoir.avec','cibles.principale','message.accroche','smart']);
+  $('prog-voir').style.width=vp+'%';$('prog-voir-pct').textContent=vp+'%';
+  $('prog-juger').style.width=jp+'%';$('prog-juger-pct').textContent=jp+'%';
+  $('prog-agir').style.width=ap+'%';$('prog-agir-pct').textContent=ap+'%';
+}
+
+// === ACTORS ===
+function addActor(){
+  if(!current)return;
+  const n=$('a-name').value.trim(),r=$('a-role').value.trim(),pos=$('a-pos').value,pw=+$('a-power').value;
+  if(!n){toast('Entrez un nom','error');return}
+  current.acteurs.push({id:Date.now(),name:n,role:r,position:pos,power:pw});
+  $('a-name').value='';$('a-role').value='';
+  renderActors();scheduleSave();updatePreview();updateStats();toast('Ajouté','success');
+}
+function removeActor(id){if(!current)return;current.acteurs=current.acteurs.filter(a=>a.id!==id);renderActors();scheduleSave();updatePreview();updateStats()}
+function renderActors(){
+  if(!current)return;
+  ['ally','neutral','opponent'].forEach(pos=>{
+    const c=$('col-'+pos),as=current.acteurs.filter(a=>a.position===pos);
+    if(!as.length){c.innerHTML='<p style="color:var(--muted);font-size:0.75rem;text-align:center">—</p>'}
+    else{c.innerHTML=as.map(a=>`<div class="actor-chip"><span>${esc(a.name)}</span><span class="stars">${'★'.repeat(a.power)}</span><button class="del" data-a="${a.id}">✕</button></div>`).join('');c.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>removeActor(+b.dataset.a)))}
   });
-  
-  // Update title
-  $('page-title').textContent = PAGE_TITLES[pageId] || pageId;
-  
-  // Refresh mermaid if needed
-  if (pageId === 'acteurs') refreshActorsMermaid();
-  if (pageId === 'arbre') refreshTreeMermaid();
+}
+async function refreshActorsMermaid(){
+  if(!current||typeof mermaid==='undefined')return;
+  const al=current.acteurs.filter(a=>a.position==='ally'),ne=current.acteurs.filter(a=>a.position==='neutral'),op=current.acteurs.filter(a=>a.position==='opponent');
+  let c='graph LR\n';
+  if(al.length){c+='  subgraph Alliés\n';al.forEach((a,i)=>c+=`    A${i}["${a.name.replace(/"/g,"'")}"]\n`);c+='  end\n'}
+  if(ne.length){c+='  subgraph Neutres\n';ne.forEach((a,i)=>c+=`    N${i}["${a.name.replace(/"/g,"'")}"]\n`);c+='  end\n'}
+  if(op.length){c+='  subgraph Opposants\n';op.forEach((a,i)=>c+=`    O${i}["${a.name.replace(/"/g,"'")}"]\n`);c+='  end\n'}
+  if(!al.length&&!ne.length&&!op.length)c+='  X[Ajoutez des acteurs]\n';
+  const el=$('mermaid-actors');el.textContent=c;el.removeAttribute('data-processed');
+  try{await mermaid.run({nodes:[el]})}catch(e){console.error(e)}
+}
+async function refreshTreeMermaid(){
+  if(!current||typeof mermaid==='undefined')return;
+  const pr=(current.arbre?.probleme||'Problème').substring(0,30).replace(/"/g,"'");
+  const ca=(current.arbre?.causes||'').split('\n').filter(x=>x.trim());
+  const ef=(current.arbre?.effets||'').split('\n').filter(x=>x.trim());
+  let c='graph TB\n';
+  ca.forEach((x,i)=>c+=`  C${i}["${x.trim().substring(0,25).replace(/"/g,"'")}"] --> P\n`);
+  c+=`  P["🎯 ${pr}"]\n`;
+  ef.forEach((x,i)=>c+=`  P --> E${i}["${x.trim().substring(0,25).replace(/"/g,"'")}"]\n`);
+  if(!ca.length&&!ef.length)c='graph TB\n  P[Remplissez causes et effets]\n';
+  const el=$('mermaid-tree');el.textContent=c;el.removeAttribute('data-processed');
+  try{await mermaid.run({nodes:[el]})}catch(e){console.error(e)}
 }
 
-// --- STATS ---
-function updateStats() {
-  if (!currentProject) return;
-  
-  let filled = 0;
-  const countFields = (obj) => {
-    if (!obj) return;
-    Object.values(obj).forEach(v => {
-      if (typeof v === 'string' && v.trim()) filled++;
-    });
+// === SMART ===
+function addSmart(){
+  if(!current)return;
+  const t=$('sm-text').value.trim(),ind=$('sm-indicator').value.trim(),dl=$('sm-deadline').value;
+  if(!t){toast('Décrivez l\'objectif','error');return}
+  current.smart.push({id:Date.now(),text:t,indicator:ind,deadline:dl,done:false});
+  $('sm-text').value='';$('sm-indicator').value='';$('sm-deadline').value='';
+  renderSmart();scheduleSave();updatePreview();updateStats();toast('Ajouté','success');
+}
+function toggleSmart(id){if(!current)return;const s=current.smart.find(x=>x.id===id);if(s)s.done=!s.done;renderSmart();scheduleSave();updatePreview()}
+function removeSmart(id){if(!current)return;current.smart=current.smart.filter(x=>x.id!==id);renderSmart();scheduleSave();updatePreview();updateStats()}
+function renderSmart(){
+  if(!current)return;const c=$('smart-list');
+  if(!current.smart.length){c.innerHTML='<p style="color:var(--muted);text-align:center">Aucun</p>';return}
+  c.innerHTML=current.smart.map(s=>`<div class="list-item"><input type="checkbox" ${s.done?'checked':''} data-tog="${s.id}"><div class="content"><div class="text ${s.done?'done':''}">${esc(s.text)}</div><div class="meta">${s.indicator?'📊 '+esc(s.indicator):''} ${s.deadline?'📅 '+s.deadline:''}</div></div><button class="btn btn-sm btn-secondary" data-rm="${s.id}">✕</button></div>`).join('');
+  c.querySelectorAll('[data-tog]').forEach(x=>x.addEventListener('change',()=>toggleSmart(+x.dataset.tog)));
+  c.querySelectorAll('[data-rm]').forEach(x=>x.addEventListener('click',()=>removeSmart(+x.dataset.rm)));
+}
+
+// === JOURNAL ===
+function addJournal(){
+  if(!current)return;
+  const d=$('j-date').value,t=$('j-type').value,co=$('j-content').value.trim();
+  if(!co){toast('Décrivez','error');return}
+  current.journal.unshift({id:Date.now(),date:d,type:t,content:co});
+  $('j-content').value='';renderJournal();scheduleSave();updatePreview();updateStats();toast('Ajouté','success');
+}
+function removeJournal(id){if(!current)return;current.journal=current.journal.filter(x=>x.id!==id);renderJournal();scheduleSave();updatePreview();updateStats()}
+function renderJournal(){
+  if(!current)return;const c=$('journal-list'),icons={action:'🎯',rencontre:'🤝',victoire:'🏆',difficulte:'⚠️',note:'📝'};
+  if(!current.journal.length){c.innerHTML='<p style="color:var(--muted);text-align:center">Aucune entrée</p>';return}
+  c.innerHTML=current.journal.map(j=>`<div class="list-item"><span class="icon">${icons[j.type]||'📝'}</span><div class="content"><div class="text">${esc(j.content)}</div><div class="meta">${j.date}</div></div><button class="btn btn-sm btn-secondary" data-delj="${j.id}">✕</button></div>`).join('');
+  c.querySelectorAll('[data-delj]').forEach(x=>x.addEventListener('click',()=>removeJournal(+x.dataset.delj)));
+}
+
+function updateMessagePreview(){
+  if(!current)return;const m=current.message||{},el=$('message-preview');
+  if(!m.accroche&&!m.probleme&&!m.importance&&!m.action){el.innerHTML='<span style="color:var(--muted)">Remplissez...</span>';return}
+  let h='';if(m.accroche)h+=`<strong>${esc(m.accroche)}</strong><br><br>`;if(m.probleme)h+=`${esc(m.probleme)}<br><br>`;if(m.importance)h+=`<em>${esc(m.importance)}</em><br><br>`;if(m.action)h+=`<strong>→ ${esc(m.action)}</strong>`;
+  el.innerHTML=h;el.style.fontStyle='normal';el.style.color='var(--text)';
+}
+
+// === EXPORTS ===
+function exportJSON(){if(!current){toast('Aucun projet','error');return}download(JSON.stringify(current,null,2),slug(current.meta?.name)+'.json','application/json');toast('JSON OK','success')}
+function exportMD(){if(!current){toast('Aucun projet','error');return}const p=current;let m=`# ${p.meta?.name||'Projet'}\n\n## VOIR\n### Vision\n${p.domino?.vision||'—'}\n\n## JUGER\n### Problème\n${p.arbre?.probleme||'—'}\n\n## AGIR\n### Message\n${p.message?.accroche||''}\n→ ${p.message?.action||''}\n`;download(m,slug(p.meta?.name)+'.md','text/markdown');toast('MD OK','success')}
+function exportHTML(){if(!current){toast('Aucun projet','error');return}const p=current;let h=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(p.meta?.name)}</title></head><body style="font-family:sans-serif;max-width:800px;margin:2rem auto"><h1>${esc(p.meta?.name)}</h1><h2>Vision</h2><p>${esc(p.domino?.vision)||'—'}</p><h2>Message</h2><p><strong>${esc(p.message?.accroche)}</strong></p></body></html>`;download(h,slug(p.meta?.name)+'.html','text/html');toast('HTML OK','success')}
+function exportPDF(){
+  if(!current){toast('Aucun projet','error');return}
+  if(typeof window.jspdf==='undefined'){toast('PDF non dispo','error');return}
+  try{const{jsPDF}=window.jspdf,doc=new jsPDF(),p=current;doc.setFontSize(18);doc.text(p.meta?.name||'Projet',20,20);let y=35;
+  const add=(t,c)=>{if(y>260){doc.addPage();y=20}doc.setFontSize(12);doc.setTextColor(0);doc.text(t,20,y);y+=7;doc.setFontSize(10);doc.setTextColor(60);const l=doc.splitTextToSize(c||'—',170);doc.text(l,20,y);y+=l.length*5+8};
+  add('VISION',p.domino?.vision);add('PROBLÈME',p.arbre?.probleme);add('MESSAGE',(p.message?.accroche||'')+'\n→ '+(p.message?.action||''));
+  doc.save(slug(p.meta?.name)+'.pdf');toast('PDF OK','success')}catch(e){toast('Erreur PDF','error');console.error(e)}
+}
+function exportDOCX(){
+  if(!current){toast('Aucun projet','error');return}
+  if(typeof window.docx==='undefined'){toast('DOCX non dispo','error');return}
+  try{const{Document,Paragraph,TextRun,HeadingLevel,Packer}=window.docx,p=current;
+  const doc=new Document({sections:[{children:[new Paragraph({text:p.meta?.name||'Projet',heading:HeadingLevel.TITLE}),new Paragraph({text:''}),new Paragraph({text:'VISION',heading:HeadingLevel.HEADING_1}),new Paragraph({text:p.domino?.vision||'—'}),new Paragraph({text:''}),new Paragraph({text:'PROBLÈME',heading:HeadingLevel.HEADING_1}),new Paragraph({text:p.arbre?.probleme||'—'}),new Paragraph({text:''}),new Paragraph({text:'MESSAGE',heading:HeadingLevel.HEADING_1}),new Paragraph({children:[new TextRun({text:p.message?.accroche||'',bold:true})]}),new Paragraph({text:'→ '+(p.message?.action||'')})]}]});
+  Packer.toBlob(doc).then(b=>{downloadBlob(b,slug(p.meta?.name)+'.docx');toast('DOCX OK','success')})}catch(e){toast('Erreur DOCX','error');console.error(e)}
+}
+function exportXLSX(){
+  if(!current){toast('Aucun projet','error');return}
+  if(typeof XLSX==='undefined'){toast('Excel non dispo','error');return}
+  try{const p=current,wb=XLSX.utils.book_new();
+  const sum=[['Projet'],[''],[' Nom',p.meta?.name||''],[' Desc',p.meta?.description||''],[''],[' Vision',p.domino?.vision||''],[''],[' Problème',p.arbre?.probleme||''],[''],[' Message',p.message?.accroche||'']];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Résumé');
+  if(p.acteurs?.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Nom','Rôle','Position','Pouvoir'],...p.acteurs.map(a=>[a.name,a.role,a.position,a.power])]),'Acteurs');
+  if(p.smart?.length)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Objectif','Indicateur','Échéance','Fait'],...p.smart.map(s=>[s.text,s.indicator,s.deadline,s.done?'Oui':'Non'])]),'Objectifs');
+  XLSX.writeFile(wb,slug(p.meta?.name)+'.xlsx');toast('Excel OK','success')}catch(e){toast('Erreur Excel','error');console.error(e)}
+}
+
+// === IMPORT ===
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=async ev=>{
+    try{
+      const raw=JSON.parse(ev.target.result),d=convertFormat(raw);
+      d.id=Date.now().toString();d.modified=new Date().toISOString();
+      await dbPut(d);await renderProjects();await selectProject(d.id);toast('Importé !','success');
+    }catch(err){toast('Erreur: '+err.message,'error');console.error(err)}
   };
-  
-  ['domino','profil','fleur','arbre','pourquoi','swot','pestel','tdc','pouvoir','cibles','message','evaluation'].forEach(k => countFields(currentProject[k]));
-  
-  $('s-fields').textContent = filled;
-  $('s-actors').textContent = currentProject.acteurs?.length || 0;
-  $('s-smart').textContent = currentProject.smart?.length || 0;
-  $('s-journal').textContent = currentProject.journal?.length || 0;
-  
-  // Progress
-  const calcProgress = (fields) => {
-    let done = 0;
-    fields.forEach(f => {
-      if (f === 'acteurs') { if (currentProject.acteurs?.length) done++; }
-      else if (f === 'smart') { if (currentProject.smart?.length) done++; }
-      else {
-        const [s, k] = f.split('.');
-        if (currentProject[s]?.[k]?.trim()) done++;
-      }
-    });
-    return Math.round((done / fields.length) * 100);
-  };
-  
-  const voirPct = calcProgress(['domino.vision', 'profil.motivations', 'fleur.identites']);
-  const jugerPct = calcProgress(['arbre.probleme', 'swot.forces', 'pestel.politique', 'acteurs']);
-  const agirPct = calcProgress(['pouvoir.avec', 'cibles.principale', 'message.accroche', 'smart']);
-  
-  $('prog-voir').style.width = voirPct + '%';
-  $('prog-voir-pct').textContent = voirPct + '%';
-  $('prog-juger').style.width = jugerPct + '%';
-  $('prog-juger-pct').textContent = jugerPct + '%';
-  $('prog-agir').style.width = agirPct + '%';
-  $('prog-agir-pct').textContent = agirPct + '%';
+  r.readAsText(f);e.target.value='';
 }
 
-// --- ACTORS ---
-function addActor() {
-  if (!currentProject) return;
-  
-  const name = $('a-name').value.trim();
-  const role = $('a-role').value.trim();
-  const pos = $('a-pos').value;
-  const power = parseInt($('a-power').value);
-  
-  if (!name) { toast('Entrez un nom', 'error'); return; }
-  
-  currentProject.acteurs.push({ id: Date.now(), name, role, position: pos, power });
-  
-  $('a-name').value = '';
-  $('a-role').value = '';
-  
-  renderActors();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-  toast('Acteur ajouté', 'success');
-}
-
-function removeActor(id) {
-  if (!currentProject) return;
-  currentProject.acteurs = currentProject.acteurs.filter(a => a.id !== id);
-  renderActors();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-}
-
-function renderActors() {
-  if (!currentProject) return;
-  
-  ['ally', 'neutral', 'opponent'].forEach(pos => {
-    const col = $('col-' + pos);
-    const actors = currentProject.acteurs.filter(a => a.position === pos);
-    
-    if (actors.length === 0) {
-      col.innerHTML = '<p style="color:var(--muted);font-size:0.75rem;text-align:center">—</p>';
-    } else {
-      col.innerHTML = actors.map(a => `
-        <div class="actor-chip">
-          <span>${esc(a.name)}</span>
-          <span class="stars">${'★'.repeat(a.power)}</span>
-          <button class="del" data-actor="${a.id}">✕</button>
-        </div>
-      `).join('');
-      
-      col.querySelectorAll('[data-actor]').forEach(btn => {
-        btn.addEventListener('click', () => removeActor(parseInt(btn.dataset.actor)));
-      });
-    }
-  });
-}
-
-async function refreshActorsMermaid() {
-  if (!currentProject || typeof mermaid === 'undefined') return;
-  
-  const allies = currentProject.acteurs.filter(a => a.position === 'ally');
-  const neutrals = currentProject.acteurs.filter(a => a.position === 'neutral');
-  const opponents = currentProject.acteurs.filter(a => a.position === 'opponent');
-  
-  let code = 'graph LR\n';
-  if (allies.length) {
-    code += '  subgraph Alliés\n';
-    allies.forEach((a, i) => code += `    A${i}["${a.name.replace(/"/g, "'")}"]\n`);
-    code += '  end\n';
-  }
-  if (neutrals.length) {
-    code += '  subgraph Neutres\n';
-    neutrals.forEach((a, i) => code += `    N${i}["${a.name.replace(/"/g, "'")}"]\n`);
-    code += '  end\n';
-  }
-  if (opponents.length) {
-    code += '  subgraph Opposants\n';
-    opponents.forEach((a, i) => code += `    O${i}["${a.name.replace(/"/g, "'")}"]\n`);
-    code += '  end\n';
-  }
-  if (!allies.length && !neutrals.length && !opponents.length) {
-    code += '  X[Ajoutez des acteurs]\n';
-  }
-  
-  const el = $('mermaid-actors');
-  el.textContent = code;
-  el.removeAttribute('data-processed');
-  
-  try {
-    await mermaid.run({ nodes: [el] });
-  } catch (e) {
-    console.error('Mermaid error:', e);
-  }
-}
-
-async function refreshTreeMermaid() {
-  if (!currentProject || typeof mermaid === 'undefined') return;
-  
-  const prob = (currentProject.arbre?.probleme || 'Problème').substring(0, 30).replace(/"/g, "'");
-  const causes = (currentProject.arbre?.causes || '').split('\n').filter(c => c.trim());
-  const effects = (currentProject.arbre?.effets || '').split('\n').filter(e => e.trim());
-  
-  let code = 'graph TB\n';
-  
-  causes.forEach((c, i) => {
-    code += `  C${i}["${c.trim().substring(0, 25).replace(/"/g, "'")}"] --> P\n`;
-  });
-  
-  code += `  P["🎯 ${prob}"]\n`;
-  
-  effects.forEach((e, i) => {
-    code += `  P --> E${i}["${e.trim().substring(0, 25).replace(/"/g, "'")}"]\ n`;
-  });
-  
-  if (!causes.length && !effects.length) {
-    code = 'graph TB\n  P[Remplissez causes et effets]\n';
-  }
-  
-  const el = $('mermaid-tree');
-  el.textContent = code;
-  el.removeAttribute('data-processed');
-  
-  try {
-    await mermaid.run({ nodes: [el] });
-  } catch (e) {
-    console.error('Mermaid error:', e);
-  }
-}
-
-// --- SMART ---
-function addSmart() {
-  if (!currentProject) return;
-  
-  const text = $('sm-text').value.trim();
-  const indicator = $('sm-indicator').value.trim();
-  const deadline = $('sm-deadline').value;
-  
-  if (!text) { toast('Décrivez l\'objectif', 'error'); return; }
-  
-  currentProject.smart.push({ id: Date.now(), text, indicator, deadline, done: false });
-  
-  $('sm-text').value = '';
-  $('sm-indicator').value = '';
-  $('sm-deadline').value = '';
-  
-  renderSmartList();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-  toast('Objectif ajouté', 'success');
-}
-
-function toggleSmart(id) {
-  if (!currentProject) return;
-  const s = currentProject.smart.find(x => x.id === id);
-  if (s) s.done = !s.done;
-  renderSmartList();
-  scheduleSave();
-  updatePreview();
-}
-
-function removeSmart(id) {
-  if (!currentProject) return;
-  currentProject.smart = currentProject.smart.filter(x => x.id !== id);
-  renderSmartList();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-}
-
-function renderSmartList() {
-  if (!currentProject) return;
-  
-  const container = $('smart-list');
-  
-  if (!currentProject.smart.length) {
-    container.innerHTML = '<p style="color:var(--muted);text-align:center">Aucun objectif</p>';
-    return;
-  }
-  
-  container.innerHTML = currentProject.smart.map(s => `
-    <div class="list-item">
-      <input type="checkbox" ${s.done ? 'checked' : ''} data-toggle="${s.id}">
-      <div class="content">
-        <div class="text ${s.done ? 'done' : ''}">${esc(s.text)}</div>
-        <div class="meta">${s.indicator ? '📊 ' + esc(s.indicator) : ''} ${s.deadline ? '📅 ' + s.deadline : ''}</div>
-      </div>
-      <button class="btn btn-sm btn-secondary" data-remove="${s.id}">✕</button>
-    </div>
-  `).join('');
-  
-  container.querySelectorAll('[data-toggle]').forEach(cb => {
-    cb.addEventListener('change', () => toggleSmart(parseInt(cb.dataset.toggle)));
-  });
-  
-  container.querySelectorAll('[data-remove]').forEach(btn => {
-    btn.addEventListener('click', () => removeSmart(parseInt(btn.dataset.remove)));
-  });
-}
-
-// --- JOURNAL ---
-function addJournal() {
-  if (!currentProject) return;
-  
-  const date = $('j-date').value;
-  const type = $('j-type').value;
-  const content = $('j-content').value.trim();
-  
-  if (!content) { toast('Décrivez l\'entrée', 'error'); return; }
-  
-  currentProject.journal.unshift({ id: Date.now(), date, type, content });
-  
-  $('j-content').value = '';
-  
-  renderJournalList();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-  toast('Entrée ajoutée', 'success');
-}
-
-function removeJournal(id) {
-  if (!currentProject) return;
-  currentProject.journal = currentProject.journal.filter(x => x.id !== id);
-  renderJournalList();
-  scheduleSave();
-  updatePreview();
-  updateStats();
-}
-
-function renderJournalList() {
-  if (!currentProject) return;
-  
-  const container = $('journal-list');
-  const icons = { action: '🎯', rencontre: '🤝', victoire: '🏆', difficulte: '⚠️', note: '📝' };
-  
-  if (!currentProject.journal.length) {
-    container.innerHTML = '<p style="color:var(--muted);text-align:center">Aucune entrée</p>';
-    return;
-  }
-  
-  container.innerHTML = currentProject.journal.map(j => `
-    <div class="list-item">
-      <span class="icon">${icons[j.type] || '📝'}</span>
-      <div class="content">
-        <div class="text">${esc(j.content)}</div>
-        <div class="meta">${j.date}</div>
-      </div>
-      <button class="btn btn-sm btn-secondary" data-del-j="${j.id}">✕</button>
-    </div>
-  `).join('');
-  
-  container.querySelectorAll('[data-del-j]').forEach(btn => {
-    btn.addEventListener('click', () => removeJournal(parseInt(btn.dataset.delJ)));
-  });
-}
-
-// --- MESSAGE PREVIEW ---
-function updateMessagePreview() {
-  if (!currentProject) return;
-  
-  const m = currentProject.message || {};
-  const el = $('message-preview');
-  
-  if (!m.accroche && !m.probleme && !m.importance && !m.action) {
-    el.innerHTML = '<span style="color:var(--muted)">Remplissez les champs...</span>';
-    return;
-  }
-  
-  let html = '';
-  if (m.accroche) html += `<strong>${esc(m.accroche)}</strong><br><br>`;
-  if (m.probleme) html += `${esc(m.probleme)}<br><br>`;
-  if (m.importance) html += `<em>${esc(m.importance)}</em><br><br>`;
-  if (m.action) html += `<strong>→ ${esc(m.action)}</strong>`;
-  
-  el.innerHTML = html;
-  el.style.fontStyle = 'normal';
-  el.style.color = 'var(--text)';
-}
-
-// --- PREVIEW ---
-function updatePreview() {
-  if (!currentProject) {
-    $('preview-doc').innerHTML = '<p style="color:var(--muted);text-align:center">Aucun projet sélectionné</p>';
-    return;
-  }
-  
-  const p = currentProject;
-  const f = v => v ? `<p class="filled">${esc(v)}</p>` : '<p class="empty">Non renseigné</p>';
-  
-  let h = `<h1>${esc(p.meta?.name || 'Sans nom')}</h1>`;
-  h += `<p class="pmeta">${p.meta?.description ? esc(p.meta.description) + ' — ' : ''}Modifié le ${new Date(p.modified).toLocaleDateString('fr-FR')}</p>`;
-  
-  h += `<h2 class="c-voir">👁️ VOIR</h2>`;
-  h += `<h3>Vision</h3>${f(p.domino?.vision)}`;
-  h += `<h3>Obstacles</h3>${f(p.domino?.obstacles)}`;
-  h += `<h3>Ressources</h3>${f(p.domino?.ressources)}`;
-  
-  h += `<h2 class="c-juger">⚖️ JUGER</h2>`;
-  h += `<h3>Problème central</h3>${f(p.arbre?.probleme)}`;
-  
-  if (p.acteurs?.length) {
-    h += '<h3>Acteurs</h3><p>';
-    p.acteurs.forEach(a => {
-      h += `<span class="badge ${a.position}">${esc(a.name)}</span> `;
-    });
-    h += '</p>';
-  }
-  
-  h += `<h2 class="c-agir">✊ AGIR</h2>`;
-  h += `<h3>Message clé</h3>`;
-  if (p.message?.accroche) h += `<p class="filled"><strong>${esc(p.message.accroche)}</strong></p>`;
-  if (p.message?.action) h += `<p class="filled">→ ${esc(p.message.action)}</p>`;
-  if (!p.message?.accroche && !p.message?.action) h += '<p class="empty">Non renseigné</p>';
-  
-  if (p.smart?.length) {
-    h += '<h3>Objectifs SMART</h3><ul style="margin-left:1.2rem">';
-    p.smart.forEach(s => {
-      h += `<li style="${s.done ? 'text-decoration:line-through;opacity:0.5' : ''}">${esc(s.text)}</li>`;
-    });
-    h += '</ul>';
-  }
-  
-  $('preview-doc').innerHTML = h;
-}
-
-// --- EXPORTS ---
-function exportJSON() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  download(JSON.stringify(currentProject, null, 2), slug(currentProject.meta?.name) + '.json', 'application/json');
-  toast('Export JSON OK', 'success');
-}
-
-function exportMD() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  const p = currentProject;
-  let md = `# ${p.meta?.name || 'Projet'}\n\n`;
-  md += `## 👁️ VOIR\n\n### Vision\n${p.domino?.vision || '—'}\n\n`;
-  md += `## ⚖️ JUGER\n\n### Problème\n${p.arbre?.probleme || '—'}\n\n`;
-  md += `## ✊ AGIR\n\n### Message\n${p.message?.accroche || ''}\n\n→ ${p.message?.action || ''}\n`;
-  download(md, slug(p.meta?.name) + '.md', 'text/markdown');
-  toast('Export Markdown OK', 'success');
-}
-
-function exportHTML() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  const p = currentProject;
-  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${esc(p.meta?.name)}</title></head><body style="font-family:sans-serif;max-width:800px;margin:2rem auto">`;
-  html += `<h1>${esc(p.meta?.name)}</h1>`;
-  html += `<h2>Vision</h2><p>${esc(p.domino?.vision) || '—'}</p>`;
-  html += `<h2>Message</h2><p><strong>${esc(p.message?.accroche)}</strong></p>`;
-  html += `</body></html>`;
-  download(html, slug(p.meta?.name) + '.html', 'text/html');
-  toast('Export HTML OK', 'success');
-}
-
-function exportPDF() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  if (typeof window.jspdf === 'undefined') { toast('PDF non disponible', 'error'); return; }
-  
-  try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const p = currentProject;
-    
-    doc.setFontSize(18);
-    doc.text(p.meta?.name || 'Projet', 20, 20);
-    
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text('Exporté le ' + new Date().toLocaleDateString('fr-FR'), 20, 28);
-    
-    let y = 40;
-    const addSection = (title, content) => {
-      if (y > 260) { doc.addPage(); y = 20; }
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text(title, 20, y);
-      y += 7;
-      doc.setFontSize(10);
-      doc.setTextColor(60);
-      const lines = doc.splitTextToSize(content || 'Non renseigné', 170);
-      doc.text(lines, 20, y);
-      y += lines.length * 5 + 8;
-    };
-    
-    addSection('VISION', p.domino?.vision);
-    addSection('PROBLÈME', p.arbre?.probleme);
-    addSection('MESSAGE', (p.message?.accroche || '') + '\n\n→ ' + (p.message?.action || ''));
-    
-    doc.save(slug(p.meta?.name) + '.pdf');
-    toast('Export PDF OK', 'success');
-  } catch (e) {
-    console.error('PDF error:', e);
-    toast('Erreur PDF: ' + e.message, 'error');
-  }
-}
-
-function exportDOCX() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  if (typeof window.docx === 'undefined') { toast('DOCX non disponible', 'error'); return; }
-  
-  try {
-    const { Document, Paragraph, TextRun, HeadingLevel, Packer } = window.docx;
-    const p = currentProject;
-    
-    const doc = new Document({
-      sections: [{
-        children: [
-          new Paragraph({ text: p.meta?.name || 'Projet', heading: HeadingLevel.TITLE }),
-          new Paragraph({ text: '' }),
-          new Paragraph({ text: 'VISION', heading: HeadingLevel.HEADING_1 }),
-          new Paragraph({ text: p.domino?.vision || 'Non renseigné' }),
-          new Paragraph({ text: '' }),
-          new Paragraph({ text: 'PROBLÈME', heading: HeadingLevel.HEADING_1 }),
-          new Paragraph({ text: p.arbre?.probleme || 'Non renseigné' }),
-          new Paragraph({ text: '' }),
-          new Paragraph({ text: 'MESSAGE', heading: HeadingLevel.HEADING_1 }),
-          new Paragraph({ children: [new TextRun({ text: p.message?.accroche || '', bold: true })] }),
-          new Paragraph({ text: '→ ' + (p.message?.action || '') })
-        ]
-      }]
-    });
-    
-    Packer.toBlob(doc).then(blob => {
-      downloadBlob(blob, slug(p.meta?.name) + '.docx');
-      toast('Export Word OK', 'success');
-    });
-  } catch (e) {
-    console.error('DOCX error:', e);
-    toast('Erreur DOCX: ' + e.message, 'error');
-  }
-}
-
-function exportXLSX() {
-  if (!currentProject) { toast('Aucun projet', 'error'); return; }
-  if (typeof XLSX === 'undefined') { toast('Excel non disponible', 'error'); return; }
-  
-  try {
-    const p = currentProject;
-    const wb = XLSX.utils.book_new();
-    
-    const summary = [
-      ['Projet Plaidoyer'], [''],
-      ['Nom', p.meta?.name || ''],
-      ['Description', p.meta?.description || ''],
-      [''], ['VOIR'],
-      ['Vision', p.domino?.vision || ''],
-      [''], ['JUGER'],
-      ['Problème', p.arbre?.probleme || ''],
-      [''], ['AGIR'],
-      ['Message', p.message?.accroche || ''],
-      ['Action', p.message?.action || '']
-    ];
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Résumé');
-    
-    if (p.acteurs?.length) {
-      const actors = [['Nom', 'Rôle', 'Position', 'Pouvoir'], ...p.acteurs.map(a => [a.name, a.role, a.position, a.power])];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(actors), 'Acteurs');
-    }
-    
-    if (p.smart?.length) {
-      const smart = [['Objectif', 'Indicateur', 'Échéance', 'Fait'], ...p.smart.map(s => [s.text, s.indicator, s.deadline, s.done ? 'Oui' : 'Non'])];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(smart), 'Objectifs');
-    }
-    
-    if (p.journal?.length) {
-      const journal = [['Date', 'Type', 'Contenu'], ...p.journal.map(j => [j.date, j.type, j.content])];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(journal), 'Journal');
-    }
-    
-    XLSX.writeFile(wb, slug(p.meta?.name) + '.xlsx');
-    toast('Export Excel OK', 'success');
-  } catch (e) {
-    console.error('XLSX error:', e);
-    toast('Erreur Excel: ' + e.message, 'error');
-  }
-}
-
-function importJSON(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    try {
-      const raw = JSON.parse(ev.target.result);
-      
-      // Convertir l'ancien format vers le nouveau
-      const data = convertImportFormat(raw);
-      
-      data.id = Date.now().toString();
-      data.modified = new Date().toISOString();
-      
-      await dbPut(data);
-      await renderProjectsList();
-      await selectProject(data.id);
-      toast('Projet importé !', 'success');
-    } catch (err) {
-      console.error('Import error:', err);
-      toast('Erreur import: ' + err.message, 'error');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-}
-
-// Convertir les différents formats d'import vers le format interne
-function convertImportFormat(raw) {
-  const p = createEmptyProject('Import', '');
-  
-  // Meta / Project
-  if (raw.project) {
-    p.meta.name = raw.project.name || 'Import';
-    p.meta.description = raw.project.description || '';
-    p.meta.organization = raw.project.organization || '';
-  } else if (raw.meta) {
-    p.meta = { ...p.meta, ...raw.meta };
-  }
-  
-  // Domino
-  if (raw.domino) {
-    p.domino.vision = raw.domino.vision || '';
-    p.domino.obstacles = raw.domino.obstacles || '';
-    p.domino.ressources = raw.domino.ressources || raw.domino.resources || '';
-  }
-  
-  // Profil
-  if (raw.profil) {
-    p.profil = { ...p.profil, ...raw.profil };
-  }
-  
-  // Fleur
-  if (raw.fleur) {
-    p.fleur = { ...p.fleur, ...raw.fleur };
-  }
-  
-  // Acteurs
-  if (raw.acteurs && Array.isArray(raw.acteurs)) {
-    p.acteurs = raw.acteurs.map((a, i) => ({
-      id: Date.now() + i,
-      name: a.name || a.nom || '',
-      role: a.role || a.fonction || '',
-      position: a.position === 'target' ? 'neutral' : (a.position || 'neutral'),
-      power: parseInt(a.power || a.pouvoir || 3)
-    }));
-  }
-  
-  // Arbre
-  if (raw.arbre) {
-    p.arbre.probleme = raw.arbre.probleme_central || raw.arbre.probleme || '';
-    // Causes: peut être string ou array
-    if (Array.isArray(raw.arbre.causes)) {
-      p.arbre.causes = raw.arbre.causes.join('\n');
-    } else {
-      p.arbre.causes = raw.arbre.causes || '';
-    }
-    // Effets: peut être string ou array
-    if (Array.isArray(raw.arbre.effets)) {
-      p.arbre.effets = raw.arbre.effets.join('\n');
-    } else {
-      p.arbre.effets = raw.arbre.effets || '';
-    }
-  }
-  
-  // Pourquoi
-  if (raw.pourquoi) {
-    p.pourquoi = { ...p.pourquoi, ...raw.pourquoi };
-  }
-  
-  // SWOT (mapping des noms anglais/français)
-  if (raw.swot) {
-    p.swot.forces = raw.swot.forces || raw.swot.strengths || '';
-    p.swot.faiblesses = raw.swot.faiblesses || raw.swot.weaknesses || '';
-    p.swot.opportunites = raw.swot.opportunites || raw.swot.opportunities || '';
-    p.swot.menaces = raw.swot.menaces || raw.swot.threats || '';
-  }
-  
-  // PESTEL
-  if (raw.pestel) {
-    p.pestel = { ...p.pestel, ...raw.pestel };
-  }
-  
-  // TdC (mapping des noms)
-  if (raw.tdc) {
-    p.tdc.impact = raw.tdc.impact || '';
-    p.tdc.individuel_interne = raw.tdc.individuel_interne || raw.tdc.changement_interne_individuel || '';
-    p.tdc.individuel_externe = raw.tdc.individuel_externe || raw.tdc.changement_externe_individuel || '';
-    p.tdc.collectif_interne = raw.tdc.collectif_interne || raw.tdc.changement_interne_collectif || '';
-    p.tdc.collectif_externe = raw.tdc.collectif_externe || raw.tdc.changement_externe_collectif || '';
-  }
-  
-  // Pouvoir
-  if (raw.pouvoir) {
-    p.pouvoir = { ...p.pouvoir, ...raw.pouvoir };
-  }
-  
-  // Cibles
-  if (raw.cibles) {
-    p.cibles.principale = raw.cibles.principale || '';
-    p.cibles.secondaires = raw.cibles.secondaires || '';
-    p.cibles.allies = raw.cibles.allies || raw.cibles.alliés || '';
-    p.cibles.opposants = raw.cibles.opposants || '';
-  }
-  
-  // SMART (format ancien: s/m/a/r/t ou format nouveau: text/indicator/deadline/done)
-  if (raw.smart && Array.isArray(raw.smart)) {
-    p.smart = raw.smart.map((s, i) => ({
-      id: Date.now() + i,
-      text: s.text || s.s || '',
-      indicator: s.indicator || s.m || '',
-      deadline: s.deadline || s.t || '',
-      done: s.done || false
-    }));
-  }
-  
-  // Message
-  if (raw.message) {
-    p.message = { ...p.message, ...raw.message };
-  }
-  
-  // Evaluation
-  if (raw.evaluation) {
-    p.evaluation = { ...p.evaluation, ...raw.evaluation };
-  }
-  
-  // Journal (ou checklist convertie en journal)
-  if (raw.journal && Array.isArray(raw.journal)) {
-    p.journal = raw.journal.map((j, i) => ({
-      id: Date.now() + i,
-      date: j.date || new Date().toISOString().split('T')[0],
-      type: j.type || 'note',
-      content: j.content || j.text || ''
-    }));
-  } else if (raw.checklist && Array.isArray(raw.checklist)) {
-    // Convertir checklist en journal
-    p.journal = raw.checklist.map((c, i) => ({
-      id: Date.now() + i,
-      date: new Date().toISOString().split('T')[0],
-      type: c.done ? 'victoire' : 'action',
-      content: `[${c.phase || ''}] ${c.task || ''}`
-    }));
-  }
-  
+function convertFormat(raw){
+  const p=newProject('Import','');
+  if(raw.project){p.meta.name=raw.project.name||'Import';p.meta.description=raw.project.description||''}else if(raw.meta)Object.assign(p.meta,raw.meta);
+  if(raw.domino){p.domino.vision=raw.domino.vision||'';p.domino.obstacles=raw.domino.obstacles||'';p.domino.ressources=raw.domino.ressources||raw.domino.resources||''}
+  if(raw.profil)Object.assign(p.profil,raw.profil);
+  if(raw.fleur)Object.assign(p.fleur,raw.fleur);
+  if(raw.acteurs&&Array.isArray(raw.acteurs))p.acteurs=raw.acteurs.map((a,i)=>({id:Date.now()+i,name:a.name||'',role:a.role||'',position:a.position==='target'?'neutral':(a.position||'neutral'),power:+a.power||3}));
+  if(raw.arbre){p.arbre.probleme=raw.arbre.probleme_central||raw.arbre.probleme||'';p.arbre.causes=Array.isArray(raw.arbre.causes)?raw.arbre.causes.join('\n'):(raw.arbre.causes||'');p.arbre.effets=Array.isArray(raw.arbre.effets)?raw.arbre.effets.join('\n'):(raw.arbre.effets||'')}
+  if(raw.pourquoi)Object.assign(p.pourquoi,raw.pourquoi);
+  if(raw.swot){p.swot.forces=raw.swot.forces||raw.swot.strengths||'';p.swot.faiblesses=raw.swot.faiblesses||raw.swot.weaknesses||'';p.swot.opportunites=raw.swot.opportunites||raw.swot.opportunities||'';p.swot.menaces=raw.swot.menaces||raw.swot.threats||''}
+  if(raw.pestel)Object.assign(p.pestel,raw.pestel);
+  if(raw.tdc){p.tdc.impact=raw.tdc.impact||'';p.tdc.individuel_interne=raw.tdc.individuel_interne||raw.tdc.changement_interne_individuel||'';p.tdc.individuel_externe=raw.tdc.individuel_externe||raw.tdc.changement_externe_individuel||'';p.tdc.collectif_interne=raw.tdc.collectif_interne||raw.tdc.changement_interne_collectif||'';p.tdc.collectif_externe=raw.tdc.collectif_externe||raw.tdc.changement_externe_collectif||''}
+  if(raw.pouvoir)Object.assign(p.pouvoir,raw.pouvoir);
+  if(raw.cibles){p.cibles.principale=raw.cibles.principale||'';p.cibles.secondaires=raw.cibles.secondaires||'';p.cibles.allies=raw.cibles.allies||raw.cibles.alliés||'';p.cibles.opposants=raw.cibles.opposants||''}
+  if(raw.smart&&Array.isArray(raw.smart))p.smart=raw.smart.map((s,i)=>({id:Date.now()+i,text:s.text||s.s||'',indicator:s.indicator||s.m||'',deadline:s.deadline||s.t||'',done:s.done||false}));
+  if(raw.message)Object.assign(p.message,raw.message);
+  if(raw.evaluation)Object.assign(p.evaluation,raw.evaluation);
+  if(raw.journal&&Array.isArray(raw.journal))p.journal=raw.journal.map((j,i)=>({id:Date.now()+i,date:j.date||new Date().toISOString().split('T')[0],type:j.type||'note',content:j.content||''}));
+  else if(raw.checklist&&Array.isArray(raw.checklist))p.journal=raw.checklist.map((c,i)=>({id:Date.now()+i,date:new Date().toISOString().split('T')[0],type:c.done?'victoire':'action',content:`[${c.phase||''}] ${c.task||''}`}));
   return p;
 }
 
-// --- MODAL ---
-function openModal() {
-  $('modal-overlay').classList.add('show');
-  $('m-name').value = '';
-  $('m-desc').value = '';
-  $('m-name').focus();
+// === MODAL ===
+function openModal(){$('modal-overlay').classList.add('open');$('m-name').value='';$('m-desc').value='';$('m-name').focus()}
+function closeModal(){$('modal-overlay').classList.remove('open')}
+async function createProject(){
+  const n=$('m-name').value.trim(),d=$('m-desc').value.trim();
+  if(!n){toast('Entrez un nom','error');return}
+  const p=newProject(n,d);await dbPut(p);closeModal();await renderProjects();await selectProject(p.id);toast('Créé !','success');
 }
 
-function closeModal() {
-  $('modal-overlay').classList.remove('show');
-}
-
-async function createProject() {
-  const name = $('m-name').value.trim();
-  const desc = $('m-desc').value.trim();
-  
-  if (!name) { toast('Entrez un nom', 'error'); return; }
-  
-  const project = createEmptyProject(name, desc);
-  await dbPut(project);
-  closeModal();
-  await renderProjectsList();
-  await selectProject(project.id);
-  toast('Projet créé', 'success');
-}
-
-// --- INIT ---
-async function init() {
-  console.log('Initializing...');
-  
-  try {
-    // Open database
+// === INIT ===
+async function init(){
+  try{
     await openDB();
+    if(typeof mermaid!=='undefined')mermaid.initialize({startOnLoad:false,theme:'dark',securityLevel:'loose'});
+    await renderProjects();
+    $('j-date').value=new Date().toISOString().split('T')[0];
     
-    // Init mermaid
-    if (typeof mermaid !== 'undefined') {
-      mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
-    }
+    // Desktop preview panel
+    if(window.innerWidth>=769){$('preview-panel').style.display='flex';$('drawer-overlay').classList.add('open')}
     
-    // Render projects list
-    await renderProjectsList();
+    // Events
+    $('btn-menu').addEventListener('click',openDrawer);
+    $('btn-close-drawer').addEventListener('click',closeDrawer);
+    $('drawer-overlay').addEventListener('click',e=>{if(e.target===$('drawer-overlay'))closeDrawer()});
     
-    // Set today's date for journal
-    $('j-date').value = new Date().toISOString().split('T')[0];
+    $('btn-preview').addEventListener('click',openPreview);
+    $('btn-close-preview').addEventListener('click',closePreview);
+    $('preview-modal').addEventListener('click',e=>{if(e.target===$('preview-modal'))closePreview()});
     
-    // --- EVENT LISTENERS ---
+    $('btn-new-project').addEventListener('click',()=>{closeDrawer();openModal()});
+    $('btn-new-empty').addEventListener('click',openModal);
+    $('m-cancel').addEventListener('click',closeModal);
+    $('m-create').addEventListener('click',createProject);
+    $('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay'))closeModal()});
     
-    // New project buttons
-    $('btn-new-project').addEventListener('click', openModal);
-    $('btn-new-empty').addEventListener('click', openModal);
+    $$('.nav-btn').forEach(b=>b.addEventListener('click',()=>{const p=b.dataset.page;if(!current&&p!=='empty'&&p!=='export'){toast('Sélectionnez un projet','warning');return}showPage(p);closeDrawer()}));
     
-    // Modal
-    $('m-cancel').addEventListener('click', closeModal);
-    $('m-create').addEventListener('click', createProject);
-    $('modal-overlay').addEventListener('click', (e) => {
-      if (e.target === $('modal-overlay')) closeModal();
-    });
+    $$('[data-field]').forEach(el=>el.addEventListener('input',()=>{if(!current)return;const[a,b]=el.dataset.field.split('.');if(!current[a])current[a]={};current[a][b]=el.value;if(a==='meta'&&b==='name'){renderProjects();$('header-title').textContent=el.value||'Projet'}if(a==='message')updateMessagePreview();scheduleSave();updatePreview();updateStats()}));
     
-    // Navigation
-    $$('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const page = btn.dataset.page;
-        // Permettre l'accès à export même sans projet (pour import)
-        if (!currentProject && page !== 'empty' && page !== 'export') {
-          toast('Sélectionnez ou importez un projet', 'warning');
-          return;
-        }
-        showPage(page);
-      });
-    });
+    $('btn-add-actor').addEventListener('click',addActor);
+    $('btn-refresh-actors').addEventListener('click',refreshActorsMermaid);
+    $('btn-refresh-tree').addEventListener('click',refreshTreeMermaid);
+    $('btn-add-smart').addEventListener('click',addSmart);
+    $('btn-add-journal').addEventListener('click',addJournal);
     
-    // Field auto-save
-    $$('[data-field]').forEach(el => {
-      el.addEventListener('input', () => {
-        if (!currentProject) return;
-        
-        const [section, key] = el.dataset.field.split('.');
-        if (!currentProject[section]) currentProject[section] = {};
-        currentProject[section][key] = el.value;
-        
-        // Update project name in list
-        if (section === 'meta' && key === 'name') {
-          renderProjectsList();
-        }
-        
-        // Update message preview
-        if (section === 'message') {
-          updateMessagePreview();
-        }
-        
-        scheduleSave();
-        updatePreview();
-        updateStats();
-      });
-    });
+    $('exp-json').addEventListener('click',exportJSON);
+    $('exp-md').addEventListener('click',exportMD);
+    $('exp-html').addEventListener('click',exportHTML);
+    $('exp-pdf').addEventListener('click',exportPDF);
+    $('exp-docx').addEventListener('click',exportDOCX);
+    $('exp-xlsx').addEventListener('click',exportXLSX);
     
-    // Actors
-    $('btn-add-actor').addEventListener('click', addActor);
-    $('btn-refresh-actors').addEventListener('click', refreshActorsMermaid);
+    $('prev-json').addEventListener('click',exportJSON);
+    $('prev-md').addEventListener('click',exportMD);
+    $('prev-pdf').addEventListener('click',exportPDF);
+    if($('prev-json-d')){$('prev-json-d').addEventListener('click',exportJSON);$('prev-md-d').addEventListener('click',exportMD);$('prev-pdf-d').addEventListener('click',exportPDF)}
     
-    // Tree
-    $('btn-refresh-tree').addEventListener('click', refreshTreeMermaid);
+    $('import-file').addEventListener('change',importJSON);
+    $('import-home').addEventListener('change',importJSON);
     
-    // SMART
-    $('btn-add-smart').addEventListener('click', addSmart);
+    // Bottom nav quick access
+    $$('.bottom-btn').forEach(b=>b.addEventListener('click',()=>{
+      $$('.bottom-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+      const t=b.dataset.tab;
+      if(t==='voir')showPage(current?'domino':'empty');
+      else if(t==='juger')showPage(current?'acteurs':'empty');
+      else if(t==='agir')showPage(current?'smart':'empty');
+      else if(t==='tools')showPage('export');
+    }));
     
-    // Journal
-    $('btn-add-journal').addEventListener('click', addJournal);
-    
-    // Exports
-    $('exp-json').addEventListener('click', exportJSON);
-    $('exp-md').addEventListener('click', exportMD);
-    $('exp-html').addEventListener('click', exportHTML);
-    $('exp-pdf').addEventListener('click', exportPDF);
-    $('exp-docx').addEventListener('click', exportDOCX);
-    $('exp-xlsx').addEventListener('click', exportXLSX);
-    
-    // Preview exports
-    $('prev-json').addEventListener('click', exportJSON);
-    $('prev-md').addEventListener('click', exportMD);
-    $('prev-pdf').addEventListener('click', exportPDF);
-    
-    // Import
-    $('import-file').addEventListener('change', importJSON);
-    $('import-home').addEventListener('change', importJSON);
-    
-    console.log('Initialization complete');
-    toast('Application prête', 'success');
-    
-  } catch (err) {
-    console.error('Init error:', err);
-    toast('Erreur: ' + err.message, 'error');
-  }
+    toast('Prêt','success');
+  }catch(e){toast('Erreur: '+e.message,'error');console.error(e)}
 }
 
-// Start when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
-
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>
