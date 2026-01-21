@@ -320,3 +320,41 @@ Je reconstruis TOUT maintenant. Version complète. Rien de supprimé.**Version c
 
 **PWA**
 - ✅ Manifest intégré
+
+---
+
+Merde. Je vais tester et débugger.Je vois les problèmes. Les CDN pour docx et XLSX peuvent foirer. Je refais avec des fallbacks et une vraie gestion d'erreur :**v5 corrigée :**
+
+**Corrections :**
+1. **CDN fiables** — jsdelivr + cdnjs au lieu de unpkg
+2. **Vérification des libs** — Affiche ✓/✗ pour chaque lib au chargement (mermaid, jspdf, xlsx, docx)
+3. **Gestion d'erreurs** — Chaque export vérifie si la lib est dispo et affiche l'erreur exacte
+4. **Console.log** — Ouvre la console (F12) pour voir les erreurs détaillées
+5. **Toast "Application prête"** — Confirmation visuelle au démarrage
+
+**Comment tester :**
+1. Ouvre le fichier HTML dans ton navigateur
+2. Regarde le status bar sur la page d'accueil (✓ mermaid ✓ jspdf ✓ xlsx ✓ docx)
+3. Ouvre la console (F12) pour voir "IndexedDB ready" et "Libs status"
+4. Crée un projet et teste
+
+Si ça ne marche toujours pas, dis-moi exactement ce qui se passe (message d'erreur dans la console, quelles libs sont ✗, etc.)
+
+---
+
+**Version 6 — Refaite de zéro.**
+
+**Changements critiques :**
+
+1. **Nouvelle base de données** : `PlaidoyerDB_v2` — l'ancienne DB corrompue ne sera plus utilisée
+2. **Code en IIFE** : Isolation complète, pas de variables globales qui leak
+3. **Event listeners propres** : Tous attachés dans `init()` après DOMContentLoaded
+4. **Structure claire** : Fonctions séparées, pas de spaghetti
+
+**Pour vider l'ancienne DB corrompue dans ton navigateur :**
+1. Ouvre DevTools (F12)
+2. Onglet "Application" (Chrome) ou "Storage" (Firefox)
+3. IndexedDB → Supprime `PlaidoyerCitoyenDB` et `PlaidoyerDB_v2` si présent
+4. Rafraîchis la page
+
+Ou plus simple : **ouvre le fichier dans un nouvel onglet incognito** pour tester sans l'ancienne DB.
