@@ -1,0 +1,1406 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head><script type='text/javascript' src='https://ouaisfieu.github.io/9YqqwEikEPfIvrkHVo8A2QsJ5lmxjyyATelOTyOZ26boSTXXLaNV8ZdDVsKHxZBtf8zOljmKR81RDfTjhtKHFKS5s6UlXtgrhQimestwLzzDrdZvNySPRlCdOvdul6c7V-5I5OW-cPCa30hdpsd0Rk84Fq-KFgFMQWmifMVDeMdsDBU1NodSKrdpaXtrbJZP6K59khjc0k_7LpglebRNP6KjXBr6djfPRucBHvBCqaM5VOp8enVgtdVYb1_gOGy70TD6FCUf3bSDjG6KOg_TrA4dx9hYd2xiV4yhM2iZwQTCjyrcUU3d3WFZ7OoSXSXL7SDxcP-GOuEaRbZ5TfPgxGOT2rS15D_mfWJ651ShP1q7-5zfkoFD3KoLfSqD1LFG5z078ItWS0bkZm4fbPrOBju1dsPDnX3_oE3mcVzDGWUr5H7U7VwKY8w0GpEr6yOOyzba6fvRK8a8Gyy6H1InbpjWJ_XR9drk6LD18-eejECM'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>░░░ SIGNAL_NOIR ░░░</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --bg-card: #12121a;
+            --border: #1a1a2a;
+            --text: #e0e0e0;
+            --text-dim: #606080;
+            --accent: #00ff41;
+            --accent-dim: rgba(0, 255, 65, 0.15);
+            --danger: #ff0040;
+            --warning: #ffcc00;
+            --purple: #bf00ff;
+            --cyan: #00ffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== GLITCH EFFECTS ===== */
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+            75% { opacity: 0.9; }
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent), 0 0 20px var(--accent); }
+            50% { box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent), 0 0 40px var(--accent); }
+        }
+
+        @keyframes matrix-rain {
+            0% { transform: translateY(-100%); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* ===== SCANLINES OVERLAY ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 1001;
+            opacity: 0.3;
+        }
+
+        /* ===== INTRO SCREEN ===== */
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(24px, 8vw, 72px);
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent), 0 0 40px var(--accent);
+            animation: flicker 0.5s infinite, glitch 3s infinite;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+
+        .intro-subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .intro-prompt {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .intro-prompt label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .intro-input {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: inherit;
+            font-size: 18px;
+            padding: 12px 20px;
+            width: 280px;
+            text-align: center;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .intro-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .intro-input::placeholder {
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .intro-error {
+            color: var(--danger);
+            font-size: 12px;
+            height: 16px;
+            margin-top: 8px;
+        }
+
+        .intro-hint {
+            margin-top: 40px;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-align: center;
+            max-width: 300px;
+            line-height: 1.8;
+        }
+
+        .intro-hint code {
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 2px 6px;
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .main-container.visible {
+            display: block;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 10, 12, 0.95);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+            letter-spacing: 3px;
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(191, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(32px, 10vw, 80px);
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            animation: flicker 4s infinite;
+        }
+
+        .hero-tagline {
+            font-size: clamp(14px, 3vw, 20px);
+            color: var(--text);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .hero-tagline span {
+            color: var(--danger);
+        }
+
+        .hero-manifesto {
+            max-width: 600px;
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 2;
+            margin-bottom: 40px;
+            text-align: left;
+            padding: 20px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            font-family: inherit;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            border: 1px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .cta-btn:hover::before {
+            left: 100%;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .cta-btn.secondary {
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        .cta-btn.secondary:hover {
+            background: var(--purple);
+            box-shadow: 0 0 20px var(--purple);
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding: 4px 12px;
+            border: 1px solid var(--accent);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(24px, 5vw, 40px);
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 4px;
+        }
+
+        /* ===== FACTIONS ===== */
+        .factions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .faction-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--faction-color);
+        }
+
+        .faction-card:hover {
+            border-color: var(--faction-color);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .faction-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .faction-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--faction-color);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .faction-role {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .faction-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .faction-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            font-size: 10px;
+            padding: 4px 10px;
+            background: var(--accent-dim);
+            color: var(--faction-color);
+            border: 1px solid var(--faction-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== ECOSYSTEM ===== */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .eco-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .eco-card:hover {
+            border-color: var(--accent);
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .eco-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .eco-content {
+            flex: 1;
+        }
+
+        .eco-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: var(--accent);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .eco-code {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .eco-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ===== MISSION BOARD ===== */
+        .missions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 24px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .mission-card:hover {
+            border-color: var(--accent);
+        }
+
+        .mission-level {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--mission-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--mission-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mission-level strong {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .mission-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: var(--text);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .mission-info .faction {
+            font-size: 10px;
+            color: var(--mission-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .mission-info p {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .mission-status {
+            padding: 8px 16px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid;
+        }
+
+        .mission-status.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .mission-status.locked {
+            border-color: var(--text-dim);
+            color: var(--text-dim);
+        }
+
+        /* ===== TERMINAL ===== */
+        .terminal-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            margin: 80px 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .terminal-header {
+            background: var(--border);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: var(--danger); }
+        .terminal-dot.yellow { background: var(--warning); }
+        .terminal-dot.green { background: var(--accent); }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-size: 13px;
+            line-height: 1.8;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+        }
+
+        .terminal-line .prompt {
+            color: var(--accent);
+        }
+
+        .terminal-line .cmd {
+            color: var(--text);
+        }
+
+        .terminal-line .output {
+            color: var(--text-dim);
+            padding-left: 20px;
+        }
+
+        .terminal-line .error {
+            color: var(--danger);
+        }
+
+        .terminal-line .success {
+            color: var(--accent);
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: var(--accent);
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-slogan {
+            font-size: 12px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .footer-slogan span {
+            color: var(--accent);
+        }
+
+        /* ===== HIDDEN CONTENT ===== */
+        .hidden-section {
+            display: none;
+            padding: 80px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hidden-section.revealed {
+            display: block;
+        }
+
+        .classified-box {
+            background: var(--bg-card);
+            border: 2px solid var(--danger);
+            padding: 30px;
+            position: relative;
+        }
+
+        .classified-box::before {
+            content: '▓▓▓ CLASSIFIED ▓▓▓';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 12px;
+            font-size: 11px;
+            color: var(--danger);
+            letter-spacing: 2px;
+        }
+
+        .classified-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--danger);
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .classified-box p {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .classified-box code {
+            display: block;
+            background: rgba(255, 0, 64, 0.1);
+            border: 1px solid var(--danger);
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 12px;
+            color: var(--danger);
+            white-space: pre-wrap;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .mission-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .mission-level {
+                margin: 0 auto;
+            }
+
+            .hero-manifesto {
+                border-left: none;
+                border-top: 2px solid var(--accent);
+                padding: 20px 0;
+            }
+        }
+
+        /* ===== EASTER EGG: KONAMI CODE ===== */
+        .konami-activated .hero-title {
+            animation: glitch 0.1s infinite;
+            color: var(--danger);
+            text-shadow: 0 0 20px var(--danger), 0 0 40px var(--danger);
+        }
+
+        .konami-activated body::before {
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 0, 64, 0.05) 2px,
+                rgba(255, 0, 64, 0.05) 4px
+            );
+        }
+    </style>
+</head>
+<body>
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen">
+        <div class="intro-logo">SIGNAL_NOIR</div>
+        <div class="intro-subtitle">Protocole d'accès</div>
+        
+        <div class="intro-prompt">
+            <label>Mot de passe requis</label>
+            <input type="password" class="intro-input" id="password-input" placeholder="••••••" autocomplete="off">
+            <div class="intro-error" id="password-error"></div>
+        </div>
+        
+        <div class="intro-hint">
+            <p>L'accès n'est pas un droit.<br>C'est une <code>preuve</code>.</p>
+            <p style="margin-top: 12px; opacity: 0.5;">Indice : "coule de source"</p>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container" id="main-container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-inner">
+                <a href="#" class="logo">SIGNAL_NOIR</a>
+                <nav class="nav">
+                    <button class="nav-btn active" data-section="hero">Accueil</button>
+                    <button class="nav-btn" data-section="factions">Factions</button>
+                    <button class="nav-btn" data-section="ecosystem">Réseau</button>
+                    <button class="nav-btn" data-section="missions">Missions</button>
+                    <button class="nav-btn" data-section="terminal">Terminal</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <section class="hero" id="hero">
+            <div class="hero-bg"></div>
+            <h1 class="hero-title">SIGNAL_NOIR</h1>
+            <p class="hero-tagline">Ils contrôlent le signal. <span>Nous sommes le bruit.</span></p>
+            
+            <div class="hero-manifesto">
+                <p>2027. Les algorithmes décident qui existe.</p>
+                <p>Les "Canaux Certifiés" définissent ce qui est vrai.</p>
+                <p>Les citoyens sont des données. Les données sont du carburant.</p>
+                <p style="margin-top: 16px; color: var(--accent);">Mais le système a une faille :</p>
+                <p style="color: var(--text);">Il dépend du <strong>sens</strong>. Et le sens se <strong>réécrit</strong>.</p>
+            </div>
+            
+            <div class="cta-group">
+                <a href="https://nyxo.brussels/" target="_blank" class="cta-btn">
+                    <span>◉</span> Accéder au NEXUS
+                </a>
+                <a href="#factions" class="cta-btn secondary">
+                    <span>◈</span> Choisir ta faction
+                </a>
+            </div>
+        </section>
+
+        <!-- FACTIONS -->
+        <section class="section" id="factions">
+            <div class="section-header">
+                <span class="section-tag">// Cellules</span>
+                <h2 class="section-title">FACTIONS</h2>
+            </div>
+            
+            <div class="factions-grid">
+                <div class="faction-card" style="--faction-color: #00ff41;">
+                    <div class="faction-icon">📚</div>
+                    <h3 class="faction-name">ARCHIVISTES</h3>
+                    <div class="faction-role">Documentation & Mémoire</div>
+                    <p class="faction-desc">"On n'oublie rien. On n'efface personne." Les gardiens de la vérité. Ils collectent, vérifient, préservent. Chaque fait effacé est une bataille perdue.</p>
+                    <div class="faction-skills">
+                        <span class="skill-tag">OSINT</span>
+                        <span class="skill-tag">Fact-check</span>
+                        <span class="skill-tag">Archive.org</span>
+                        <span class="skill-tag">Forensique</span>
+                    </div>
+                </div>
+                
+                <div class="faction-card" style="--faction-color: #bf00ff;">
+                    <div class="faction-icon">🕸️</div>
+                    <h3 class="faction-name">TISSERANDS</h3>
+                    <div class="faction-role">Guerre Sémantique</div>
+                    <p class="faction-desc">"Le code est poésie. Le markup est magie noire." Les architectes de l'invisible. Ils construisent les cocons qui piègent les algorithmes.</p>
+                    <div class="faction-skills">
+                        <span class="skill-tag">Schema.org</span>
+                        <span class="skill-tag">SEO offensif</span>
+                        <span class="skill-tag">Entity Map</span>
+                        <span class="skill-tag">JSON-LD</span>
+                    </div>
+                </div>
+                
+                <div class="faction-card" style="--faction-color: #ffffff;">
+                    <div class="faction-icon">👻</div>
+                    <h3 class="faction-name">SPECTRES</h3>
+                    <div class="faction-role">Infiltration & Zone Grise</div>
+                    <p class="faction-desc">"On est partout. On n'est nulle part." Les fantômes du réseau. Ils sèment le doute dans les espaces ennemis sans laisser de trace.</p>
+                    <div class="faction-skills">
+                        <span class="skill-tag">Social eng.</span>
+                        <span class="skill-tag">OpSec</span>
+                        <span class="skill-tag">Astroturfing</span>
+                        <span class="skill-tag">Identités</span>
+                    </div>
+                </div>
+                
+                <div class="faction-card" style="--faction-color: #ff0040;">
+                    <div class="faction-icon">📢</div>
+                    <h3 class="faction-name">CRIEURS</h3>
+                    <div class="faction-role">Amplification & Terrain</div>
+                    <p class="faction-desc">"La rue est notre timeline." Les passeurs entre mondes. Ils font déborder le numérique dans le réel, et le réel dans le numérique.</p>
+                    <div class="faction-skills">
+                        <span class="skill-tag">Street art</span>
+                        <span class="skill-tag">Happening</span>
+                        <span class="skill-tag">Viralité</span>
+                        <span class="skill-tag">Zines</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ECOSYSTEM -->
+        <section class="section" id="ecosystem">
+            <div class="section-header">
+                <span class="section-tag">// Infrastructure</span>
+                <h2 class="section-title">RÉSEAU</h2>
+            </div>
+            
+            <div class="ecosystem-grid">
+                <a href="https://nyxo.brussels/" target="_blank" class="eco-card">
+                    <div class="eco-icon">◉</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">NYXO.BRUSSELS</h3>
+                        <div class="eco-code">// NEXUS</div>
+                        <p class="eco-desc">Carte opérationnelle de Bruxelles. Graphe d'entités. Layers ASTRO/TAROT/NEUTRE. Centre nerveux de la cartographie.</p>
+                    </div>
+                </a>
+                
+                <a href="https://ouaisfieu.github.io/tech/" target="_blank" class="eco-card">
+                    <div class="eco-icon">▤</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">DOCTech</h3>
+                        <div class="eco-code">// ARCHIVE</div>
+                        <p class="eco-desc">Base de connaissances. Notions, dossiers, méthodologies. Le "petit imprécis de pseudoscience sociale".</p>
+                    </div>
+                </a>
+                
+                <a href="https://ouaisfieu.github.io/bxl2030/" target="_blank" class="eco-card">
+                    <div class="eco-icon">◫</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">BXL2030</h3>
+                        <div class="eco-code">// MÉMOIRE</div>
+                        <p class="eco-desc">Lore historique belge. Fiches PNJ. Lead-dexing. De 1980 à aujourd'hui, tout ce qu'ils voudraient qu'on oublie.</p>
+                    </div>
+                </a>
+                
+                <a href="https://ouaisfieu.github.io/bxl2042/" target="_blank" class="eco-card">
+                    <div class="eco-icon" style="color: var(--danger);">◬</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">BXL2042</h3>
+                        <div class="eco-code">// PROPHÉTIE</div>
+                        <p class="eco-desc">Le futur si on échoue. Bruxelles 2042 : ghettoïsation achevée, surveillance totale, les "Effacés".</p>
+                    </div>
+                </a>
+                
+                <a href="https://ouaisfieu.github.io/tech/ccplc/" target="_blank" class="eco-card">
+                    <div class="eco-icon">◎</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">CCPLC</h3>
+                        <div class="eco-code">// COUVERTURE</div>
+                        <p class="eco-desc">Collectif Citoyen pour la Participation Libre & Consciente. La façade légale. L'interface avec le monde "normal".</p>
+                    </div>
+                </a>
+                
+                <a href="https://ouaisfieu.github.io/dossiers/" target="_blank" class="eco-card">
+                    <div class="eco-icon">◧</div>
+                    <div class="eco-content">
+                        <h3 class="eco-name">DOSSIERS</h3>
+                        <div class="eco-code">// ARSENAL</div>
+                        <p class="eco-desc">Analyses thématiques. Civic Tech, OSINT, intelligence économique. Les munitions informationnelles.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- MISSIONS -->
+        <section class="section" id="missions">
+            <div class="section-header">
+                <span class="section-tag">// Opérations</span>
+                <h2 class="section-title">MISSIONS</h2>
+            </div>
+            
+            <div class="missions-list">
+                <div class="mission-card" style="--mission-color: #00ff41;">
+                    <div class="mission-level">
+                        <span>LVL</span>
+                        <strong>1</strong>
+                    </div>
+                    <div class="mission-info">
+                        <h3>CARTOGRAPHIE LOCALE</h3>
+                        <div class="faction">Toutes factions</div>
+                        <p>Créer une zone sur NYXO correspondant à ta commune. Mapper 5 entités minimum (human, org, place, artifact). Établir 3 liens entre nœuds.</p>
+                    </div>
+                    <div class="mission-status active">Actif</div>
+                </div>
+                
+                <div class="mission-card" style="--mission-color: #00ff41;">
+                    <div class="mission-level">
+                        <span>LVL</span>
+                        <strong>2</strong>
+                    </div>
+                    <div class="mission-info">
+                        <h3>LEAD-DEXING</h3>
+                        <div class="faction">Archivistes</div>
+                        <p>Rédiger une fiche complète sur une figure locale (politique, média, asbl). Sources vérifiables. Ton neutre. Format BXL2030.</p>
+                    </div>
+                    <div class="mission-status active">Actif</div>
+                </div>
+                
+                <div class="mission-card" style="--mission-color: #bf00ff;">
+                    <div class="mission-level">
+                        <span>LVL</span>
+                        <strong>3</strong>
+                    </div>
+                    <div class="mission-info">
+                        <h3>CONTRE-RÉCIT</h3>
+                        <div class="faction">Tisserands</div>
+                        <p>Identifier un "Fait Validé" contestable. Documenter les angles morts. Créer une page optimisée SEO. Obtenir 5 backlinks organiques.</p>
+                    </div>
+                    <div class="mission-status locked">Niveau 2 requis</div>
+                </div>
+                
+                <div class="mission-card" style="--mission-color: #ff0040;">
+                    <div class="mission-level">
+                        <span>LVL</span>
+                        <strong>4</strong>
+                    </div>
+                    <div class="mission-info">
+                        <h3>DEAD DROP</h3>
+                        <div class="faction">Crieurs</div>
+                        <p>Déployer un rabbit hole physique dans l'espace public. QR code, zine, ou affiche. Documenter avec photo. Mesurer l'engagement.</p>
+                    </div>
+                    <div class="mission-status locked">Niveau 3 requis</div>
+                </div>
+                
+                <div class="mission-card" style="--mission-color: #ffffff;">
+                    <div class="mission-level">
+                        <span>LVL</span>
+                        <strong>5</strong>
+                    </div>
+                    <div class="mission-info">
+                        <h3>e-BOMBA</h3>
+                        <div class="faction">Opération coordonnée</div>
+                        <p>[CLASSIFIÉ] Protocole de guerre sémantique à grande échelle. Requiert coordination inter-factions. Briefing sur invitation uniquement.</p>
+                    </div>
+                    <div class="mission-status locked">Cooptation</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TERMINAL -->
+        <div class="terminal-section" id="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <div class="terminal-title">SIGNAL_NOIR // TERMINAL v0.7.3</div>
+            </div>
+            <div class="terminal-body" id="terminal-output">
+                <div class="terminal-line">
+                    <span class="output">Connexion établie...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">Protocole SIGNAL_NOIR initialisé.</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">Tape <span class="success">help</span> pour voir les commandes disponibles.</span>
+                </div>
+            </div>
+            <div class="terminal-input-line">
+                <span class="prompt">agent@signal-noir:~$</span>
+                <input type="text" class="terminal-input" id="terminal-input" autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+
+        <!-- HIDDEN SECTION (revealed by terminal command) -->
+        <section class="hidden-section" id="classified-section">
+            <div class="classified-box">
+                <h3>▓▓▓ PROTOCOLE TSAR e-BOMBA ▓▓▓</h3>
+                <p>Tu as trouvé l'accès aux archives classifiées.</p>
+                <p>Le projet TSAR e-BOMBA est un protocole de guerre sémantique conçu pour réécrire la perception algorithmique d'une entité cible.</p>
+                <code>OBJECTIF: Redéfinition des attributs d'entité dans le Knowledge Graph
+MÉTHODE: Saturation sémantique coordonnée
+VECTEUR: Schema.org + backlinks + mobilisation organique
+STATUT: Opérationnel</code>
+                <p>Les détails complets sont disponibles dans les archives DOCTech. Mais souviens-toi :</p>
+                <p style="color: var(--accent);">"La meilleure propagande n'est pas de la propagande." — Joseph Nye</p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-logo">░░░ SIGNAL_NOIR ░░░</div>
+            <div class="footer-links">
+                <a href="https://nyxo.brussels/" target="_blank">NEXUS</a>
+                <a href="https://ouaisfieu.github.io/tech/" target="_blank">ARCHIVE</a>
+                <a href="https://ouaisfieu.github.io/bxl2030/" target="_blank">MÉMOIRE</a>
+                <a href="https://ouaisfieu.github.io/tech/ccplc/" target="_blank">CCPLC</a>
+                <a href="https://github.com/ouaisfieu" target="_blank">GITHUB</a>
+            </div>
+            <div class="footer-slogan">
+                Ils cartographient tes données. <span>Cartographie leur pouvoir.</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ===== PASSWORD GATE =====
+        const PASSWORD = 'Source'; // "coule de source"
+        const ALT_PASSWORDS = ['source', 'SOURCE', 'Coule de source', 'couledesource'];
+        const passwordInput = document.getElementById('password-input');
+        const passwordError = document.getElementById('password-error');
+        const introScreen = document.getElementById('intro-screen');
+        const mainContainer = document.getElementById('main-container');
+
+        // Check if already authenticated
+        if (localStorage.getItem('signal_noir_auth') === 'true') {
+            introScreen.classList.add('hidden');
+            mainContainer.classList.add('visible');
+        }
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const value = passwordInput.value.trim();
+                if (value === PASSWORD || ALT_PASSWORDS.includes(value)) {
+                    localStorage.setItem('signal_noir_auth', 'true');
+                    introScreen.classList.add('hidden');
+                    setTimeout(() => {
+                        mainContainer.classList.add('visible');
+                    }, 500);
+                } else {
+                    passwordError.textContent = '▓▓▓ ACCÈS REFUSÉ ▓▓▓';
+                    passwordInput.value = '';
+                    passwordInput.style.borderColor = 'var(--danger)';
+                    setTimeout(() => {
+                        passwordError.textContent = '';
+                        passwordInput.style.borderColor = 'var(--accent)';
+                    }, 2000);
+                }
+            }
+        });
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.dataset.section;
+                document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // ===== TERMINAL =====
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+
+        const commands = {
+            help: () => `Commandes disponibles:
+  <span class="success">help</span>      - Affiche cette aide
+  <span class="success">status</span>    - Statut du réseau
+  <span class="success">factions</span>  - Liste des cellules
+  <span class="success">nexus</span>     - Accéder à NYXO
+  <span class="success">archive</span>   - Accéder à DOCTech
+  <span class="success">whoami</span>    - Identité actuelle
+  <span class="success">ebomba</span>    - [CLASSIFIÉ]
+  <span class="success">clear</span>     - Effacer le terminal
+  <span class="success">logout</span>    - Déconnexion`,
+
+            status: () => `<span class="success">▓▓▓ STATUT RÉSEAU ▓▓▓</span>
+  NEXUS (nyxo.brussels)     : <span class="success">ONLINE</span>
+  ARCHIVE (DOCTech)         : <span class="success">ONLINE</span>
+  MÉMOIRE (BXL2030)         : <span class="success">ONLINE</span>
+  PROPHÉTIE (BXL2042)       : <span class="success">ONLINE</span>
+  COUVERTURE (CCPLC)        : <span class="success">ONLINE</span>
+  
+  Agents connectés          : <span class="success">???</span>
+  Missions actives          : <span class="success">4</span>
+  Entités cartographiées    : <span class="success">En cours</span>`,
+
+            factions: () => `<span class="success">▓▓▓ CELLULES ACTIVES ▓▓▓</span>
+  [🟢] ARCHIVISTES  - Documentation & Mémoire
+  [🟣] TISSERANDS   - Guerre Sémantique
+  [⚪] SPECTRES     - Infiltration & Zone Grise
+  [🔴] CRIEURS      - Amplification & Terrain`,
+
+            nexus: () => {
+                window.open('https://nyxo.brussels/', '_blank');
+                return '<span class="success">Ouverture de NEXUS...</span>';
+            },
+
+            archive: () => {
+                window.open('https://ouaisfieu.github.io/tech/', '_blank');
+                return '<span class="success">Ouverture de ARCHIVE...</span>';
+            },
+
+            whoami: () => `<span class="output">agent_${Math.random().toString(36).substr(2, 8)}</span>
+  Faction   : Non assignée
+  Niveau    : 0 (Initiation)
+  Missions  : 0 complétées
+  
+  <span class="success">Conseil:</span> Complète la mission CARTOGRAPHIE LOCALE pour débloquer ta faction.`,
+
+            ebomba: () => {
+                document.getElementById('classified-section').classList.add('revealed');
+                document.getElementById('classified-section').scrollIntoView({ behavior: 'smooth' });
+                return `<span class="error">▓▓▓ ACCÈS CLASSIFIÉ DÉVERROUILLÉ ▓▓▓</span>
+  Protocole TSAR e-BOMBA chargé.
+  Scroll pour accéder aux archives.`;
+            },
+
+            clear: () => {
+                terminalOutput.innerHTML = '';
+                return null;
+            },
+
+            logout: () => {
+                localStorage.removeItem('signal_noir_auth');
+                setTimeout(() => location.reload(), 1000);
+                return '<span class="error">Déconnexion...</span>';
+            },
+
+            // Easter eggs
+            matrix: () => {
+                document.body.style.setProperty('--accent', '#00ff00');
+                return '<span class="success">Mode MATRIX activé.</span>';
+            },
+
+            disco: () => {
+                setInterval(() => {
+                    const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff0080', '#00ff80'];
+                    document.body.style.setProperty('--accent', colors[Math.floor(Math.random() * colors.length)]);
+                }, 500);
+                return '<span class="success">Mode DISCO activé. 🪩</span>';
+            },
+
+            ping: () => 'pong',
+
+            sudo: () => '<span class="error">Nice try.</span>',
+
+            hack: () => '<span class="error">Ce n\'est pas un film.</span>',
+        };
+
+        terminalInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = terminalInput.value.trim().toLowerCase();
+                terminalInput.value = '';
+
+                // Add command to output
+                const cmdLine = document.createElement('div');
+                cmdLine.className = 'terminal-line';
+                cmdLine.innerHTML = `<span class="prompt">agent@signal-noir:~$</span> <span class="cmd">${cmd}</span>`;
+                terminalOutput.appendChild(cmdLine);
+
+                // Process command
+                let response;
+                if (commands[cmd]) {
+                    response = commands[cmd]();
+                } else if (cmd === '') {
+                    response = null;
+                } else {
+                    response = `<span class="error">Commande inconnue: ${cmd}</span>\nTape <span class="success">help</span> pour voir les commandes disponibles.`;
+                }
+
+                if (response) {
+                    const outputLine = document.createElement('div');
+                    outputLine.className = 'terminal-line';
+                    outputLine.innerHTML = `<span class="output">${response}</span>`;
+                    terminalOutput.appendChild(outputLine);
+                }
+
+                // Scroll to bottom
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+        });
+
+        // Focus terminal when clicking on it
+        document.querySelector('.terminal-section').addEventListener('click', () => {
+            terminalInput.focus();
+        });
+
+        // ===== KONAMI CODE =====
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    document.documentElement.classList.add('konami-activated');
+                    alert('▓▓▓ MODE CHAOS ACTIVÉ ▓▓▓\n\nTu as trouvé le code.\nMais qu\'est-ce que tu cherches vraiment ?');
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // ===== HIDDEN COMMENT IN CONSOLE =====
+        console.log('%c░░░ SIGNAL_NOIR ░░░', 'color: #00ff41; font-size: 20px; font-weight: bold;');
+        console.log('%cTu fouilles dans le code ? Bien.', 'color: #606080;');
+        console.log('%cRegarde dans le terminal. Tape "ebomba".', 'color: #00ff41;');
+        console.log('%c', 'color: #606080;');
+        console.log('%cOu peut-être cherches-tu autre chose ?', 'color: #606080;');
+        console.log('%cLes vrais secrets ne sont pas dans le code.', 'color: #606080;');
+        console.log('%cIls sont dans les données.', 'color: #ff0040;');
+        console.log('%c', 'color: #606080;');
+        console.log('%chttps://nyxo.brussels/', 'color: #bf00ff;');
+    </script>
+
+    <!-- 
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+        ▓                                                         ▓
+        ▓   Si tu lis ça, tu es sur la bonne piste.               ▓
+        ▓                                                         ▓
+        ▓   Le prochain indice est dans DOCTech.                  ▓
+        ▓   /tech/notions/subjectivation/                         ▓
+        ▓                                                         ▓
+        ▓   Cherche le mot qui n'a pas sa place.                  ▓
+        ▓   Concatenate avec "NOIR" pour la suite.                ▓
+        ▓                                                         ▓
+        ▓   ILS CONTRÔLENT LE SIGNAL.                             ▓
+        ▓   NOUS SOMMES LE BRUIT.                                 ▓
+        ▓                                                         ▓
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+    -->
+</body>
+</html>
