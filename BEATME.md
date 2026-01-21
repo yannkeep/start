@@ -41,4 +41,24 @@ LANDING VAMPIRE (acquisition)
 2. Un système pour que les mordus puissent CHOISIR leur mission (comme toi tu voulais avoir le choix)
 3. Un moyen de tracker/valoriser les contributions sans fliquer
 
-Tu veux que je crée la page "Missions Actives" avec les vraies deadlines de tes docs ?
+---
+
+Landing Vampire (tu choisis)
+         ↓
+    "Je mords"
+         ↓
+    Missions Actives (tu choisis ta mission)
+         ↓
+    ┌─────────────────────────────────────┐
+    │  🔥 NLnet → 1er février (11 jours)  │
+    │  ⏰ Erasmus+ → 5 mars               │
+    │  📋 Innoviris → novembre            │
+    │  📋 Sovereign Tech → rolling        │
+    │  📋 FLOSS/fund → rolling            │
+    └─────────────────────────────────────┘
+         ↓
+    Tu portes / soutiens / propages
+         ↓
+    L'ARG s'enrichit
+         ↓
+    Boucle
