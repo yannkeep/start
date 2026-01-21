@@ -1,0 +1,49 @@
+# Si TON SITE est à https://ouaisfieu.github.io/magasin/
+url: "https://ouaisfieu.github.io"   # ⚠️ sans /magasin
+baseurl: "/magasin"                  # ⚠️ avec le slash initial
+
+title: "ouaisfi·eu"
+description: "Magasin de fichiers, scripts et ressources à télécharger"
+default_image: "/assets/og-default.jpg"
+
+# Active Minimal Mistakes sans Gemfile
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
+minimal_mistakes_skin: "dark"         # (dark, default, air, aqua, neon, etc.)
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-include-cache   # ← indispensable pour {% include_cached %}
+  - jekyll-paginate         # pour la pagination
+
+defaults:
+  - scope:
+      path: "o"
+      type: "posts"
+    values:
+      layout: "single"      # layout Minimal Mistakes
+      classes: wide
+      share: true           # boutons de partage
+      author_profile: false
+      read_time: false
+      toc: false
+      # show_title: false
+      header:
+        overlay_image: /assets/img/bxl-header.jpg
+        overlay_filter: "0.3"
+        caption: "Entre brume et ruines"
+
+permalink: /:path/:basename/   # propre pour pages
+
+# navigation
+nav:
+  main: main
+  
+paginate: 5
+paginate_path: "/page:num"
+
+related_posts:
+  enabled: true
+  threshold: 1
+  max_count: 3

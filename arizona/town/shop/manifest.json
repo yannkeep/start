@@ -1,0 +1,754 @@
+{
+  "version": 1,
+  "updated": "2025-07-29",
+  "items": [
+    {
+      "id": "kit-citoyen-volet-comprendre",
+      "title": "Kit Citoyen – Volet « Comprendre »",
+      "description": "Se recentrer en tant qu’individu au milieu du collectif signifie comprendre comment sa propre vie s’insère dans la vie collective, et comment agir ensemble peut bénéficier à chacun...",
+      "note": "Comprendre l’individu au sein du collectif",
+      "url": "/pdfs/KitCitoyen%C2%B7ne.pdf",
+      "type": "pdf",
+      "size": 70656,
+      "tags": [
+        "citoyenneté",
+        "comprendre"
+      ],
+      "created": "2025-07-22",
+      "thumb": "./thumbs/kit.jpg"
+    },
+    {
+      "id": "de-l-auftragstaktik-militaire-la-participation-citoyenne-consciente",
+      "title": "De l’Auftragstaktik militaire à la participation citoyenne consciente",
+      "note": "Pour rendre au Kaiser ce qui est au Kaiser",
+      "description": "Du « commandement par mission » prussien aux assemblées citoyennes belges, comment passer d’une logique militaire à une démocratie plus agile ?",
+      "url": "/pdfs/auftragstaktik.pdf",
+      "type": "pdf",
+      "size": 104448,
+      "tags": [
+        "citoyenneté",
+        "comprendre"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/Hans Fritz.jpg"
+    },
+    {
+      "id": "la-citoyennet-c-est-le-brol-un-syst-me-complexe-en-perspective",
+      "title": "La citoyenneté, c’est le brol : un système complexe en perspective",
+      "note": "Et tire ton plan avec ça!",
+      "description": "De l’Athènes antique aux cartes d’identité électroniques, notre statut de citoyen s’est emballé dans une spirale de règles, de papiers… et d’injonctions contradictoires.",
+      "url": "/pdfs/citoyennete.pdf",
+      "type": "pdf",
+      "size": 96256,
+      "tags": [
+        "comprendre",
+        "citoyenneté"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/login.jpg"
+    },
+    {
+      "id": "approche-critique-corpus",
+      "title": "Approche critique du corpus - 07/2025",
+      "description": "Document de travail interne. 6 dossiers en 5 pages... et c'est du lourd. Le rapport entre information et pouvoir toujours, et les pratiques participatives ou encore la veille citoyenne",
+      "note": "Ça va pas vous intéresser, c'est très critique",
+      "url": "/pdfs/critique.pdf",
+      "type": "pdf",
+      "size": 31744,
+      "tags": [
+        "interne",
+        "doc"
+      ],
+      "created": "2025-07-26",
+      "thumb": "./thumbs/logo.jpg"
+    },
+    {
+      "id": "rapport-sur-les-d-rives-dystopiques-mondiales-actuelles",
+      "title": "Rapport sur les dérives dystopiques mondiales actuelles",
+      "description": "La société moderne voit émerger des tendances qui évoquent des scénarios dystopiques autrefois cantonnés à la fiction...",
+      "note": "Ça va, c'est pas (encore) la fin du monde",
+      "url": "/pdfs/dystopie.pdf",
+      "type": "pdf",
+      "size": 159744,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-28",
+      "thumb": "./thumbs/dystop.jpg"
+    },
+    {
+      "id": "comprendre-l-volution-des-changes-de-l-intelligence-la-stupidit-conomiques",
+      "title": "Évolution des échanges : de l’« intelligence » à la « stupidité » économique",
+      "note": "« l’histoire économique oscille entre progrès collectif et dérives spéculatives »",
+      "description": "Du troc ancestral aux algorithmes de haute fréquence, cinq ruptures majeures pour comprendre comment l’ingéniosité humaine se retourne encore contre la société",
+      "url": "/pdfs/economie.pdf",
+      "type": "pdf",
+      "size": 470016,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/coin.png"
+    },
+    {
+      "id": "guide-pour-d-velopper-un-r-seau-collectif-de-veille-citoyenne-en-ducation-permanente-fwb",
+      "title": "Guide pour développer un réseau collectif de veille citoyenne en Éducation permanente (FWB)",
+      "note": "Finalement, « il n'y a plus qu'à »",
+      "description": "La veille citoyenne se définit comme « le regard porté par les citoyens sur la mise en œuvre de l’action publique afin de veiller au respect des engagements »",
+      "url": "/pdfs/guide-reseau-veille.pdf",
+      "type": "pdf",
+      "size": 103424,
+      "tags": [
+        "guide",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb":"./thumbs/organigramme.jpg"
+    },
+    {
+      "id": "l-impact-de-la-surcharge-informationnelle-sur-la-soci-t-et-les-individus",
+      "title": "L’impact de la surcharge informationnelle sur la société et les individus",
+      "description": "La surcharge informationnelle – qu’on appelle aussi surinformation ou infobésité – désigne un excès d’informations qu’une personne ne peut absorber ou traiter sans se porter préjudice...",
+      "note": "Tout va tellement si vite",
+      "url": "/pdfs/infobesite.pdf",
+      "type": "pdf",
+      "size": 60416,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-26",
+      "thumb": "https://dl.ouaisfi.eu/vrFriendly.gif"
+    },
+    {
+      "id": "la-place-de-l-information-dans-l-empouvoirement-individuel-et-le-pouvoir-d-agir-collectif",
+      "title": "La place de l’information dans l’empouvoirement individuel et le pouvoir d’agir collectif",
+      "description": "L’information est un levier d’émancipation mais si elle est inégalement distribuée, falsifiée ou surveillée, alors elle devient un instrument de domination.",
+      "note": "« Savoir, c’est pouvoir », mais malheureusement pas pour tout le monde",
+      "url": "/pdfs/information.pdf",
+      "type": "pdf",
+      "size": 216064,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/dics.jpg"
+    },
+    {
+      "id": "le-mouvement-ouvrier-chr-tien-moc-en-belgique-recherche-approfondie",
+      "title": "Le Mouvement Ouvrier Chrétien (MOC) en Belgique : recherche approfondie",
+      "description": "Plongée au coeur des Terres du Milieu, le centrisme dans toute sa profondeur...",
+      "note": "Les ultras savent pourquoi",
+      "url": "/pdfs/moc.pdf",
+      "type": "pdf",
+      "size": 95232,
+      "tags": [
+        "fichage",
+        "doc"
+      ],
+      "created": "2025-07-23",
+      "thumb": "./thumbs/Mage centriste.jpg"
+    },
+    {
+      "id": "dynamiques-institutionnelles-et-politiques-de-la-belgique-pilarisation-particratie-compromis-et",
+      "title": "Dynamiques institutionnelles et politiques de la Belgique",
+      "description": "La Belgique, « laboratoire du compromis », de « démocratie consociative » ou encore de « pays ingouvernable organisé ». Ces formules renvoient à un système institutionnel et politique structuré par plusieurs dynamiques interdépendantes...",
+      "note": "Pilarisation, Particratie, Compromis, etc. ",
+      "url": "/pdfs/myspot.pdf",
+      "type": "pdf",
+      "size": 109568,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/bxl-header.jpg"
+    },
+    {
+      "id": "tat-des-lieux-des-civic-tech-et-de-l-open-data-en-belgique",
+      "title": "État des lieux des Civic Tech et de l’Open Data en Belgique",
+      "description": "Bruxelles, Wallonie, Flandre – trois approches régionales, un cadre fédéral commun. Entre participation citoyenne numérique et ouverture des données publiques, la Belgique fourmille d’initiatives.",
+      "note": "Panorama national",
+      "url": "/pdfs/opendata.pdf",
+      "type": "pdf",
+      "size": 114688,
+      "tags": [
+        "agir",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/logo.jpg"
+
+    },
+    {
+      "id": "empowerment-individuel-et-pouvoir-d-agir-collectif-face-l-h-g-monie-capitaliste-mondiale",
+      "title": "Empowerment individuel et pouvoir d’agir collectif face à l’hégémonie capitaliste mondiale",
+      "note": "Marche (en groupe) ou crève.",
+      "description": "Autonomie et <b>subjectivation</b> néolibérale : Les théoriciens critiques ont montré que l’individu « autonome » dans nos sociétés contemporaines est largement produit par des mécanismes de pouvoir.",
+      "url": "/pdfs/pouvoir.pdf",
+      "type": "pdf",
+      "size": 100352,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/speaker.gif"
+    },
+    {
+      "id": "de-pikachu-r-mi-vomi-la-pop-culture-entre-ic-nes-plan-taires-et-h-ros-oubli-s",
+      "title": "De Pikachu à Rémi Vomi : la pop culture entre icônes planétaires et héros oubliés",
+      "note": "« les frontières entre culture “légitime” et culture populaire se sont estompées »",
+      "description": "Le terme pop culture est vague, mais on peut le définir comme l’ensemble des productions culturelles qui dominent la société de masse à une époque donnée...",
+      "url": "/pdfs/remiReviens.pdf",
+      "type": "pdf",
+      "size": 58368,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-23",
+      "thumb": "./thumbs/lapin.gif"
+    },
+    {
+      "id": "la-guerre-conomique-et-ses-r-percussions-sur-la-soci-t-civile-aux-xxe-et-xxie-si-cles",
+      "title": "La guerre économique et ses répercussions sur la société civile aux XXe et XXIe siècles",
+      "description": "Pas un coup de feu, des millions de victimes. « Il est illusoire de penser que l’on puisse “cibler” un pays sans faire souffrir ses habitants tant les économies sont intégrées. »",
+      "note": "Allez, un bonne guerre ?",
+      "url": "/pdfs/sanctions.pdf",
+      "type": "pdf",
+      "size": 143360,
+      "tags": [
+        "comprendre",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/tamponALLO.jpg"
+    },
+    {
+      "id": "veille-citoyenne-en-f-d-ration-wallonie-bruxelles-enjeux-strat-giques-inclusion-et-perspectives",
+      "title": "Veille citoyenne en Fédération Wallonie-Bruxelles : enjeux stratégiques, inclusion et perspectives",
+      "description": "La veille citoyenne désigne le travail de suivi et d’analyse ou « le regard porté par les citoyens sur la mise en œuvre de l’action publique afin de veiller à ce que les engagements pris soient respectés »",
+      "note": "« l’information devient ainsi un bien commun à reconquérir : non seulement en tant que contenu, mais aussi en tant que méthode et outil »",
+      "url": "/pdfs/veille-citoyenne-enjeux.pdf",
+      "type": "pdf",
+      "size": 40960,
+      "tags": [
+        "agir",
+        "doc"
+      ],
+      "created": "2025-07-21",
+      "thumb": "./thumbs/organigramme.jpg"
+    },
+    {
+    "id": "make-chunk-all",
+    "title": "Make Chunk All",
+    "description": "Script python servant à construire ce catalogue · BIENTÖT · SOON · GORE",
+    "note": "À exécuter dans un dossier pour obtenir un bout de .json",
+    "url": "https://github.com/ouaisfieu/contact/tree/main/scripts",
+    "type": "script",
+    "size": 5439,
+    "tags": ["enfer", "damnation"],
+    "created": "1957-09-13",
+    "thumb": "./thumbs/jason-manifest-json.jpg"
+    },
+    {
+    "id": "smoke",
+    "title": "Smoke - Parce que fumer tue",
+    "description": "« Fumé m'a fumer »",
+    "note": "Ça vaut pour toux et tousse !",
+    "url": "images/smoke.png",
+    "type": "image",
+    "size": 1614133,
+    "tags": ["enfer", "damnation"],
+    "created": "2025-07-27",
+    "thumb": "./thumbs/smoke.jpg"
+    },
+    {
+    "id": "article-pkm",
+    "title": "Article « Personal Knowledge Management »",
+    "description": "Le PKM n’est pas un simple classement ; c’est une approche stratégique qui vous permet de capturer l’essentiel, de relier les idées et de passer à l’action.",
+    "note": "Pourquoi un système PKM ?",
+    "url": "pdfs/Article-PKM.pdf",
+    "type": "pdf",
+    "size": 45373,
+    "tags": ["doc", "agir"],
+    "created": "2025-07-30",
+    "thumb": "./thumbs/logo.jpg"
+
+    },
+    {
+    "id": "guide-obsidian-pas-à-pas",
+    "title": "Guide Obsidian Pas À Pas",
+    "description": "Ce guide propose un système d’organisation général qui peut être adapté à n’importe quelle thématique. Il repose sur l’application Obsidian, un éditeur de notes...",
+    "note": "Suite du tutoriel pour débutant·e",
+    "url": "pdfs/Guide Obsidian pas à pas.pdf",
+    "type": "pdf",
+    "size": 74849,
+    "tags": ["guide", "obsidian"],
+    "created": "2025-07-23",
+    "thumb": "./thumbs/obs.jpg",
+    "badges": ["star"] 
+    },
+    {
+    "id": "representation",
+    "title": "Analyse de la représentation démocratique et de la participation citoyenne en Belgique",
+    "description": "« les défis demeurent importants : redonner aux citoyens le sentiment d’être entendus et influents, améliorer la transparence et la simplicité de la gouvernance, et adapter la représentation aux exigences du 21e siècle »",
+    "note": "Ça c'est un titre !",
+    "url": "/representation.pdf",
+    "type": "pdf",
+    "size": 106952,
+    "tags": [],
+    "created": "2025-07-11",
+    "thumb": "./thumbs/organigramme.jpg"
+    },
+    {
+    "id": "tutoriel-obsidian",
+    "title": "Tutoriel Obsidian pour débutant·e",
+    "description": "Ce tutoriel présente pas à pas l’application Obsidian, un outil de prise de notes et de gestion des connaissances (Personal Knowledge Management) basé sur des fichiers en texte simple (Markdown)",
+    "note": "Ceci n'est pas un placement de produit",
+    "url": "/Tutoriel-Obsidian.pdf",
+    "type": "pdf",
+    "size": 71650,
+    "tags": ["guide", "obsidian"],
+    "created": "2025-07-29",
+    "thumb": "./thumbs/obs.jpg",
+    "badges": ["star"] 
+
+    },
+    {
+    "id": "mon-item-exemple",
+    "title": "Titre lisible de l’item",
+    "description": "La « fenêtre d’Overton » est un concept qui décrit l’éventail des idées et des politiques considérées comme acceptables dans l’opinion publique à un moment donné. Ce cadre peut être influencé par des discours, des événements ou des stratégies médiatiques.",
+    "note": "Ceci n'est pas un fenêtre",
+    "thumb": "./thumbs/overton.jpg",
+    "info": "https://ouaisfi.eu/up-yours#la-fenetre-d-overton",
+    "run": "https://ouaisfi.eu/user/pages/05.up-yours/foverton.png",
+    "url": "https://ouaisfi.eu/up-yours#la-fenetre-d-overton",
+    "type": "script",
+    "size": 123456,
+    "tags": ["doc", "interne", "damnation"],
+    "created": "1980-03-01"
+    },
+    {
+    "id": "astro",
+    "title": "☯ ASTRO - Kit Markdown",
+    "description": "Astrologies occidentale et chinoise combinées dans un coffret maison. Les 24 signes, les planètes, les éléments... Une cinquantaine de fichiers.md à télécharger dans une archive .zip · Paré·e·s à décompresser ?",
+    "note": "Mot de passe : batman1234",
+    "url": "kits/☯ ASTRO.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 116781,
+    "tags": [],
+    "created": "2025-07-28"
+    },
+    {
+    "id": "emotions",
+    "title": "☯ EMOTIONS - Kit Markdown",
+    "description": "Les émotions dans tous leurs états",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ EMOTIONS.zip",
+    "run": "",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 65456,
+    "tags": [],
+    "created": "2025-07-11"
+    },
+    {
+    "id": "equipe",
+    "title": "☯ EQUIPE - Kit Markdown",
+    "description": "À décrire",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ EQUIPE.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 27512,
+    "tags": [],
+    "created": "2025-07-26"
+    },
+    {
+    "id": "intro",
+    "title": "☯ INTROSPECTION - Kit Markdown",
+    "description": "À décrire",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ INTRO.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 62141,
+    "tags": [],
+    "created": "2025-07-15"
+    },
+    {
+    "id": "mythes-et-legendes",
+    "title": "☯ MYTHES ET LEGENDES - Kit Markdown",
+    "description": "À décrire",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ MYTHES ET LEGENDES.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 108283,
+    "tags": [],
+    "created": "2025-07-07"
+    },
+    {
+    "id": "perso",
+    "title": "☯ Personnalités - Kit Markdown",
+    "description": "À décrire",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ Perso.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 75310,
+    "tags": [],
+    "created": "2025-07-30"
+    },
+    {
+    "id": "valeurs",
+    "title": "☯ VALEURS - Kit Markdown",
+    "description": "À décrire",
+    "note": "Mot de passe : batman1234",
+    "url": "/☯ VALEURS.zip",
+    "run": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "info": "https://publish.obsidian.md/ouaisfieu/%E2%96%B6+NOS+KITS+%E2%97%80/Kits",
+    "thumb": "./thumbs/kit.jpg",
+    "type": "zip",
+    "size": 39427,
+    "tags": [],
+    "created": "2025-07-21"
+    },
+    {
+      "id": "ui-badges",
+      "title": "Interface du magasin (badges.html)",
+      "description": "Page unique qui lit manifest.json et affiche la bibliothèque.",
+      "thumb": "./thumbs/1.jpg",
+      "url": "./badges.html",
+      "type": "other",
+      "tags": [
+        "ui",
+        "html",
+        "essentiel"
+      ],
+      "created": "2025-07-27",
+      "badges": [
+        "star"
+      ]
+    },
+    {
+      "id": "css-fx",
+      "title": "Effets de mise en avant (fx.css)",
+      "description": "Néons mint/lilas, surlignage, glitch, CRT, Halloween. Optionnel.",
+      "thumb": "./thumbs/2.jpg",
+      "url": "./css/fx.css",
+      "type": "other",
+      "tags": [
+        "css",
+        "fx",
+        "optionnel"
+      ],
+      "created": "2025-07-01",
+      "badges": [
+        "tip"
+      ]
+    },
+    {
+      "id": "doc-guide-bibliotheque",
+      "title": "Créer sa bibliothèque (tutoriel complet)",
+      "description": "Installation, structure, manifest.json, vignettes, déploiement.",
+      "thumb": "./thumbs/3.jpg",
+      "url": "./md/guide-bibliotheque.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "guide",
+        "manifest"
+      ],
+      "created": "2025-07-30",
+      "badges": [
+        "md",
+        "edu"
+      ]
+    },
+    {
+      "id": "doc-guide-ultime-item",
+      "title": "Guide ultime : créer un item",
+      "description": "Champs, liens, boutons, vignettes, badges, effets, perfs, pièges.",
+      "thumb": "./thumbs/4.jpg",
+      "url": "./md/guide-ultime-item.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "item",
+        "référence"
+      ],
+      "created": "2025-07-22",
+      "badges": [
+        "md",
+        "edu"
+      ]
+    },
+    {
+      "id": "doc-legende-badges",
+      "title": "Légende des badges (référence rapide)",
+      "description": "Clés manifest, rendu, quand les utiliser. Exemples JSON.",
+      "thumb": "./thumbs/5.jpg",
+      "url": "./md/legende-badges.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "badges",
+        "ui"
+      ],
+      "created": "2025-07-30",
+      "badges": [
+        "md",
+        "tip"
+      ]
+    },
+    {
+      "id": "doc-effets-fx",
+      "title": "Effets de texte (fx.css) — guide",
+      "description": "Surlignage doux, néons, glitch/CRT, variantes saisonnières.",
+      "thumb": "./thumbs/6.jpg",
+      "url": "./md/guide-effets-fx.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "css",
+        "fx"
+      ],
+      "created": "2025-07-17",
+      "badges": [
+        "md",
+        "tip"
+      ]
+    },
+    {
+      "id": "doc-faq-depannage",
+      "title": "FAQ / Dépannage",
+      "description": "Téléchargement cross‑origin, aperçu PDF, chemins, perfs 100+ items.",
+      "thumb": "./thumbs/7.jpg",
+      "url": "./md/faq-depannage.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "faq",
+        "support"
+      ],
+      "created": "2025-07-07",
+      "badges": [
+        "md"
+      ]
+    },
+    {
+      "id": "doc-5whys",
+      "title": "L’idée derrière en 5 « pourquoi »",
+      "description": "Pourquoi statique, pourquoi manifest, pourquoi une seule page.",
+      "thumb": "./thumbs/8.jpg",
+      "url": "./md/5whys.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "vision",
+        "pourquoi"
+      ],
+      "created": "2025-01-02",
+      "badges": [
+        "md"
+      ]
+    },
+    {
+      "id": "schema-manifest",
+      "title": "Schéma JSON du manifest",
+      "description": "Validation des champs : items[].title/url/type/tags…",
+      "thumb": "./thumbs/9.jpg",
+      "url": "./schema/manifest.schema.json",
+      "type": "other",
+      "tags": [
+        "schema",
+        "json",
+        "qualité"
+      ],
+      "created": "2025-01-01",
+      "badges": [
+        "oss",
+        "tip"
+      ]
+    },
+    {
+      "id": "validator-web",
+      "title": "Validateur de manifest (web)",
+      "description": "Page locale : collez ou ouvrez un manifest, validation live.",
+      "thumb": "./thumbs/10.jpg",
+      "run": "./scripts/validate.html",
+      "url": "./zips/validator-web.zip",
+      "type": "script",
+      "tags": [
+        "script",
+        "qualité",
+        "web"
+      ],
+      "created": "2025-07-01",
+      "badges": [
+        "beta",
+        "script"
+      ]
+    },
+    {
+      "id": "generator-cli",
+      "title": "Générateur de manifest (CLI)",
+      "description": "Scanne un dossier, produit manifest.json (title/url/type/size/created).",
+      "thumb": "./thumbs/1.jpg",
+      "url": "./zips/manifest-generator-cli.zip",
+      "type": "zip",
+      "tags": [
+        "zip",
+        "cli",
+        "outil"
+      ],
+      "created": "2025-07-18",
+      "badges": [
+        "zip",
+        "oss"
+      ]
+    },
+    {
+      "id": "editor-gui",
+      "title": "Éditeur graphique d’items (web)",
+      "description": "Formulaire pour créer/éditer un item puis exporter le JSON.",
+      "thumb": "./thumbs/2.jpg",
+      "run": "./scripts/editor.html",
+      "url": "./zips/editor-gui.zip",
+      "type": "script",
+      "tags": [
+        "script",
+        "ui",
+        "outil"
+      ],
+      "created": "2025-07-25",
+      "badges": [
+        "beta",
+        "script"
+      ]
+    },
+    {
+      "id": "readme-github",
+      "title": "README pour GitHub",
+      "description": "Présentation courte, démarrage, licence.",
+      "thumb": "./thumbs/3.jpg",
+      "url": "./md/README.md",
+      "type": "md",
+      "tags": [
+        "doc",
+        "github",
+        "template"
+      ],
+      "created": "2025-07-30",
+      "badges": [
+        "md"
+      ]
+    },
+    {
+      "id": "licence-mit",
+      "title": "LICENCE — MIT",
+      "description": "Licence permissive recommandée.",
+      "thumb": "./thumbs/4.jpg",
+      "url": "./md/LICENSE-MIT.md",
+      "type": "md",
+      "tags": [
+        "licence",
+        "legal",
+        "template"
+      ],
+      "created": "2025-07-21",
+      "badges": [
+        "md"
+      ]
+    },
+    {
+      "id": "contributing",
+      "title": "CONTRIBUTING — comment contribuer",
+      "description": "Issues, PR, style, validation du manifest.",
+      "thumb": "./thumbs/5.jpg",
+      "url": "./md/CONTRIBUTING.md",
+      "type": "md",
+      "tags": [
+        "oss",
+        "process",
+        "template"
+      ],
+      "created": "2025-07-14",
+      "badges": [
+        "md",
+        "oss"
+      ]
+    },
+    {
+      "id": "issue-templates",
+      "title": "Issue templates (GitHub)",
+      "description": "Bug report, feature request, question.",
+      "thumb": "./thumbs/6.jpg",
+      "url": "./zips/issue-templates.zip",
+      "type": "zip",
+      "tags": [
+        "github",
+        "template",
+        "qualité"
+      ],
+      "created": "2025-07-10",
+      "badges": [
+        "zip",
+        "tip"
+      ]
+    },
+    {
+      "id": "thumbs-pack",
+      "title": "Pack de vignettes 16:9 (exemples)",
+      "description": "Fonds sobres mint/lilac, titres lisibles.",
+      "thumb": "./thumbs/7.jpg",
+      "url": "./zips/thumbs-pack.zip",
+      "type": "zip",
+      "tags": [
+        "thumbs",
+        "ressource",
+        "ui"
+      ],
+      "created": "2025-07-11",
+      "badges": [
+        "zip"
+      ]
+    },
+    {
+      "id": "themes-pack",
+      "title": "Pack de thèmes badges/FX",
+      "description": "Halloween, Noël, Vaporwave (CSS prêts).",
+      "thumb": "./thumbs/8.jpg",
+      "url": "./zips/themes-pack.zip",
+      "type": "zip",
+      "tags": [
+        "css",
+        "theme",
+        "fx"
+      ],
+      "created": "2025-07-07",
+      "badges": [
+        "zip",
+        "beta"
+      ]
+    }     
+  ]
+}
