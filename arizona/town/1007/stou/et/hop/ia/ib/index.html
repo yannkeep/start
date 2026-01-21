@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>!AAARG — Appel aux partenaires</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --black: #0a0a0a;
+            --dark: #141414;
+            --card: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #e5e5e5;
+            --text-dim: #888;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --green: #22c55e;
+            --orange: #f97316;
+            --red: #ef4444;
+            --purple: #a855f7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--black);
+            color: var(--text);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* Header */
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .header-cta {
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .header-cta:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--orange);
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 2.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+        }
+
+        /* Section titles */
+        h2 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-intro {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-bottom: 3rem;
+            max-width: 700px;
+        }
+
+        /* Urgency banner */
+        .urgency-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 22, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 4rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .urgency-icon {
+            font-size: 2rem;
+        }
+
+        .urgency-content {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .urgency-title {
+            font-weight: 600;
+            color: var(--red);
+            margin-bottom: 0.25rem;
+        }
+
+        .urgency-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* Cards grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.75rem;
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .card-icon {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 0;
+        }
+
+        /* Roles section */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .role-card {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .role-card.porter::before { background: var(--green); }
+        .role-card.coconstruire::before { background: var(--purple); }
+        .role-card.diffuser::before { background: var(--orange); }
+        .role-card.financer::before { background: var(--accent); }
+
+        .role-tag {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .role-card.porter .role-tag { background: rgba(34, 197, 94, 0.15); color: var(--green); }
+        .role-card.coconstruire .role-tag { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+        .role-card.diffuser .role-tag { background: rgba(249, 115, 22, 0.15); color: var(--orange); }
+        .role-card.financer .role-tag { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+
+        .role-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-card p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .role-examples {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .role-examples strong {
+            color: var(--text);
+        }
+
+        /* Timeline */
+        .timeline {
+            margin-top: 2rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background: var(--card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .timeline-item.active .timeline-dot {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+        .timeline-item.urgent .timeline-dot {
+            border-color: var(--red);
+            background: var(--red);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-bottom: 0.5rem;
+        }
+
+        .timeline-date {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* Offer box */
+        .offer-box {
+            background: linear-gradient(135deg, var(--card), var(--dark));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .offer-box h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .offer-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .offer-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .offer-list li::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        /* FAQ */
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.25rem;
+            color: var(--text-dim);
+        }
+
+        .faq-answer {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(180deg, var(--black), var(--dark));
+        }
+
+        .cta-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .cta-note {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        .footer-note {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            section { padding: 3rem 1.5rem; }
+            .hero { padding: 4rem 1.5rem; }
+            .urgency-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">!AAARG</div>
+    <a href="#contact" class="header-cta">Nous contacter</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">Appel aux partenaires</div>
+    <h1>Construisons ensemble l'infrastructure civique de demain</h1>
+    <p class="hero-sub">
+        Un framework open source pour créer des jeux en réalité alternée à visée citoyenne. 
+        On cherche des organisations pour porter, co-construire et déployer.
+    </p>
+    <div class="hero-ctas">
+        <a href="#roles" class="btn btn-primary">Comment participer</a>
+        <a href="#timeline" class="btn btn-secondary">Voir la feuille de route</a>
+    </div>
+</section>
+
+<!-- URGENCY -->
+<section style="padding-top: 0;">
+    <div class="urgency-banner">
+        <div class="urgency-icon">⏰</div>
+        <div class="urgency-content">
+            <div class="urgency-title">Deadline NLnet : 1er février 2026</div>
+            <div class="urgency-text">
+                Une candidature est en cours pour 20.000 € de financement européen. 
+                Les lettres de soutien de partenaires augmentent significativement les chances de succès.
+            </div>
+        </div>
+        <a href="#contact" class="btn btn-primary">Soutenir la candidature</a>
+    </div>
+</section>
+
+<!-- LE PROJET -->
+<section id="projet">
+    <div class="section-label">Le projet</div>
+    <h2>Un ARG civique, c'est quoi ?</h2>
+    <p class="section-intro">
+        Un jeu en réalité alternée (ARG) mélange fiction et réalité pour créer des expériences immersives. 
+        !AAARG applique ce format à l'engagement citoyen — les joueurs deviennent des agents de changement, 
+        et leurs actions réelles nourrissent l'univers fictif.
+    </p>
+
+    <div class="cards-grid">
+        <div class="card">
+            <div class="card-icon">🎭</div>
+            <h3>Fiction + Réalité</h3>
+            <p>Les missions du jeu sont des vrais projets. Les deadlines sont réelles. L'impact est réel. La fiction donne du sens et de l'élan.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔧</div>
+            <h3>Zéro dépendance</h3>
+            <p>HTML/CSS/JS pur. Pas de serveur. Fonctionne sur GitHub Pages, clé USB, vieux ordinateurs. Les organisations gardent le contrôle total.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🍴</div>
+            <h3>100% forkable</h3>
+            <p>Licence AGPL-3.0. Chaque organisation peut créer sa propre instance adaptée à son public, puis les connecter en méta-jeu.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🇪🇺</div>
+            <h3>Ancrage européen</h3>
+            <p>Basé à Bruxelles. Documentation trilingue FR/NL/EN. Conçu pour l'écosystème d'éducation permanente belge et européen.</p>
+        </div>
+    </div>
+</section>
+
+<!-- RÔLES -->
+<section id="roles">
+    <div class="section-label">Comment participer</div>
+    <h2>Quatre façons de rejoindre le projet</h2>
+    <p class="section-intro">
+        Que vous soyez une ASBL, une bibliothèque, une Maison de Jeunes, un centre culturel ou un bailleur de fonds — 
+        il y a une place pour vous.
+    </p>
+
+    <div class="roles-grid">
+        <div class="role-card porter">
+            <span class="role-tag">Porteur</span>
+            <h3>Porter le projet</h3>
+            <p>Devenir structure porteuse pour les financements (Erasmus+, FWB, COCOF). Le projet cherche une ASBL existante pour héberger les demandes qui nécessitent une personnalité juridique.</p>
+            <div class="role-examples">
+                <strong>Idéal pour :</strong> ASBL d'éducation permanente, centres culturels reconnus
+            </div>
+        </div>
+
+        <div class="role-card coconstruire">
+            <span class="role-tag">Co-constructeur</span>
+            <h3>Co-construire</h3>
+            <p>Participer à la création des scénarios, tester avec vos publics, adapter à votre contexte. Vos retours façonnent l'outil.</p>
+            <div class="role-examples">
+                <strong>Idéal pour :</strong> Maisons de Jeunes, bibliothèques, animateurs terrain
+            </div>
+        </div>
+
+        <div class="role-card diffuser">
+            <span class="role-tag">Diffuseur</span>
+            <h3>Diffuser</h3>
+            <p>Relayer l'appel dans vos réseaux, connecter avec des partenaires potentiels, identifier des opportunités de financement.</p>
+            <div class="role-examples">
+                <strong>Idéal pour :</strong> Fédérations, réseaux, médias spécialisés
+            </div>
+        </div>
+
+        <div class="role-card financer">
+            <span class="role-tag">Financeur</span>
+            <h3>Financer</h3>
+            <p>Soutenir le développement via vos programmes existants, participer au match-funding, écrire des lettres de soutien.</p>
+            <div class="role-examples">
+                <strong>Idéal pour :</strong> Fondations, pouvoirs publics, mécènes
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+    <div class="section-label">Feuille de route</div>
+    <h2>Ce qui se passe et quand</h2>
+
+    <div class="timeline">
+        <div class="timeline-item urgent">
+            <div class="timeline-dot">!</div>
+            <div class="timeline-content">
+                <div class="timeline-date">1er février 2026</div>
+                <div class="timeline-title">Deadline NLnet NGI Zero Commons</div>
+                <div class="timeline-desc">Candidature pour 20.000 € — financement R&D du framework de base.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item active">
+            <div class="timeline-dot">1</div>
+            <div class="timeline-content">
+                <div class="timeline-date">Février – Mars 2026</div>
+                <div class="timeline-title">Développement Milestone 1 & 2</div>
+                <div class="timeline-desc">Moteur de scénarios + Module économie fictive. Premier prototype testable.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">2</div>
+            <div class="timeline-content">
+                <div class="timeline-date">5 mars 2026</div>
+                <div class="timeline-title">Deadline Erasmus+ KA2</div>
+                <div class="timeline-desc">Opportunité pour partenariat européen (2+ pays). Nécessite structure porteuse.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">3</div>
+            <div class="timeline-content">
+                <div class="timeline-date">Avril – Juin 2026</div>
+                <div class="timeline-title">Tests avec partenaires pilotes</div>
+                <div class="timeline-desc">Déploiement en conditions réelles avec les organisations partenaires.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">4</div>
+            <div class="timeline-content">
+                <div class="timeline-date">Novembre 2026</div>
+                <div class="timeline-title">Deadline Innoviris PYSI</div>
+                <div class="timeline-desc">Jusqu'à 100.000 € pour l'innovation sociale à Bruxelles. Nécessite siège bruxellois.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot">5</div>
+            <div class="timeline-content">
+                <div class="timeline-date">2027</div>
+                <div class="timeline-title">Méta-jeu intersectoriel</div>
+                <div class="timeline-desc">Connexion des instances sectorielles. Objectif : citoyens informés pour les élections.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OFFRE -->
+<section id="offre">
+    <div class="section-label">Ce qu'on propose</div>
+    <h2>Pourquoi nous rejoindre maintenant</h2>
+
+    <div class="offer-box">
+        <h3>Pour les organisations partenaires</h3>
+        <ul class="offer-list">
+            <li>Un outil clé en main adapté à l'éducation permanente, sans coût technique récurrent</li>
+            <li>Co-construction : vos besoins façonnent les fonctionnalités</li>
+            <li>Visibilité : mention dans toutes les communications et candidatures</li>
+            <li>Formation : accompagnement au déploiement pour vos équipes</li>
+            <li>Réseau : connexion avec les autres organisations participantes</li>
+            <li>Propriété : vous gardez le contrôle total de votre instance, pour toujours</li>
+        </ul>
+
+        <h3 style="margin-top: 2rem;">Pour les structures porteuses</h3>
+        <ul class="offer-list">
+            <li>Frais de gestion sur les financements obtenus (à négocier)</li>
+            <li>Positionnement pionnier sur l'innovation en éducation citoyenne</li>
+            <li>Mutualisation des coûts de développement avec d'autres partenaires</li>
+            <li>Méthodologie réplicable pour vos autres projets</li>
+        </ul>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+    <div class="section-label">Questions fréquentes</div>
+    <h2>Ce que vous voulez probablement savoir</h2>
+
+    <div class="faq-item">
+        <div class="faq-question">Qui porte le projet actuellement ?</div>
+        <p class="faq-answer">
+            Une personne seule, basée à Bruxelles (1160). Le projet cherche activement une structure porteuse 
+            pour les financements qui nécessitent une personnalité juridique. La création d'une ASBL dédiée 
+            reste une option si aucun porteur existant ne se manifeste.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Quel est le budget total visé ?</div>
+        <p class="faq-answer">
+            Phase 1 (NLnet) : 20.000 € pour la R&D du framework.<br>
+            Phase 2 (Erasmus+) : jusqu'à 60.000 € pour les partenariats européens.<br>
+            Phase 3 (Innoviris) : jusqu'à 100.000 € pour le déploiement à Bruxelles.<br>
+            Le financement est progressif — chaque étape réussie débloque la suivante.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Que signifie "co-construire" concrètement ?</div>
+        <p class="faq-answer">
+            Participer aux tests, donner des retours sur l'ergonomie, proposer des scénarios adaptés à votre public, 
+            identifier des bugs, suggérer des fonctionnalités. Pas besoin de compétences techniques — 
+            votre expertise de terrain est ce qui compte.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Comment fonctionne le méta-jeu intersectoriel ?</div>
+        <p class="faq-answer">
+            Chaque organisation déploie sa propre instance adaptée à son secteur (jeunesse, culture, environnement...). 
+            La couche de fédération permet de connecter ces instances : événements narratifs partagés, 
+            classements opt-in, échanges entre publics différents. L'objectif final est de mélanger 
+            les perspectives pour créer une intelligence collective citoyenne.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <div class="faq-question">Quel engagement minimum pour devenir partenaire ?</div>
+        <p class="faq-answer">
+            Pour une lettre de soutien NLnet : 30 minutes (on fournit un template).<br>
+            Pour co-construire : quelques heures par mois de tests et retours.<br>
+            Pour porter : engagement sur la durée du financement concerné.<br>
+            Tout est modulable selon vos capacités.
+        </p>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+    <h2>Prêt à discuter ?</h2>
+    <p>
+        Que vous ayez des questions, une proposition, ou juste envie de comprendre mieux — 
+        on est là.
+    </p>
+    <div class="cta-buttons">
+        <a href="mailto:[EMAIL]?subject=Partenariat%20!AAARG" class="btn btn-primary">Envoyer un email</a>
+        <a href="https://github.com/yannkeep/start/issues" target="_blank" class="btn btn-secondary">Ouvrir une issue GitHub</a>
+    </div>
+    <p class="cta-note">
+        Réponse sous 48h. Promis.
+    </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-links">
+        <a href="https://github.com/yannkeep/start" target="_blank">Code source</a>
+        <a href="https://yannkeep.github.io/start/arizona/town/cryptocoin/room/" target="_blank">Démo</a>
+        <a href="https://nlnet.nl/commonsfund/" target="_blank">NLnet Commons Fund</a>
+    </div>
+    <p class="footer-note">
+        !AAARG — Bruxelles 1160 — AGPL-3.0 / CC-BY-SA<br>
+        Données mises à jour le 21 janvier 2026
+    </p>
+</footer>
+
+</body>
+</html>
