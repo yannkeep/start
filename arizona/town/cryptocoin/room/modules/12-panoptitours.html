@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://ouaisfieu.github.io/112/12-panopticon.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::PANOPTICON v2 — Graphe de Pouvoir</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --pink: #f472b6;
+            --orange: #fb923c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / 4;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .logo-text { font-weight: 700; font-size: 1rem; }
+        .logo-sub { font-size: 0.6rem; color: var(--text-dim); }
+        .version-badge { 
+            font-size: 0.55rem; 
+            background: var(--green); 
+            color: black; 
+            padding: 0.1rem 0.3rem; 
+            border-radius: 3px; 
+            font-weight: 700;
+        }
+        
+        .header-search {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .header-search input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .header-search input:focus { outline: none; border-color: var(--accent); }
+        .header-search::before {
+            content: '🔍';
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .hstat { text-align: center; }
+        .hstat-value { font-weight: 700; font-size: 1.1rem; }
+        .hstat-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); }
+        
+        .btn-new {
+            padding: 0.4rem 0.8rem;
+            background: var(--purple);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .filters {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: white;
+        }
+        
+        .entities-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .entity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .entity-item:hover { background: var(--bg-hover); }
+        .entity-item.active { background: var(--bg-card); border-left: 3px solid var(--purple); }
+        
+        .entity-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .entity-avatar.person { background: rgba(99, 102, 241, 0.2); }
+        .entity-avatar.organization { background: rgba(34, 211, 238, 0.2); }
+        .entity-avatar.company { background: rgba(74, 222, 128, 0.2); }
+        .entity-avatar.media { background: rgba(251, 191, 36, 0.2); }
+        .entity-avatar.institution { background: rgba(167, 139, 250, 0.2); }
+        .entity-avatar.event { background: rgba(248, 113, 113, 0.2); }
+        .entity-avatar.document { background: rgba(244, 114, 182, 0.2); }
+        
+        .entity-info { flex: 1; min-width: 0; }
+        .entity-name { font-weight: 500; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .entity-type { font-size: 0.65rem; color: var(--text-dim); }
+        .entity-links { font-size: 0.6rem; color: var(--purple); }
+        
+        /* Main - Graph */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            min-height: 0; /* Important pour flex */
+        }
+        
+        .graph-toolbar {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            background: var(--bg-deep);
+            flex-wrap: wrap;
+        }
+        
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .toolbar-label { font-size: 0.7rem; color: var(--text-dim); }
+        
+        .toolbar-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .toolbar-btn:hover { background: var(--bg-hover); }
+        .toolbar-btn.active { background: var(--purple); border-color: var(--purple); }
+        
+        .graph-container {
+            flex: 1;
+            background: var(--bg-surface);
+            position: relative;
+            min-height: 500px;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .graph-container svg { 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 400px;
+            min-height: 400px;
+            display: block;
+        }
+        
+        .node { cursor: pointer; }
+        .node circle { stroke: var(--bg-void); stroke-width: 2px; transition: all 0.2s; }
+        .node:hover circle { stroke: var(--cyan); stroke-width: 3px; }
+        .node.selected circle { stroke: var(--amber); stroke-width: 4px; }
+        .node text { font-size: 10px; fill: var(--text); pointer-events: none; }
+        
+        /* Relations colorées par type */
+        .link { stroke: #888; stroke-opacity: 0.6; transition: all 0.2s; }
+        .link.highlighted { stroke-opacity: 1; stroke-width: 3px !important; }
+        .link-label { font-size: 8px; fill: var(--text-dim); pointer-events: none; }
+        
+        .link.rel-hierarchy { stroke: var(--purple); }
+        .link.rel-funding { stroke: var(--green); }
+        .link.rel-ownership { stroke: var(--amber); }
+        .link.rel-collaboration { stroke: var(--cyan); }
+        .link.rel-conflict { stroke: var(--red); stroke-dasharray: 5,3; }
+        .link.rel-personal { stroke: var(--pink); }
+        .link.rel-information { stroke: var(--orange); }
+        .link.rel-default { stroke: var(--border); }
+        
+        .graph-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.65rem;
+            max-width: 200px;
+        }
+        
+        .legend-title { font-weight: 600; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
+        .legend-section { margin-bottom: 0.75rem; }
+        .legend-section-title { font-size: 0.6rem; color: var(--text-dim); margin-bottom: 0.25rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .legend-line { width: 20px; height: 2px; }
+        .legend-line.dashed { background: repeating-linear-gradient(90deg, var(--red), var(--red) 3px, transparent 3px, transparent 6px); }
+        
+        /* Detail Panel */
+        .detail-panel {
+            background: var(--bg-deep);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .detail-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .detail-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .detail-info { flex: 1; }
+        .detail-name { font-weight: 600; font-size: 1rem; margin-bottom: 0.25rem; }
+        .detail-type { font-size: 0.75rem; color: var(--text-dim); }
+        
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.75rem;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .detail-tab:hover { color: var(--text); }
+        .detail-tab.active { 
+            color: var(--purple); 
+            border-bottom-color: var(--purple);
+            background: var(--bg-surface);
+        }
+        
+        .detail-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .detail-section { margin-bottom: 1.25rem; }
+        .detail-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-field { margin-bottom: 0.75rem; }
+        .detail-field label { display: block; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 0.2rem; }
+        
+        .detail-field input, .detail-field select, .detail-field textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.8rem;
+            font-family: inherit;
+        }
+        
+        .detail-field input:focus, .detail-field select:focus, .detail-field textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+        
+        /* Relations List - UPGRADED */
+        .relations-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        
+        .relation-item {
+            background: var(--bg-surface);
+            border-radius: 8px;
+            padding: 0.75rem;
+            border-left: 3px solid var(--border);
+        }
+        
+        .relation-item.rel-hierarchy { border-left-color: var(--purple); }
+        .relation-item.rel-funding { border-left-color: var(--green); }
+        .relation-item.rel-ownership { border-left-color: var(--amber); }
+        .relation-item.rel-collaboration { border-left-color: var(--cyan); }
+        .relation-item.rel-conflict { border-left-color: var(--red); }
+        .relation-item.rel-personal { border-left-color: var(--pink); }
+        .relation-item.rel-information { border-left-color: var(--orange); }
+        
+        .relation-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .relation-direction {
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+        
+        .relation-target {
+            flex: 1;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        
+        .relation-target:hover { color: var(--cyan); }
+        
+        .relation-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .relation-actions button {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0.2rem;
+        }
+        
+        .relation-actions button:hover { color: var(--text); }
+        .relation-actions button.delete:hover { color: var(--red); }
+        
+        .relation-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .relation-type-badge {
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            font-weight: 500;
+        }
+        
+        .relation-type-badge.hierarchy { background: rgba(167, 139, 250, 0.2); color: var(--purple); }
+        .relation-type-badge.funding { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .relation-type-badge.ownership { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+        .relation-type-badge.collaboration { background: rgba(34, 211, 238, 0.2); color: var(--cyan); }
+        .relation-type-badge.conflict { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+        .relation-type-badge.personal { background: rgba(244, 114, 182, 0.2); color: var(--pink); }
+        .relation-type-badge.information { background: rgba(251, 146, 60, 0.2); color: var(--orange); }
+        
+        .relation-label { color: var(--text-dim); }
+        .relation-strength { color: var(--amber); }
+        .relation-date { color: var(--text-dim); }
+        
+        .relation-notes {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border);
+            font-style: italic;
+        }
+        
+        .add-relation-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .add-relation-btn:hover { border-color: var(--purple); color: var(--purple); }
+        
+        .detail-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .detail-footer button {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .btn-save { background: var(--purple); border: none; color: white; }
+        .btn-delete { background: transparent; border: 1px solid var(--red); color: var(--red); }
+        
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+        
+        /* Modal - UPGRADED */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.open { display: flex; }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title { font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 1rem; }
+        .modal-footer { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; justify-content: flex-end; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 0.4rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        /* Relation Type Selector */
+        .relation-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .relation-type-option {
+            padding: 0.6rem;
+            background: var(--bg-surface);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .relation-type-option:hover { border-color: var(--text-dim); }
+        .relation-type-option.selected { border-color: var(--purple); background: rgba(99, 102, 241, 0.1); }
+        
+        .relation-type-option .icon { font-size: 1.2rem; margin-bottom: 0.25rem; }
+        .relation-type-option .label { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* Target Search */
+        .target-search-container {
+            position: relative;
+        }
+        
+        .target-options {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        
+        .target-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .target-option:last-child { border-bottom: none; }
+        .target-option:hover { background: var(--bg-hover); }
+        .target-option.selected { background: var(--purple); }
+        
+        /* Strength Slider */
+        .strength-slider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .strength-slider input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            background: var(--bg-surface);
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        .strength-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--purple);
+            cursor: pointer;
+        }
+        
+        .strength-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--amber);
+        }
+        
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 1001;
+        }
+        
+        .notif {
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .notif.success { border-left: 3px solid var(--green); }
+        .notif.xp { border-left: 3px solid var(--amber); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .xp-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, var(--amber), var(--orange));
+            color: black;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            text-align: center;
+            animation: xpPop 2s ease forwards;
+            z-index: 1002;
+        }
+        
+        @keyframes xpPop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="https://ouaisfieu.github.io/112/index.html" class="logo">
+                <div class="logo-icon">🕸️</div>
+                <div>
+                    <div class="logo-text">PANOPTICON <span class="version-badge">V2</span></div>
+                    <div class="logo-sub">Graphe de Pouvoir</div>
+                </div>
+            </a>
+            
+            <div class="header-search">
+                <input type="text" id="searchInput" placeholder="Rechercher une entité...">
+            </div>
+            
+            <div class="header-stats">
+                <div class="hstat">
+                    <div class="hstat-value" id="statEntities">0</div>
+                    <div class="hstat-label">Entités</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" id="statLinks">0</div>
+                    <div class="hstat-label">Relations</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" id="statClusters">0</div>
+                    <div class="hstat-label">Clusters</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Entités</span>
+                <button class="btn-new" onclick="openCreateModal()">+ Nouvelle</button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Toutes</button>
+                <button class="filter-btn" data-filter="person">👤</button>
+                <button class="filter-btn" data-filter="organization">🏛️</button>
+                <button class="filter-btn" data-filter="company">🏢</button>
+                <button class="filter-btn" data-filter="media">📰</button>
+                <button class="filter-btn" data-filter="institution">🏦</button>
+                <button class="filter-btn" data-filter="event">📅</button>
+                <button class="filter-btn" data-filter="document">📄</button>
+            </div>
+            
+            <div class="entities-list" id="entitiesList">
+        <div class="entity-item " data-id="entity_sauron" onclick="selectEntity(&#39;entity_sauron&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Sauron</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 3 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_saruman" onclick="selectEntity(&#39;entity_saruman&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Saruman le Blanc</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 3 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_nazgul" onclick="selectEntity(&#39;entity_nazgul&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Les Nazgûl</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_witch_king" onclick="selectEntity(&#39;entity_witch_king&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Roi-Sorcier d'Angmar</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_urukhai" onclick="selectEntity(&#39;entity_urukhai&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Uruk-hai</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_neo" onclick="selectEntity(&#39;entity_neo&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Neo (Thomas Anderson)</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 3 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_smith" onclick="selectEntity(&#39;entity_smith&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Agent Smith</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_architect" onclick="selectEntity(&#39;entity_architect&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">L'Architecte</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_oracle" onclick="selectEntity(&#39;entity_oracle&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">L'Oracle</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_zion" onclick="selectEntity(&#39;entity_zion&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Zion</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_matrix_system" onclick="selectEntity(&#39;entity_matrix_system&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">La Matrice</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_gargamel" onclick="selectEntity(&#39;entity_gargamel&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">Gargamel</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 3 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_azrael" onclick="selectEntity(&#39;entity_azrael&#39;)">
+            <div class="entity-avatar other">❓</div>
+            <div class="entity-info">
+                <div class="entity-name">Azraël</div>
+                <div class="entity-type">other</div>
+                <div class="entity-links">🔗 1 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_schtroumpfette" onclick="selectEntity(&#39;entity_schtroumpfette&#39;)">
+            <div class="entity-avatar person">👤</div>
+            <div class="entity-info">
+                <div class="entity-name">La Schtroumpfette</div>
+                <div class="entity-type">person</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_village_schtroumpf" onclick="selectEntity(&#39;entity_village_schtroumpf&#39;)">
+            <div class="entity-avatar location">❓</div>
+            <div class="entity-info">
+                <div class="entity-name">Village Schtroumpf</div>
+                <div class="entity-type">location</div>
+                <div class="entity-links">🔗 1 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_lorem_industries" onclick="selectEntity(&#39;entity_lorem_industries&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Lorem Industries SA</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_ipsum_finance" onclick="selectEntity(&#39;entity_ipsum_finance&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Ipsum Finance Group</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_dolor_holdings" onclick="selectEntity(&#39;entity_dolor_holdings&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Dolor Holdings Ltd</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_mordor_inc" onclick="selectEntity(&#39;entity_mordor_inc&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Mordor Incorporated</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_isengard_corp" onclick="selectEntity(&#39;entity_isengard_corp&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Isengard Corporation</div>
+                <div class="entity-type">organization</div>
+                <div class="entity-links">🔗 2 relations</div>
+            </div>
+        </div>
+    
+        <div class="entity-item " data-id="entity_colruyt" onclick="selectEntity(&#39;entity_colruyt&#39;)">
+            <div class="entity-avatar organization">🏛️</div>
+            <div class="entity-info">
+                <div class="entity-name">Colruyt Group</div>
+                <div class="entity-type">organization</div>
+                
+            </div>
+        </div>
+    </div>
+        </aside>
+        
+        <!-- Main Graph -->
+        <main class="main-content">
+            <div class="graph-toolbar">
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Layout:</span>
+                    <button class="toolbar-btn active" id="btnForce" onclick="setLayout(&#39;force&#39;)">Force</button>
+                    <button class="toolbar-btn" id="btnRadial" onclick="setLayout(&#39;radial&#39;)">Radial</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Affichage:</span>
+                    <button class="toolbar-btn" id="btnLabels" onclick="toggleLabels()">Labels</button>
+                    <button class="toolbar-btn active" id="btnRelations" onclick="toggleRelations()">Relations</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Filtrer relations:</span>
+                    <select id="filterRelationType" onchange="filterByRelationType(this.value)">
+                        <option value="all">Toutes</option>
+                        <option value="hierarchy">⬆️ Hiérarchie</option>
+                        <option value="funding">💰 Financement</option>
+                        <option value="ownership">📜 Propriété</option>
+                        <option value="collaboration">🤝 Collaboration</option>
+                        <option value="conflict">⚔️ Conflit</option>
+                        <option value="personal">❤️ Personnel</option>
+                        <option value="information">📡 Information</option>
+                    </select>
+                </div>
+                
+                <div class="toolbar-group" style="margin-left: auto;">
+                    <button class="toolbar-btn" onclick="zoomIn()">🔍+</button>
+                    <button class="toolbar-btn" onclick="zoomOut()">🔍−</button>
+                    <button class="toolbar-btn" onclick="zoomReset()">↺</button>
+                    <button class="toolbar-btn" onclick="exportGraph()">📤</button>
+                </div>
+            </div>
+            
+            <div class="graph-container" id="graphContainer">
+                <svg id="graphSvg"></svg>
+                
+                <div class="graph-legend">
+                    <div class="legend-title">Légende</div>
+                    
+                    <div class="legend-section">
+                        <div class="legend-section-title">Entités</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #6366f1"></div> Personne</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #22d3ee"></div> Organisation</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #4ade80"></div> Entreprise</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #fbbf24"></div> Média</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #a78bfa"></div> Institution</div>
+                    </div>
+                    
+                    <div class="legend-section">
+                        <div class="legend-section-title">Relations</div>
+                        <div class="legend-item"><div class="legend-line" style="background: #a78bfa"></div> Hiérarchie</div>
+                        <div class="legend-item"><div class="legend-line" style="background: #4ade80"></div> Financement</div>
+                        <div class="legend-item"><div class="legend-line" style="background: #fbbf24"></div> Propriété</div>
+                        <div class="legend-item"><div class="legend-line" style="background: #22d3ee"></div> Collaboration</div>
+                        <div class="legend-item"><div class="legend-line dashed"></div> Conflit</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Detail Panel -->
+        <aside class="detail-panel">
+            <div id="detailEmpty" class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">Sélectionnez une entité</div>
+                <div>Cliquez sur un nœud du graphe ou dans la liste</div>
+            </div>
+            
+            <div id="detailContent" style="display: none; flex-direction: column; height: 100%;">
+                <div class="detail-header">
+                    <div class="detail-avatar person" id="detailAvatar">👤</div>
+                    <div class="detail-info">
+                        <div class="detail-name" id="detailName">Entité</div>
+                        <div class="detail-type" id="detailType">Type</div>
+                    </div>
+                </div>
+                
+                <div class="detail-tabs">
+                    <button class="detail-tab active" onclick="switchTab(&#39;info&#39;)">📋 Infos</button>
+                    <button class="detail-tab" onclick="switchTab(&#39;relations&#39;)">🔗 Relations</button>
+                    <button class="detail-tab" onclick="switchTab(&#39;timeline&#39;)">📅 Timeline</button>
+                </div>
+                
+                <div class="detail-body">
+                    <!-- Tab: Info -->
+                    <div class="tab-content active" id="tabInfo">
+                        <div class="detail-section">
+                            <div class="detail-section-title">Informations générales</div>
+                            <div class="detail-field">
+                                <label>Nom</label>
+                                <input type="text" id="inputName">
+                            </div>
+                            <div class="detail-field">
+                                <label>Type</label>
+                                <select id="inputType">
+                                    <option value="person">👤 Personne</option>
+                                    <option value="organization">🏛️ Organisation</option>
+                                    <option value="company">🏢 Entreprise</option>
+                                    <option value="media">📰 Média</option>
+                                    <option value="institution">🏦 Institution</option>
+                                    <option value="event">📅 Événement</option>
+                                    <option value="document">📄 Document</option>
+                                </select>
+                            </div>
+                            <div class="detail-field">
+                                <label>Rôle / Fonction</label>
+                                <input type="text" id="inputRole" placeholder="Ex: CEO, Député...">
+                            </div>
+                            <div class="detail-field">
+                                <label>Description</label>
+                                <textarea id="inputDescription" rows="3"></textarea>
+                            </div>
+                            <div class="detail-field">
+                                <label>Tags (séparés par virgules)</label>
+                                <input type="text" id="inputTags" placeholder="politique, finance, lobby...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab: Relations -->
+                    <div class="tab-content" id="tabRelations">
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                🔗 Relations (<span id="linkCount">0</span>)
+                                <button class="btn-new" onclick="openRelationModal()" style="font-size: 0.65rem; padding: 0.25rem 0.5rem;">+ Ajouter</button>
+                            </div>
+                            
+                            <div class="relations-list" id="relationsList"></div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-section-title">📥 Relations entrantes (<span id="incomingCount">0</span>)</div>
+                            <div class="relations-list" id="incomingList"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab: Timeline -->
+                    <div class="tab-content" id="tabTimeline">
+                        <div class="detail-section">
+                            <div class="detail-section-title">📅 Historique des relations</div>
+                            <div id="timelineList"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-footer">
+                    <button class="btn-save" onclick="saveEntity()">💾 Sauvegarder</button>
+                    <button class="btn-delete" onclick="deleteEntity()">🗑️ Supprimer</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Create Entity Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Nouvelle entité</span>
+                <button class="modal-close" onclick="closeCreateModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" id="createName" placeholder="Nom de l&#39;entité">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="createType">
+                        <option value="person">👤 Personne</option>
+                        <option value="organization">🏛️ Organisation</option>
+                        <option value="company">🏢 Entreprise</option>
+                        <option value="media">📰 Média</option>
+                        <option value="institution">🏦 Institution</option>
+                        <option value="event">📅 Événement</option>
+                        <option value="document">📄 Document</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rôle / Fonction</label>
+                    <input type="text" id="createRole" placeholder="Ex: CEO, Député...">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="createDescription" rows="3" placeholder="Notes..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="toolbar-btn" onclick="closeCreateModal()">Annuler</button>
+                <button class="btn-save" onclick="createEntity()">Créer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create/Edit Relation Modal - UPGRADED -->
+    <div class="modal" id="relationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="relationModalTitle">Nouvelle relation</span>
+                <button class="modal-close" onclick="closeRelationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Relation Type Grid -->
+                <div class="form-group">
+                    <label>Type de relation *</label>
+                    <div class="relation-type-grid" id="relationTypeGrid">
+                        <div class="relation-type-option" data-type="hierarchy" onclick="selectRelationType(&#39;hierarchy&#39;)">
+                            <div class="icon">⬆️</div>
+                            <div class="label">Hiérarchie</div>
+                        </div>
+                        <div class="relation-type-option" data-type="funding" onclick="selectRelationType(&#39;funding&#39;)">
+                            <div class="icon">💰</div>
+                            <div class="label">Financement</div>
+                        </div>
+                        <div class="relation-type-option" data-type="ownership" onclick="selectRelationType(&#39;ownership&#39;)">
+                            <div class="icon">📜</div>
+                            <div class="label">Propriété</div>
+                        </div>
+                        <div class="relation-type-option" data-type="collaboration" onclick="selectRelationType(&#39;collaboration&#39;)">
+                            <div class="icon">🤝</div>
+                            <div class="label">Collaboration</div>
+                        </div>
+                        <div class="relation-type-option" data-type="conflict" onclick="selectRelationType(&#39;conflict&#39;)">
+                            <div class="icon">⚔️</div>
+                            <div class="label">Conflit</div>
+                        </div>
+                        <div class="relation-type-option" data-type="personal" onclick="selectRelationType(&#39;personal&#39;)">
+                            <div class="icon">❤️</div>
+                            <div class="label">Personnel</div>
+                        </div>
+                        <div class="relation-type-option" data-type="information" onclick="selectRelationType(&#39;information&#39;)">
+                            <div class="icon">📡</div>
+                            <div class="label">Information</div>
+                        </div>
+                        <div class="relation-type-option selected" data-type="default" onclick="selectRelationType(&#39;default&#39;)">
+                            <div class="icon">🔗</div>
+                            <div class="label">Autre</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Direction -->
+                <div class="form-group">
+                    <label>Direction</label>
+                    <select id="relationDirection">
+                        <option value="outgoing">→ Sortante (de cette entité vers...)</option>
+                        <option value="incoming">← Entrante (vers cette entité depuis...)</option>
+                        <option value="bidirectional">↔ Bidirectionnelle</option>
+                    </select>
+                </div>
+                
+                <!-- Label -->
+                <div class="form-group">
+                    <label>Label de la relation</label>
+                    <input type="text" id="relationLabel" placeholder="Ex: travaille pour, finance, membre de...">
+                    <div style="font-size: 0.65rem; color: var(--text-dim); margin-top: 0.25rem;">
+                        Suggestions: <span class="suggestion" onclick="setRelationLabel(&#39;travaille pour&#39;)" style="cursor: pointer; color: var(--cyan);">travaille pour</span>, 
+                        <span class="suggestion" onclick="setRelationLabel(&#39;finance&#39;)" style="cursor: pointer; color: var(--cyan);">finance</span>,
+                        <span class="suggestion" onclick="setRelationLabel(&#39;membre de&#39;)" style="cursor: pointer; color: var(--cyan);">membre de</span>,
+                        <span class="suggestion" onclick="setRelationLabel(&#39;propriétaire de&#39;)" style="cursor: pointer; color: var(--cyan);">propriétaire de</span>
+                    </div>
+                </div>
+                
+                <!-- Target Entity -->
+                <div class="form-group target-search-container">
+                    <label>Connecter à *</label>
+                    <input type="text" id="relationTargetSearch" placeholder="Rechercher une entité..." oninput="filterTargetOptions()">
+                    <div class="target-options" id="targetOptions"></div>
+                </div>
+                
+                <!-- Strength -->
+                <div class="form-group">
+                    <label>Force de la relation</label>
+                    <div class="strength-slider">
+                        <input type="range" id="relationStrength" min="1" max="10" value="5" oninput="updateStrengthDisplay()">
+                        <span class="strength-value" id="strengthValue">5</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-dim);">
+                        <span>Faible</span>
+                        <span>Forte</span>
+                    </div>
+                </div>
+                
+                <!-- Date -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date début</label>
+                        <input type="date" id="relationStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Date fin</label>
+                        <input type="date" id="relationEndDate">
+                    </div>
+                </div>
+                
+                <!-- Source -->
+                <div class="form-group">
+                    <label>Source / Preuve</label>
+                    <input type="text" id="relationSource" placeholder="URL, document, interview...">
+                </div>
+                
+                <!-- Notes -->
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="relationNotes" rows="2" placeholder="Détails supplémentaires..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="toolbar-btn" onclick="closeRelationModal()">Annuler</button>
+                <button class="btn-save" onclick="saveRelation()">Créer la relation</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notifications" id="notifications"></div>
+
+<script>
+// ==================== STATE ====================
+let currentEntityId = null;
+let currentFilter = 'all';
+let currentRelationFilter = 'all';
+let simulation = null;
+let showLabels = true;
+let showRelations = true;
+let layout = 'force';
+
+// Relation modal state
+let editingRelationId = null;
+let selectedRelationType = 'default';
+let selectedTargetId = null;
+
+const TYPE_COLORS = {
+    person: '#6366f1',
+    organization: '#22d3ee',
+    company: '#4ade80',
+    media: '#fbbf24',
+    institution: '#a78bfa',
+    event: '#f87171',
+    document: '#f472b6'
+};
+
+const TYPE_ICONS = {
+    person: '👤',
+    organization: '🏛️',
+    company: '🏢',
+    media: '📰',
+    institution: '🏦',
+    event: '📅',
+    document: '📄'
+};
+
+const RELATION_TYPES = {
+    hierarchy: { icon: '⬆️', label: 'Hiérarchie', color: '#a78bfa' },
+    funding: { icon: '💰', label: 'Financement', color: '#4ade80' },
+    ownership: { icon: '📜', label: 'Propriété', color: '#fbbf24' },
+    collaboration: { icon: '🤝', label: 'Collaboration', color: '#22d3ee' },
+    conflict: { icon: '⚔️', label: 'Conflit', color: '#f87171' },
+    personal: { icon: '❤️', label: 'Personnel', color: '#f472b6' },
+    information: { icon: '📡', label: 'Information', color: '#fb923c' },
+    default: { icon: '🔗', label: 'Autre', color: '#888' }
+};
+
+// ==================== DATA LAYER ====================
+// Simple localStorage-based data layer (compatible with KERN if present)
+const DataStore = {
+    getEntities() {
+        try {
+            return JSON.parse(localStorage.getItem('kern_entities') || '[]');
+        } catch {
+            return [];
+        }
+    },
+    
+    saveEntities(entities) {
+        localStorage.setItem('kern_entities', JSON.stringify(entities));
+    },
+    
+    getEntity(id) {
+        return this.getEntities().find(e => e.id === id);
+    },
+    
+    createEntity(data) {
+        const entities = this.getEntities();
+        const entity = {
+            id: 'ent_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            ...data,
+            links: [],
+            createdAt: new Date().toISOString()
+        };
+        entities.push(entity);
+        this.saveEntities(entities);
+        return entity;
+    },
+    
+    updateEntity(id, updates) {
+        const entities = this.getEntities();
+        const idx = entities.findIndex(e => e.id === id);
+        if (idx !== -1) {
+            entities[idx] = { ...entities[idx], ...updates };
+            this.saveEntities(entities);
+            return entities[idx];
+        }
+        return null;
+    },
+    
+    deleteEntity(id) {
+        let entities = this.getEntities();
+        // Remove entity
+        entities = entities.filter(e => e.id !== id);
+        // Remove all links to this entity
+        entities.forEach(e => {
+            e.links = (e.links || []).filter(l => l.target !== id);
+        });
+        this.saveEntities(entities);
+    },
+    
+    addRelation(sourceId, relation) {
+        const entities = this.getEntities();
+        const source = entities.find(e => e.id === sourceId);
+        if (!source) return null;
+        
+        const newRelation = {
+            id: 'rel_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            ...relation,
+            createdAt: new Date().toISOString()
+        };
+        
+        source.links = source.links || [];
+        source.links.push(newRelation);
+        
+        // If bidirectional, add reverse link
+        if (relation.direction === 'bidirectional') {
+            const target = entities.find(e => e.id === relation.target);
+            if (target) {
+                target.links = target.links || [];
+                target.links.push({
+                    ...newRelation,
+                    id: 'rel_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    target: sourceId,
+                    direction: 'bidirectional'
+                });
+            }
+        }
+        
+        this.saveEntities(entities);
+        return newRelation;
+    },
+    
+    updateRelation(entityId, relationId, updates) {
+        const entities = this.getEntities();
+        const entity = entities.find(e => e.id === entityId);
+        if (!entity) return null;
+        
+        const relIdx = (entity.links || []).findIndex(l => l.id === relationId);
+        if (relIdx !== -1) {
+            entity.links[relIdx] = { ...entity.links[relIdx], ...updates };
+            this.saveEntities(entities);
+            return entity.links[relIdx];
+        }
+        return null;
+    },
+    
+    deleteRelation(entityId, relationId) {
+        const entities = this.getEntities();
+        const entity = entities.find(e => e.id === entityId);
+        if (!entity) return;
+        
+        const relation = (entity.links || []).find(l => l.id === relationId);
+        
+        // Remove from source
+        entity.links = (entity.links || []).filter(l => l.id !== relationId);
+        
+        // If bidirectional, remove reverse link
+        if (relation && relation.direction === 'bidirectional') {
+            const target = entities.find(e => e.id === relation.target);
+            if (target) {
+                target.links = (target.links || []).filter(l => 
+                    !(l.target === entityId && l.direction === 'bidirectional')
+                );
+            }
+        }
+        
+        this.saveEntities(entities);
+    },
+    
+    getIncomingRelations(entityId) {
+        const entities = this.getEntities();
+        const incoming = [];
+        
+        entities.forEach(e => {
+            if (e.id === entityId) return;
+            (e.links || []).forEach(link => {
+                if (link.target === entityId) {
+                    incoming.push({
+                        ...link,
+                        sourceId: e.id,
+                        sourceName: e.name,
+                        sourceType: e.type
+                    });
+                }
+            });
+        });
+        
+        return incoming;
+    },
+    
+    // Initialize with demo data if empty
+    initDemoData() {
+        if (this.getEntities().length === 0) {
+            const demoEntities = [
+                {
+                    id: 'ent_demo_001',
+                    name: 'Georges-Louis Bouchez',
+                    type: 'person',
+                    role: 'Président MR',
+                    description: 'Président du Mouvement Réformateur depuis 2020',
+                    tags: ['politique', 'libéral', 'wallonie'],
+                    links: [
+                        { id: 'rel_001', target: 'ent_demo_002', type: 'hierarchy', label: 'préside', direction: 'outgoing', strength: 5 },
+                        { id: 'rel_002', target: 'ent_demo_008', type: 'collaboration', label: 'coalition Arizona', direction: 'bidirectional', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_002',
+                    name: 'Mouvement Réformateur',
+                    type: 'organization',
+                    role: 'Parti politique libéral',
+                    description: 'Parti politique libéral belge francophone',
+                    tags: ['politique', 'libéral'],
+                    links: [
+                        { id: 'rel_003', target: 'ent_demo_003', type: 'information', label: 'relayé par', direction: 'outgoing', strength: 3 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_003',
+                    name: 'La Libre Belgique',
+                    type: 'media',
+                    role: 'Quotidien francophone',
+                    description: 'Journal quotidien belge francophone',
+                    tags: ['média', 'presse', 'francophone'],
+                    links: [
+                        { id: 'rel_004', target: 'ent_demo_004', type: 'ownership', label: 'détenu par', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_004',
+                    name: 'IPM Group',
+                    type: 'company',
+                    role: 'Groupe de presse',
+                    description: 'Groupe médiatique belge (La Libre, La DH, etc.)',
+                    tags: ['média', 'holding'],
+                    links: []
+                },
+                {
+                    id: 'ent_demo_005',
+                    name: 'Paul Magnette',
+                    type: 'person',
+                    role: 'Président PS',
+                    description: 'Président du Parti Socialiste depuis 2019',
+                    tags: ['politique', 'socialiste', 'wallonie'],
+                    links: [
+                        { id: 'rel_005', target: 'ent_demo_006', type: 'hierarchy', label: 'préside', direction: 'outgoing', strength: 5 },
+                        { id: 'rel_006', target: 'ent_demo_001', type: 'conflict', label: 'opposition', direction: 'bidirectional', strength: 4, notes: 'Opposition politique marquée' }
+                    ]
+                },
+                {
+                    id: 'ent_demo_006',
+                    name: 'Parti Socialiste',
+                    type: 'organization',
+                    role: 'Parti politique socialiste',
+                    description: 'Parti politique socialiste belge francophone',
+                    tags: ['politique', 'socialiste'],
+                    links: [
+                        { id: 'rel_007', target: 'ent_demo_007', type: 'collaboration', label: 'Action Commune', direction: 'bidirectional', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_007',
+                    name: 'FGTB',
+                    type: 'organization',
+                    role: 'Syndicat socialiste',
+                    description: 'Fédération Générale du Travail de Belgique - 1.5M affiliés',
+                    tags: ['syndicat', 'socialiste'],
+                    links: [
+                        { id: 'rel_008', target: 'ent_demo_015', type: 'hierarchy', label: 'présidé par', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_008',
+                    name: 'N-VA',
+                    type: 'organization',
+                    role: 'Parti nationaliste flamand',
+                    description: 'Nieuw-Vlaamse Alliantie - Premier parti de Flandre. Présidente: Valerie Van Peel (depuis avril 2025)',
+                    tags: ['politique', 'nationaliste', 'flandre'],
+                    links: [
+                        { id: 'rel_009', target: 'ent_demo_019', type: 'hierarchy', label: 'présidé par', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_009',
+                    name: 'Thierry Bodson',
+                    type: 'person',
+                    role: 'Co-président UNMS (ex-FGTB)',
+                    description: 'Co-président de Solidaris/UNMS avec Christel Geerts. A quitté la présidence FGTB fin décembre 2025.',
+                    tags: ['mutualité', 'socialiste', 'ex-syndicat'],
+                    links: [
+                        { id: 'rel_010', target: 'ent_demo_011', type: 'hierarchy', label: 'co-préside', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_010',
+                    name: 'Bart De Wever',
+                    type: 'person',
+                    role: 'Premier Ministre de Belgique',
+                    description: 'Premier Ministre depuis le 3 février 2025 (gouvernement Arizona). Ex-président N-VA (2004-2025), ex-bourgmestre d\'Anvers.',
+                    tags: ['politique', 'nationaliste', 'flandre', 'gouvernement'],
+                    links: [
+                        { id: 'rel_011', target: 'ent_demo_012', type: 'hierarchy', label: 'dirige', direction: 'outgoing', strength: 5 },
+                        { id: 'rel_021', target: 'ent_demo_008', type: 'personal', label: 'membre', direction: 'outgoing', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_011',
+                    name: 'Solidaris (UNMS)',
+                    type: 'organization',
+                    role: 'Mutualité socialiste',
+                    description: 'Union Nationale des Mutualités Socialistes - 3.3M affiliés. SG: Jean-Pascal Labille',
+                    tags: ['mutualité', 'socialiste', 'santé'],
+                    links: [
+                        { id: 'rel_012', target: 'ent_demo_006', type: 'collaboration', label: 'Action Commune', direction: 'bidirectional', strength: 4 },
+                        { id: 'rel_020', target: 'ent_demo_016', type: 'hierarchy', label: 'régionale wallonne', direction: 'outgoing', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_012',
+                    name: 'Gouvernement Arizona',
+                    type: 'institution',
+                    role: 'Gouvernement fédéral 2024-',
+                    description: 'Coalition N-VA/MR/CD&V/Vooruit/Engagés - Premier Ministre: Bart De Wever',
+                    tags: ['gouvernement', 'fédéral', '2024'],
+                    links: []
+                },
+                {
+                    id: 'ent_demo_013',
+                    name: 'PAC',
+                    type: 'organization',
+                    role: 'Éducation permanente',
+                    description: 'Présence et Action Culturelles - 200+ sections locales. Codirection: Pierre Vangilbergen et Anne-Lise Cydzik (depuis octobre 2025)',
+                    tags: ['éducation permanente', 'socialiste', 'culture'],
+                    links: [
+                        { id: 'rel_013', target: 'ent_demo_006', type: 'collaboration', label: 'Action Commune', direction: 'bidirectional', strength: 3 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_014',
+                    name: 'Soralia',
+                    type: 'organization',
+                    role: 'Mouvement féministe',
+                    description: 'Ex-Femmes Prévoyantes Socialistes - 200+ groupes locaux. SG: Noémie Van Erps',
+                    tags: ['féminisme', 'socialiste', 'santé'],
+                    links: [
+                        { id: 'rel_014', target: 'ent_demo_011', type: 'collaboration', label: 'réseau mutualiste', direction: 'bidirectional', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_015',
+                    name: 'Bert Engelaar',
+                    type: 'person',
+                    role: 'Président FGTB',
+                    description: 'Président de la FGTB depuis décembre 2025 (succède à Bodson). 46 ans.',
+                    tags: ['syndicat', 'socialiste'],
+                    links: [
+                        { id: 'rel_015', target: 'ent_demo_007', type: 'hierarchy', label: 'préside', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_016',
+                    name: 'Sarah de Liamchine',
+                    type: 'person',
+                    role: 'Prés. Solidaris Wallonie / DG Samusocial',
+                    description: 'Présidente Solidaris Wallonie, DG Samusocial Brussels (depuis sept 2025). A quitté PAC en septembre 2025.',
+                    tags: ['mutualité', 'socialiste', 'social'],
+                    links: [
+                        { id: 'rel_016', target: 'ent_demo_011', type: 'hierarchy', label: 'préside Solidaris Wallonie', direction: 'outgoing', strength: 4 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_017',
+                    name: 'Jean-Pascal Labille',
+                    type: 'person',
+                    role: 'Secrétaire général Solidaris',
+                    description: 'Secrétaire général de l\'UNMS/Solidaris. Ex-ministre fédéral PS.',
+                    tags: ['mutualité', 'socialiste', 'politique'],
+                    links: [
+                        { id: 'rel_018', target: 'ent_demo_011', type: 'hierarchy', label: 'secrétaire général', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_018',
+                    name: 'Selena Carbonero Fernandez',
+                    type: 'person',
+                    role: 'Secrétaire générale FGTB',
+                    description: 'Secrétaire générale FGTB depuis déc 2025. Première femme francophone à ce poste depuis 2014.',
+                    tags: ['syndicat', 'socialiste'],
+                    links: [
+                        { id: 'rel_019', target: 'ent_demo_007', type: 'hierarchy', label: 'secrétaire générale', direction: 'outgoing', strength: 5 }
+                    ]
+                },
+                {
+                    id: 'ent_demo_019',
+                    name: 'Valerie Van Peel',
+                    type: 'person',
+                    role: 'Présidente N-VA',
+                    description: 'Présidente de la N-VA depuis le 26 avril 2025 (élue avec 96%). Succède à Bart De Wever.',
+                    tags: ['politique', 'nationaliste', 'flandre'],
+                    links: [
+                        { id: 'rel_022', target: 'ent_demo_008', type: 'hierarchy', label: 'préside', direction: 'outgoing', strength: 5 }
+                    ]
+                }
+            ];
+            this.saveEntities(demoEntities);
+            console.log('📊 PANOPTICON: Demo data initialized');
+        }
+    }
+};
+
+// Initialize demo data on load
+DataStore.initDemoData();
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+    renderEntitiesList();
+    updateStats();
+    setupEventListeners();
+    
+    // Attendre que le layout CSS soit calculé avant de render le graphe
+    setTimeout(() => {
+        console.log('Initializing graph after delay...');
+        renderGraph();
+    }, 100);
+});
+
+// ==================== ENTITIES CRUD ====================
+function openCreateModal() {
+    document.getElementById('createName').value = '';
+    document.getElementById('createType').value = 'person';
+    document.getElementById('createRole').value = '';
+    document.getElementById('createDescription').value = '';
+    document.getElementById('createModal').classList.add('open');
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').classList.remove('open');
+}
+
+function createEntity() {
+    const name = document.getElementById('createName').value.trim();
+    if (!name) {
+        alert('Nom requis');
+        return;
+    }
+    
+    const entity = DataStore.createEntity({
+        name,
+        type: document.getElementById('createType').value,
+        role: document.getElementById('createRole').value.trim(),
+        description: document.getElementById('createDescription').value.trim(),
+        tags: []
+    });
+    
+    closeCreateModal();
+    renderEntitiesList();
+    renderGraph();
+    updateStats();
+    selectEntity(entity.id);
+    showNotification('success', 'Entité créée !');
+}
+
+function selectEntity(id) {
+    currentEntityId = id;
+    const entity = DataStore.getEntity(id);
+    if (!entity) return;
+    
+    // Show detail panel
+    document.getElementById('detailEmpty').style.display = 'none';
+    document.getElementById('detailContent').style.display = 'flex';
+    
+    // Fill header
+    document.getElementById('detailAvatar').textContent = TYPE_ICONS[entity.type] || '❓';
+    document.getElementById('detailAvatar').className = `detail-avatar ${entity.type}`;
+    document.getElementById('detailName').textContent = entity.name;
+    document.getElementById('detailType').textContent = entity.role || entity.type;
+    
+    // Fill form
+    document.getElementById('inputName').value = entity.name || '';
+    document.getElementById('inputType').value = entity.type || 'person';
+    document.getElementById('inputRole').value = entity.role || '';
+    document.getElementById('inputDescription').value = entity.description || '';
+    document.getElementById('inputTags').value = (entity.tags || []).join(', ');
+    
+    // Update relations
+    updateRelationsPanel();
+    
+    // Highlight in graph
+    highlightEntity(id);
+    
+    // Update list selection
+    document.querySelectorAll('.entity-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+}
+
+function saveEntity() {
+    if (!currentEntityId) return;
+    
+    const tags = document.getElementById('inputTags').value
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t);
+    
+    DataStore.updateEntity(currentEntityId, {
+        name: document.getElementById('inputName').value || 'Sans nom',
+        type: document.getElementById('inputType').value,
+        role: document.getElementById('inputRole').value,
+        description: document.getElementById('inputDescription').value,
+        tags
+    });
+    
+    const entity = DataStore.getEntity(currentEntityId);
+    document.getElementById('detailName').textContent = entity.name;
+    document.getElementById('detailType').textContent = entity.role || entity.type;
+    document.getElementById('detailAvatar').textContent = TYPE_ICONS[entity.type] || '❓';
+    
+    renderEntitiesList();
+    renderGraph();
+    showNotification('success', 'Entité sauvegardée');
+}
+
+function deleteEntity() {
+    if (!currentEntityId) return;
+    if (!confirm('Supprimer cette entité et toutes ses relations ?')) return;
+    
+    DataStore.deleteEntity(currentEntityId);
+    
+    currentEntityId = null;
+    document.getElementById('detailEmpty').style.display = 'flex';
+    document.getElementById('detailContent').style.display = 'none';
+    
+    renderEntitiesList();
+    renderGraph();
+    updateStats();
+    showNotification('success', 'Entité supprimée');
+}
+
+// ==================== TABS ====================
+function switchTab(tabName) {
+    document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    document.querySelector(`.detail-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
+}
+
+// ==================== RELATIONS ====================
+function updateRelationsPanel() {
+    const entity = DataStore.getEntity(currentEntityId);
+    if (!entity) return;
+    
+    const outgoing = entity.links || [];
+    const incoming = DataStore.getIncomingRelations(currentEntityId);
+    
+    document.getElementById('linkCount').textContent = outgoing.length;
+    document.getElementById('incomingCount').textContent = incoming.length;
+    
+    // Render outgoing relations
+    const outgoingContainer = document.getElementById('relationsList');
+    if (outgoing.length === 0) {
+        outgoingContainer.innerHTML = '<div style="color: var(--text-dim); font-size: 0.75rem; text-align: center; padding: 1rem;">Aucune relation sortante</div>';
+    } else {
+        outgoingContainer.innerHTML = outgoing.map(rel => renderRelationItem(rel, 'outgoing')).join('');
+    }
+    
+    // Render incoming relations
+    const incomingContainer = document.getElementById('incomingList');
+    if (incoming.length === 0) {
+        incomingContainer.innerHTML = '<div style="color: var(--text-dim); font-size: 0.75rem; text-align: center; padding: 1rem;">Aucune relation entrante</div>';
+    } else {
+        incomingContainer.innerHTML = incoming.map(rel => renderRelationItem(rel, 'incoming')).join('');
+    }
+    
+    // Render timeline
+    renderTimeline(outgoing, incoming);
+}
+
+function renderRelationItem(rel, direction) {
+    const type = rel.type || 'default';
+    const typeInfo = RELATION_TYPES[type] || RELATION_TYPES.default;
+    
+    let targetName, targetType, targetId;
+    if (direction === 'outgoing') {
+        const target = DataStore.getEntity(rel.target);
+        if (!target) return '';
+        targetName = target.name;
+        targetType = target.type;
+        targetId = rel.target;
+    } else {
+        targetName = rel.sourceName;
+        targetType = rel.sourceType;
+        targetId = rel.sourceId;
+    }
+    
+    const directionIcon = direction === 'outgoing' ? '→' : '←';
+    const strengthStars = rel.strength ? '★'.repeat(Math.min(rel.strength, 5)) + '☆'.repeat(5 - Math.min(rel.strength, 5)) : '';
+    
+    return `
+        <div class="relation-item rel-${type}">
+            <div class="relation-header">
+                <span class="relation-direction">${directionIcon}</span>
+                <span class="relation-target" onclick="selectEntity('${targetId}')">
+                    ${TYPE_ICONS[targetType] || '❓'} ${targetName}
+                </span>
+                ${direction === 'outgoing' ? `
+                <div class="relation-actions">
+                    <button onclick="editRelation('${rel.id}')" title="Modifier">✏️</button>
+                    <button class="delete" onclick="deleteRelation('${rel.id}')" title="Supprimer">🗑️</button>
+                </div>
+                ` : ''}
+            </div>
+            <div class="relation-meta">
+                <span class="relation-type-badge ${type}">${typeInfo.icon} ${typeInfo.label}</span>
+                ${rel.label ? `<span class="relation-label">"${rel.label}"</span>` : ''}
+                ${rel.strength ? `<span class="relation-strength">${strengthStars}</span>` : ''}
+                ${rel.startDate ? `<span class="relation-date">📅 ${rel.startDate}</span>` : ''}
+            </div>
+            ${rel.notes ? `<div class="relation-notes">${rel.notes}</div>` : ''}
+            ${rel.source ? `<div class="relation-notes">📎 ${rel.source}</div>` : ''}
+        </div>
+    `;
+}
+
+function renderTimeline(outgoing, incoming) {
+    const container = document.getElementById('timelineList');
+    
+    const allRelations = [
+        ...outgoing.map(r => ({ ...r, direction: 'outgoing' })),
+        ...incoming.map(r => ({ ...r, direction: 'incoming' }))
+    ].filter(r => r.startDate || r.createdAt);
+    
+    allRelations.sort((a, b) => {
+        const dateA = a.startDate || a.createdAt;
+        const dateB = b.startDate || b.createdAt;
+        return new Date(dateB) - new Date(dateA);
+    });
+    
+    if (allRelations.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-dim); font-size: 0.75rem; text-align: center; padding: 1rem;">Aucune date enregistrée</div>';
+        return;
+    }
+    
+    container.innerHTML = allRelations.map(rel => {
+        const typeInfo = RELATION_TYPES[rel.type] || RELATION_TYPES.default;
+        const date = rel.startDate || rel.createdAt?.split('T')[0];
+        const targetName = rel.direction === 'outgoing' 
+            ? DataStore.getEntity(rel.target)?.name 
+            : rel.sourceName;
+        
+        return `
+            <div style="display: flex; gap: 0.5rem; padding: 0.5rem; border-left: 2px solid ${typeInfo.color}; margin-bottom: 0.5rem;">
+                <div style="font-size: 0.7rem; color: var(--text-dim); min-width: 70px;">${date}</div>
+                <div style="font-size: 0.8rem;">
+                    ${rel.direction === 'outgoing' ? '→' : '←'} ${targetName}
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">${rel.label || typeInfo.label}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== RELATION MODAL ====================
+function openRelationModal(existingRelation = null) {
+    if (!currentEntityId) return;
+    
+    editingRelationId = existingRelation?.id || null;
+    
+    // Reset form
+    selectRelationType(existingRelation?.type || 'default');
+    document.getElementById('relationDirection').value = existingRelation?.direction || 'outgoing';
+    document.getElementById('relationLabel').value = existingRelation?.label || '';
+    document.getElementById('relationStrength').value = existingRelation?.strength || 5;
+    document.getElementById('strengthValue').textContent = existingRelation?.strength || 5;
+    document.getElementById('relationStartDate').value = existingRelation?.startDate || '';
+    document.getElementById('relationEndDate').value = existingRelation?.endDate || '';
+    document.getElementById('relationSource').value = existingRelation?.source || '';
+    document.getElementById('relationNotes').value = existingRelation?.notes || '';
+    document.getElementById('relationTargetSearch').value = '';
+    
+    selectedTargetId = existingRelation?.target || null;
+    
+    document.getElementById('relationModalTitle').textContent = existingRelation ? 'Modifier la relation' : 'Nouvelle relation';
+    
+    renderTargetOptions();
+    document.getElementById('relationModal').classList.add('open');
+}
+
+function closeRelationModal() {
+    document.getElementById('relationModal').classList.remove('open');
+    editingRelationId = null;
+    selectedTargetId = null;
+}
+
+function selectRelationType(type) {
+    selectedRelationType = type;
+    document.querySelectorAll('.relation-type-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.dataset.type === type);
+    });
+}
+
+function setRelationLabel(label) {
+    document.getElementById('relationLabel').value = label;
+}
+
+function updateStrengthDisplay() {
+    document.getElementById('strengthValue').textContent = document.getElementById('relationStrength').value;
+}
+
+function renderTargetOptions(query = '') {
+    const container = document.getElementById('targetOptions');
+    const currentEntity = DataStore.getEntity(currentEntityId);
+    const currentLinks = (currentEntity?.links || []).map(l => l.target);
+    
+    let entities = DataStore.getEntities().filter(e => 
+        e.id !== currentEntityId &&
+        (!editingRelationId || !currentLinks.includes(e.id) || e.id === selectedTargetId)
+    );
+    
+    if (query) {
+        entities = entities.filter(e => e.name.toLowerCase().includes(query.toLowerCase()));
+    }
+    
+    if (entities.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 1rem;">Aucune entité disponible</div>';
+        return;
+    }
+    
+    container.innerHTML = entities.map(e => `
+        <div class="target-option ${e.id === selectedTargetId ? 'selected' : ''}" onclick="selectTarget('${e.id}')">
+            <span>${TYPE_ICONS[e.type] || '❓'}</span>
+            <span style="flex:1">${e.name}</span>
+            <span style="font-size: 0.65rem; color: var(--text-dim)">${e.type}</span>
+        </div>
+    `).join('');
+}
+
+function filterTargetOptions() {
+    const query = document.getElementById('relationTargetSearch').value;
+    renderTargetOptions(query);
+}
+
+function selectTarget(id) {
+    selectedTargetId = id;
+    const entity = DataStore.getEntity(id);
+    document.getElementById('relationTargetSearch').value = entity?.name || '';
+    renderTargetOptions();
+}
+
+function saveRelation() {
+    if (!selectedTargetId) {
+        alert('Veuillez sélectionner une entité cible');
+        return;
+    }
+    
+    const relationData = {
+        target: selectedTargetId,
+        type: selectedRelationType,
+        direction: document.getElementById('relationDirection').value,
+        label: document.getElementById('relationLabel').value.trim(),
+        strength: parseInt(document.getElementById('relationStrength').value),
+        startDate: document.getElementById('relationStartDate').value || null,
+        endDate: document.getElementById('relationEndDate').value || null,
+        source: document.getElementById('relationSource').value.trim() || null,
+        notes: document.getElementById('relationNotes').value.trim() || null
+    };
+    
+    if (editingRelationId) {
+        DataStore.updateRelation(currentEntityId, editingRelationId, relationData);
+        showNotification('success', 'Relation modifiée');
+    } else {
+        DataStore.addRelation(currentEntityId, relationData);
+        showNotification('success', 'Relation créée !');
+    }
+    
+    closeRelationModal();
+    updateRelationsPanel();
+    renderGraph();
+    updateStats();
+}
+
+function editRelation(relationId) {
+    const entity = DataStore.getEntity(currentEntityId);
+    const relation = (entity?.links || []).find(l => l.id === relationId);
+    if (relation) {
+        openRelationModal(relation);
+    }
+}
+
+function deleteRelation(relationId) {
+    if (!confirm('Supprimer cette relation ?')) return;
+    
+    DataStore.deleteRelation(currentEntityId, relationId);
+    updateRelationsPanel();
+    renderGraph();
+    updateStats();
+    showNotification('success', 'Relation supprimée');
+}
+
+// ==================== RENDER LIST ====================
+function renderEntitiesList() {
+    const allEntities = DataStore.getEntities();
+    const filtered = currentFilter === 'all' 
+        ? allEntities 
+        : allEntities.filter(e => e.type === currentFilter);
+    
+    const container = document.getElementById('entitiesList');
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: 2rem;">
+                <div class="empty-icon">🕸️</div>
+                <div>Aucune entité</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(e => `
+        <div class="entity-item ${e.id === currentEntityId ? 'active' : ''}" 
+             data-id="${e.id}" onclick="selectEntity('${e.id}')">
+            <div class="entity-avatar ${e.type}">${TYPE_ICONS[e.type] || '❓'}</div>
+            <div class="entity-info">
+                <div class="entity-name">${e.name}</div>
+                <div class="entity-type">${e.role || e.type}</div>
+                ${(e.links?.length || 0) > 0 ? `<div class="entity-links">🔗 ${e.links.length} relations</div>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== GRAPH ====================
+function renderGraph() {
+    const container = document.getElementById('graphContainer');
+    if (!container) {
+        console.error('graphContainer not found');
+        return;
+    }
+    
+    const svg = d3.select('#graphSvg');
+    svg.selectAll('*').remove();
+    
+    // Force le container à avoir une taille calculée
+    const rect = container.getBoundingClientRect();
+    let width = rect.width || 800;
+    let height = rect.height || 600;
+    
+    // Fallback minimum
+    if (width < 100) width = 800;
+    if (height < 100) height = 600;
+    
+    console.log('renderGraph: container rect=', rect.width, 'x', rect.height, '=> using', width, 'x', height);
+    
+    // Set SVG viewBox pour assurer l'espace de rendu
+    svg.attr('viewBox', `0 0 ${width} ${height}`)
+       .attr('preserveAspectRatio', 'xMidYMid meet');
+    
+    const entities = DataStore.getEntities();
+    console.log('renderGraph: entities=', entities.length);
+    
+    if (entities.length === 0) {
+        console.log('No entities to render');
+        return;
+    }
+    
+    // Build nodes with initial positions spread in center
+    const nodes = entities.map((e, i) => ({
+        id: e.id,
+        name: e.name,
+        type: e.type,
+        linkCount: (e.links || []).length,
+        x: width / 2 + (Math.random() - 0.5) * Math.min(width, 400),
+        y: height / 2 + (Math.random() - 0.5) * Math.min(height, 400)
+    }));
+    
+    console.log('Nodes created:', nodes.length, 'First node pos:', nodes[0]?.x, nodes[0]?.y);
+    
+    // Build links with type information
+    const links = [];
+    entities.forEach(e => {
+        (e.links || []).forEach(link => {
+            // Filter by relation type if needed
+            if (currentRelationFilter !== 'all' && link.type !== currentRelationFilter) {
+                return;
+            }
+            
+            // Avoid duplicates for bidirectional (only add if source < target alphabetically)
+            if (link.direction === 'bidirectional') {
+                if (e.id < link.target) {
+                    links.push({
+                        source: e.id,
+                        target: link.target,
+                        relation: link.label || RELATION_TYPES[link.type]?.label || 'lié à',
+                        type: link.type || 'default',
+                        strength: link.strength || 5
+                    });
+                }
+            } else {
+                links.push({
+                    source: e.id,
+                    target: link.target,
+                    relation: link.label || RELATION_TYPES[link.type]?.label || 'lié à',
+                    type: link.type || 'default',
+                    strength: link.strength || 5
+                });
+            }
+        });
+    });
+    
+    // Create a group for zoom/pan
+    const g = svg.append('g').attr('class', 'graph-group');
+    
+    // Debug background rect to see the SVG area
+    svg.insert('rect', ':first-child')
+       .attr('width', '100%')
+       .attr('height', '100%')
+       .attr('fill', 'transparent');
+    
+    // Add zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on('zoom', (event) => {
+            g.attr('transform', event.transform);
+        });
+    
+    svg.call(zoom);
+    
+    // Store zoom for external controls
+    window.graphZoom = zoom;
+    window.graphSvg = svg;
+    
+    // Simulation with layout-dependent forces
+    simulation = d3.forceSimulation(nodes);
+    
+    if (layout === 'radial') {
+        const angleStep = (2 * Math.PI) / nodes.length;
+        const radius = Math.min(width, height) / 3;
+        
+        nodes.forEach((node, i) => {
+            node.x = width / 2 + radius * Math.cos(angleStep * i);
+            node.y = height / 2 + radius * Math.sin(angleStep * i);
+            node.fx = node.x;
+            node.fy = node.y;
+        });
+        
+        simulation.force('link', d3.forceLink(links).id(d => d.id).distance(100).strength(0.1));
+    } else {
+        simulation
+            .force('link', d3.forceLink(links).id(d => d.id).distance(d => 150 - d.strength * 5))
+            .force('charge', d3.forceManyBody().strength(-400))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(40));
+    }
+    
+    // Draw links with type-based styling
+    const link = g.append('g')
+        .attr('class', 'links-group')
+        .selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('class', d => `link rel-${d.type}`)
+        .attr('stroke-width', d => 1 + d.strength * 0.3);
+    
+    // Draw link labels
+    const linkLabel = g.append('g')
+        .attr('class', 'link-labels-group')
+        .selectAll('text')
+        .data(links)
+        .join('text')
+        .attr('class', 'link-label')
+        .text(d => showRelations ? d.relation : '')
+        .attr('text-anchor', 'middle');
+    
+    // Draw nodes
+    const node = g.append('g')
+        .attr('class', 'nodes-group')
+        .selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended))
+        .on('click', (event, d) => {
+            event.stopPropagation();
+            selectEntity(d.id);
+        });
+    
+    node.append('circle')
+        .attr('r', d => 15 + Math.min(d.linkCount * 2, 10))
+        .attr('fill', d => TYPE_COLORS[d.type] || '#888')
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2);
+    
+    if (showLabels) {
+        node.append('text')
+            .text(d => d.name.length > 15 ? d.name.substring(0, 15) + '...' : d.name)
+            .attr('x', 18)
+            .attr('y', 4);
+    }
+    
+    simulation.on('tick', () => {
+        // Constrain nodes to visible area
+        nodes.forEach(d => {
+            d.x = Math.max(50, Math.min(width - 50, d.x || width/2));
+            d.y = Math.max(50, Math.min(height - 50, d.y || height/2));
+        });
+        
+        link
+            .attr('x1', d => d.source.x || 0)
+            .attr('y1', d => d.source.y || 0)
+            .attr('x2', d => d.target.x || 0)
+            .attr('y2', d => d.target.y || 0);
+        
+        linkLabel
+            .attr('x', d => ((d.source.x || 0) + (d.target.x || 0)) / 2)
+            .attr('y', d => ((d.source.y || 0) + (d.target.y || 0)) / 2);
+        
+        node.attr('transform', d => `translate(${d.x || width/2},${d.y || height/2})`);
+    });
+    
+    // Force start simulation
+    simulation.alpha(1).restart();
+    console.log('Graph rendered: nodes=', nodes.length, 'links=', links.length);
+    
+    // Debug: vérifier que les éléments SVG sont créés
+    console.log('SVG nodes count:', g.selectAll('.node').size());
+    console.log('SVG links count:', g.selectAll('.link').size());
+    
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        if (layout !== 'radial') {
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+    }
+}
+
+// ==================== GRAPH CONTROLS ====================
+function zoomIn() {
+    if (window.graphZoom && window.graphSvg) {
+        window.graphSvg.transition().call(window.graphZoom.scaleBy, 1.3);
+    }
+}
+
+function zoomOut() {
+    if (window.graphZoom && window.graphSvg) {
+        window.graphSvg.transition().call(window.graphZoom.scaleBy, 0.7);
+    }
+}
+
+function zoomReset() {
+    if (window.graphZoom && window.graphSvg) {
+        const container = document.getElementById('graphContainer');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        window.graphSvg.transition().call(
+            window.graphZoom.transform,
+            d3.zoomIdentity.translate(width / 2, height / 2).scale(0.8).translate(-width / 2, -height / 2)
+        );
+    }
+}
+
+function highlightEntity(id) {
+    d3.selectAll('.node').classed('selected', d => d.id === id);
+    d3.selectAll('.link').classed('highlighted', d => d.source.id === id || d.target.id === id);
+}
+
+function setLayout(type) {
+    layout = type;
+    document.getElementById('btnForce').classList.toggle('active', type === 'force');
+    document.getElementById('btnRadial').classList.toggle('active', type === 'radial');
+    renderGraph();
+}
+
+function toggleLabels() {
+    showLabels = !showLabels;
+    document.getElementById('btnLabels').classList.toggle('active', showLabels);
+    renderGraph();
+}
+
+function toggleRelations() {
+    showRelations = !showRelations;
+    document.getElementById('btnRelations').classList.toggle('active', showRelations);
+    renderGraph();
+}
+
+function filterByRelationType(type) {
+    currentRelationFilter = type;
+    renderGraph();
+}
+
+function exportGraph() {
+    const data = { 
+        entities: DataStore.getEntities(), 
+        exported: new Date().toISOString(),
+        version: 'panopticon-v2'
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'panopticon_export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const entities = DataStore.getEntities();
+    let totalLinks = 0;
+    entities.forEach(e => totalLinks += (e.links || []).length);
+    
+    document.getElementById('statEntities').textContent = entities.length;
+    document.getElementById('statLinks').textContent = totalLinks;
+    document.getElementById('statClusters').textContent = countClusters(entities);
+}
+
+function countClusters(entities) {
+    const visited = new Set();
+    let clusters = 0;
+    
+    function dfs(id) {
+        if (visited.has(id)) return;
+        visited.add(id);
+        const entity = entities.find(e => e.id === id);
+        if (entity) {
+            (entity.links || []).forEach(l => dfs(l.target));
+        }
+    }
+    
+    entities.forEach(e => {
+        if (!visited.has(e.id)) {
+            clusters++;
+            dfs(e.id);
+        }
+    });
+    
+    return clusters;
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderEntitiesList();
+        });
+    });
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.entity-item').forEach(item => {
+            const name = item.querySelector('.entity-name').textContent.toLowerCase();
+            item.style.display = name.includes(query) ? 'flex' : 'none';
+        });
+    });
+    
+    // Window resize
+    window.addEventListener('resize', () => renderGraph());
+    
+    // Click outside modals
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+    });
+}
+
+// ==================== UTILS ====================
+function showNotification(type, message) {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = `notif ${type}`;
+    notif.innerHTML = `<span>${type === 'success' ? '✅' : '⭐'}</span><span>${message}</span>`;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+// Suggestion click handler
+document.querySelectorAll('.suggestion').forEach(s => {
+    s.style.cursor = 'pointer';
+    s.style.color = 'var(--cyan)';
+});
+</script>
+
+</body></html>

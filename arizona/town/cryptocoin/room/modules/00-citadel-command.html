@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⬡ CITADEL — Command Center</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-panel: #0d1117;
+            --bg-widget: #111822;
+            --border: #1e3a5f;
+            --border-glow: #00f7ff;
+            --cyan: #00f7ff;
+            --cyan-dim: rgba(0, 247, 255, 0.15);
+            --green: #00ff88;
+            --green-dim: rgba(0, 255, 136, 0.15);
+            --magenta: #ff00ff;
+            --magenta-dim: rgba(255, 0, 255, 0.15);
+            --orange: #ff8800;
+            --orange-dim: rgba(255, 136, 0, 0.15);
+            --red: #ff3366;
+            --red-dim: rgba(255, 51, 102, 0.15);
+            --yellow: #ffcc00;
+            --text: #e0f0ff;
+            --text-dim: #4a6a8a;
+            --scanline: rgba(0, 247, 255, 0.03);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            position: relative;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            position: relative;
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                var(--scanline) 2px,
+                var(--scanline) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, var(--bg-panel) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            animation: headerGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes headerGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--cyan)); }
+            50% { filter: drop-shadow(0 0 20px var(--cyan)); }
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 0.3em;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--cyan);
+        }
+        
+        .logo-sub {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 0.2em;
+        }
+        
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: statusPulse 1.5s ease-in-out infinite;
+        }
+        
+        .status-dot.online { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .status-dot.warning { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .status-dot.critical { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        
+        @keyframes statusPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        
+        .datetime {
+            text-align: right;
+        }
+        
+        .time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 10px var(--cyan);
+        }
+        
+        .date {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        /* Main Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: auto 1fr;
+            gap: 1px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            background: var(--border);
+        }
+        
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+        
+        /* Panels */
+        .panel {
+            background: var(--bg-panel);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-title::before {
+            content: '◆';
+            font-size: 0.5rem;
+        }
+        
+        .panel-status {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+        
+        .panel-body {
+            position: relative;
+            padding: 1rem;
+            height: calc(100% - 45px);
+            overflow-y: auto;
+        }
+        
+        /* Sidebar Left - System Status */
+        .sidebar-left {
+            grid-row: span 2;
+        }
+        
+        .system-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .stat-block {
+            background: var(--bg-widget);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--cyan);
+        }
+        
+        .stat-block.warning::before { background: var(--orange); }
+        .stat-block.critical::before { background: var(--red); }
+        .stat-block.success::before { background: var(--green); }
+        
+        .stat-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 10px var(--cyan);
+        }
+        
+        .stat-value.warning { color: var(--orange); text-shadow: 0 0 10px var(--orange); }
+        .stat-value.critical { color: var(--red); text-shadow: 0 0 10px var(--red); }
+        .stat-value.success { color: var(--green); text-shadow: 0 0 10px var(--green); }
+        
+        .stat-change {
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
+        }
+        
+        .stat-change.up { color: var(--green); }
+        .stat-change.down { color: var(--red); }
+        
+        .stat-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+        
+        .stat-bar-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--green)); }
+        .stat-bar-fill.magenta { background: linear-gradient(90deg, var(--magenta), var(--cyan)); }
+        .stat-bar-fill.orange { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 1px;
+            background: var(--border);
+        }
+        
+        /* Top Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+        
+        .mini-stat {
+            background: var(--bg-panel);
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .mini-stat::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 2px;
+            background: var(--cyan);
+            opacity: 0.5;
+        }
+        
+        .mini-stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mini-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .mini-stat-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        /* Central Display */
+        .central-display {
+            background: var(--bg-panel);
+            position: relative;
+        }
+        
+        .hex-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%2300f7ff' fill-opacity='1'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .central-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .central-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .threat-level {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .threat-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        .threat-indicator {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .threat-bar {
+            width: 8px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 2px;
+        }
+        
+        .threat-bar.active { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .threat-bar.warning { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .threat-bar.critical { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        
+        .mission-status {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: var(--green-dim);
+            border: 1px solid var(--green);
+            color: var(--green);
+            border-radius: 4px;
+            animation: statusBlink 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Activity Grid */
+        .activity-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            padding: 1px;
+        }
+        
+        .activity-widget {
+            background: var(--bg-widget);
+            padding: 1rem;
+        }
+        
+        .widget-title {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .widget-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+        }
+        
+        /* Chart Styles */
+        .chart-container {
+            height: 120px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 4px;
+            padding-top: 20px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--cyan), var(--green));
+            border-radius: 2px 2px 0 0;
+            min-height: 4px;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+        
+        .chart-bar.negative {
+            background: linear-gradient(180deg, var(--red), var(--orange));
+        }
+        
+        .chart-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white;
+            opacity: 0.5;
+        }
+        
+        /* Ring Chart */
+        .ring-chart {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .ring-chart svg {
+            transform: rotate(-90deg);
+        }
+        
+        .ring-chart circle {
+            fill: none;
+            stroke-width: 8;
+        }
+        
+        .ring-bg {
+            stroke: var(--border);
+        }
+        
+        .ring-fill {
+            stroke: var(--cyan);
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 5px var(--cyan));
+            transition: stroke-dashoffset 1s ease;
+        }
+        
+        .ring-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .ring-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--cyan);
+        }
+        
+        .ring-label {
+            font-size: 0.5rem;
+            color: var(--text-dim);
+        }
+        
+        /* Activity Feed */
+        .feed-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .feed-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.75rem;
+        }
+        
+        .feed-item:last-child { border-bottom: none; }
+        
+        .feed-time {
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            min-width: 45px;
+        }
+        
+        .feed-icon {
+            font-size: 0.9rem;
+        }
+        
+        .feed-text {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        /* Network Visualization */
+        .network-viz {
+            height: 130px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .network-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+        
+        .network-node.type-org { background: var(--magenta); box-shadow: 0 0 10px var(--magenta); }
+        .network-node.type-media { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .network-node.type-inst { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+        
+        .network-center {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 20px var(--green);
+            animation: centerPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes centerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .network-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            transform-origin: left center;
+            opacity: 0.3;
+        }
+        
+        /* Bottom Bar */
+        .bottom-bar {
+            background: var(--bg-panel);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+        }
+        
+        .bottom-widget {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg-widget);
+        }
+        
+        .bottom-icon {
+            font-size: 1.5rem;
+        }
+        
+        .bottom-info {
+            flex: 1;
+        }
+        
+        .bottom-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        .bottom-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
+        /* Sidebar Right - Event Feed */
+        .sidebar-right {
+            grid-row: span 2;
+        }
+        
+        .event-timeline {
+            position: relative;
+        }
+        
+        .event-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, var(--cyan), var(--magenta), transparent);
+        }
+        
+        .timeline-item {
+            padding-left: 2rem;
+            padding-bottom: 1.25rem;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--bg-panel);
+            border: 2px solid var(--cyan);
+        }
+        
+        .timeline-item.conseil::before { border-color: var(--magenta); }
+        .timeline-item.vote::before { border-color: var(--red); }
+        .timeline-item.deadline::before { border-color: var(--orange); }
+        .timeline-item.action::before { border-color: var(--green); }
+        
+        .timeline-date {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-title {
+            font-size: 0.8rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-type {
+            font-size: 0.55rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        
+        .timeline-type.conseil { background: var(--magenta-dim); color: var(--magenta); }
+        .timeline-type.vote { background: var(--red-dim); color: var(--red); }
+        .timeline-type.deadline { background: var(--orange-dim); color: var(--orange); }
+        .timeline-type.reunion { background: var(--cyan-dim); color: var(--cyan); }
+        .timeline-type.action { background: var(--green-dim); color: var(--green); }
+        
+        /* Quick Actions */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .quick-btn {
+            background: var(--bg-widget);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text);
+            border-radius: 4px;
+        }
+        
+        .quick-btn:hover {
+            border-color: var(--cyan);
+            background: var(--cyan-dim);
+            box-shadow: 0 0 15px var(--cyan-dim);
+        }
+        
+        .quick-btn-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .quick-btn-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Glitch effect for title */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+            -webkit-text-fill-color: var(--cyan);
+        }
+        
+        .glitch::after {
+            animation: glitch-2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+            -webkit-text-fill-color: var(--magenta);
+        }
+        
+        @keyframes glitch-1 {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-1px); }
+            80% { transform: translateX(1px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes glitch-2 {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(2px); }
+            50% { transform: translateX(-2px); }
+            75% { transform: translateX(1px); }
+            100% { transform: translateX(0); }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .header { padding: 0.5rem 1rem; }
+            .logo-text { font-size: 1rem; letter-spacing: 0.1em; }
+            .time { font-size: 1rem; }
+            .stats-row { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">⬡</span>
+            <div>
+                <div class="logo-text glitch" data-text="CITADEL">CITADEL</div>
+                <div class="logo-sub">CITIZEN TACTICAL DATA ENVIRONMENT LINK</div>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="status-indicator">
+                <span class="status-dot online" id="systemStatus"></span>
+                <span>SYSTÈME OPÉRATIONNEL</span>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot online"></span>
+                <span>DONNÉES SYNC</span>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot online"></span>
+                <span>STOCKAGE LOCAL</span>
+            </div>
+        </div>
+        
+        <div class="datetime">
+            <div class="time" id="currentTime">00:00:00</div>
+            <div class="date" id="currentDate">CHARGEMENT...</div>
+        </div>
+    </div>
+    
+    <div class="dashboard">
+        <!-- Left Sidebar -->
+        <div class="panel sidebar-left">
+            <div class="panel-header">
+                <span class="panel-title">METRICS SYSTÈME</span>
+                <span class="panel-status">LIVE</span>
+            </div>
+            <div class="panel-body">
+                <div class="system-stats">
+                    <div class="stat-block success">
+                        <div class="stat-label">SOLDE TOTAL</div>
+                        <div class="stat-value success" id="totalBalance">€0</div>
+                        <div class="stat-change up" id="balanceChange">↑ --</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill cyan" style="width: 75%" id="balanceBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-block">
+                        <div class="stat-label">MISSIONS ACTIVES</div>
+                        <div class="stat-value" id="activeMissions">0</div>
+                        <div class="stat-change" id="missionProgress">-- en cours</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill magenta" style="width: 45%" id="missionBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-block">
+                        <div class="stat-label">RÉSEAU CONTACTS</div>
+                        <div class="stat-value" id="networkSize">0</div>
+                        <div class="stat-change" id="networkConnections">-- connexions</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill cyan" style="width: 60%" id="networkBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-block">
+                        <div class="stat-label">JOURNAL ENTRIES</div>
+                        <div class="stat-value" id="journalCount">0</div>
+                        <div class="stat-change" id="journalStreak">-- ce mois</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill orange" style="width: 30%" id="journalBar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-block warning">
+                        <div class="stat-label">ÉVÉNEMENTS À VENIR</div>
+                        <div class="stat-value warning" id="upcomingEvents">0</div>
+                        <div class="stat-change" id="nextEvent">Prochain: --</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Stats -->
+            <div class="stats-row">
+                <div class="mini-stat">
+                    <div class="mini-stat-icon">💰</div>
+                    <div class="mini-stat-value" id="statIncome">€0</div>
+                    <div class="mini-stat-label">ENTRÉES</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-icon">💸</div>
+                    <div class="mini-stat-value" id="statExpenses">€0</div>
+                    <div class="mini-stat-label">SORTIES</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-icon">🎯</div>
+                    <div class="mini-stat-value" id="statXP">0</div>
+                    <div class="mini-stat-label">XP TOTAL</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-icon">📝</div>
+                    <div class="mini-stat-value" id="statDocs">8</div>
+                    <div class="mini-stat-label">TEMPLATES</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-icon">🔥</div>
+                    <div class="mini-stat-value" id="statStreak">0</div>
+                    <div class="mini-stat-label">JOURS STREAK</div>
+                </div>
+            </div>
+            
+            <!-- Central Display -->
+            <div class="central-display">
+                <div class="hex-grid"></div>
+                <div class="central-content">
+                    <div class="central-header">
+                        <div class="threat-level">
+                            <span class="threat-label">NIVEAU ACTIVITÉ</span>
+                            <div class="threat-indicator" id="threatIndicator">
+                                <div class="threat-bar active"></div>
+                                <div class="threat-bar active"></div>
+                                <div class="threat-bar active"></div>
+                                <div class="threat-bar"></div>
+                                <div class="threat-bar"></div>
+                            </div>
+                        </div>
+                        <div class="mission-status" id="missionStatus">◉ OPÉRATIONNEL</div>
+                    </div>
+                    
+                    <div class="activity-grid">
+                        <!-- Finance Chart -->
+                        <div class="activity-widget">
+                            <div class="widget-title">FLUX FINANCIERS (6 MOIS)</div>
+                            <div class="chart-container" id="financeChart">
+                                <!-- Generated -->
+                            </div>
+                        </div>
+                        
+                        <!-- Mission Progress -->
+                        <div class="activity-widget">
+                            <div class="widget-title">PROGRESSION MISSIONS</div>
+                            <div class="ring-chart">
+                                <svg width="100" height="100">
+                                    <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+                                    <circle class="ring-fill" cx="50" cy="50" r="42" 
+                                            stroke-dasharray="264" 
+                                            stroke-dashoffset="264" 
+                                            id="progressRing"></circle>
+                                </svg>
+                                <div class="ring-center">
+                                    <div class="ring-value" id="progressPercent">0%</div>
+                                    <div class="ring-label">COMPLÉTÉ</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity Feed -->
+                        <div class="activity-widget">
+                            <div class="widget-title">ACTIVITÉ RÉCENTE</div>
+                            <div class="feed-list" id="activityFeed">
+                                <!-- Generated -->
+                            </div>
+                        </div>
+                        
+                        <!-- Network Viz -->
+                        <div class="activity-widget">
+                            <div class="widget-title">CARTOGRAPHIE RÉSEAU</div>
+                            <div class="network-viz" id="networkViz">
+                                <div class="network-center"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="bottom-bar">
+                <a href="01-finance-tracker.html" class="bottom-widget">
+                    <span class="bottom-icon">💰</span>
+                    <div class="bottom-info">
+                        <div class="bottom-label">FINANCE</div>
+                        <div class="bottom-value" id="bottomFinance">0 TX</div>
+                    </div>
+                </a>
+                <a href="02-mission-creator.html" class="bottom-widget">
+                    <span class="bottom-icon">🎯</span>
+                    <div class="bottom-info">
+                        <div class="bottom-label">MISSIONS</div>
+                        <div class="bottom-value" id="bottomMissions">0 ACTIVES</div>
+                    </div>
+                </a>
+                <a href="04-network-map.html" class="bottom-widget">
+                    <span class="bottom-icon">🕸️</span>
+                    <div class="bottom-info">
+                        <div class="bottom-label">RÉSEAU</div>
+                        <div class="bottom-value" id="bottomNetwork">0 NODES</div>
+                    </div>
+                </a>
+                <a href="05-agenda-politique.html" class="bottom-widget">
+                    <span class="bottom-icon">📅</span>
+                    <div class="bottom-info">
+                        <div class="bottom-label">AGENDA</div>
+                        <div class="bottom-value" id="bottomAgenda">0 EVENTS</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar -->
+        <div class="panel sidebar-right">
+            <div class="panel-header">
+                <span class="panel-title">TIMELINE ÉVÉNEMENTS</span>
+                <span class="panel-status" id="eventCount">0</span>
+            </div>
+            <div class="panel-body">
+                <div class="event-timeline" id="eventTimeline">
+                    <!-- Generated -->
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <div class="widget-title">ACCÈS RAPIDE</div>
+                    <div class="quick-grid">
+                        <a href="01-finance-tracker.html" class="quick-btn">
+                            <div class="quick-btn-icon">💸</div>
+                            <div class="quick-btn-label">DÉPENSE</div>
+                        </a>
+                        <a href="03-journal.html" class="quick-btn">
+                            <div class="quick-btn-icon">✏️</div>
+                            <div class="quick-btn-label">JOURNAL</div>
+                        </a>
+                        <a href="05-agenda-politique.html" class="quick-btn">
+                            <div class="quick-btn-icon">📆</div>
+                            <div class="quick-btn-label">ÉVÉNEMENT</div>
+                        </a>
+                        <a href="06-generateur-documents.html" class="quick-btn">
+                            <div class="quick-btn-icon">📄</div>
+                            <div class="quick-btn-label">DOCUMENT</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data sources
+        const sources = {
+            finance: 'financeTracker',
+            missions: 'missionCreator',
+            journal: 'journalEntries',
+            network: 'networkMap',
+            agenda: 'politicalAgenda'
+        };
+        
+        let data = {};
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            startClock();
+            loadAllData();
+            renderAll();
+            
+            // Auto refresh every 30s
+            setInterval(() => {
+                loadAllData();
+                renderAll();
+            }, 30000);
+        });
+        
+        // Clock
+        function startClock() {
+            function update() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = 
+                    now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('currentDate').textContent = 
+                    now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+            }
+            update();
+            setInterval(update, 1000);
+        }
+        
+        // Load data
+        function loadAllData() {
+            data.finance = JSON.parse(localStorage.getItem(sources.finance) || '[]');
+            data.missions = JSON.parse(localStorage.getItem(sources.missions) || '[]');
+            data.journal = JSON.parse(localStorage.getItem(sources.journal) || '[]');
+            data.network = JSON.parse(localStorage.getItem(sources.network) || '[]');
+            data.agenda = JSON.parse(localStorage.getItem(sources.agenda) || '[]');
+        }
+        
+        // Render all
+        function renderAll() {
+            renderSystemStats();
+            renderTopStats();
+            renderFinanceChart();
+            renderMissionProgress();
+            renderActivityFeed();
+            renderNetworkViz();
+            renderEventTimeline();
+            renderBottomBar();
+            updateThreatLevel();
+        }
+        
+        // System Stats (Left Sidebar)
+        function renderSystemStats() {
+            // Balance
+            const totalIn = data.finance.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0);
+            const totalOut = data.finance.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0);
+            const balance = totalIn - totalOut;
+            
+            document.getElementById('totalBalance').textContent = `€${balance.toFixed(0)}`;
+            document.getElementById('totalBalance').className = `stat-value ${balance >= 0 ? 'success' : 'critical'}`;
+            document.getElementById('balanceChange').textContent = balance >= 0 ? `↑ Positif` : `↓ Déficit`;
+            document.getElementById('balanceChange').className = `stat-change ${balance >= 0 ? 'up' : 'down'}`;
+            
+            // Missions
+            const active = data.missions.filter(m => m.status === 'active');
+            document.getElementById('activeMissions').textContent = active.length;
+            document.getElementById('missionProgress').textContent = `${data.missions.length} total`;
+            
+            // Network
+            document.getElementById('networkSize').textContent = data.network.length;
+            let connections = 0;
+            data.network.forEach(n => { if (n.connections) connections += n.connections.length; });
+            document.getElementById('networkConnections').textContent = `${Math.floor(connections/2)} connexions`;
+            
+            // Journal
+            document.getElementById('journalCount').textContent = data.journal.length;
+            const thisMonth = new Date().toISOString().substring(0, 7);
+            const monthEntries = data.journal.filter(e => e.createdAt?.startsWith(thisMonth)).length;
+            document.getElementById('journalStreak').textContent = `${monthEntries} ce mois`;
+            
+            // Events
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const upcoming = data.agenda.filter(e => new Date(e.date) >= today);
+            document.getElementById('upcomingEvents').textContent = upcoming.length;
+            
+            if (upcoming.length > 0) {
+                const next = upcoming.sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+                const nextDate = new Date(next.date);
+                const diff = Math.ceil((nextDate - today) / (1000 * 60 * 60 * 24));
+                document.getElementById('nextEvent').textContent = diff === 0 ? 'Aujourd\'hui!' : `Dans ${diff}j`;
+            }
+        }
+        
+        // Top Stats
+        function renderTopStats() {
+            const totalIn = data.finance.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0);
+            const totalOut = data.finance.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0);
+            
+            document.getElementById('statIncome').textContent = `€${totalIn.toFixed(0)}`;
+            document.getElementById('statExpenses').textContent = `€${totalOut.toFixed(0)}`;
+            
+            const totalXP = data.missions.filter(m => m.status === 'active').reduce((s, m) => s + (m.xp || 0), 0);
+            document.getElementById('statXP').textContent = totalXP;
+            
+            // Streak calculation
+            let streak = 0;
+            const todayDate = new Date();
+            todayDate.setHours(0, 0, 0, 0);
+            
+            for (let i = 0; i < 365; i++) {
+                const checkDate = new Date(todayDate);
+                checkDate.setDate(checkDate.getDate() - i);
+                const dateStr = checkDate.toISOString().split('T')[0];
+                const hasEntry = data.journal.some(e => e.createdAt?.startsWith(dateStr));
+                if (hasEntry) streak++;
+                else if (i > 0) break;
+            }
+            document.getElementById('statStreak').textContent = streak;
+        }
+        
+        // Finance Chart
+        function renderFinanceChart() {
+            const container = document.getElementById('financeChart');
+            const months = [];
+            const now = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                
+                const monthTx = data.finance.filter(t => t.date?.startsWith(monthKey));
+                const inAmount = monthTx.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0);
+                const outAmount = monthTx.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0);
+                const net = inAmount - outAmount;
+                
+                months.push({ net, in: inAmount, out: outAmount });
+            }
+            
+            const maxAmount = Math.max(...months.map(m => Math.abs(m.net)), 100);
+            
+            container.innerHTML = months.map(m => {
+                const height = Math.max(4, (Math.abs(m.net) / maxAmount) * 100);
+                const isNegative = m.net < 0;
+                return `<div class="chart-bar ${isNegative ? 'negative' : ''}" 
+                            style="height: ${height}px;" 
+                            title="${isNegative ? '-' : '+'}€${Math.abs(m.net).toFixed(0)}"></div>`;
+            }).join('');
+        }
+        
+        // Mission Progress Ring
+        function renderMissionProgress() {
+            const completed = data.missions.filter(m => m.status === 'completed').length;
+            const total = data.missions.length || 1;
+            const percent = Math.round((completed / total) * 100);
+            
+            document.getElementById('progressPercent').textContent = `${percent}%`;
+            
+            const ring = document.getElementById('progressRing');
+            const circumference = 264;
+            const offset = circumference - (percent / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
+        }
+        
+        // Activity Feed
+        function renderActivityFeed() {
+            const container = document.getElementById('activityFeed');
+            let activities = [];
+            
+            // Collect recent activities
+            data.finance.slice(0, 3).forEach(t => {
+                activities.push({
+                    icon: t.type === 'in' ? '💰' : '💸',
+                    text: t.description?.substring(0, 30) || 'Transaction',
+                    time: t.createdAt || t.date,
+                    type: 'finance'
+                });
+            });
+            
+            data.journal.slice(0, 3).forEach(e => {
+                activities.push({
+                    icon: '📝',
+                    text: e.content?.substring(0, 30) + '...' || 'Entry',
+                    time: e.createdAt,
+                    type: 'journal'
+                });
+            });
+            
+            // Sort by time
+            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+            activities = activities.slice(0, 5);
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 1rem;">NO DATA</div>';
+                return;
+            }
+            
+            container.innerHTML = activities.map(a => `
+                <div class="feed-item">
+                    <span class="feed-time">${formatTime(a.time)}</span>
+                    <span class="feed-icon">${a.icon}</span>
+                    <span class="feed-text">${escapeHtml(a.text)}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Network Visualization
+        function renderNetworkViz() {
+            const container = document.getElementById('networkViz');
+            const nodes = data.network.slice(0, 12);
+            
+            // Clear existing nodes (keep center)
+            container.querySelectorAll('.network-node, .network-line').forEach(el => el.remove());
+            
+            if (nodes.length === 0) return;
+            
+            const centerX = 50;
+            const centerY = 50;
+            const radius = 45;
+            
+            nodes.forEach((node, i) => {
+                const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                // Line
+                const line = document.createElement('div');
+                line.className = 'network-line';
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const angleRad = Math.atan2(dy, dx);
+                line.style.width = `${length}%`;
+                line.style.left = `${centerX}%`;
+                line.style.top = `${centerY}%`;
+                line.style.transform = `rotate(${angleRad}rad)`;
+                container.appendChild(line);
+                
+                // Node
+                const nodeEl = document.createElement('div');
+                nodeEl.className = `network-node type-${node.type === 'org' ? 'org' : node.type === 'media' ? 'media' : node.type === 'institution' ? 'inst' : ''}`;
+                nodeEl.style.left = `calc(${x}% - 6px)`;
+                nodeEl.style.top = `calc(${y}% - 6px)`;
+                container.appendChild(nodeEl);
+            });
+        }
+        
+        // Event Timeline
+        function renderEventTimeline() {
+            const container = document.getElementById('eventTimeline');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const upcoming = data.agenda
+                .filter(e => new Date(e.date) >= today)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 6);
+            
+            document.getElementById('eventCount').textContent = upcoming.length;
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 2rem;">AUCUN ÉVÉNEMENT</div>';
+                return;
+            }
+            
+            container.innerHTML = upcoming.map(e => {
+                const d = new Date(e.date);
+                const diff = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+                const dateLabel = diff === 0 ? 'AUJOURD\'HUI' : diff === 1 ? 'DEMAIN' : `DANS ${diff} JOURS`;
+                
+                return `
+                    <div class="timeline-item ${e.type}">
+                        <div class="timeline-date">${dateLabel} • ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</div>
+                        <div class="timeline-title">${escapeHtml(e.title)}</div>
+                        <span class="timeline-type ${e.type}">${e.type?.toUpperCase() || 'EVENT'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Bottom Bar
+        function renderBottomBar() {
+            document.getElementById('bottomFinance').textContent = `${data.finance.length} TX`;
+            document.getElementById('bottomMissions').textContent = `${data.missions.filter(m => m.status === 'active').length} ACTIVES`;
+            document.getElementById('bottomNetwork').textContent = `${data.network.length} NODES`;
+            document.getElementById('bottomAgenda').textContent = `${data.agenda.length} EVENTS`;
+        }
+        
+        // Threat Level (Activity Level)
+        function updateThreatLevel() {
+            const indicator = document.getElementById('threatIndicator');
+            const bars = indicator.querySelectorAll('.threat-bar');
+            
+            // Calculate activity score
+            let score = 0;
+            
+            // Recent finance activity
+            const recentFinance = data.finance.filter(t => {
+                const d = new Date(t.createdAt || t.date);
+                return (new Date() - d) < 7 * 24 * 60 * 60 * 1000;
+            }).length;
+            score += Math.min(recentFinance, 3);
+            
+            // Active missions
+            score += Math.min(data.missions.filter(m => m.status === 'active').length, 2);
+            
+            // Recent journal
+            const recentJournal = data.journal.filter(e => {
+                const d = new Date(e.createdAt);
+                return (new Date() - d) < 7 * 24 * 60 * 60 * 1000;
+            }).length;
+            score += Math.min(recentJournal, 2);
+            
+            // Upcoming events
+            const today = new Date();
+            const urgentEvents = data.agenda.filter(e => {
+                const d = new Date(e.date);
+                const diff = (d - today) / (1000 * 60 * 60 * 24);
+                return diff >= 0 && diff <= 7;
+            }).length;
+            score += Math.min(urgentEvents, 2);
+            
+            // Normalize to 5 bars
+            const level = Math.min(Math.ceil(score / 2), 5);
+            
+            bars.forEach((bar, i) => {
+                bar.className = 'threat-bar';
+                if (i < level) {
+                    if (level <= 2) bar.classList.add('active');
+                    else if (level <= 4) bar.classList.add('warning');
+                    else bar.classList.add('critical');
+                }
+            });
+            
+            // Update status
+            const status = document.getElementById('missionStatus');
+            if (level <= 2) {
+                status.textContent = '◉ STANDBY';
+                status.style.background = 'var(--cyan-dim)';
+                status.style.borderColor = 'var(--cyan)';
+                status.style.color = 'var(--cyan)';
+            } else if (level <= 4) {
+                status.textContent = '◉ OPÉRATIONNEL';
+                status.style.background = 'var(--green-dim)';
+                status.style.borderColor = 'var(--green)';
+                status.style.color = 'var(--green)';
+            } else {
+                status.textContent = '◉ HAUTE ACTIVITÉ';
+                status.style.background = 'var(--orange-dim)';
+                status.style.borderColor = 'var(--orange)';
+                status.style.color = 'var(--orange)';
+            }
+        }
+        
+        // Utilities
+        function formatTime(dateStr) {
+            if (!dateStr) return '--:--';
+            const d = new Date(dateStr);
+            const now = new Date();
+            const diff = now - d;
+            
+            if (diff < 60000) return 'NOW';
+            if (diff < 3600000) return `${Math.floor(diff/60000)}m`;
+            if (diff < 86400000) return `${Math.floor(diff/3600000)}h`;
+            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

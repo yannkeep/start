@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::PARTNERS — Écosystème Partenaires</title>
+    <script src="kern-core.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --pink: #f472b6;
+            --orange: #fb923c;
+            
+            /* Tier colors */
+            --tier-free: #6b7280;
+            --tier-bronze: #cd7f32;
+            --tier-silver: #c0c0c0;
+            --tier-gold: #ffd700;
+            --tier-platinum: #e5e4e2;
+            --tier-diamond: #b9f2ff;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* Background */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .app {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(15, 15, 24, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--amber), var(--orange));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+        }
+        
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text), var(--amber));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-text span {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .hstat { text-align: center; }
+        .hstat-value { font-weight: 700; font-size: 1.2rem; }
+        .hstat-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        .header-agent {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--amber);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main Layout */
+        .main {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .section-subtitle {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Tier Filters */
+        .tier-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tier-filter {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .tier-filter:hover, .tier-filter.active {
+            border-color: var(--accent);
+        }
+        
+        .tier-filter.active { background: var(--accent); color: white; }
+        
+        .tier-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        /* Partners Grid */
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        /* Partner Card */
+        .partner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .partner-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Status animations */
+        .partner-card.status-prospect {
+            animation: pulseProspect 3s ease-in-out infinite;
+        }
+        
+        .partner-card.status-negotiation {
+            animation: pulseNegotiation 1.5s ease-in-out infinite;
+        }
+        
+        .partner-card.status-active {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+        }
+        
+        .partner-card.status-premium {
+            border-color: var(--amber);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+            animation: pulsePremium 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseProspect {
+            0%, 100% { border-color: var(--border); }
+            50% { border-color: var(--cyan); }
+        }
+        
+        @keyframes pulseNegotiation {
+            0%, 100% { border-color: var(--border); box-shadow: none; }
+            50% { border-color: var(--purple); box-shadow: 0 0 25px rgba(167, 139, 250, 0.4); }
+        }
+        
+        @keyframes pulsePremium {
+            0%, 100% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(251, 191, 36, 0.5); }
+        }
+        
+        /* Tier badge */
+        .tier-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .tier-badge.free { background: var(--tier-free); color: white; }
+        .tier-badge.bronze { background: var(--tier-bronze); color: white; }
+        .tier-badge.silver { background: var(--tier-silver); color: #333; }
+        .tier-badge.gold { background: var(--tier-gold); color: #333; }
+        .tier-badge.platinum { background: var(--tier-platinum); color: #333; }
+        .tier-badge.diamond { background: linear-gradient(135deg, var(--tier-diamond), var(--cyan)); color: #333; }
+        
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-indicator.prospect { background: var(--cyan); animation: blink 2s infinite; }
+        .status-indicator.negotiation { background: var(--purple); animation: blink 0.8s infinite; }
+        .status-indicator.active { background: var(--green); }
+        .status-indicator.premium { background: var(--amber); animation: glow 1.5s infinite; }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--amber); }
+            50% { box-shadow: 0 0 15px var(--amber), 0 0 25px var(--amber); }
+        }
+        
+        .partner-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .partner-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .partner-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .partner-tagline {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+        
+        .partner-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        .partner-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Products grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .product-item {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .product-item:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
+        
+        .product-item.empty {
+            border-style: dashed;
+            opacity: 0.5;
+        }
+        
+        .product-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .product-name {
+            font-size: 0.65rem;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .product-price {
+            font-size: 0.6rem;
+            color: var(--green);
+            font-weight: 600;
+        }
+        
+        .partner-footer {
+            padding: 0.75rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .partner-cta {
+            padding: 0.4rem 0.8rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .partner-cta:hover { opacity: 0.9; }
+        
+        .partner-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .partner-link {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-surface);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .partner-link:hover { background: var(--bg-hover); }
+        
+        /* Pricing Section */
+        .pricing-section {
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .pricing-card.popular {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.25rem 0.75rem;
+            background: var(--accent);
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .pricing-tier {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .pricing-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .pricing-ca {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-price {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        
+        .pricing-period {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+        
+        .pricing-feature.included { color: var(--text); }
+        .pricing-feature .check { color: var(--green); }
+        .pricing-feature .cross { color: var(--red); opacity: 0.5; }
+        
+        .pricing-cta {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pricing-cta.primary {
+            background: var(--accent);
+            border: none;
+            color: white;
+        }
+        
+        .pricing-cta.secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        .pricing-cta:hover { opacity: 0.9; }
+        
+        /* Admin Section */
+        .admin-section {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .admin-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .admin-btn.primary {
+            background: var(--green);
+            border-color: var(--green);
+            color: var(--bg-void);
+        }
+        
+        /* Pipeline table */
+        .pipeline-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .pipeline-table th {
+            text-align: left;
+            padding: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .pipeline-table td {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .pipeline-table tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        .pipeline-company {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .pipeline-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pipeline-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .pipeline-status.prospect { background: rgba(34, 211, 238, 0.2); color: var(--cyan); }
+        .pipeline-status.negotiation { background: rgba(167, 139, 250, 0.2); color: var(--purple); }
+        .pipeline-status.active { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .pipeline-status.premium { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+        
+        .pipeline-value {
+            font-weight: 600;
+            color: var(--green);
+        }
+        
+        .pipeline-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pipeline-action {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .pipeline-action:hover { background: var(--bg-hover); }
+        
+        /* Revenue Stats */
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .revenue-card {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        
+        .revenue-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+        
+        .revenue-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .revenue-change {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+        }
+        
+        .revenue-change.up { color: var(--green); }
+        .revenue-change.down { color: var(--red); }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.open { display: flex; }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title { font-weight: 700; font-size: 1.1rem; }
+        .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; }
+        
+        .modal-body { padding: 1.25rem; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 0.4rem; color: var(--text-dim); }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .btn-primary { background: var(--accent); border: none; color: white; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 320px;
+            z-index: 1000;
+        }
+        
+        .notif {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notif.success { border-left: 3px solid var(--green); }
+        .notif.info { border-left: 3px solid var(--cyan); }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .partners-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+            .revenue-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 768px) {
+            .header { flex-wrap: wrap; padding: 1rem; }
+            .header-stats { display: none; }
+            .main { padding: 1rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .revenue-stats { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="00-kern-nexus.html" class="logo">
+                <div class="logo-icon">🤝</div>
+                <div class="logo-text">
+                    <h1>KERN::PARTNERS</h1>
+                    <span>ÉCOSYSTÈME PARTENAIRES</span>
+                </div>
+            </a>
+            
+            <nav class="header-nav">
+                <button class="nav-btn active" data-view="marketplace">🏪 Marketplace</button>
+                <button class="nav-btn" data-view="pricing">💰 Tarifs</button>
+                <button class="nav-btn" data-view="pipeline">📊 Pipeline</button>
+            </nav>
+            
+            <div class="header-stats">
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--green)" id="statPartners">0</div>
+                    <div class="hstat-label">Partenaires</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--amber)" id="statMRR">0€</div>
+                    <div class="hstat-label">MRR</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--purple)" id="statProspects">0</div>
+                    <div class="hstat-label">Prospects</div>
+                </div>
+            </div>
+            
+            <a href="00-kern-nexus.html" class="header-agent">
+                <div class="agent-avatar">🎭</div>
+            </a>
+        </header>
+        
+        <main class="main">
+            <!-- Marketplace View -->
+            <section id="marketplaceView">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">🏪 Marketplace Partenaires</h2>
+                        <p class="section-subtitle">Découvrez nos partenaires et leurs solutions</p>
+                    </div>
+                    <div class="tier-filters">
+                        <button class="tier-filter active" data-tier="all">Tous</button>
+                        <button class="tier-filter" data-tier="free"><span class="tier-dot" style="background: var(--tier-free)"></span> Gratuit</button>
+                        <button class="tier-filter" data-tier="bronze"><span class="tier-dot" style="background: var(--tier-bronze)"></span> Bronze</button>
+                        <button class="tier-filter" data-tier="silver"><span class="tier-dot" style="background: var(--tier-silver)"></span> Silver</button>
+                        <button class="tier-filter" data-tier="gold"><span class="tier-dot" style="background: var(--tier-gold)"></span> Gold</button>
+                        <button class="tier-filter" data-tier="platinum"><span class="tier-dot" style="background: var(--tier-platinum)"></span> Platinum</button>
+                        <button class="tier-filter" data-tier="diamond"><span class="tier-dot" style="background: var(--tier-diamond)"></span> Diamond</button>
+                    </div>
+                </div>
+                
+                <div class="partners-grid" id="partnersGrid"></div>
+            </section>
+            
+            <!-- Pricing View -->
+            <section id="pricingView" style="display: none;">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">💰 Grille Tarifaire</h2>
+                        <p class="section-subtitle">Tarification basée sur le chiffre d'affaires estimé</p>
+                    </div>
+                </div>
+                
+                <div class="pricing-grid" id="pricingGrid"></div>
+            </section>
+            
+            <!-- Pipeline View (Admin) -->
+            <section id="pipelineView" style="display: none;">
+                <div class="revenue-stats">
+                    <div class="revenue-card">
+                        <div class="revenue-label">MRR Total</div>
+                        <div class="revenue-value" style="color: var(--green)" id="totalMRR">€0</div>
+                        <div class="revenue-change up">↑ +12% ce mois</div>
+                    </div>
+                    <div class="revenue-card">
+                        <div class="revenue-label">ARR Projeté</div>
+                        <div class="revenue-value" style="color: var(--cyan)" id="totalARR">€0</div>
+                        <div class="revenue-change up">↑ +8% YoY</div>
+                    </div>
+                    <div class="revenue-card">
+                        <div class="revenue-label">Pipeline Value</div>
+                        <div class="revenue-value" style="color: var(--purple)" id="pipelineValue">€0</div>
+                        <div class="revenue-change">15 deals en cours</div>
+                    </div>
+                    <div class="revenue-card">
+                        <div class="revenue-label">Conversion Rate</div>
+                        <div class="revenue-value" style="color: var(--amber)">34%</div>
+                        <div class="revenue-change up">↑ +5% vs Q-1</div>
+                    </div>
+                </div>
+                
+                <div class="admin-section">
+                    <div class="admin-header">
+                        <div class="admin-title">📊 Pipeline Commercial</div>
+                        <div class="admin-actions">
+                            <button class="admin-btn" onclick="exportPipeline()">📤 Exporter</button>
+                            <button class="admin-btn primary" onclick="openPartnerModal()">+ Ajouter</button>
+                        </div>
+                    </div>
+                    
+                    <table class="pipeline-table">
+                        <thead>
+                            <tr>
+                                <th>Entreprise</th>
+                                <th>Tier</th>
+                                <th>Statut</th>
+                                <th>CA Estimé</th>
+                                <th>Valeur Deal</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pipelineTable"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Partner Modal -->
+    <div class="modal" id="partnerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Ajouter un partenaire</span>
+                <button class="modal-close" onclick="closePartnerModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom de l'entreprise *</label>
+                        <input type="text" id="partnerName" placeholder="Lorem Industries">
+                    </div>
+                    <div class="form-group">
+                        <label>Emoji / Logo</label>
+                        <input type="text" id="partnerEmoji" placeholder="🏢" maxlength="2">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tagline</label>
+                    <input type="text" id="partnerTagline" placeholder="Solutions innovantes pour...">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CA Estimé (€)</label>
+                        <input type="number" id="partnerCA" placeholder="500000">
+                    </div>
+                    <div class="form-group">
+                        <label>Statut</label>
+                        <select id="partnerStatus">
+                            <option value="prospect">🔵 Prospect</option>
+                            <option value="negotiation">🟣 En négociation</option>
+                            <option value="active">🟢 Client actif</option>
+                            <option value="premium">🟡 Premium</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Secteur</label>
+                        <input type="text" id="partnerSector" placeholder="Tech, Finance, Santé...">
+                    </div>
+                    <div class="form-group">
+                        <label>Site web</label>
+                        <input type="url" id="partnerWebsite" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Produits (JSON ou séparés par virgules)</label>
+                    <textarea id="partnerProducts" rows="3" placeholder="Produit 1, Produit 2, Produit 3..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePartnerModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="savePartner()">Ajouter</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notifications" id="notifications"></div>
+
+<script>
+// ==================== DATA ====================
+const PRICING_TIERS = [
+    {
+        id: 'free',
+        name: 'Gratuit',
+        emoji: '🌱',
+        caMin: 0,
+        caMax: 100000,
+        price: 0,
+        color: 'var(--tier-free)',
+        features: [
+            { text: '1 emplacement marketplace', included: true },
+            { text: '3 produits max', included: true },
+            { text: 'Badge "Partenaire"', included: true },
+            { text: 'Statistiques basiques', included: true },
+            { text: 'Mise en avant', included: false },
+            { text: 'Analytics avancés', included: false },
+            { text: 'Support prioritaire', included: false },
+        ]
+    },
+    {
+        id: 'bronze',
+        name: 'Bronze',
+        emoji: '🥉',
+        caMin: 100000,
+        caMax: 500000,
+        price: 49,
+        color: 'var(--tier-bronze)',
+        features: [
+            { text: '1 emplacement marketplace', included: true },
+            { text: '5 produits max', included: true },
+            { text: 'Badge "Bronze"', included: true },
+            { text: 'Statistiques détaillées', included: true },
+            { text: 'Mise en avant occasionnelle', included: true },
+            { text: 'Analytics avancés', included: false },
+            { text: 'Support prioritaire', included: false },
+        ]
+    },
+    {
+        id: 'silver',
+        name: 'Silver',
+        emoji: '🥈',
+        caMin: 500000,
+        caMax: 2000000,
+        price: 149,
+        color: 'var(--tier-silver)',
+        features: [
+            { text: '2 emplacements marketplace', included: true },
+            { text: '7 produits max', included: true },
+            { text: 'Badge "Silver"', included: true },
+            { text: 'Statistiques complètes', included: true },
+            { text: 'Mise en avant hebdo', included: true },
+            { text: 'Analytics avancés', included: true },
+            { text: 'Support prioritaire', included: false },
+        ]
+    },
+    {
+        id: 'gold',
+        name: 'Gold',
+        emoji: '🥇',
+        caMin: 2000000,
+        caMax: 10000000,
+        price: 349,
+        color: 'var(--tier-gold)',
+        popular: true,
+        features: [
+            { text: '3 emplacements marketplace', included: true },
+            { text: '9 produits max', included: true },
+            { text: 'Badge "Gold" animé', included: true },
+            { text: 'Dashboard dédié', included: true },
+            { text: 'Mise en avant permanente', included: true },
+            { text: 'Analytics temps réel', included: true },
+            { text: 'Support prioritaire', included: true },
+        ]
+    },
+    {
+        id: 'platinum',
+        name: 'Platinum',
+        emoji: '💎',
+        caMin: 10000000,
+        caMax: 50000000,
+        price: 749,
+        color: 'var(--tier-platinum)',
+        features: [
+            { text: '5 emplacements marketplace', included: true },
+            { text: '9 produits par emplacement', included: true },
+            { text: 'Badge "Platinum" premium', included: true },
+            { text: 'Dashboard white-label', included: true },
+            { text: 'Position top homepage', included: true },
+            { text: 'API accès données', included: true },
+            { text: 'Account manager dédié', included: true },
+        ]
+    },
+    {
+        id: 'diamond',
+        name: 'Diamond',
+        emoji: '👑',
+        caMin: 50000000,
+        caMax: Infinity,
+        price: 1499,
+        color: 'var(--tier-diamond)',
+        features: [
+            { text: 'Emplacements illimités', included: true },
+            { text: 'Produits illimités', included: true },
+            { text: 'Badge "Diamond" exclusif', included: true },
+            { text: 'Intégration sur-mesure', included: true },
+            { text: 'Sponsoring événements', included: true },
+            { text: 'Co-branding KERN', included: true },
+            { text: 'Équipe dédiée 24/7', included: true },
+        ]
+    }
+];
+
+// Sample partners data
+const DEMO_PARTNERS = [
+    {
+        id: 'p1',
+        name: 'Lorem Industries',
+        emoji: '🏭',
+        tagline: 'Solutions industrielles nouvelle génération',
+        ca: 15000000,
+        tier: 'platinum',
+        status: 'active',
+        sector: 'Industrie',
+        website: 'https://lorem-industries.example',
+        products: [
+            { name: 'LoremFlow Pro', icon: '⚙️', price: '€2,499/an' },
+            { name: 'IpsumTrack', icon: '📍', price: '€899/an' },
+            { name: 'DolorShield', icon: '🛡️', price: '€1,299/an' },
+            { name: 'SitAmet Hub', icon: '🔄', price: '€699/an' },
+            { name: 'ConsecSuite', icon: '📊', price: '€1,899/an' },
+            { name: 'AdipCloud', icon: '☁️', price: '€449/an' },
+            { name: 'ElitMobile', icon: '📱', price: '€299/an' },
+            { name: 'SedDo AI', icon: '🤖', price: '€3,999/an' },
+            { name: 'TempIncubo', icon: '🧪', price: 'Sur devis' }
+        ]
+    },
+    {
+        id: 'p2',
+        name: 'Ipsum Finance',
+        emoji: '💰',
+        tagline: 'Votre partenaire financier de confiance',
+        ca: 75000000,
+        tier: 'diamond',
+        status: 'premium',
+        sector: 'Finance',
+        website: 'https://ipsum-finance.example',
+        products: [
+            { name: 'IpsumPay', icon: '💳', price: '0.5% / tx' },
+            { name: 'DolorInvest', icon: '📈', price: '€99/mois' },
+            { name: 'SitWealth', icon: '🏦', price: '€249/mois' },
+            { name: 'AmetCredit', icon: '💵', price: 'Variable' },
+            { name: 'ConsecInsure', icon: '🔒', price: '€49/mois' },
+            { name: 'AdipTax', icon: '📋', price: '€199/an' },
+            { name: 'ElitRetire', icon: '🏖️', price: '€149/mois' },
+            { name: 'SedPortfolio', icon: '💼', price: '€79/mois' },
+            { name: 'TempAudit', icon: '🔍', price: 'Sur devis' }
+        ]
+    },
+    {
+        id: 'p3',
+        name: 'Dolor Tech',
+        emoji: '💻',
+        tagline: 'Innovation digitale accessible',
+        ca: 3500000,
+        tier: 'gold',
+        status: 'active',
+        sector: 'Tech',
+        website: 'https://dolor-tech.example',
+        products: [
+            { name: 'DolorCMS', icon: '📝', price: '€29/mois' },
+            { name: 'SitBuilder', icon: '🏗️', price: '€49/mois' },
+            { name: 'AmetHost', icon: '🖥️', price: '€19/mois' },
+            { name: 'ConsecAPI', icon: '🔌', price: '€99/mois' },
+            { name: 'AdipSEO', icon: '🔎', price: '€79/mois' },
+            { name: 'ElitChat', icon: '💬', price: '€39/mois' },
+            null, null, null
+        ]
+    },
+    {
+        id: 'p4',
+        name: 'Sit Amet ASBL',
+        emoji: '🤲',
+        tagline: 'Association pour un numérique responsable',
+        ca: 45000,
+        tier: 'free',
+        status: 'active',
+        sector: 'Non-profit',
+        website: 'https://sitamet.example',
+        products: [
+            { name: 'AmetFormation', icon: '🎓', price: 'Gratuit' },
+            { name: 'ConsecGuide', icon: '📚', price: 'Gratuit' },
+            { name: 'AdipToolkit', icon: '🧰', price: 'Gratuit' },
+            null, null, null, null, null, null
+        ]
+    },
+    {
+        id: 'p5',
+        name: 'Consectetur Legal',
+        emoji: '⚖️',
+        tagline: 'Cabinet d\'avocats spécialisé données',
+        ca: 850000,
+        tier: 'silver',
+        status: 'negotiation',
+        sector: 'Juridique',
+        website: 'https://consec-legal.example',
+        products: [
+            { name: 'LegalCheck', icon: '✅', price: '€199/audit' },
+            { name: 'GDPRShield', icon: '🇪🇺', price: '€499/an' },
+            { name: 'ContractGen', icon: '📄', price: '€149/mois' },
+            { name: 'DisputeResolve', icon: '🤝', price: 'Sur devis' },
+            { name: 'ComplianceKit', icon: '📋', price: '€299/an' },
+            null, null, null, null
+        ]
+    },
+    {
+        id: 'p6',
+        name: 'Adipiscing Media',
+        emoji: '📰',
+        tagline: 'Agence média indépendante',
+        ca: 280000,
+        tier: 'bronze',
+        status: 'prospect',
+        sector: 'Médias',
+        website: 'https://adipiscing.example',
+        products: [
+            { name: 'NewsFlow', icon: '📡', price: '€59/mois' },
+            { name: 'ContentStudio', icon: '🎬', price: '€129/mois' },
+            { name: 'SocialPulse', icon: '📱', price: '€79/mois' },
+            { name: 'AnalyticsPro', icon: '📊', price: '€49/mois' },
+            null, null, null, null, null
+        ]
+    },
+    {
+        id: 'p7',
+        name: 'Elit Santé',
+        emoji: '🏥',
+        tagline: 'E-santé et télémédecine',
+        ca: 6200000,
+        tier: 'gold',
+        status: 'negotiation',
+        sector: 'Santé',
+        website: 'https://elit-sante.example',
+        products: [
+            { name: 'TeleDoc', icon: '👨‍⚕️', price: '€19/consult' },
+            { name: 'HealthTrack', icon: '❤️', price: '€9/mois' },
+            { name: 'PharmaConnect', icon: '💊', price: '€299/mois' },
+            { name: 'LabResults', icon: '🧬', price: '€49/mois' },
+            { name: 'MedRecord', icon: '📁', price: '€149/mois' },
+            { name: 'CareSchedule', icon: '📅', price: '€79/mois' },
+            { name: 'HealthAI', icon: '🤖', price: '€199/mois' },
+            null, null
+        ]
+    },
+    {
+        id: 'p8',
+        name: 'Sed Do Consulting',
+        emoji: '🎯',
+        tagline: 'Conseil en transformation digitale',
+        ca: 1200000,
+        tier: 'silver',
+        status: 'active',
+        sector: 'Conseil',
+        website: 'https://seddo.example',
+        products: [
+            { name: 'DigiAudit', icon: '🔍', price: '€2,500' },
+            { name: 'StrategyPack', icon: '🗺️', price: '€5,000' },
+            { name: 'TeamTrain', icon: '👥', price: '€800/jour' },
+            { name: 'ProcessOptim', icon: '⚡', price: '€3,500' },
+            { name: 'ChangeManage', icon: '🔄', price: '€4,000' },
+            { name: 'InnoLab', icon: '💡', price: '€6,000' },
+            null, null, null
+        ]
+    },
+    {
+        id: 'p9',
+        name: 'Tempor Startup',
+        emoji: '🚀',
+        tagline: 'L\'innovation qui disrupte',
+        ca: 120000,
+        tier: 'bronze',
+        status: 'prospect',
+        sector: 'Startup',
+        website: 'https://tempor-startup.example',
+        products: [
+            { name: 'DisruptApp', icon: '💥', price: 'Freemium' },
+            { name: 'SynergyTool', icon: '🔗', price: '€19/mois' },
+            { name: 'PivotBoard', icon: '🔀', price: '€29/mois' },
+            null, null, null, null, null, null
+        ]
+    },
+    {
+        id: 'p10',
+        name: 'Incididunt Data',
+        emoji: '📊',
+        tagline: 'Big Data & Analytics',
+        ca: 8500000,
+        tier: 'gold',
+        status: 'premium',
+        sector: 'Data',
+        website: 'https://incididunt.example',
+        products: [
+            { name: 'DataLake Pro', icon: '🌊', price: '€999/mois' },
+            { name: 'InsightEngine', icon: '🔮', price: '€499/mois' },
+            { name: 'PredictML', icon: '🤖', price: '€799/mois' },
+            { name: 'VizStudio', icon: '📈', price: '€199/mois' },
+            { name: 'StreamPipe', icon: '⚡', price: '€349/mois' },
+            { name: 'CleanBot', icon: '🧹', price: '€149/mois' },
+            { name: 'GovernData', icon: '🏛️', price: '€599/mois' },
+            { name: 'SecureVault', icon: '🔐', price: '€249/mois' },
+            { name: 'APIGateway', icon: '🚪', price: '€299/mois' }
+        ]
+    },
+    {
+        id: 'p11',
+        name: 'Labore Green',
+        emoji: '🌿',
+        tagline: 'Solutions écologiques pour entreprises',
+        ca: 420000,
+        tier: 'bronze',
+        status: 'active',
+        sector: 'Écologie',
+        website: 'https://labore-green.example',
+        products: [
+            { name: 'CarbonTrack', icon: '🌍', price: '€89/mois' },
+            { name: 'EcoAudit', icon: '🔍', price: '€499' },
+            { name: 'GreenSupply', icon: '♻️', price: '€149/mois' },
+            { name: 'SustainReport', icon: '📊', price: '€199/an' },
+            null, null, null, null, null
+        ]
+    },
+    {
+        id: 'p12',
+        name: 'Qux Formations',
+        emoji: '🎓',
+        tagline: 'Formation professionnelle continue',
+        ca: 680000,
+        tier: 'silver',
+        status: 'prospect',
+        sector: 'Formation',
+        website: 'https://qux-formations.example',
+        products: [
+            { name: 'LearnHub', icon: '📚', price: '€29/user/mois' },
+            { name: 'CertifPro', icon: '🏆', price: '€199/certif' },
+            { name: 'SkillTrack', icon: '📈', price: '€49/mois' },
+            { name: 'MentorMatch', icon: '👥', price: '€99/mois' },
+            { name: 'QuizMaster', icon: '❓', price: '€19/mois' },
+            null, null, null, null
+        ]
+    }
+];
+
+// State
+let partners = [];
+let currentFilter = 'all';
+let currentView = 'marketplace';
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+    loadPartners();
+    renderMarketplace();
+    renderPricing();
+    renderPipeline();
+    updateStats();
+    setupEventListeners();
+});
+
+function loadPartners() {
+    const stored = localStorage.getItem('kern_partners');
+    if (stored) {
+        partners = JSON.parse(stored);
+    } else {
+        partners = DEMO_PARTNERS;
+        savePartners();
+    }
+}
+
+function savePartners() {
+    localStorage.setItem('kern_partners', JSON.stringify(partners));
+}
+
+function getTierForCA(ca) {
+    for (const tier of PRICING_TIERS) {
+        if (ca >= tier.caMin && ca < tier.caMax) {
+            return tier;
+        }
+    }
+    return PRICING_TIERS[0];
+}
+
+// ==================== RENDER MARKETPLACE ====================
+function renderMarketplace() {
+    const container = document.getElementById('partnersGrid');
+    
+    let filtered = partners;
+    if (currentFilter !== 'all') {
+        filtered = partners.filter(p => p.tier === currentFilter);
+    }
+    
+    // Sort: premium/diamond first, then by CA
+    filtered.sort((a, b) => {
+        const tierOrder = ['diamond', 'platinum', 'gold', 'silver', 'bronze', 'free'];
+        const aIndex = tierOrder.indexOf(a.tier);
+        const bIndex = tierOrder.indexOf(b.tier);
+        if (aIndex !== bIndex) return aIndex - bIndex;
+        return b.ca - a.ca;
+    });
+    
+    container.innerHTML = filtered.map(partner => {
+        const tier = PRICING_TIERS.find(t => t.id === partner.tier) || PRICING_TIERS[0];
+        const products = partner.products || [];
+        
+        // Ensure we have 9 slots
+        while (products.length < 9) products.push(null);
+        
+        return `
+            <div class="partner-card status-${partner.status}" data-id="${partner.id}">
+                <span class="status-indicator ${partner.status}"></span>
+                <span class="tier-badge ${partner.tier}">${tier.emoji} ${tier.name}</span>
+                
+                <div class="partner-header">
+                    <div class="partner-logo">${partner.emoji}</div>
+                    <div class="partner-name">${partner.name}</div>
+                    <div class="partner-tagline">${partner.tagline}</div>
+                    <div class="partner-meta">
+                        <span>🏢 ${partner.sector}</span>
+                        <span>💰 ${formatCA(partner.ca)}</span>
+                    </div>
+                </div>
+                
+                <div class="products-grid">
+                    ${products.slice(0, 9).map((prod, i) => prod ? `
+                        <div class="product-item" title="${prod.name}">
+                            <div class="product-icon">${prod.icon}</div>
+                            <div class="product-name">${prod.name}</div>
+                            <div class="product-price">${prod.price}</div>
+                        </div>
+                    ` : `
+                        <div class="product-item empty">
+                            <div class="product-icon">➕</div>
+                            <div class="product-name">Slot ${i + 1}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="partner-footer">
+                    <button class="partner-cta" onclick="viewPartner('${partner.id}')">Voir détails</button>
+                    <div class="partner-links">
+                        ${partner.website ? `<a href="${partner.website}" target="_blank" class="partner-link">🔗</a>` : ''}
+                        <span class="partner-link" onclick="contactPartner('${partner.id}')">✉️</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== RENDER PRICING ====================
+function renderPricing() {
+    const container = document.getElementById('pricingGrid');
+    
+    container.innerHTML = PRICING_TIERS.map(tier => `
+        <div class="pricing-card ${tier.popular ? 'popular' : ''}">
+            ${tier.popular ? '<span class="popular-badge">⭐ POPULAIRE</span>' : ''}
+            <div class="pricing-tier" style="background: ${tier.color}22; border: 2px solid ${tier.color};">
+                ${tier.emoji}
+            </div>
+            <div class="pricing-name">${tier.name}</div>
+            <div class="pricing-ca">CA: ${formatCA(tier.caMin)} - ${tier.caMax === Infinity ? '∞' : formatCA(tier.caMax)}</div>
+            <div class="pricing-price" style="color: ${tier.color}">${tier.price === 0 ? 'Gratuit' : '€' + tier.price}</div>
+            <div class="pricing-period">${tier.price > 0 ? 'par mois' : ''}</div>
+            <div class="pricing-features">
+                ${tier.features.map(f => `
+                    <div class="pricing-feature ${f.included ? 'included' : ''}">
+                        <span class="${f.included ? 'check' : 'cross'}">${f.included ? '✓' : '✗'}</span>
+                        ${f.text}
+                    </div>
+                `).join('')}
+            </div>
+            <button class="pricing-cta ${tier.popular ? 'primary' : 'secondary'}">
+                ${tier.price === 0 ? 'Commencer' : 'Souscrire'}
+            </button>
+        </div>
+    `).join('');
+}
+
+// ==================== RENDER PIPELINE ====================
+function renderPipeline() {
+    const container = document.getElementById('pipelineTable');
+    
+    // Sort by status: negotiation > prospect > active > premium
+    const statusOrder = ['negotiation', 'prospect', 'active', 'premium'];
+    const sorted = [...partners].sort((a, b) => {
+        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+    });
+    
+    container.innerHTML = sorted.map(partner => {
+        const tier = PRICING_TIERS.find(t => t.id === partner.tier) || PRICING_TIERS[0];
+        const dealValue = tier.price * 12; // Annual value
+        
+        return `
+            <tr>
+                <td>
+                    <div class="pipeline-company">
+                        <div class="pipeline-logo">${partner.emoji}</div>
+                        <div>
+                            <div style="font-weight: 600;">${partner.name}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim);">${partner.sector}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="tier-badge ${partner.tier}" style="position: static;">${tier.emoji} ${tier.name}</span>
+                </td>
+                <td>
+                    <span class="pipeline-status ${partner.status}">
+                        <span class="status-indicator ${partner.status}" style="position: static; width: 6px; height: 6px;"></span>
+                        ${formatStatus(partner.status)}
+                    </span>
+                </td>
+                <td>${formatCA(partner.ca)}</td>
+                <td class="pipeline-value">${dealValue > 0 ? '€' + dealValue.toLocaleString() + '/an' : 'Gratuit'}</td>
+                <td>
+                    <div class="pipeline-actions">
+                        <button class="pipeline-action" onclick="editPartner('${partner.id}')" title="Éditer">✏️</button>
+                        <button class="pipeline-action" onclick="changeStatus('${partner.id}')" title="Changer statut">🔄</button>
+                        <button class="pipeline-action" onclick="deletePartner('${partner.id}')" title="Supprimer">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Update revenue stats
+    let totalMRR = 0;
+    let pipelineValue = 0;
+    
+    partners.forEach(p => {
+        const tier = PRICING_TIERS.find(t => t.id === p.tier) || PRICING_TIERS[0];
+        if (p.status === 'active' || p.status === 'premium') {
+            totalMRR += tier.price;
+        } else {
+            pipelineValue += tier.price * 12;
+        }
+    });
+    
+    document.getElementById('totalMRR').textContent = '€' + totalMRR.toLocaleString();
+    document.getElementById('totalARR').textContent = '€' + (totalMRR * 12).toLocaleString();
+    document.getElementById('pipelineValue').textContent = '€' + pipelineValue.toLocaleString();
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const activePartners = partners.filter(p => p.status === 'active' || p.status === 'premium').length;
+    const prospects = partners.filter(p => p.status === 'prospect' || p.status === 'negotiation').length;
+    
+    let mrr = 0;
+    partners.forEach(p => {
+        if (p.status === 'active' || p.status === 'premium') {
+            const tier = PRICING_TIERS.find(t => t.id === p.tier) || PRICING_TIERS[0];
+            mrr += tier.price;
+        }
+    });
+    
+    document.getElementById('statPartners').textContent = activePartners;
+    document.getElementById('statMRR').textContent = '€' + mrr.toLocaleString();
+    document.getElementById('statProspects').textContent = prospects;
+}
+
+// ==================== MODAL ====================
+function openPartnerModal() {
+    document.getElementById('partnerModal').classList.add('open');
+}
+
+function closePartnerModal() {
+    document.getElementById('partnerModal').classList.remove('open');
+    // Clear form
+    ['partnerName', 'partnerEmoji', 'partnerTagline', 'partnerCA', 'partnerSector', 'partnerWebsite', 'partnerProducts'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+}
+
+function savePartner() {
+    const name = document.getElementById('partnerName').value.trim();
+    if (!name) {
+        alert('Nom requis');
+        return;
+    }
+    
+    const ca = parseInt(document.getElementById('partnerCA').value) || 0;
+    const tier = getTierForCA(ca);
+    
+    const productsRaw = document.getElementById('partnerProducts').value;
+    let products = [];
+    if (productsRaw.includes(',')) {
+        products = productsRaw.split(',').map((p, i) => ({
+            name: p.trim(),
+            icon: ['📦', '⚡', '🔧', '📊', '🎯', '💡', '🔒', '🚀', '🌟'][i % 9],
+            price: 'Sur demande'
+        }));
+    }
+    while (products.length < 9) products.push(null);
+    
+    const newPartner = {
+        id: 'p' + Date.now(),
+        name,
+        emoji: document.getElementById('partnerEmoji').value || '🏢',
+        tagline: document.getElementById('partnerTagline').value || 'Partenaire KERN',
+        ca,
+        tier: tier.id,
+        status: document.getElementById('partnerStatus').value,
+        sector: document.getElementById('partnerSector').value || 'Général',
+        website: document.getElementById('partnerWebsite').value,
+        products
+    };
+    
+    partners.push(newPartner);
+    savePartners();
+    closePartnerModal();
+    renderMarketplace();
+    renderPipeline();
+    updateStats();
+    showNotification('success', 'Partenaire ajouté !');
+}
+
+function changeStatus(id) {
+    const partner = partners.find(p => p.id === id);
+    if (!partner) return;
+    
+    const statuses = ['prospect', 'negotiation', 'active', 'premium'];
+    const currentIndex = statuses.indexOf(partner.status);
+    partner.status = statuses[(currentIndex + 1) % statuses.length];
+    
+    savePartners();
+    renderMarketplace();
+    renderPipeline();
+    updateStats();
+    showNotification('info', `Statut changé: ${formatStatus(partner.status)}`);
+}
+
+function deletePartner(id) {
+    if (!confirm('Supprimer ce partenaire ?')) return;
+    partners = partners.filter(p => p.id !== id);
+    savePartners();
+    renderMarketplace();
+    renderPipeline();
+    updateStats();
+}
+
+function viewPartner(id) {
+    const partner = partners.find(p => p.id === id);
+    if (partner && partner.website) {
+        window.open(partner.website, '_blank');
+    }
+}
+
+function contactPartner(id) {
+    showNotification('info', 'Fonctionnalité contact à venir...');
+}
+
+function exportPipeline() {
+    const data = {
+        exported: new Date().toISOString(),
+        partners,
+        stats: {
+            total: partners.length,
+            mrr: partners.reduce((sum, p) => {
+                if (p.status === 'active' || p.status === 'premium') {
+                    const tier = PRICING_TIERS.find(t => t.id === p.tier);
+                    return sum + (tier?.price || 0);
+                }
+                return sum;
+            }, 0)
+        }
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kern_partners_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // View navigation
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            currentView = btn.dataset.view;
+            document.getElementById('marketplaceView').style.display = currentView === 'marketplace' ? 'block' : 'none';
+            document.getElementById('pricingView').style.display = currentView === 'pricing' ? 'block' : 'none';
+            document.getElementById('pipelineView').style.display = currentView === 'pipeline' ? 'block' : 'none';
+        });
+    });
+    
+    // Tier filters
+    document.querySelectorAll('.tier-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tier-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.tier;
+            renderMarketplace();
+        });
+    });
+}
+
+// ==================== UTILS ====================
+function formatCA(ca) {
+    if (ca >= 1000000) return (ca / 1000000).toFixed(1) + 'M€';
+    if (ca >= 1000) return (ca / 1000).toFixed(0) + 'K€';
+    return ca + '€';
+}
+
+function formatStatus(status) {
+    const labels = {
+        prospect: 'Prospect',
+        negotiation: 'Négociation',
+        active: 'Client actif',
+        premium: 'Premium'
+    };
+    return labels[status] || status;
+}
+
+function showNotification(type, message) {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = `notif ${type}`;
+    notif.innerHTML = `<span>${type === 'success' ? '✅' : 'ℹ️'}</span><span>${message}</span>`;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kit Réseaux Sociaux - Parti Libre & Conscient</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #0f0f1a;
+        color: white;
+        padding: 40px;
+        min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .kit-header {
+        max-width: 900px;
+        margin: 0 auto 60px;
+        text-align: center;
+    }
+
+    .kit-header h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .kit-header p {
+        color: rgba(255,255,255,0.6);
+        font-size: 18px;
+    }
+
+    .section {
+        max-width: 1200px;
+        margin: 0 auto 80px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .template-card {
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .template-preview {
+        position: relative;
+    }
+
+    .template-label {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .template-info {
+        padding: 20px;
+    }
+
+    .template-info h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .template-info p {
+        font-size: 13px;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 15px;
+    }
+
+    .copy-btn {
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .copy-btn:hover {
+        transform: scale(1.02);
+    }
+
+    /* ========== POST FORMATS ========== */
+    
+    /* Post carré Instagram/Facebook */
+    .post-square {
+        width: 100%;
+        aspect-ratio: 1;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .post-square::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 100%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(233,69,96,0.2) 0%, transparent 60%);
+    }
+
+    .post-square .logo-mini {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .post-square h2 {
+        font-size: 28px;
+        line-height: 1.2;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .post-square h2 span {
+        color: #e94560;
+    }
+
+    .post-square p {
+        font-size: 14px;
+        color: rgba(255,255,255,0.7);
+        position: relative;
+        z-index: 1;
+    }
+
+    .post-square .cta-tag {
+        position: absolute;
+        bottom: 20px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Story format */
+    .story-format {
+        width: 100%;
+        aspect-ratio: 9/16;
+        max-height: 500px;
+        background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px 25px;
+    }
+
+    .story-format::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(180deg, rgba(233,69,96,0.3) 0%, transparent 100%);
+    }
+
+    .story-format .story-top {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .story-format .story-logo {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 auto 15px;
+    }
+
+    .story-format .story-badge {
+        background: rgba(255,255,255,0.1);
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 11px;
+        display: inline-block;
+    }
+
+    .story-format .story-main {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .story-format h2 {
+        font-size: 32px;
+        line-height: 1.1;
+        margin-bottom: 15px;
+    }
+
+    .story-format h2 span {
+        color: #e94560;
+    }
+
+    .story-format .story-text {
+        font-size: 14px;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .story-format .story-bottom {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .story-format .swipe-cta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    /* Twitter/X Banner */
+    .twitter-banner {
+        width: 100%;
+        aspect-ratio: 3/1;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+    }
+
+    .twitter-banner::before {
+        content: 'PLC';
+        position: absolute;
+        right: -5%;
+        font-family: 'Space Grotesk';
+        font-size: 200px;
+        font-weight: 800;
+        opacity: 0.05;
+    }
+
+    .twitter-banner .banner-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .twitter-banner .banner-logo {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 22px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .twitter-banner h2 {
+        font-size: 24px;
+        line-height: 1.2;
+    }
+
+    .twitter-banner h2 span {
+        color: #e94560;
+    }
+
+    /* Quote post */
+    .quote-post {
+        width: 100%;
+        aspect-ratio: 1;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .quote-post .quote-mark {
+        font-size: 80px;
+        font-family: Georgia, serif;
+        opacity: 0.3;
+        line-height: 0.5;
+        margin-bottom: 20px;
+    }
+
+    .quote-post blockquote {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 25px;
+    }
+
+    .quote-post .quote-author {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .quote-post .quote-logo {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* Stats post */
+    .stats-post {
+        width: 100%;
+        aspect-ratio: 1;
+        background: #1a1a2e;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px;
+    }
+
+    .stats-post .stat-cell {
+        background: linear-gradient(135deg, rgba(233,69,96,0.1) 0%, rgba(26,26,46,1) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .stats-post .stat-cell:nth-child(2) { background: linear-gradient(135deg, rgba(52,152,219,0.1) 0%, rgba(26,26,46,1) 100%); }
+    .stats-post .stat-cell:nth-child(3) { background: linear-gradient(135deg, rgba(46,204,113,0.1) 0%, rgba(26,26,46,1) 100%); }
+    .stats-post .stat-cell:nth-child(4) { background: linear-gradient(135deg, rgba(155,89,182,0.1) 0%, rgba(26,26,46,1) 100%); }
+
+    .stats-post .stat-number {
+        font-family: 'Space Grotesk';
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .stats-post .stat-cell:nth-child(1) .stat-number { color: #e94560; }
+    .stats-post .stat-cell:nth-child(2) .stat-number { color: #3498db; }
+    .stats-post .stat-cell:nth-child(3) .stat-number { color: #2ecc71; }
+    .stats-post .stat-cell:nth-child(4) .stat-number { color: #9b59b6; }
+
+    .stats-post .stat-label {
+        font-size: 12px;
+        color: rgba(255,255,255,0.6);
+        text-align: center;
+    }
+
+    /* ========== TEXTES À COPIER ========== */
+    .text-templates {
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        padding: 30px;
+    }
+
+    .text-template {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .text-template:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .text-template h4 {
+        font-size: 14px;
+        color: #e94560;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .text-template .platform-tag {
+        background: rgba(255,255,255,0.1);
+        padding: 3px 10px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 400;
+        color: rgba(255,255,255,0.6);
+    }
+
+    .text-template pre {
+        background: rgba(0,0,0,0.3);
+        padding: 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: rgba(255,255,255,0.8);
+    }
+
+    .hashtags {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .hashtag {
+        background: rgba(233,69,96,0.2);
+        color: #e94560;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="kit-header">
+        <h1>📱 Kit Réseaux Sociaux</h1>
+        <p>Templates visuels et textes prêts à poster pour le Parti Libre & Conscient</p>
+    </div>
+
+    <!-- VISUELS -->
+    <div class="section">
+        <h2 class="section-title">🎨 Templates visuels</h2>
+        <div class="templates-grid">
+            
+            <!-- Post carré principal -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="template-label">1080×1080</div>
+                    <div class="post-square">
+                        <div class="logo-mini">PLC</div>
+                        <h2>Reprends le <span>pouvoir</span> sur ta démocratie</h2>
+                        <p>Ni gauche, ni droite : conscient.</p>
+                        <div class="cta-tag">Rejoins-nous →</div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <h3>Post principal</h3>
+                    <p>Instagram / Facebook — Format carré</p>
+                </div>
+            </div>
+
+            <!-- Story -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="template-label">1080×1920</div>
+                    <div class="story-format">
+                        <div class="story-top">
+                            <div class="story-logo">PLC</div>
+                            <span class="story-badge">Mouvement citoyen</span>
+                        </div>
+                        <div class="story-main">
+                            <h2>Marre de la <span>politique spectacle</span> ?</h2>
+                            <p class="story-text">Un mouvement qui forme, informe et agit.</p>
+                        </div>
+                        <div class="story-bottom">
+                            <div class="swipe-cta">↑ Swipe pour rejoindre</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <h3>Story / Reel</h3>
+                    <p>Instagram / TikTok — Format vertical</p>
+                </div>
+            </div>
+
+            <!-- Quote -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="template-label">1080×1080</div>
+                    <div class="quote-post">
+                        <div class="quote-mark">"</div>
+                        <blockquote>La démocratie ne peut pas être réservée aux initiés.</blockquote>
+                        <p class="quote-author">— Parti Libre & Conscient</p>
+                        <div class="quote-logo">PLC</div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <h3>Citation</h3>
+                    <p>Tous réseaux — Format carré</p>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="template-card">
+                <div class="template-preview">
+                    <div class="template-label">1080×1080</div>
+                    <div class="stats-post">
+                        <div class="stat-cell">
+                            <div class="stat-number">2847</div>
+                            <div class="stat-label">Citoyens engagés</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Cellules locales</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-number">47</div>
+                            <div class="stat-label">Actions menées</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Motivation</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <h3>Infographie stats</h3>
+                    <p>Tous réseaux — Format carré</p>
+                </div>
+            </div>
+
+            <!-- Twitter Banner -->
+            <div class="template-card" style="grid-column: span 2;">
+                <div class="template-preview">
+                    <div class="template-label">1500×500</div>
+                    <div class="twitter-banner">
+                        <div class="banner-content">
+                            <div class="banner-logo">PLC</div>
+                            <h2>Parti Libre & Conscient<br><span>Reprends le pouvoir</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <h3>Bannière profil</h3>
+                    <p>Twitter/X / LinkedIn — Format bannière</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TEXTES -->
+    <div class="section">
+        <h2 class="section-title">✍️ Textes prêts à poster</h2>
+        <div class="text-templates">
+            
+            <div class="text-template">
+                <h4>Post de lancement <span class="platform-tag">Twitter/X</span></h4>
+                <pre>🚀 Le Parti Libre & Conscient, c'est parti.
+
+Ni gauche, ni droite : conscient.
+
+Un mouvement citoyen qui :
+→ Forme à l'analyse critique
+→ Documente l'action publique
+→ Outille ceux qui veulent agir
+→ Ne te dit pas quoi penser
+
+Pas de chef. Pas de cotisation. Pas de bullshit.
+
+Rejoins-nous 👇</pre>
+                <div class="hashtags">
+                    <span class="hashtag">#PLC</span>
+                    <span class="hashtag">#DémocratieParticipative</span>
+                    <span class="hashtag">#CitoyenConscient</span>
+                    <span class="hashtag">#Belgique</span>
+                </div>
+            </div>
+
+            <div class="text-template">
+                <h4>Post éducatif <span class="platform-tag">Instagram / Facebook</span></h4>
+                <pre>📚 SAVAIS-TU QUE...
+
+En Belgique, les présidents de parti ont souvent plus de pouvoir que les ministres qu'ils désignent.
+
+C'est ce qu'on appelle la particratie.
+
+Et c'est un problème.
+
+Au Parti Libre & Conscient, on ne te dit pas pour qui voter.
+On te donne les outils pour comprendre comment fonctionne le système.
+
+Parce qu'un citoyen informé est un citoyen libre.
+
+🔗 Plus d'infos dans notre bio</pre>
+                <div class="hashtags">
+                    <span class="hashtag">#ÉducationCivique</span>
+                    <span class="hashtag">#Particratie</span>
+                    <span class="hashtag">#PLC</span>
+                    <span class="hashtag">#Belgique</span>
+                </div>
+            </div>
+
+            <div class="text-template">
+                <h4>Appel à l'action <span class="platform-tag">Tous réseaux</span></h4>
+                <pre>🔥 MARRE DE REGARDER ?
+
+Tu peux :
+✅ Rejoindre une cellule locale
+✅ Lancer un groupe dans ta commune
+✅ Contribuer à la documentation
+✅ Animer un atelier
+✅ Juste apprendre et partager
+
+Le Parti Libre & Conscient, c'est pas un parti comme les autres.
+C'est un mouvement de citoyens qui reprennent le pouvoir.
+
+Sans chef. Sans cotisation. Sans bullshit.
+
+👉 Lien en bio</pre>
+                <div class="hashtags">
+                    <span class="hashtag">#Agir</span>
+                    <span class="hashtag">#PLC</span>
+                    <span class="hashtag">#MouvementCitoyen</span>
+                </div>
+            </div>
+
+            <div class="text-template">
+                <h4>Thread explicatif <span class="platform-tag">Twitter/X</span></h4>
+                <pre>🧵 C'est quoi le Parti Libre & Conscient ? (thread)
+
+1/ Le PLC est né du constat que la démocratie belge dysfonctionne. Particratie, opacité, déconnexion des élus.
+
+2/ Mais on ne propose pas de solution miracle ou de programme clé en main. On propose autre chose : des OUTILS.
+
+3/ Observer → Veille citoyenne sur l'action publique
+Documenter → Rapports et données en accès libre
+Former → Ateliers d'analyse critique
+
+4/ Outiller → Méthodes pour s'organiser
+Connecter → Réseau de cellules locales
+Évaluer → On mesure notre propre impact
+
+5/ Pas de chef suprême. Chaque cellule est autonome.
+Pas de cotisation. Tout est gratuit.
+Pas de récupération. Contenu sous licence libre.
+
+6/ On ne te dit pas pour qui voter.
+On te donne les moyens de comprendre.
+La conclusion, c'est toi qui la tires.
+
+7/ Rejoins-nous → [lien]</pre>
+            </div>
+
+            <div class="text-template">
+                <h4>Bio type <span class="platform-tag">Tous profils</span></h4>
+                <pre>🔴 Parti Libre & Conscient
+Ni gauche, ni droite : conscient.
+📚 Éducation citoyenne | 🔍 Veille démocratique | 🤝 Action collective
+🆓 Gratuit • Sans chef • Contenu libre
+👇 Rejoins-nous</pre>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

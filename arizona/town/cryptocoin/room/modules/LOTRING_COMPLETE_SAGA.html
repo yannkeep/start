@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>#LOTR!NG - The Complete Saga</title>
+    
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="An idle-strategy epic spanning 18 chapters across the history of the One Ring">
+    <meta property="og:title" content="#LOTR!NG - The Complete Saga">
+    <meta property="og:description" content="Trace the Ring's power back to its origin. 18 chapters. 3 acts. One destiny.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --ring-gold: #c9a227;
+            --ring-glow: #f7d354;
+            --mordor-red: #8b0000;
+            --mordor-orange: #ff4500;
+            --shire-green: #228b22;
+            --mithril: #c0c0c0;
+            --elvish-blue: #4169e1;
+            --cyber-cyan: #00f0ff;
+            --neon-magenta: #ff00aa;
+            --matrix-green: #00ff41;
+            --act1-color: #00f0ff;
+            --act2-color: #ff4500;
+            --act3-color: #f7d354;
+            --bg-void: #050508;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           ANIMATIONS
+        ═══════════════════════════════════════════════════════════ */
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(249,211,84,0.5); } 50% { box-shadow: 0 0 40px rgba(249,211,84,0.8); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-100%); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes coinFloat { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(0.5); } }
+        @keyframes ringRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 5px currentColor); } 50% { filter: drop-shadow(0 0 20px currentColor); } }
+        @keyframes bossEntrance { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        @keyframes victoryBurst { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        @keyframes typewriter { from { width: 0; } to { width: 100%; } }
+        
+        .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+        .animate-glow { animation: glow 3s ease-in-out infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* ═══════════════════════════════════════════════════════════
+           INTRO SCREEN
+        ═══════════════════════════════════════════════════════════ */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-void);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .intro-screen.hidden { display: none; }
+        
+        .intro-ring {
+            width: 150px;
+            height: 150px;
+            border: 6px solid var(--ring-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 30px;
+            animation: glow 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .intro-ring:hover { transform: scale(1.1); }
+        
+        .intro-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--ring-glow), var(--ring-gold), var(--mordor-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .intro-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--mithril);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .intro-tagline {
+            font-family: 'Crimson Text', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--ring-gold);
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+        
+        .intro-acts {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .intro-act {
+            padding: 15px 25px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            text-align: center;
+            min-width: 150px;
+        }
+        .intro-act.act1 { border-color: var(--act1-color); }
+        .intro-act.act2 { border-color: var(--act2-color); }
+        .intro-act.act3 { border-color: var(--act3-color); }
+        .intro-act-num { font-family: 'Orbitron', monospace; font-size: 0.8rem; margin-bottom: 5px; }
+        .intro-act.act1 .intro-act-num { color: var(--act1-color); }
+        .intro-act.act2 .intro-act-num { color: var(--act2-color); }
+        .intro-act.act3 .intro-act-num { color: var(--act3-color); }
+        .intro-act-name { font-family: 'Cinzel', serif; font-size: 0.9rem; }
+        .intro-act-chapters { font-size: 0.75rem; color: var(--text-secondary); margin-top: 5px; }
+        
+        .intro-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .intro-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .intro-btn.primary {
+            background: linear-gradient(135deg, var(--ring-gold), var(--mordor-orange));
+            color: #000;
+        }
+        .intro-btn.secondary {
+            background: transparent;
+            border: 2px solid var(--ring-gold);
+            color: var(--ring-gold);
+        }
+        .intro-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(249,211,84,0.4); }
+
+        /* ═══════════════════════════════════════════════════════════
+           STORY OVERLAY
+        ═══════════════════════════════════════════════════════════ */
+        .story-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 9500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .story-overlay.hidden { display: none; }
+        
+        .story-card {
+            background: var(--bg-card);
+            border: 2px solid var(--ring-gold);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+        .story-icon { font-size: 5rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        .story-act {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        .story-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--ring-gold);
+            margin-bottom: 20px;
+        }
+        .story-text {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        .story-text em { color: var(--ring-gold); font-style: italic; }
+        .story-rewards {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .story-reward {
+            padding: 10px 20px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        .story-reward.artifact { border: 1px solid var(--ring-gold); color: var(--ring-gold); }
+
+        /* ═══════════════════════════════════════════════════════════
+           BOSS FIGHT OVERLAY
+        ═══════════════════════════════════════════════════════════ */
+        .boss-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 9600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .boss-overlay.hidden { display: none; }
+        
+        .boss-arena {
+            text-align: center;
+            max-width: 600px;
+        }
+        .boss-icon {
+            font-size: 8rem;
+            animation: bossEntrance 1s ease-out, pulse 2s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        .boss-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--mordor-red);
+            text-shadow: 0 0 30px rgba(139,0,0,0.8);
+            margin-bottom: 10px;
+        }
+        .boss-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        .boss-health-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .boss-health-bar {
+            height: 30px;
+            background: var(--bg-elevated);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .boss-health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mordor-red), var(--mordor-orange));
+            border-radius: 15px;
+            transition: width 0.5s;
+        }
+        .boss-health-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+        }
+        .boss-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .boss-action {
+            padding: 15px 30px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--ring-gold);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .boss-action:hover { background: var(--ring-gold); color: #000; }
+        .boss-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ═══════════════════════════════════════════════════════════
+           MAIN GAME LAYOUT
+        ═══════════════════════════════════════════════════════════ */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background: linear-gradient(180deg, var(--bg-dark), transparent);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-ring {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--ring-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            animation: glow 3s ease-in-out infinite;
+        }
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--ring-gold);
+        }
+        
+        .resources {
+            display: flex;
+            gap: 15px;
+        }
+        .resource {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .resource-icon { font-size: 1.1rem; }
+        .resource-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .resource-value.gold { color: var(--ring-gold); }
+        .resource-value.cyan { color: var(--cyber-cyan); }
+        .resource-value.green { color: var(--matrix-green); }
+        .resource-per-sec {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+        
+        .top-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .top-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        .top-btn:hover { border-color: var(--ring-gold); background: rgba(249,211,84,0.1); }
+
+        /* MAIN AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* LEFT PANEL */
+        .clicker-panel {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .ring-clicker {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .the-ring {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            border: 6px solid var(--ring-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+            animation: glow 3s ease-in-out infinite;
+        }
+        .the-ring:hover { transform: scale(1.05); }
+        .the-ring:active { transform: scale(0.95); }
+        .the-ring::before {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border: 2px solid rgba(249,211,84,0.3);
+            border-radius: 50%;
+            animation: ringRotate 10s linear infinite;
+        }
+        
+        .click-reward {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--ring-gold);
+            margin-bottom: 5px;
+        }
+        .click-multiplier {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .float-number {
+            position: fixed;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            color: var(--ring-gold);
+            pointer-events: none;
+            animation: coinFloat 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        /* PLAYER CARD */
+        .player-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .player-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--ring-gold), var(--mordor-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .player-info h3 { font-family: 'Cinzel', serif; font-size: 0.95rem; }
+        .player-title { font-size: 0.75rem; color: var(--ring-gold); }
+        
+        .xp-bar {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ring-gold), var(--mordor-orange));
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .xp-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+        }
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--cyber-cyan);
+        }
+        .stat-label { font-size: 0.65rem; color: var(--text-secondary); }
+
+        /* CAMPAIGN PROGRESS MINI */
+        .campaign-mini {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .campaign-mini-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .campaign-mini-acts {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .campaign-mini-act {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .campaign-mini-act-icon { font-size: 1.2rem; }
+        .campaign-mini-act-info { flex: 1; }
+        .campaign-mini-act-name { font-size: 0.8rem; }
+        .campaign-mini-act-progress {
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 3px;
+        }
+        .campaign-mini-act-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+        .campaign-mini-act.act1 .campaign-mini-act-fill { background: var(--act1-color); }
+        .campaign-mini-act.act2 .campaign-mini-act-fill { background: var(--act2-color); }
+        .campaign-mini-act.act3 .campaign-mini-act-fill { background: var(--act3-color); }
+
+        /* CENTER PANEL */
+        .center-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            padding: 10px 18px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab-btn:hover { border-color: rgba(249,211,84,0.3); }
+        .tab-btn.active {
+            background: rgba(249,211,84,0.1);
+            border-color: var(--ring-gold);
+            color: var(--ring-gold);
+        }
+        .tab-badge {
+            background: var(--mordor-red);
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        .tab-badge.gold { background: var(--ring-gold); color: #000; }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        /* ═══════════════════════════════════════════════════════════
+           CAMPAIGN TAB
+        ═══════════════════════════════════════════════════════════ */
+        .campaign-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .campaign-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--ring-gold);
+            margin-bottom: 10px;
+        }
+        .campaign-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .campaign-overall-progress {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .campaign-stat {
+            text-align: center;
+        }
+        .campaign-stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--cyber-cyan);
+        }
+        .campaign-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .acts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .act-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid transparent;
+        }
+        .act-section.act1 { border-color: rgba(0,240,255,0.3); }
+        .act-section.act2 { border-color: rgba(255,69,0,0.3); }
+        .act-section.act3 { border-color: rgba(247,211,84,0.3); }
+        .act-section.locked { opacity: 0.6; }
+        
+        .act-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .act-title-group { display: flex; align-items: center; gap: 15px; }
+        .act-icon { font-size: 2.5rem; }
+        .act-info h2 { font-family: 'Cinzel', serif; font-size: 1.3rem; }
+        .act-section.act1 .act-info h2 { color: var(--act1-color); }
+        .act-section.act2 .act-info h2 { color: var(--act2-color); }
+        .act-section.act3 .act-info h2 { color: var(--act3-color); }
+        .act-subtitle { font-size: 0.85rem; color: var(--text-secondary); }
+        
+        .act-progress {
+            text-align: right;
+        }
+        .act-progress-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+        }
+        .act-progress-bar {
+            width: 150px;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .act-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+        .act-section.act1 .act-progress-fill { background: var(--act1-color); }
+        .act-section.act2 .act-progress-fill { background: var(--act2-color); }
+        .act-section.act3 .act-progress-fill { background: var(--act3-color); }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .chapter-card {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 18px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .chapter-card:hover { transform: translateY(-3px); }
+        .chapter-card.available { border-color: var(--ring-gold); }
+        .chapter-card.available:hover { box-shadow: 0 0 20px rgba(249,211,84,0.3); }
+        .chapter-card.completed { border-color: var(--matrix-green); background: rgba(0,255,65,0.05); }
+        .chapter-card.locked { opacity: 0.5; cursor: not-allowed; }
+        .chapter-card.locked:hover { transform: none; }
+        
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .chapter-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .chapter-card.completed .chapter-icon { background: rgba(0,255,65,0.2); }
+        .chapter-num { font-family: 'Orbitron', monospace; font-size: 0.7rem; color: var(--text-secondary); }
+        .chapter-name { font-weight: 600; font-size: 0.95rem; }
+        
+        .chapter-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .chapter-objectives {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        .chapter-obj {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: var(--bg-card);
+            border-radius: 5px;
+        }
+        .chapter-obj.done { background: rgba(0,255,65,0.2); color: var(--matrix-green); }
+        
+        .chapter-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chapter-reward {
+            font-size: 0.75rem;
+            color: var(--ring-gold);
+        }
+        .chapter-status {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+        .chapter-status.available { background: rgba(249,211,84,0.2); color: var(--ring-gold); }
+        .chapter-status.completed { background: rgba(0,255,65,0.2); color: var(--matrix-green); }
+        .chapter-status.locked { background: rgba(255,255,255,0.1); color: var(--text-secondary); }
+
+        /* BOSS BUTTON */
+        .boss-challenge {
+            background: linear-gradient(135deg, rgba(139,0,0,0.3), rgba(255,69,0,0.3));
+            border: 2px solid var(--mordor-red);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .boss-challenge:hover { box-shadow: 0 0 30px rgba(255,69,0,0.4); transform: scale(1.02); }
+        .boss-challenge.locked { opacity: 0.5; cursor: not-allowed; }
+        .boss-challenge.locked:hover { transform: none; box-shadow: none; }
+        .boss-challenge.defeated { border-color: var(--matrix-green); background: linear-gradient(135deg, rgba(0,255,65,0.1), rgba(0,255,65,0.05)); }
+        
+        .boss-info { display: flex; align-items: center; gap: 15px; }
+        .boss-icon-small { font-size: 2.5rem; }
+        .boss-name-small { font-family: 'Cinzel', serif; font-size: 1.1rem; }
+        .boss-subtitle-small { font-size: 0.8rem; color: var(--text-secondary); }
+        .boss-status {
+            font-family: 'Cinzel', serif;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        .boss-status.ready { background: var(--mordor-red); color: #fff; }
+        .boss-status.locked { background: var(--bg-elevated); color: var(--text-secondary); }
+        .boss-status.defeated { background: var(--matrix-green); color: #000; }
+
+        /* ═══════════════════════════════════════════════════════════
+           ARTIFACTS TAB
+        ═══════════════════════════════════════════════════════════ */
+        .artifacts-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .artifacts-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--ring-gold);
+            margin-bottom: 10px;
+        }
+        .artifacts-count {
+            color: var(--text-secondary);
+        }
+        
+        .artifacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .artifact-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .artifact-card.owned { border-color: var(--ring-gold); }
+        .artifact-card.locked { opacity: 0.4; }
+        .artifact-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .artifact-card.locked .artifact-icon { filter: grayscale(1); }
+        .artifact-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+        .artifact-card.owned .artifact-name { color: var(--ring-gold); }
+        .artifact-source {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        .artifact-effect {
+            font-size: 0.8rem;
+            color: var(--matrix-green);
+            padding: 8px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+        }
+        .artifact-card.locked .artifact-effect { color: var(--text-secondary); }
+
+        /* ═══════════════════════════════════════════════════════════
+           UPGRADES TAB
+        ═══════════════════════════════════════════════════════════ */
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+        }
+        .upgrade-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 18px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upgrade-card:hover { border-color: rgba(249,211,84,0.3); transform: translateY(-2px); }
+        .upgrade-card.affordable { border-color: var(--ring-gold); }
+        .upgrade-card.maxed { opacity: 0.6; cursor: default; }
+        .upgrade-card.maxed::after {
+            content: 'MAX';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--matrix-green);
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .upgrade-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .upgrade-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .upgrade-name { font-weight: 600; font-size: 0.9rem; }
+        .upgrade-level { font-size: 0.75rem; color: var(--text-secondary); }
+        
+        .upgrade-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .upgrade-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .upgrade-effect { font-size: 0.8rem; color: var(--matrix-green); }
+        .upgrade-cost {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--ring-gold);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           TERRITORIES TAB
+        ═══════════════════════════════════════════════════════════ */
+        .territories-container {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        
+        .map-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .map-title {
+            font-family: 'Cinzel', serif;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .map-progress { font-size: 0.9rem; color: var(--ring-gold); }
+        
+        .territories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .territory {
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .territory:hover { border-color: rgba(249,211,84,0.3); }
+        .territory.owned { border-color: var(--matrix-green); background: rgba(0,255,65,0.1); }
+        .territory.locked { opacity: 0.5; cursor: not-allowed; }
+        
+        .territory-icon { font-size: 1.8rem; margin-bottom: 5px; }
+        .territory-name { font-size: 0.8rem; font-weight: 600; }
+        .territory-status { font-size: 0.7rem; color: var(--text-secondary); }
+        .territory-income { font-size: 0.7rem; color: var(--matrix-green); margin-top: 3px; }
+
+        .territory-details {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .territory-details-icon { font-size: 2.5rem; text-align: center; margin-bottom: 10px; }
+        .territory-details-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--ring-gold);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .attack-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--mordor-red), var(--mordor-orange));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        .attack-btn:hover { transform: scale(1.02); }
+        .attack-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ═══════════════════════════════════════════════════════════
+           EVENTS & ACHIEVEMENTS & PRESTIGE (Compact)
+        ═══════════════════════════════════════════════════════════ */
+        .event-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 550px;
+            margin: 0 auto;
+            border: 2px solid var(--ring-gold);
+        }
+        .event-icon { font-size: 3rem; text-align: center; margin-bottom: 15px; }
+        .event-title { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--ring-gold); text-align: center; margin-bottom: 10px; }
+        .event-desc { color: var(--text-secondary); text-align: center; margin-bottom: 20px; }
+        .event-choices { display: flex; flex-direction: column; gap: 10px; }
+        .event-choice {
+            padding: 12px 18px;
+            background: var(--bg-elevated);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .event-choice:hover { border-color: var(--ring-gold); }
+        .event-choice-effect { font-size: 0.8rem; color: var(--matrix-green); margin-top: 5px; }
+        .event-choice-effect.negative { color: var(--mordor-red); }
+        .no-event { text-align: center; padding: 40px; color: var(--text-secondary); }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 12px;
+        }
+        .achievement {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid transparent;
+        }
+        .achievement.unlocked { border-color: var(--ring-gold); }
+        .achievement.locked { opacity: 0.5; }
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .achievement-name { font-weight: 600; font-size: 0.9rem; }
+        .achievement-desc { font-size: 0.75rem; color: var(--text-secondary); }
+
+        .prestige-container { max-width: 500px; margin: 0 auto; text-align: center; }
+        .prestige-ring { width: 150px; height: 150px; margin: 0 auto 20px; border: 6px solid var(--ring-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; animation: float 3s ease-in-out infinite; }
+        .prestige-title { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--ring-gold); margin-bottom: 10px; }
+        .prestige-bonus { background: var(--bg-card); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .prestige-bonus-value { font-family: 'Orbitron', monospace; font-size: 2rem; color: var(--cyber-cyan); }
+        .prestige-btn { padding: 15px 40px; background: linear-gradient(135deg, var(--ring-gold), var(--mordor-orange)); border: none; border-radius: 25px; font-family: 'Cinzel', serif; font-size: 1rem; color: #000; cursor: pointer; transition: all 0.3s; }
+        .prestige-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* RIGHT PANEL - LOG */
+        .right-panel { width: 260px; }
+        .log-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 15px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .log-title { font-family: 'Cinzel', serif; font-size: 0.9rem; margin-bottom: 12px; }
+        .log-entries { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .log-entry {
+            padding: 8px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+        .log-entry-time { font-size: 0.65rem; color: var(--text-secondary); }
+        .log-entry.good { border-left: 3px solid var(--matrix-green); }
+        .log-entry.bad { border-left: 3px solid var(--mordor-red); }
+        .log-entry.event { border-left: 3px solid var(--cyber-cyan); }
+        .log-entry.achievement { border-left: 3px solid var(--ring-gold); }
+        .log-entry.campaign { border-left: 3px solid var(--neon-magenta); }
+
+        /* SETTINGS MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.hidden { display: none; }
+        .modal { background: var(--bg-card); border-radius: 15px; padding: 25px; max-width: 450px; width: 100%; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--ring-gold); }
+        .modal-close { width: 35px; height: 35px; background: var(--bg-elevated); border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: #fff; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .toggle { width: 45px; height: 24px; background: var(--bg-elevated); border-radius: 12px; cursor: pointer; position: relative; }
+        .toggle.on { background: var(--ring-gold); }
+        .toggle::after { content: ''; position: absolute; width: 20px; height: 20px; background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.3s; }
+        .toggle.on::after { transform: translateX(21px); }
+        .save-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .save-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .save-btn.export { background: var(--matrix-green); color: #000; }
+        .save-btn.import { background: var(--cyber-cyan); color: #000; }
+        .save-btn.reset { background: var(--mordor-red); color: #fff; }
+
+        /* TOAST */
+        .toast-container { position: fixed; top: 70px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 12px 18px; background: var(--bg-card); border-radius: 10px; border-left: 4px solid var(--ring-gold); animation: slideIn 0.3s ease; min-width: 220px; }
+        .toast.success { border-color: var(--matrix-green); }
+        .toast.error { border-color: var(--mordor-red); }
+        .toast.campaign { border-color: var(--neon-magenta); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .main-area { flex-direction: column; }
+            .clicker-panel, .right-panel { width: 100%; }
+            .territories-container { grid-template-columns: 1fr; }
+            .chapters-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+        @media (max-width: 600px) {
+            .resources { display: none; }
+            .territories-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-void); }
+        ::-webkit-scrollbar-thumb { background: var(--ring-gold); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <!-- INTRO SCREEN -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-ring" onclick="startNewGame()">👁️</div>
+        <h1 class="intro-title">#LOTR!NG</h1>
+        <p class="intro-subtitle">THE COMPLETE SAGA</p>
+        <p class="intro-tagline">
+            "You hold the One Ring... But where did its power originate?<br>
+            Journey back through time and uncover the Ancient Rings that forged your destiny."
+        </p>
+        
+        <div class="intro-acts">
+            <div class="intro-act act1">
+                <div class="intro-act-num">ACT I</div>
+                <div class="intro-act-name">The Digital Dawn</div>
+                <div class="intro-act-chapters">6 Chapters • Crypto Era</div>
+            </div>
+            <div class="intro-act act2">
+                <div class="intro-act-num">ACT II</div>
+                <div class="intro-act-name">The Dark Lord's Rise</div>
+                <div class="intro-act-chapters">6 Chapters • SAURON Era</div>
+            </div>
+            <div class="intro-act act3">
+                <div class="intro-act-num">ACT III</div>
+                <div class="intro-act-name">The Fellowship</div>
+                <div class="intro-act-chapters">6 Chapters • @ÆGIS Era</div>
+            </div>
+        </div>
+        
+        <div class="intro-buttons">
+            <button class="intro-btn primary" onclick="startNewGame()">⚡ BEGIN THE SAGA</button>
+            <button class="intro-btn secondary" onclick="loadAndStart()" id="continueBtn" style="display:none">📂 CONTINUE JOURNEY</button>
+        </div>
+    </div>
+
+    <!-- STORY OVERLAY -->
+    <div class="story-overlay hidden" id="storyOverlay">
+        <div class="story-card">
+            <div class="story-icon" id="storyIcon">📜</div>
+            <div class="story-act" id="storyAct">ACT I • CHAPTER 1</div>
+            <h2 class="story-title" id="storyTitle">Chapter Title</h2>
+            <p class="story-text" id="storyText">Story text goes here...</p>
+            <div class="story-rewards" id="storyRewards"></div>
+            <button class="intro-btn primary" onclick="closeStory()">CONTINUE →</button>
+        </div>
+    </div>
+
+    <!-- BOSS OVERLAY -->
+    <div class="boss-overlay hidden" id="bossOverlay">
+        <div class="boss-arena">
+            <div class="boss-icon" id="bossIcon">👹</div>
+            <h2 class="boss-name" id="bossName">Boss Name</h2>
+            <p class="boss-subtitle" id="bossSubtitle">Boss subtitle</p>
+            <div class="boss-health-container">
+                <div class="boss-health-bar">
+                    <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
+                </div>
+                <div class="boss-health-text"><span id="bossHealthCurrent">10000</span> / <span id="bossHealthMax">10000</span> HP</div>
+            </div>
+            <div class="boss-actions">
+                <button class="boss-action" onclick="bossAttack('ring')">💍 Use Ring Power<br><small>-1000 HP (costs 500 $RING)</small></button>
+                <button class="boss-action" onclick="bossAttack('power')">⚡ Power Strike<br><small>-500 HP (costs 100 Power)</small></button>
+                <button class="boss-action" onclick="bossAttack('click')">👆 Click Attack<br><small>-100 HP (free)</small></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GAME -->
+    <div class="game-container" id="gameContainer" style="display:none">
+        
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="logo">
+                <div class="logo-ring">👁️</div>
+                <span class="logo-text">#LOTR!NG</span>
+            </div>
+            
+            <div class="resources">
+                <div class="resource">
+                    <span class="resource-icon">💍</span>
+                    <div>
+                        <div class="resource-value gold" id="ringDisplay">0</div>
+                        <div class="resource-per-sec"><span id="rpsDisplay">0</span>/s</div>
+                    </div>
+                </div>
+                <div class="resource">
+                    <span class="resource-icon">⚡</span>
+                    <div class="resource-value cyan" id="powerDisplay">0</div>
+                </div>
+                <div class="resource">
+                    <span class="resource-icon">🏆</span>
+                    <div class="resource-value green" id="xpDisplay">0</div>
+                </div>
+            </div>
+            
+            <div class="top-actions">
+                <div class="top-btn" onclick="toggleSettings()">⚙️</div>
+                <div class="top-btn" onclick="toggleSound()" id="soundBtn">🔊</div>
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+            
+            <!-- LEFT PANEL -->
+            <div class="clicker-panel">
+                <div class="ring-clicker">
+                    <div class="the-ring" id="theRing" onclick="clickRing(event)">👁️</div>
+                    <div class="click-reward">+<span id="clickValue">1</span> 💍</div>
+                    <div class="click-multiplier">per click</div>
+                </div>
+                
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-avatar">👁️</div>
+                        <div class="player-info">
+                            <h3>Ring Bearer</h3>
+                            <div class="player-title">🏆 Level <span id="playerLevel">1</span></div>
+                        </div>
+                    </div>
+                    <div class="xp-bar"><div class="xp-fill" id="xpBar" style="width: 0%"></div></div>
+                    <div class="xp-text">
+                        <span><span id="currentXP">0</span> XP</span>
+                        <span><span id="nextLevelXP">100</span> to next</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalClicks">0</div>
+                            <div class="stat-label">Clicks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="territoriesOwned">0</div>
+                            <div class="stat-label">Lands</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="artifactsOwned">0</div>
+                            <div class="stat-label">Artifacts</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="campaign-mini">
+                    <div class="campaign-mini-title">📜 Campaign Progress</div>
+                    <div class="campaign-mini-acts">
+                        <div class="campaign-mini-act act1">
+                            <div class="campaign-mini-act-icon">💎</div>
+                            <div class="campaign-mini-act-info">
+                                <div class="campaign-mini-act-name">Act I: Digital Dawn</div>
+                                <div class="campaign-mini-act-progress"><div class="campaign-mini-act-fill" id="act1Progress" style="width: 0%"></div></div>
+                            </div>
+                        </div>
+                        <div class="campaign-mini-act act2">
+                            <div class="campaign-mini-act-icon">🔥</div>
+                            <div class="campaign-mini-act-info">
+                                <div class="campaign-mini-act-name">Act II: Dark Lord</div>
+                                <div class="campaign-mini-act-progress"><div class="campaign-mini-act-fill" id="act2Progress" style="width: 0%"></div></div>
+                            </div>
+                        </div>
+                        <div class="campaign-mini-act act3">
+                            <div class="campaign-mini-act-icon">👑</div>
+                            <div class="campaign-mini-act-info">
+                                <div class="campaign-mini-act-name">Act III: Fellowship</div>
+                                <div class="campaign-mini-act-progress"><div class="campaign-mini-act-fill" id="act3Progress" style="width: 0%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER PANEL -->
+            <div class="center-panel">
+                <div class="tab-bar">
+                    <button class="tab-btn active" data-tab="campaign">📜 Campaign <span class="tab-badge gold" id="campaignBadge">!</span></button>
+                    <button class="tab-btn" data-tab="upgrades">🔨 Upgrades</button>
+                    <button class="tab-btn" data-tab="territories">🗺️ Territories</button>
+                    <button class="tab-btn" data-tab="artifacts">💎 Artifacts <span class="tab-badge" id="artifactBadge" style="display:none">NEW</span></button>
+                    <button class="tab-btn" data-tab="events">📜 Events</button>
+                    <button class="tab-btn" data-tab="achievements">🏆 Achievements</button>
+                    <button class="tab-btn" data-tab="prestige">💫 Prestige</button>
+                </div>
+                
+                <!-- CAMPAIGN TAB -->
+                <div class="tab-content active" id="tab-campaign">
+                    <div class="campaign-header">
+                        <h1 class="campaign-title">📜 The Complete Saga</h1>
+                        <p class="campaign-subtitle">Trace the Ring's power back to its origin across 18 chapters</p>
+                        <div class="campaign-overall-progress">
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value" id="chaptersCompleted">0</div>
+                                <div class="campaign-stat-label">/ 18 Chapters</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value" id="bossesDefeated">0</div>
+                                <div class="campaign-stat-label">/ 3 Bosses</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value" id="totalArtifacts">0</div>
+                                <div class="campaign-stat-label">/ 18 Artifacts</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="acts-container" id="actsContainer"></div>
+                </div>
+                
+                <!-- ARTIFACTS TAB -->
+                <div class="tab-content" id="tab-artifacts">
+                    <div class="artifacts-header">
+                        <h1 class="artifacts-title">💎 Ancient Artifacts</h1>
+                        <p class="artifacts-count"><span id="artifactsCollected">0</span> / 18 collected</p>
+                    </div>
+                    <div class="artifacts-grid" id="artifactsGrid"></div>
+                </div>
+
+                <!-- UPGRADES TAB -->
+                <div class="tab-content" id="tab-upgrades">
+                    <div class="upgrades-grid" id="upgradesGrid"></div>
+                </div>
+                
+                <!-- TERRITORIES TAB -->
+                <div class="tab-content" id="tab-territories">
+                    <div class="territories-container">
+                        <div class="map-container">
+                            <div class="map-title">
+                                <span>🗺️ Middle-earth</span>
+                                <span class="map-progress"><span id="territoriesProgress">0</span>/10 conquered</span>
+                            </div>
+                            <div class="territories-grid" id="territoriesGrid"></div>
+                        </div>
+                        <div class="territory-details" id="territoryDetails">
+                            <div class="territory-details-icon">🏰</div>
+                            <div class="territory-details-name">Select a territory</div>
+                            <div id="detailContent"><p style="color:var(--text-secondary);text-align:center;margin-top:20px;">Click on a territory to view details</p></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- EVENTS TAB -->
+                <div class="tab-content" id="tab-events">
+                    <div id="eventContainer">
+                        <div class="no-event">
+                            <div style="font-size:4rem;opacity:0.3;margin-bottom:20px;">📜</div>
+                            <p>No events at the moment. Keep playing!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ACHIEVEMENTS TAB -->
+                <div class="tab-content" id="tab-achievements">
+                    <div class="achievements-grid" id="achievementsGrid"></div>
+                </div>
+                
+                <!-- PRESTIGE TAB -->
+                <div class="tab-content" id="tab-prestige">
+                    <div class="prestige-container">
+                        <div class="prestige-ring">🔥</div>
+                        <h2 class="prestige-title">Forge a New Ring</h2>
+                        <p style="color:var(--text-secondary);margin-bottom:20px;">Destroy your current Ring to forge a more powerful one.</p>
+                        <div class="prestige-bonus">
+                            <div style="margin-bottom:10px;">Prestige Bonus</div>
+                            <div class="prestige-bonus-value">+<span id="prestigeBonus">0</span>%</div>
+                            <div style="font-size:0.85rem;color:var(--text-secondary);">to all production</div>
+                        </div>
+                        <p style="color:var(--text-secondary);margin-bottom:20px;">Requirement: <span id="prestigeReq">1,000</span> 💍</p>
+                        <button class="prestige-btn" id="prestigeBtn" onclick="doPrestige()" disabled>🔥 FORGE NEW RING</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel">
+                <div class="log-container">
+                    <div class="log-title">📜 Chronicles</div>
+                    <div class="log-entries" id="logEntries"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Settings</h2>
+                <button class="modal-close" onclick="toggleSettings()">×</button>
+            </div>
+            <div class="setting-item">
+                <div><div>Sound Effects</div></div>
+                <div class="toggle on" id="soundToggle" onclick="toggleSound()"></div>
+            </div>
+            <div class="setting-item">
+                <div><div>Notifications</div></div>
+                <div class="toggle on" id="notifToggle" onclick="toggleNotifications()"></div>
+            </div>
+            <div class="save-actions">
+                <button class="save-btn export" onclick="exportSave()">📤 Export</button>
+                <button class="save-btn import" onclick="importSave()">📥 Import</button>
+                <button class="save-btn reset" onclick="resetGame()">🗑️ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+    // ═══════════════════════════════════════════════════════════════════
+    // #LOTR!NG - THE COMPLETE SAGA - GAME ENGINE
+    // ═══════════════════════════════════════════════════════════════════
+
+    // ═══════════════════════════════════════════════════════════
+    // GAME STATE
+    // ═══════════════════════════════════════════════════════════
+    let GAME = {
+        ring: 0,
+        totalRing: 0,
+        power: 100, // Start with some power
+        xp: 0,
+        level: 1,
+        clicks: 0,
+        clickValue: 1,
+        rps: 0,
+        
+        prestigeCount: 0,
+        prestigeBonus: 0,
+        
+        upgrades: {},
+        territories: {},
+        achievements: {},
+        artifacts: {},
+        
+        // Campaign
+        chapters: {},
+        bossesDefeated: {},
+        currentBoss: null,
+        bossHealth: 0,
+        
+        settings: { sound: true, notifications: true },
+        
+        currentEvent: null,
+        eventCooldown: 0,
+        
+        lastTick: Date.now(),
+        lastSave: Date.now()
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // CAMPAIGN DATA - 18 CHAPTERS IN 3 ACTS
+    // ═══════════════════════════════════════════════════════════
+    const CAMPAIGN = {
+        acts: [
+            {
+                id: 'act1',
+                name: 'The Digital Dawn',
+                subtitle: 'The Crypto Era',
+                icon: '💎',
+                color: 'act1',
+                boss: {
+                    id: 'first_minter',
+                    name: 'The First Minter',
+                    subtitle: 'Guardian of the Original Blockchain',
+                    icon: '🏦',
+                    maxHealth: 5000,
+                    reward: { ring: 10000, power: 500, xp: 2000 }
+                },
+                chapters: [
+                    {
+                        id: 'ch1_civiccoin',
+                        num: 1,
+                        name: 'The First Coin',
+                        icon: '🪙',
+                        lore: 'In the beginning, there was *CivicCoin* - a utopian dream of democratic currency. The citizens believed that wealth could be fair, that votes could have value. This was the first spark of digital power.',
+                        project: 'CivicCoin',
+                        objectives: [
+                            { id: 'clicks_100', desc: 'Click 100 times', check: () => GAME.clicks >= 100 },
+                            { id: 'ring_500', desc: 'Earn 500 $RING', check: () => GAME.totalRing >= 500 },
+                            { id: 'level_2', desc: 'Reach Level 2', check: () => GAME.level >= 2 }
+                        ],
+                        artifact: { id: 'first_coin', name: 'The First Coin', icon: '🪙', effect: '+5% click power', bonus: { clickMult: 1.05 } },
+                        rewards: { ring: 500, power: 50, xp: 100 }
+                    },
+                    {
+                        id: 'ch2_template',
+                        num: 2,
+                        name: 'The Template Scroll',
+                        icon: '📜',
+                        lore: 'With the success of CivicCoin came imitation. The *Template Scroll* was created - a white-label blueprint that allowed anyone to forge their own currency. Power began to decentralize.',
+                        project: 'CryptoCoin White-Label',
+                        objectives: [
+                            { id: 'ring_2000', desc: 'Earn 2,000 $RING total', check: () => GAME.totalRing >= 2000 },
+                            { id: 'upgrade_any', desc: 'Buy any upgrade', check: () => Object.keys(GAME.upgrades).length > 0 },
+                            { id: 'rps_5', desc: 'Reach 5 $RING/s', check: () => GAME.rps >= 5 }
+                        ],
+                        artifact: { id: 'template_scroll', name: 'Template Scroll', icon: '📜', effect: '+10% RPS', bonus: { rpsMult: 1.10 } },
+                        rewards: { ring: 1000, power: 100, xp: 200 }
+                    },
+                    {
+                        id: 'ch3_anarcoin',
+                        num: 3,
+                        name: 'The Rebel Coin',
+                        icon: '🏴',
+                        lore: 'From the underground emerged *ANARCoin* - currency of the rebels, the outcasts, the free. "No gods, no masters, no central banks." The anarchists forged their own path.',
+                        project: 'ANARCoin',
+                        objectives: [
+                            { id: 'ring_5000', desc: 'Earn 5,000 $RING total', check: () => GAME.totalRing >= 5000 },
+                            { id: 'power_200', desc: 'Reach 200 Power', check: () => GAME.power >= 200 },
+                            { id: 'level_5', desc: 'Reach Level 5', check: () => GAME.level >= 5 }
+                        ],
+                        artifact: { id: 'rebel_flag', name: 'Rebel Flag', icon: '🏴', effect: '+15% Power gain', bonus: { powerMult: 1.15 } },
+                        rewards: { ring: 2000, power: 200, xp: 400 }
+                    },
+                    {
+                        id: 'ch4_exchange',
+                        num: 4,
+                        name: 'The Free Exchange',
+                        icon: '🔄',
+                        lore: 'Trading began. The *ANARCoin Platform* connected buyers and sellers across the digital realm. Swap, stake, govern - the tools of financial revolution were born.',
+                        project: 'ANARCoin Platform',
+                        objectives: [
+                            { id: 'ring_10000', desc: 'Earn 10,000 $RING total', check: () => GAME.totalRing >= 10000 },
+                            { id: 'territory_1', desc: 'Conquer 1 territory', check: () => countTerritories() >= 1 },
+                            { id: 'upgrades_3', desc: 'Own 3 upgrades', check: () => countUpgrades() >= 3 }
+                        ],
+                        artifact: { id: 'exchange_key', name: 'Exchange Key', icon: '🔑', effect: 'Unlock Trading', bonus: { tradingUnlocked: true } },
+                        rewards: { ring: 3000, power: 300, xp: 600 }
+                    },
+                    {
+                        id: 'ch5_moncoin',
+                        num: 5,
+                        name: 'The White Forge',
+                        icon: '⚪',
+                        lore: '*MONCoin* emerged as a purified vision - ethical, transparent, community-driven. The White Forge crafted tokens infused with purpose, not just profit.',
+                        project: 'MONCoin',
+                        objectives: [
+                            { id: 'ring_25000', desc: 'Earn 25,000 $RING total', check: () => GAME.totalRing >= 25000 },
+                            { id: 'rps_50', desc: 'Reach 50 $RING/s', check: () => GAME.rps >= 50 },
+                            { id: 'power_500', desc: 'Reach 500 Power', check: () => GAME.power >= 500 }
+                        ],
+                        artifact: { id: 'white_ring', name: 'White Ring', icon: '⚪', effect: '+20% XP gain', bonus: { xpMult: 1.20 } },
+                        rewards: { ring: 5000, power: 500, xp: 1000 }
+                    },
+                    {
+                        id: 'ch6_influence',
+                        num: 6,
+                        name: 'The Influence Web',
+                        icon: '🔮',
+                        lore: 'The final evolution: *INFLUENCE*. Not just currency, but reputation. Not just tokens, but power. Social capital became as valuable as gold. The web was complete.',
+                        project: 'INFLUENCE',
+                        objectives: [
+                            { id: 'ring_50000', desc: 'Earn 50,000 $RING total', check: () => GAME.totalRing >= 50000 },
+                            { id: 'level_10', desc: 'Reach Level 10', check: () => GAME.level >= 10 },
+                            { id: 'territories_3', desc: 'Conquer 3 territories', check: () => countTerritories() >= 3 }
+                        ],
+                        artifact: { id: 'influence_orb', name: 'Influence Orb', icon: '🔮', effect: '+25% all bonuses', bonus: { globalMult: 1.25 } },
+                        rewards: { ring: 10000, power: 1000, xp: 2000 }
+                    }
+                ]
+            },
+            {
+                id: 'act2',
+                name: "The Dark Lord's Rise",
+                subtitle: 'The SAURON Era',
+                icon: '🔥',
+                color: 'act2',
+                boss: {
+                    id: 'sauron_prime',
+                    name: 'Sauron Prime',
+                    subtitle: 'The All-Seeing Eye Awakened',
+                    icon: '👁️',
+                    maxHealth: 15000,
+                    reward: { ring: 50000, power: 2000, xp: 5000 }
+                },
+                chapters: [
+                    {
+                        id: 'ch7_epsos',
+                        num: 7,
+                        name: 'The Guild Alliance',
+                        icon: '🏛️',
+                        lore: 'The associations gathered. *EPSOS* united 280 guilds under one banner - a SaaS platform for collective management. The infrastructure for empire was laid.',
+                        project: 'EPSOS',
+                        objectives: [
+                            { id: 'ring_75000', desc: 'Earn 75,000 $RING total', check: () => GAME.totalRing >= 75000 },
+                            { id: 'upgrades_5', desc: 'Own 5 upgrades', check: () => countUpgrades() >= 5 },
+                            { id: 'artifacts_6', desc: 'Collect 6 artifacts', check: () => countArtifacts() >= 6 }
+                        ],
+                        artifact: { id: 'guild_charter', name: 'Guild Charter', icon: '🏛️', effect: 'Unlock Guild features', bonus: { guildUnlocked: true } },
+                        rewards: { ring: 15000, power: 1500, xp: 3000 }
+                    },
+                    {
+                        id: 'ch8_map',
+                        num: 8,
+                        name: 'The Great Map',
+                        icon: '🗺️',
+                        lore: 'The *Répertoire* was drawn - 274 associations mapped across the land. Every guild, every location, every potential ally catalogued. Knowledge is power.',
+                        project: 'Répertoire AEP',
+                        objectives: [
+                            { id: 'ring_100000', desc: 'Earn 100,000 $RING total', check: () => GAME.totalRing >= 100000 },
+                            { id: 'territories_5', desc: 'Conquer 5 territories', check: () => countTerritories() >= 5 },
+                            { id: 'level_15', desc: 'Reach Level 15', check: () => GAME.level >= 15 }
+                        ],
+                        artifact: { id: 'ancient_map', name: 'Ancient Map', icon: '🗺️', effect: '+30% territory income', bonus: { territoryMult: 1.30 } },
+                        rewards: { ring: 20000, power: 2000, xp: 4000 }
+                    },
+                    {
+                        id: 'ch9_command',
+                        num: 9,
+                        name: 'The First Command',
+                        icon: '📊',
+                        lore: 'From chaos, order. *SAURON V1* arose - a command center to rule them all. The Eye began to open, watching, analyzing, controlling.',
+                        project: 'SAURON V1-V2',
+                        objectives: [
+                            { id: 'ring_150000', desc: 'Earn 150,000 $RING total', check: () => GAME.totalRing >= 150000 },
+                            { id: 'rps_200', desc: 'Reach 200 $RING/s', check: () => GAME.rps >= 200 },
+                            { id: 'power_3000', desc: 'Reach 3,000 Power', check: () => GAME.power >= 3000 }
+                        ],
+                        artifact: { id: 'command_tablet', name: 'Command Tablet', icon: '📊', effect: 'Unlock Analytics', bonus: { analyticsUnlocked: true } },
+                        rewards: { ring: 25000, power: 2500, xp: 5000 }
+                    },
+                    {
+                        id: 'ch10_warcouncil',
+                        num: 10,
+                        name: 'The War Council',
+                        icon: '⚔️',
+                        lore: '*SAURON V3 Ultimate* - 173KB of pure power. Leaflet maps, Kanban boards, D3 graphs. The war room was complete. Strategy became science.',
+                        project: 'SAURON V3',
+                        objectives: [
+                            { id: 'ring_250000', desc: 'Earn 250,000 $RING total', check: () => GAME.totalRing >= 250000 },
+                            { id: 'territories_7', desc: 'Conquer 7 territories', check: () => countTerritories() >= 7 },
+                            { id: 'clicks_5000', desc: 'Click 5,000 times', check: () => GAME.clicks >= 5000 }
+                        ],
+                        artifact: { id: 'war_banner', name: 'War Banner', icon: '⚔️', effect: '+35% conquest power', bonus: { conquestMult: 1.35 } },
+                        rewards: { ring: 35000, power: 3500, xp: 7000 }
+                    },
+                    {
+                        id: 'ch11_tower',
+                        num: 11,
+                        name: 'The Dark Tower',
+                        icon: '🗼',
+                        lore: '*SAURON V4 Nuclear* - the tower reached its zenith. AI conversation, document generation, Gantt charts, gamification. 172KB of absolute control.',
+                        project: 'SAURON V4',
+                        objectives: [
+                            { id: 'ring_400000', desc: 'Earn 400,000 $RING total', check: () => GAME.totalRing >= 400000 },
+                            { id: 'level_20', desc: 'Reach Level 20', check: () => GAME.level >= 20 },
+                            { id: 'upgrades_7', desc: 'Own 7 upgrades', check: () => countUpgrades() >= 7 }
+                        ],
+                        artifact: { id: 'dark_crystal', name: 'Dark Crystal', icon: '🔮', effect: 'Unlock AI Assistant', bonus: { aiUnlocked: true } },
+                        rewards: { ring: 50000, power: 5000, xp: 10000 }
+                    },
+                    {
+                        id: 'ch12_hero',
+                        num: 12,
+                        name: "The Hero's Path",
+                        icon: '🧙',
+                        lore: '*SAURON V5 Omega* transformed war into adventure. 4 classes, talent trees, factions, quests. The warriors became heroes. The system became legend.',
+                        project: 'SAURON V5',
+                        objectives: [
+                            { id: 'ring_600000', desc: 'Earn 600,000 $RING total', check: () => GAME.totalRing >= 600000 },
+                            { id: 'rps_500', desc: 'Reach 500 $RING/s', check: () => GAME.rps >= 500 },
+                            { id: 'power_10000', desc: 'Reach 10,000 Power', check: () => GAME.power >= 10000 }
+                        ],
+                        artifact: { id: 'hero_cloak', name: "Hero's Cloak", icon: '🧙', effect: '+40% XP from all sources', bonus: { xpMult: 1.40 } },
+                        rewards: { ring: 75000, power: 7500, xp: 15000 }
+                    }
+                ]
+            },
+            {
+                id: 'act3',
+                name: 'The Fellowship',
+                subtitle: 'The @ÆGIS Era',
+                icon: '👑',
+                color: 'act3',
+                boss: {
+                    id: 'one_ring',
+                    name: 'The One Ring Awakened',
+                    subtitle: 'Your Creation Turns Against You',
+                    icon: '💍',
+                    maxHealth: 50000,
+                    reward: { ring: 200000, power: 10000, xp: 50000 }
+                },
+                chapters: [
+                    {
+                        id: 'ch13_arena',
+                        num: 13,
+                        name: 'The Battle Arena',
+                        icon: '🏟️',
+                        lore: '*SAURON V6 Apex* brought combat. Battle pass, gacha, PvP, guilds, global chat. Warriors clashed for glory and $RING. The arena roared.',
+                        project: 'SAURON V6',
+                        objectives: [
+                            { id: 'ring_800000', desc: 'Earn 800,000 $RING total', check: () => GAME.totalRing >= 800000 },
+                            { id: 'territories_9', desc: 'Conquer 9 territories', check: () => countTerritories() >= 9 },
+                            { id: 'artifacts_12', desc: 'Collect 12 artifacts', check: () => countArtifacts() >= 12 }
+                        ],
+                        artifact: { id: 'arena_trophy', name: 'Arena Trophy', icon: '🏆', effect: 'Unlock PvP features', bonus: { pvpUnlocked: true } },
+                        rewards: { ring: 100000, power: 10000, xp: 20000 }
+                    },
+                    {
+                        id: 'ch14_metaverse',
+                        num: 14,
+                        name: 'The Metaverse Portal',
+                        icon: '🌐',
+                        lore: '*@ÆGIS V7 Metaverse* - the realm transcended reality. 6 kingdoms, 3 tokens, DAO governance, NFT integration. A new world was born.',
+                        project: '@ÆGIS V7',
+                        objectives: [
+                            { id: 'ring_1000000', desc: 'Earn 1,000,000 $RING total', check: () => GAME.totalRing >= 1000000 },
+                            { id: 'level_25', desc: 'Reach Level 25', check: () => GAME.level >= 25 },
+                            { id: 'prestige_1', desc: 'Prestige at least once', check: () => GAME.prestigeCount >= 1 }
+                        ],
+                        artifact: { id: 'metaverse_shard', name: 'Metaverse Shard', icon: '🌐', effect: 'Unlock Social features', bonus: { socialUnlocked: true } },
+                        rewards: { ring: 150000, power: 15000, xp: 30000 }
+                    },
+                    {
+                        id: 'ch15_merchant',
+                        num: 15,
+                        name: "The Merchant's Gate",
+                        icon: '🏪',
+                        lore: '*@ÆGIS Landing* opened the gates to commerce. Three tiers of power - Free, Pro, Team. The marketplace flourished.',
+                        project: '@ÆGIS Landing',
+                        objectives: [
+                            { id: 'ring_1500000', desc: 'Earn 1,500,000 $RING total', check: () => GAME.totalRing >= 1500000 },
+                            { id: 'rps_1000', desc: 'Reach 1,000 $RING/s', check: () => GAME.rps >= 1000 },
+                            { id: 'clicks_10000', desc: 'Click 10,000 times', check: () => GAME.clicks >= 10000 }
+                        ],
+                        artifact: { id: 'merchant_key', name: "Merchant's Key", icon: '🔑', effect: '-20% upgrade costs', bonus: { costMult: 0.80 } },
+                        rewards: { ring: 200000, power: 20000, xp: 40000 }
+                    },
+                    {
+                        id: 'ch16_sponsors',
+                        num: 16,
+                        name: 'The Golden Sponsors',
+                        icon: '💰',
+                        lore: '*@ÆGIS Sponsors* - the revenue streams flowed. 6 ad formats, 3 packages, €34K projected. The treasury overflowed with gold.',
+                        project: '@ÆGIS Sponsors',
+                        objectives: [
+                            { id: 'ring_2000000', desc: 'Earn 2,000,000 $RING total', check: () => GAME.totalRing >= 2000000 },
+                            { id: 'power_50000', desc: 'Reach 50,000 Power', check: () => GAME.power >= 50000 },
+                            { id: 'territories_all', desc: 'Conquer all territories', check: () => countTerritories() >= 10 }
+                        ],
+                        artifact: { id: 'sponsor_purse', name: "Sponsor's Purse", icon: '💰', effect: '+100 $RING/s passive', bonus: { passiveRps: 100 } },
+                        rewards: { ring: 300000, power: 30000, xp: 60000 }
+                    },
+                    {
+                        id: 'ch17_unity',
+                        num: 17,
+                        name: 'The Great Unification',
+                        icon: '🔗',
+                        lore: '*#LOTR!NG* was forged - 18 projects unified into one. 7 realms, 4 tokens, 112KB of pure power. The One Ring to rule them all.',
+                        project: 'LOTRING Original',
+                        objectives: [
+                            { id: 'ring_3000000', desc: 'Earn 3,000,000 $RING total', check: () => GAME.totalRing >= 3000000 },
+                            { id: 'level_30', desc: 'Reach Level 30', check: () => GAME.level >= 30 },
+                            { id: 'artifacts_16', desc: 'Collect 16 artifacts', check: () => countArtifacts() >= 16 }
+                        ],
+                        artifact: { id: 'unity_crown', name: 'Crown of Unity', icon: '👑', effect: '+50% all production', bonus: { globalMult: 1.50 } },
+                        rewards: { ring: 500000, power: 50000, xp: 100000 }
+                    },
+                    {
+                        id: 'ch18_tongues',
+                        num: 18,
+                        name: 'The Three Tongues',
+                        icon: '🧝',
+                        lore: 'The final chapter: *Multilingue*. French, English, Elvish - the One Ring spoke to all peoples. "Er Corma turien ilú" - One Ring to rule them all.',
+                        project: 'LOTRING Multilingue',
+                        objectives: [
+                            { id: 'ring_5000000', desc: 'Earn 5,000,000 $RING total', check: () => GAME.totalRing >= 5000000 },
+                            { id: 'prestige_3', desc: 'Prestige 3 times', check: () => GAME.prestigeCount >= 3 },
+                            { id: 'artifacts_17', desc: 'Collect 17 artifacts', check: () => countArtifacts() >= 17 }
+                        ],
+                        artifact: { id: 'elvish_tome', name: 'Elvish Tome', icon: '🧝', effect: '+100% everything (ULTIMATE)', bonus: { globalMult: 2.0 } },
+                        rewards: { ring: 1000000, power: 100000, xp: 200000 }
+                    }
+                ]
+            }
+        ]
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // OTHER GAME DATA
+    // ═══════════════════════════════════════════════════════════
+    const UPGRADES = [
+        { id: 'ringwraith', name: '👻 Ring Wraith', desc: 'Servants gather $RING', baseRps: 1, baseCost: 10, costMult: 1.15, max: 100 },
+        { id: 'orc', name: '👹 Orc Workers', desc: 'Orcs mine $RING', baseRps: 5, baseCost: 50, costMult: 1.15, max: 100 },
+        { id: 'nazgul', name: '🦇 Nazgûl', desc: 'The Nine hunt', baseRps: 25, baseCost: 250, costMult: 1.18, max: 50 },
+        { id: 'balrog', name: '🔥 Balrog', desc: 'Demon of power', baseRps: 100, baseCost: 1000, costMult: 1.2, max: 25 },
+        { id: 'palantir', name: '🔮 Palantír', desc: 'Reveal caches', baseRps: 500, baseCost: 5000, costMult: 1.22, max: 10 },
+        { id: 'forge', name: '🏭 Dark Forge', desc: 'Forge rings', baseRps: 2500, baseCost: 25000, costMult: 1.25, max: 5 },
+        { id: 'sauron', name: '👁️ Eye of Sauron', desc: 'The Dark Lord', baseRps: 10000, baseCost: 100000, costMult: 1.3, max: 3 },
+        { id: 'clickPower', name: '💪 Ring Power', desc: '+1 per click', baseClick: 1, baseCost: 100, costMult: 1.5, max: 50, isClick: true },
+        { id: 'clickMult', name: '✨ Ring Mastery', desc: 'x2 clicks', clickMult: 2, baseCost: 1000, costMult: 3, max: 10, isClickMult: true },
+    ];
+
+    const TERRITORIES = [
+        { id: 'shire', name: '🏡 The Shire', power: 10, income: 5, unlockCost: 0 },
+        { id: 'bree', name: '🏘️ Bree', power: 25, income: 15, unlockCost: 100 },
+        { id: 'rivendell', name: '🏛️ Rivendell', power: 50, income: 40, unlockCost: 500 },
+        { id: 'moria', name: '⛏️ Moria', power: 100, income: 100, unlockCost: 2000 },
+        { id: 'lorien', name: '🌳 Lothlórien', power: 200, income: 200, unlockCost: 5000 },
+        { id: 'rohan', name: '🐴 Rohan', power: 400, income: 400, unlockCost: 15000 },
+        { id: 'gondor', name: '🏰 Gondor', power: 800, income: 800, unlockCost: 50000 },
+        { id: 'isengard', name: '🗼 Isengard', power: 1500, income: 1500, unlockCost: 150000 },
+        { id: 'mordor', name: '🌋 Mordor', power: 3000, income: 3000, unlockCost: 500000 },
+        { id: 'baradur', name: '👁️ Barad-dûr', power: 10000, income: 10000, unlockCost: 2000000 },
+    ];
+
+    const EVENTS = [
+        { id: 'hobbit', icon: '🧑‍🌾', title: 'Hobbit Merchant', desc: 'A hobbit offers trade.',
+          choices: [
+            { text: 'Accept', effect: '+500 $RING', action: () => { GAME.ring += 500; return true; } },
+            { text: 'Rob', effect: '+1000 $RING, -50 Power', action: () => { GAME.ring += 1000; GAME.power -= 50; return true; } }
+          ]},
+        { id: 'orc_raid', icon: '👹', title: 'Orc Raid', desc: 'Orcs attack your stash!',
+          choices: [
+            { text: 'Fight', effect: '-100 Power', action: () => { GAME.power = Math.max(0, GAME.power - 100); return true; } },
+            { text: 'Pay', effect: '-20% $RING', action: () => { GAME.ring = Math.floor(GAME.ring * 0.8); return true; } }
+          ]},
+        { id: 'gandalf', icon: '🧙', title: 'Gandalf Visits', desc: 'The wizard appears.',
+          choices: [
+            { text: 'Wisdom', effect: '+500 XP', action: () => { addXP(500); return true; } },
+            { text: 'Payment', effect: '+2000 $RING', action: () => { GAME.ring += 2000; return true; } }
+          ]},
+        { id: 'treasure', icon: '💎', title: 'Hidden Treasure', desc: 'Ancient cache found!',
+          choices: [
+            { text: 'Gold', effect: '+5000 $RING', action: () => { GAME.ring += 5000; return true; } },
+            { text: 'Artifact', effect: '+200 Power', action: () => { GAME.power += 200; return true; } }
+          ]},
+        { id: 'dragon', icon: '🐉', title: 'Dragon Attack!', desc: 'Smaug\'s kin descends!',
+          choices: [
+            { text: 'Fight (50/50)', effect: '+10000 or -50%', action: () => { if(Math.random()>0.5){GAME.ring+=10000;}else{GAME.ring=Math.floor(GAME.ring*0.5);} return true; } },
+            { text: 'Tribute', effect: '-5000 $RING', action: () => { if(GAME.ring>=5000){GAME.ring-=5000;return true;} return false; } }
+          ]}
+    ];
+
+    const ACHIEVEMENTS = [
+        { id: 'click_1', name: '👆 First Click', desc: 'Click once', check: () => GAME.clicks >= 1, reward: 10 },
+        { id: 'click_1000', name: '💪 Dedicated', desc: 'Click 1,000 times', check: () => GAME.clicks >= 1000, reward: 200 },
+        { id: 'ring_1000', name: '💰 Hoarder', desc: 'Earn 1,000 $RING', check: () => GAME.totalRing >= 1000, reward: 100 },
+        { id: 'ring_100000', name: '💎 Rich', desc: 'Earn 100,000 $RING', check: () => GAME.totalRing >= 100000, reward: 1000 },
+        { id: 'ring_1m', name: '👑 Millionaire', desc: 'Earn 1,000,000 $RING', check: () => GAME.totalRing >= 1000000, reward: 10000 },
+        { id: 'territory_1', name: '🏡 Conqueror', desc: 'Conquer 1 territory', check: () => countTerritories() >= 1, reward: 100 },
+        { id: 'territory_all', name: '🌍 Emperor', desc: 'Conquer all', check: () => countTerritories() >= 10, reward: 5000 },
+        { id: 'level_10', name: '⚡ Leveler', desc: 'Reach level 10', check: () => GAME.level >= 10, reward: 500 },
+        { id: 'prestige_1', name: '🔥 Reborn', desc: 'Prestige once', check: () => GAME.prestigeCount >= 1, reward: 1000 },
+        { id: 'chapter_1', name: '📜 First Chapter', desc: 'Complete chapter 1', check: () => countChapters() >= 1, reward: 500 },
+        { id: 'act_1', name: '💎 Act I Complete', desc: 'Finish Act I', check: () => isActComplete('act1'), reward: 5000 },
+        { id: 'act_2', name: '🔥 Act II Complete', desc: 'Finish Act II', check: () => isActComplete('act2'), reward: 10000 },
+        { id: 'act_3', name: '👑 Act III Complete', desc: 'Finish Act III', check: () => isActComplete('act3'), reward: 25000 },
+        { id: 'saga_complete', name: '💍 Saga Complete', desc: 'Finish all chapters', check: () => countChapters() >= 18, reward: 100000 },
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    // UTILITY FUNCTIONS
+    // ═══════════════════════════════════════════════════════════
+    function formatNumber(n) {
+        if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
+        if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+        if (n >= 1e3) return (n / 1e3).toFixed(2) + 'K';
+        return Math.floor(n).toLocaleString();
+    }
+
+    function countTerritories() { return Object.values(GAME.territories).filter(s => s === 'owned').length; }
+    function countUpgrades() { return Object.values(GAME.upgrades).reduce((a, b) => a + b, 0); }
+    function countArtifacts() { return Object.keys(GAME.artifacts).length; }
+    function countChapters() { return Object.values(GAME.chapters).filter(c => c === 'completed').length; }
+    function isActComplete(actId) {
+        const act = CAMPAIGN.acts.find(a => a.id === actId);
+        return act && act.chapters.every(ch => GAME.chapters[ch.id] === 'completed') && GAME.bossesDefeated[act.boss.id];
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // AUDIO
+    // ═══════════════════════════════════════════════════════════
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+    function playSound(type) {
+        if (!GAME.settings.sound || !audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        const sounds = {
+            click: { freq: [800, 400], dur: 0.1 },
+            purchase: { freq: [400, 800], dur: 0.15 },
+            levelup: { freq: [523, 659, 784], dur: 0.3, type: 'square' },
+            achievement: { freq: [600, 1200], dur: 0.3, type: 'triangle' },
+            boss: { freq: [200, 100, 200], dur: 0.5, type: 'sawtooth' },
+            victory: { freq: [523, 659, 784, 1047], dur: 0.5, type: 'square' }
+        };
+        
+        const s = sounds[type] || sounds.click;
+        osc.type = s.type || 'sine';
+        osc.frequency.setValueAtTime(s.freq[0], audioCtx.currentTime);
+        s.freq.slice(1).forEach((f, i) => osc.frequency.setValueAtTime(f, audioCtx.currentTime + (i+1) * s.dur / s.freq.length));
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + s.dur);
+        osc.start();
+        osc.stop(audioCtx.currentTime + s.dur);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // TOAST & LOG
+    // ═══════════════════════════════════════════════════════════
+    function showToast(msg, type = 'info', dur = 3000) {
+        if (!GAME.settings.notifications) return;
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = msg;
+        document.getElementById('toastContainer').appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, dur);
+    }
+
+    function addLog(msg, type = 'info') {
+        const log = document.getElementById('logEntries');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = `<div class="log-entry-time">${new Date().toLocaleTimeString()}</div>${msg}`;
+        log.insertBefore(entry, log.firstChild);
+        while (log.children.length > 50) log.removeChild(log.lastChild);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // CORE MECHANICS
+    // ═══════════════════════════════════════════════════════════
+    function clickRing(event) {
+        initAudio();
+        
+        let reward = GAME.clickValue;
+        reward *= (1 + GAME.prestigeBonus / 100);
+        reward *= getArtifactBonus('clickMult');
+        reward *= getArtifactBonus('globalMult');
+        reward = Math.floor(reward);
+        
+        GAME.ring += reward;
+        GAME.totalRing += reward;
+        GAME.clicks++;
+        
+        // Float number
+        const float = document.createElement('div');
+        float.className = 'float-number';
+        float.textContent = `+${formatNumber(reward)}`;
+        float.style.left = event.clientX + 'px';
+        float.style.top = event.clientY + 'px';
+        document.body.appendChild(float);
+        setTimeout(() => float.remove(), 1000);
+        
+        const ring = document.getElementById('theRing');
+        ring.style.transform = 'scale(0.95)';
+        setTimeout(() => ring.style.transform = '', 100);
+        
+        playSound('click');
+        if (GAME.clicks % 10 === 0) addXP(1);
+        
+        updateUI();
+        checkAchievements();
+        checkChapterProgress();
+    }
+
+    function getArtifactBonus(type) {
+        let mult = 1;
+        Object.keys(GAME.artifacts).forEach(id => {
+            const artifact = getAllArtifacts().find(a => a.id === id);
+            if (artifact && artifact.bonus[type]) {
+                mult *= artifact.bonus[type];
+            }
+        });
+        return mult;
+    }
+
+    function getAllArtifacts() {
+        const all = [];
+        CAMPAIGN.acts.forEach(act => act.chapters.forEach(ch => all.push(ch.artifact)));
+        return all;
+    }
+
+    function calculateRPS() {
+        let rps = 0;
+        UPGRADES.forEach(u => {
+            if (u.baseRps && GAME.upgrades[u.id]) {
+                rps += u.baseRps * GAME.upgrades[u.id];
+            }
+        });
+        TERRITORIES.forEach(t => {
+            if (GAME.territories[t.id] === 'owned') {
+                rps += t.income * getArtifactBonus('territoryMult');
+            }
+        });
+        rps *= (1 + GAME.prestigeBonus / 100);
+        rps *= getArtifactBonus('rpsMult');
+        rps *= getArtifactBonus('globalMult');
+        
+        // Passive from artifacts
+        const passive = getAllArtifacts().filter(a => GAME.artifacts[a.id] && a.bonus.passiveRps);
+        passive.forEach(a => rps += a.bonus.passiveRps);
+        
+        GAME.rps = Math.floor(rps);
+        return GAME.rps;
+    }
+
+    function calculateClickValue() {
+        let val = 1;
+        UPGRADES.forEach(u => {
+            if (u.isClick && GAME.upgrades[u.id]) val += u.baseClick * GAME.upgrades[u.id];
+            if (u.isClickMult && GAME.upgrades[u.id]) val *= Math.pow(u.clickMult, GAME.upgrades[u.id]);
+        });
+        GAME.clickValue = Math.floor(val);
+        return GAME.clickValue;
+    }
+
+    function getUpgradeCost(u) {
+        const level = GAME.upgrades[u.id] || 0;
+        let cost = Math.floor(u.baseCost * Math.pow(u.costMult, level));
+        cost *= getArtifactBonus('costMult');
+        return Math.floor(cost);
+    }
+
+    function buyUpgrade(id) {
+        const u = UPGRADES.find(x => x.id === id);
+        if (!u) return;
+        const level = GAME.upgrades[u.id] || 0;
+        if (level >= u.max) return;
+        const cost = getUpgradeCost(u);
+        if (GAME.ring < cost) return;
+        
+        GAME.ring -= cost;
+        GAME.upgrades[u.id] = level + 1;
+        calculateRPS();
+        calculateClickValue();
+        playSound('purchase');
+        addLog(`Bought ${u.name} (Lv.${level + 1})`, 'good');
+        updateUI();
+        renderUpgrades();
+        checkAchievements();
+        checkChapterProgress();
+        saveGame();
+    }
+
+    // XP & Leveling
+    function getXPForLevel(lvl) { return Math.floor(100 * Math.pow(1.5, lvl - 1)); }
+    function addXP(amount) {
+        amount *= getArtifactBonus('xpMult');
+        GAME.xp += Math.floor(amount);
+        while (GAME.xp >= getXPForLevel(GAME.level)) {
+            GAME.xp -= getXPForLevel(GAME.level);
+            GAME.level++;
+            playSound('levelup');
+            showToast(`🎉 Level ${GAME.level}!`, 'achievement');
+            addLog(`Level Up! Now level ${GAME.level}`, 'achievement');
+            GAME.power += GAME.level * 10;
+        }
+        updateUI();
+        checkAchievements();
+        checkChapterProgress();
+    }
+
+    // Territories
+    function canConquer(t) { return GAME.power >= t.power && GAME.ring >= t.unlockCost; }
+    function conquerTerritory(id) {
+        const t = TERRITORIES.find(x => x.id === id);
+        if (!t || GAME.territories[id] === 'owned' || !canConquer(t)) return;
+        
+        const conquestPower = t.power / getArtifactBonus('conquestMult');
+        GAME.ring -= t.unlockCost;
+        GAME.power -= Math.floor(conquestPower);
+        GAME.territories[id] = 'owned';
+        
+        calculateRPS();
+        playSound('achievement');
+        showToast(`⚔️ Conquered ${t.name}!`, 'success');
+        addLog(`Conquered ${t.name}! +${t.income}/s`, 'good');
+        addXP(t.power);
+        
+        updateUI();
+        renderTerritories();
+        checkAchievements();
+        checkChapterProgress();
+        saveGame();
+    }
+
+    let selectedTerritory = null;
+    function selectTerritory(id) {
+        selectedTerritory = TERRITORIES.find(t => t.id === id);
+        renderTerritoryDetails();
+    }
+
+    // Prestige
+    function getPrestigeBonus() { return Math.floor(Math.sqrt(GAME.totalRing / 1000)); }
+    function canPrestige() { return GAME.totalRing >= 1000; }
+    function doPrestige() {
+        if (!canPrestige()) return;
+        const bonus = getPrestigeBonus();
+        
+        GAME.ring = 0;
+        GAME.power = 100;
+        GAME.upgrades = {};
+        GAME.territories = {};
+        GAME.currentEvent = null;
+        
+        GAME.prestigeCount++;
+        GAME.prestigeBonus += bonus;
+        GAME.totalRing = 0;
+        
+        playSound('victory');
+        showToast(`🔥 Reforged! +${bonus}% permanent!`, 'achievement', 5000);
+        addLog(`🔥 Forged New Ring! Prestige #${GAME.prestigeCount}`, 'achievement');
+        
+        calculateRPS();
+        calculateClickValue();
+        updateUI();
+        renderAll();
+        checkAchievements();
+        checkChapterProgress();
+        saveGame();
+    }
+
+    // Events
+    function triggerEvent() {
+        if (GAME.currentEvent || GAME.eventCooldown > 0) return;
+        GAME.currentEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+        playSound('achievement');
+        addLog(`📜 Event: ${GAME.currentEvent.title}`, 'event');
+        renderEvent();
+    }
+
+    function chooseEvent(i) {
+        if (!GAME.currentEvent) return;
+        const choice = GAME.currentEvent.choices[i];
+        if (choice.action()) {
+            addLog(`${choice.text}: ${choice.effect}`, 'event');
+            showToast(choice.effect, choice.effect.includes('-') ? 'error' : 'success');
+        } else {
+            showToast('Cannot afford!', 'error');
+            return;
+        }
+        GAME.currentEvent = null;
+        GAME.eventCooldown = 60;
+        updateUI();
+        renderEvent();
+        saveGame();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // CAMPAIGN SYSTEM
+    // ═══════════════════════════════════════════════════════════
+    function isChapterAvailable(chapter) {
+        // Chapter 1 always available
+        if (chapter.num === 1) return true;
+        
+        // Find previous chapter
+        let prevChapter = null;
+        CAMPAIGN.acts.forEach(act => {
+            act.chapters.forEach((ch, i) => {
+                if (ch.id === chapter.id && i > 0) {
+                    prevChapter = act.chapters[i - 1];
+                }
+            });
+        });
+        
+        // If first in act, check previous act boss
+        if (!prevChapter) {
+            const actIndex = CAMPAIGN.acts.findIndex(a => a.chapters.some(c => c.id === chapter.id));
+            if (actIndex > 0) {
+                const prevAct = CAMPAIGN.acts[actIndex - 1];
+                return GAME.bossesDefeated[prevAct.boss.id];
+            }
+            return true;
+        }
+        
+        return GAME.chapters[prevChapter.id] === 'completed';
+    }
+
+    function isChapterComplete(chapter) {
+        return chapter.objectives.every(obj => obj.check());
+    }
+
+    function checkChapterProgress() {
+        CAMPAIGN.acts.forEach(act => {
+            act.chapters.forEach(chapter => {
+                if (GAME.chapters[chapter.id] === 'completed') return;
+                if (!isChapterAvailable(chapter)) return;
+                
+                if (isChapterComplete(chapter)) {
+                    completeChapter(chapter, act);
+                }
+            });
+        });
+    }
+
+    function completeChapter(chapter, act) {
+        if (GAME.chapters[chapter.id] === 'completed') return;
+        
+        GAME.chapters[chapter.id] = 'completed';
+        
+        // Grant artifact
+        GAME.artifacts[chapter.artifact.id] = true;
+        
+        // Grant rewards
+        GAME.ring += chapter.rewards.ring;
+        GAME.totalRing += chapter.rewards.ring;
+        GAME.power += chapter.rewards.power;
+        addXP(chapter.rewards.xp);
+        
+        playSound('victory');
+        
+        // Show story
+        showStory(chapter, act);
+        
+        addLog(`📜 Chapter ${chapter.num} complete: ${chapter.name}`, 'campaign');
+        showToast(`📜 Chapter Complete: ${chapter.name}!`, 'campaign', 5000);
+        
+        updateUI();
+        renderCampaign();
+        renderArtifacts();
+        checkAchievements();
+        saveGame();
+    }
+
+    function showStory(chapter, act) {
+        const overlay = document.getElementById('storyOverlay');
+        overlay.classList.remove('hidden');
+        
+        document.getElementById('storyIcon').textContent = chapter.artifact.icon;
+        document.getElementById('storyAct').textContent = `ACT ${act.id.replace('act', '')} • CHAPTER ${chapter.num}`;
+        document.getElementById('storyTitle').textContent = chapter.name;
+        document.getElementById('storyText').innerHTML = chapter.lore;
+        
+        document.getElementById('storyRewards').innerHTML = `
+            <div class="story-reward">+${formatNumber(chapter.rewards.ring)} 💍</div>
+            <div class="story-reward">+${formatNumber(chapter.rewards.power)} ⚡</div>
+            <div class="story-reward">+${formatNumber(chapter.rewards.xp)} XP</div>
+            <div class="story-reward artifact">${chapter.artifact.icon} ${chapter.artifact.name}</div>
+        `;
+    }
+
+    function closeStory() {
+        document.getElementById('storyOverlay').classList.add('hidden');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // BOSS SYSTEM
+    // ═══════════════════════════════════════════════════════════
+    function canFightBoss(act) {
+        return act.chapters.every(ch => GAME.chapters[ch.id] === 'completed') && !GAME.bossesDefeated[act.boss.id];
+    }
+
+    function startBossFight(actId) {
+        const act = CAMPAIGN.acts.find(a => a.id === actId);
+        if (!act || !canFightBoss(act)) return;
+        
+        GAME.currentBoss = act.boss;
+        GAME.bossHealth = act.boss.maxHealth;
+        
+        playSound('boss');
+        
+        const overlay = document.getElementById('bossOverlay');
+        overlay.classList.remove('hidden');
+        
+        document.getElementById('bossIcon').textContent = act.boss.icon;
+        document.getElementById('bossName').textContent = act.boss.name;
+        document.getElementById('bossSubtitle').textContent = act.boss.subtitle;
+        document.getElementById('bossHealthMax').textContent = formatNumber(act.boss.maxHealth);
+        
+        updateBossUI();
+    }
+
+    function bossAttack(type) {
+        if (!GAME.currentBoss) return;
+        
+        let damage = 0;
+        let canAttack = true;
+        
+        switch(type) {
+            case 'ring':
+                if (GAME.ring >= 500) {
+                    GAME.ring -= 500;
+                    damage = 1000;
+                } else canAttack = false;
+                break;
+            case 'power':
+                if (GAME.power >= 100) {
+                    GAME.power -= 100;
+                    damage = 500;
+                } else canAttack = false;
+                break;
+            case 'click':
+                damage = 100 * getArtifactBonus('clickMult') * getArtifactBonus('globalMult');
+                break;
+        }
+        
+        if (!canAttack) {
+            showToast('Not enough resources!', 'error');
+            return;
+        }
+        
+        GAME.bossHealth -= Math.floor(damage);
+        playSound('click');
+        
+        if (GAME.bossHealth <= 0) {
+            defeatBoss();
+        }
+        
+        updateBossUI();
+        updateUI();
+    }
+
+    function updateBossUI() {
+        if (!GAME.currentBoss) return;
+        
+        const pct = Math.max(0, (GAME.bossHealth / GAME.currentBoss.maxHealth) * 100);
+        document.getElementById('bossHealthFill').style.width = pct + '%';
+        document.getElementById('bossHealthCurrent').textContent = formatNumber(Math.max(0, GAME.bossHealth));
+    }
+
+    function defeatBoss() {
+        const boss = GAME.currentBoss;
+        GAME.bossesDefeated[boss.id] = true;
+        
+        // Rewards
+        GAME.ring += boss.reward.ring;
+        GAME.totalRing += boss.reward.ring;
+        GAME.power += boss.reward.power;
+        addXP(boss.reward.xp);
+        
+        playSound('victory');
+        
+        document.getElementById('bossOverlay').classList.add('hidden');
+        
+        showToast(`🏆 BOSS DEFEATED: ${boss.name}!`, 'achievement', 5000);
+        addLog(`🏆 Boss defeated: ${boss.name}!`, 'achievement');
+        
+        GAME.currentBoss = null;
+        GAME.bossHealth = 0;
+        
+        updateUI();
+        renderCampaign();
+        checkAchievements();
+        
+        // Check for game complete
+        if (countChapters() >= 18 && Object.keys(GAME.bossesDefeated).length >= 3) {
+            setTimeout(showEnding, 1000);
+        }
+        
+        saveGame();
+    }
+
+    function showEnding() {
+        showToast('🎉 CONGRATULATIONS! You have completed the entire saga!', 'achievement', 10000);
+        addLog('🎉 THE SAGA IS COMPLETE! You are the TRUE RING LORD!', 'achievement');
+        
+        // Epic ending overlay could go here
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // ACHIEVEMENTS
+    // ═══════════════════════════════════════════════════════════
+    function checkAchievements() {
+        ACHIEVEMENTS.forEach(ach => {
+            if (GAME.achievements[ach.id]) return;
+            if (ach.check()) {
+                GAME.achievements[ach.id] = true;
+                playSound('achievement');
+                showToast(`🏆 ${ach.name}!`, 'achievement', 4000);
+                addLog(`🏆 Achievement: ${ach.name}`, 'achievement');
+                GAME.ring += ach.reward;
+                GAME.totalRing += ach.reward;
+                addXP(ach.reward);
+                renderAchievements();
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // RENDERING
+    // ═══════════════════════════════════════════════════════════
+    function updateUI() {
+        document.getElementById('ringDisplay').textContent = formatNumber(GAME.ring);
+        document.getElementById('rpsDisplay').textContent = formatNumber(GAME.rps);
+        document.getElementById('powerDisplay').textContent = formatNumber(GAME.power);
+        document.getElementById('xpDisplay').textContent = formatNumber(GAME.xp);
+        document.getElementById('clickValue').textContent = formatNumber(GAME.clickValue);
+        document.getElementById('playerLevel').textContent = GAME.level;
+        document.getElementById('totalClicks').textContent = formatNumber(GAME.clicks);
+        document.getElementById('territoriesOwned').textContent = countTerritories();
+        document.getElementById('artifactsOwned').textContent = countArtifacts();
+        
+        const xpNeeded = getXPForLevel(GAME.level);
+        document.getElementById('xpBar').style.width = (GAME.xp / xpNeeded * 100) + '%';
+        document.getElementById('currentXP').textContent = formatNumber(GAME.xp);
+        document.getElementById('nextLevelXP').textContent = formatNumber(xpNeeded);
+        
+        document.getElementById('prestigeBonus').textContent = GAME.prestigeBonus + getPrestigeBonus();
+        document.getElementById('prestigeBtn').disabled = !canPrestige();
+        document.getElementById('territoriesProgress').textContent = countTerritories();
+        
+        // Campaign stats
+        document.getElementById('chaptersCompleted').textContent = countChapters();
+        document.getElementById('bossesDefeated').textContent = Object.keys(GAME.bossesDefeated).length;
+        document.getElementById('totalArtifacts').textContent = countArtifacts();
+        document.getElementById('artifactsCollected').textContent = countArtifacts();
+        
+        // Act progress bars
+        CAMPAIGN.acts.forEach((act, i) => {
+            const completed = act.chapters.filter(ch => GAME.chapters[ch.id] === 'completed').length;
+            const pct = (completed / act.chapters.length) * 100;
+            const el = document.getElementById(`act${i+1}Progress`);
+            if (el) el.style.width = pct + '%';
+        });
+    }
+
+    function renderCampaign() {
+        const container = document.getElementById('actsContainer');
+        
+        container.innerHTML = CAMPAIGN.acts.map((act, actIndex) => {
+            const completedChapters = act.chapters.filter(ch => GAME.chapters[ch.id] === 'completed').length;
+            const totalChapters = act.chapters.length;
+            const actProgress = (completedChapters / totalChapters) * 100;
+            const bossDefeated = GAME.bossesDefeated[act.boss.id];
+            const canBoss = canFightBoss(act);
+            
+            // Check if act is locked (previous act not complete)
+            let actLocked = false;
+            if (actIndex > 0) {
+                const prevAct = CAMPAIGN.acts[actIndex - 1];
+                actLocked = !GAME.bossesDefeated[prevAct.boss.id];
+            }
+            
+            return `
+                <div class="act-section ${act.color} ${actLocked ? 'locked' : ''}">
+                    <div class="act-header">
+                        <div class="act-title-group">
+                            <div class="act-icon">${act.icon}</div>
+                            <div class="act-info">
+                                <h2>Act ${actIndex + 1}: ${act.name}</h2>
+                                <div class="act-subtitle">${act.subtitle}</div>
+                            </div>
+                        </div>
+                        <div class="act-progress">
+                            <div class="act-progress-text">${completedChapters}/${totalChapters}</div>
+                            <div class="act-progress-bar">
+                                <div class="act-progress-fill" style="width: ${actProgress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chapters-grid">
+                        ${act.chapters.map(ch => {
+                            const available = isChapterAvailable(ch);
+                            const completed = GAME.chapters[ch.id] === 'completed';
+                            const objectivesDone = ch.objectives.filter(o => o.check()).length;
+                            
+                            return `
+                                <div class="chapter-card ${completed ? 'completed' : ''} ${available && !completed ? 'available' : ''} ${!available ? 'locked' : ''}"
+                                     onclick="${available && !completed ? 'viewChapter(\'' + ch.id + '\')' : ''}">
+                                    <div class="chapter-header">
+                                        <div class="chapter-icon">${ch.icon}</div>
+                                        <div>
+                                            <div class="chapter-num">CHAPTER ${ch.num}</div>
+                                            <div class="chapter-name">${ch.name}</div>
+                                        </div>
+                                    </div>
+                                    <div class="chapter-desc">${ch.project}</div>
+                                    <div class="chapter-objectives">
+                                        ${ch.objectives.map(obj => `
+                                            <span class="chapter-obj ${obj.check() ? 'done' : ''}">${obj.check() ? '✓' : '○'} ${obj.desc}</span>
+                                        `).join('')}
+                                    </div>
+                                    <div class="chapter-footer">
+                                        <div class="chapter-reward">${ch.artifact.icon} ${ch.artifact.name}</div>
+                                        <div class="chapter-status ${completed ? 'completed' : ''} ${available && !completed ? 'available' : ''} ${!available ? 'locked' : ''}">
+                                            ${completed ? '✅ DONE' : available ? `${objectivesDone}/${ch.objectives.length}` : '🔒'}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="boss-challenge ${canBoss ? '' : 'locked'} ${bossDefeated ? 'defeated' : ''}"
+                         onclick="${canBoss ? 'startBossFight(\'' + act.id + '\')' : ''}">
+                        <div class="boss-info">
+                            <div class="boss-icon-small">${act.boss.icon}</div>
+                            <div>
+                                <div class="boss-name-small">${act.boss.name}</div>
+                                <div class="boss-subtitle-small">${act.boss.subtitle}</div>
+                            </div>
+                        </div>
+                        <div class="boss-status ${bossDefeated ? 'defeated' : canBoss ? 'ready' : 'locked'}">
+                            ${bossDefeated ? '✅ DEFEATED' : canBoss ? '⚔️ CHALLENGE' : '🔒 LOCKED'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function viewChapter(id) {
+        // Could open a detail view - for now just highlight
+        showToast('Complete all objectives to unlock the artifact!', 'info');
+    }
+
+    function renderArtifacts() {
+        const grid = document.getElementById('artifactsGrid');
+        const allArtifacts = getAllArtifacts();
+        
+        grid.innerHTML = allArtifacts.map(art => {
+            const owned = GAME.artifacts[art.id];
+            return `
+                <div class="artifact-card ${owned ? 'owned' : 'locked'}">
+                    <div class="artifact-icon">${art.icon}</div>
+                    <div class="artifact-name">${art.name}</div>
+                    <div class="artifact-source">${owned ? 'Collected!' : '???'}</div>
+                    <div class="artifact-effect">${owned ? art.effect : 'Complete chapter to reveal'}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderUpgrades() {
+        const grid = document.getElementById('upgradesGrid');
+        grid.innerHTML = UPGRADES.map(u => {
+            const level = GAME.upgrades[u.id] || 0;
+            const cost = getUpgradeCost(u);
+            const affordable = GAME.ring >= cost;
+            const maxed = level >= u.max;
+            
+            let effect = u.baseRps ? `+${formatNumber(u.baseRps * (level + 1))}/s` : 
+                         u.isClick ? `+${u.baseClick}/click` : `x${u.clickMult}`;
+            
+            return `
+                <div class="upgrade-card ${affordable && !maxed ? 'affordable' : ''} ${maxed ? 'maxed' : ''}"
+                     onclick="${maxed ? '' : `buyUpgrade('${u.id}')`}">
+                    <div class="upgrade-header">
+                        <div class="upgrade-icon">${u.name.split(' ')[0]}</div>
+                        <div>
+                            <div class="upgrade-name">${u.name.split(' ').slice(1).join(' ')}</div>
+                            <div class="upgrade-level">Lv.${level}/${u.max}</div>
+                        </div>
+                    </div>
+                    <div class="upgrade-desc">${u.desc}</div>
+                    <div class="upgrade-footer">
+                        <div class="upgrade-effect">${effect}</div>
+                        <div class="upgrade-cost">${maxed ? 'MAX' : formatNumber(cost) + ' 💍'}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderTerritories() {
+        const grid = document.getElementById('territoriesGrid');
+        grid.innerHTML = TERRITORIES.map(t => {
+            const owned = GAME.territories[t.id] === 'owned';
+            return `
+                <div class="territory ${owned ? 'owned' : ''}" onclick="selectTerritory('${t.id}')">
+                    <div class="territory-icon">${t.name.split(' ')[0]}</div>
+                    <div class="territory-name">${t.name.split(' ').slice(1).join(' ')}</div>
+                    <div class="territory-status">${owned ? '✅' : `⚔️ ${formatNumber(t.power)}`}</div>
+                    ${owned ? `<div class="territory-income">+${formatNumber(t.income)}/s</div>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderTerritoryDetails() {
+        const details = document.getElementById('territoryDetails');
+        if (!selectedTerritory) {
+            details.innerHTML = `
+                <div class="territory-details-icon">🏰</div>
+                <div class="territory-details-name">Select a territory</div>
+                <div id="detailContent"><p style="color:var(--text-secondary);text-align:center;margin-top:20px;">Click to view</p></div>
+            `;
+            return;
+        }
+        
+        const t = selectedTerritory;
+        const owned = GAME.territories[t.id] === 'owned';
+        
+        details.innerHTML = `
+            <div class="territory-details-icon">${t.name.split(' ')[0]}</div>
+            <div class="territory-details-name">${t.name}</div>
+            <div style="text-align:center;margin:15px 0;">
+                <div>Power: ${formatNumber(t.power)} | Income: +${formatNumber(t.income)}/s</div>
+                <div style="margin-top:10px;color:var(--text-secondary);">Cost: ${formatNumber(t.unlockCost)} 💍</div>
+            </div>
+            ${owned ? '<div style="text-align:center;color:var(--matrix-green);padding:15px;">✅ OWNED</div>' : 
+              `<button class="attack-btn" onclick="conquerTerritory('${t.id}')" ${canConquer(t)?'':'disabled'}>⚔️ CONQUER</button>`}
+        `;
+    }
+
+    function renderEvent() {
+        const container = document.getElementById('eventContainer');
+        if (!GAME.currentEvent) {
+            container.innerHTML = `<div class="no-event"><div style="font-size:4rem;opacity:0.3;margin-bottom:20px;">📜</div><p>No events. Keep playing!</p></div>`;
+            return;
+        }
+        const e = GAME.currentEvent;
+        container.innerHTML = `
+            <div class="event-card">
+                <div class="event-icon">${e.icon}</div>
+                <h2 class="event-title">${e.title}</h2>
+                <p class="event-desc">${e.desc}</p>
+                <div class="event-choices">
+                    ${e.choices.map((c, i) => `
+                        <div class="event-choice" onclick="chooseEvent(${i})">
+                            <div>${c.text}</div>
+                            <div class="event-choice-effect ${c.effect.includes('-')?'negative':''}">${c.effect}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderAchievements() {
+        const grid = document.getElementById('achievementsGrid');
+        grid.innerHTML = ACHIEVEMENTS.map(a => `
+            <div class="achievement ${GAME.achievements[a.id] ? 'unlocked' : 'locked'}">
+                <div class="achievement-icon">${a.name.split(' ')[0]}</div>
+                <div>
+                    <div class="achievement-name">${a.name.split(' ').slice(1).join(' ')}</div>
+                    <div class="achievement-desc">${a.desc}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderAll() {
+        renderCampaign();
+        renderArtifacts();
+        renderUpgrades();
+        renderTerritories();
+        renderTerritoryDetails();
+        renderEvent();
+        renderAchievements();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // TABS
+    // ═══════════════════════════════════════════════════════════
+    function initTabs() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById('tab-' + tab)?.classList.add('active');
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // GAME LOOP
+    // ═══════════════════════════════════════════════════════════
+    function gameLoop() {
+        const now = Date.now();
+        const delta = (now - GAME.lastTick) / 1000;
+        GAME.lastTick = now;
+        
+        if (GAME.rps > 0) {
+            const earned = GAME.rps * delta;
+            GAME.ring += earned;
+            GAME.totalRing += earned;
+        }
+        
+        if (GAME.eventCooldown > 0) {
+            GAME.eventCooldown -= delta;
+        }
+        
+        // Random events
+        if (!GAME.currentEvent && GAME.eventCooldown <= 0 && Math.random() < 0.0005) {
+            triggerEvent();
+        }
+        
+        // Auto-save
+        if (now - GAME.lastSave > 30000) {
+            saveGame();
+            GAME.lastSave = now;
+        }
+        
+        updateUI();
+        checkChapterProgress();
+        
+        requestAnimationFrame(gameLoop);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // SAVE/LOAD
+    // ═══════════════════════════════════════════════════════════
+    function saveGame() {
+        localStorage.setItem('lotring_saga_save', JSON.stringify({ version: 2, ...GAME }));
+    }
+
+    function loadGame() {
+        const saved = localStorage.getItem('lotring_saga_save');
+        if (!saved) return false;
+        try {
+            const data = JSON.parse(saved);
+            GAME = { ...GAME, ...data };
+            
+            // Offline progress
+            const offline = (Date.now() - GAME.lastTick) / 1000;
+            if (offline > 10 && GAME.rps > 0) {
+                const maxOffline = 3600 * 8;
+                const effectiveTime = Math.min(offline, maxOffline);
+                const earned = GAME.rps * effectiveTime * 0.5;
+                GAME.ring += earned;
+                GAME.totalRing += earned;
+                setTimeout(() => {
+                    showToast(`💤 Offline: +${formatNumber(earned)} $RING!`, 'success', 5000);
+                    addLog(`Earned ${formatNumber(earned)} while away`, 'good');
+                }, 1000);
+            }
+            
+            GAME.lastTick = Date.now();
+            calculateRPS();
+            calculateClickValue();
+            return true;
+        } catch (e) {
+            console.error('Load failed:', e);
+            return false;
+        }
+    }
+
+    function exportSave() {
+        const data = btoa(JSON.stringify(GAME));
+        navigator.clipboard.writeText(data).then(() => showToast('📋 Copied!', 'success')).catch(() => prompt('Copy:', data));
+    }
+
+    function importSave() {
+        const code = prompt('Paste save code:');
+        if (!code) return;
+        try {
+            GAME = { ...GAME, ...JSON.parse(atob(code)) };
+            calculateRPS();
+            calculateClickValue();
+            updateUI();
+            renderAll();
+            saveGame();
+            showToast('✅ Imported!', 'success');
+        } catch (e) {
+            showToast('❌ Invalid code', 'error');
+        }
+    }
+
+    function resetGame() {
+        if (!confirm('Reset ALL progress?')) return;
+        if (!confirm('REALLY SURE?')) return;
+        localStorage.removeItem('lotring_saga_save');
+        location.reload();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════════════════════
+    function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
+    function toggleSound() {
+        GAME.settings.sound = !GAME.settings.sound;
+        document.getElementById('soundToggle').classList.toggle('on', GAME.settings.sound);
+        document.getElementById('soundBtn').textContent = GAME.settings.sound ? '🔊' : '🔇';
+        saveGame();
+    }
+    function toggleNotifications() {
+        GAME.settings.notifications = !GAME.settings.notifications;
+        document.getElementById('notifToggle').classList.toggle('on', GAME.settings.notifications);
+        saveGame();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // INITIALIZATION
+    // ═══════════════════════════════════════════════════════════
+    function startNewGame() {
+        document.getElementById('introScreen').classList.add('hidden');
+        document.getElementById('gameContainer').style.display = 'flex';
+        initAudio();
+        calculateRPS();
+        calculateClickValue();
+        updateUI();
+        renderAll();
+        addLog('🎮 The Saga begins... Click the Ring!', 'campaign');
+        gameLoop();
+    }
+
+    function loadAndStart() {
+        if (loadGame()) startNewGame();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('lotring_saga_save')) {
+            document.getElementById('continueBtn').style.display = 'block';
+        }
+        initTabs();
+    });
+
+    window.addEventListener('beforeunload', saveGame);
+
+    // Console
+    console.log(`
+%c
+    ██╗      ██████╗ ████████╗██████╗ ██╗███╗   ██╗ ██████╗ 
+    ██║     ██╔═══██╗╚══██╔══╝██╔══██╗██║████╗  ██║██╔════╝ 
+    ██║     ██║   ██║   ██║   ██████╔╝██║██╔██╗ ██║██║  ███╗
+    ██║     ██║   ██║   ██║   ██╔══██╗██║██║╚██╗██║██║   ██║
+    ███████╗╚██████╔╝   ██║   ██║  ██║██║██║ ╚████║╚██████╔╝
+    ╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+    
+    ════════════════════════════════════════════════════════
+    🎮 THE COMPLETE SAGA - 18 Chapters, 3 Acts, 3 Bosses
+    ════════════════════════════════════════════════════════
+    
+    📜 Journey from CivicCoin to the One Ring!
+    
+    Debug: GAME, CAMPAIGN, triggerEvent(), saveGame()
+    
+    💍 One Ring to rule them all!
+%c`, 'color: #f7d354; font-family: monospace;', 'color: #888;');
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇧🇪 BELDATA CITOYEN — Cartographie Démocratique Belge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a28;--border:#2a2a40;
+            --yellow:#f4b400;--red:#e53935;--blue:#3b82f6;--green:#22c55e;
+            --purple:#a855f7;--cyan:#06b6d4;--orange:#f97316;
+            --text:#e8e8f0;--dim:#8888a0;--success:#10b981;--warning:#f59e0b
+        }
+        body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px}
+        
+        /* Header avec drapeau belge */
+        header{background:linear-gradient(135deg,var(--bg2),var(--bg));border-bottom:4px solid;border-image:linear-gradient(90deg,#000 33%,var(--yellow) 33% 66%,var(--red) 66%)1;padding:1rem 1.5rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+        .header-content{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .logo{display:flex;align-items:center;gap:0.75rem}
+        .flag{display:flex;width:32px;height:20px;border-radius:2px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+        .flag div{flex:1}.f1{background:#000}.f2{background:var(--yellow)}.f3{background:var(--red)}
+        .logo-text{font-weight:700;font-size:1.2rem}
+        .logo-text span{color:var(--yellow)}
+        .badge{font-size:0.65rem;padding:0.3rem 0.6rem;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--dim)}
+        
+        main{max-width:1400px;margin:0 auto;padding:1.5rem}
+        
+        /* DISCLAIMER */
+        .disclaimer{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(239,68,68,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:0.75rem}
+        .disclaimer-title{font-weight:700;color:var(--warning);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+        .disclaimer-content{color:var(--dim);line-height:1.6}
+        .disclaimer-content strong{color:var(--text)}
+        .disclaimer-sources{margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid rgba(245,158,11,0.2);display:flex;flex-wrap:wrap;gap:0.5rem}
+        .disclaimer-sources a{color:var(--cyan);text-decoration:none;padding:0.2rem 0.4rem;background:var(--bg3);border-radius:4px;font-size:0.65rem}
+        .disclaimer-sources a:hover{background:var(--bg2)}
+        
+        /* Navigation pyramide */
+        .pyramid-nav{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:2rem;padding:1.5rem 0}
+        .pyramid-nav h2{font-size:0.8rem;color:var(--dim);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.1em}
+        .lvl{padding:0.6rem 1.2rem;border-radius:8px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center;border:2px solid transparent}
+        .lvl:hover{transform:translateY(-2px);filter:brightness(1.15)}
+        .lvl.active{border-color:var(--yellow);box-shadow:0 0 20px rgba(244,180,0,0.2)}
+        .l1{background:linear-gradient(135deg,#003399,#1a237e);width:200px}
+        .l2{background:linear-gradient(135deg,#1e293b,#334155);width:260px}
+        .l3{background:linear-gradient(135deg,#7c3aed,#6d28d9);width:320px}
+        .l4{background:linear-gradient(135deg,#047857,#059669);width:380px}
+        .l5{background:linear-gradient(135deg,#0369a1,#0284c7);width:440px}
+        .l6{background:linear-gradient(135deg,#b45309,#d97706);width:500px}
+        
+        /* Stats globales */
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:2rem}
+        .stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+        .stat-value{font-size:1.5rem;font-weight:700;color:var(--yellow)}
+        .stat-label{font-size:0.6rem;color:var(--dim);margin-top:0.25rem;text-transform:uppercase;letter-spacing:0.05em}
+        
+        /* Tabs */
+        .tabs{display:flex;gap:3px;background:var(--bg2);padding:3px;border-radius:8px;margin-bottom:1rem;flex-wrap:wrap}
+        .tab{padding:0.5rem 0.75rem;background:transparent;border:none;border-radius:5px;color:var(--dim);font-size:0.7rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+        .tab:hover{color:var(--text)}
+        .tab.active{background:var(--yellow);color:#000;font-weight:600}
+        
+        .panel{display:none}.panel.active{display:block}
+        
+        /* Section */
+        .section{margin-bottom:2rem}
+        .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem}
+        .section-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem}
+        .section-title .verified{font-size:0.55rem;background:var(--success);color:#000;padding:0.15rem 0.4rem;border-radius:3px}
+        .section-subtitle{font-size:0.7rem;color:var(--dim)}
+        
+        .btns{display:flex;gap:0.4rem;flex-wrap:wrap}
+        .btn{padding:0.4rem 0.6rem;background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:0.65rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+        .btn:hover{border-color:var(--yellow);background:var(--bg2)}
+        
+        /* Filters */
+        .filters{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap}
+        .filter{padding:0.4rem 0.6rem;background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:0.7rem;font-family:inherit;min-width:130px}
+        .filter:focus{outline:none;border-color:var(--cyan)}
+        
+        /* Tables */
+        .tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+        .tbl-scroll{max-height:400px;overflow:auto}
+        table{width:100%;border-collapse:collapse;font-size:0.75rem}
+        th{background:var(--bg3);padding:0.6rem 0.75rem;text-align:left;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--dim);position:sticky;top:0;z-index:1}
+        td{padding:0.5rem 0.75rem;border-bottom:1px solid var(--border)}
+        tr:hover td{background:rgba(244,180,0,0.05)}
+        
+        /* Tags partis */
+        .tag{display:inline-block;padding:0.15rem 0.4rem;border-radius:4px;font-size:0.6rem;font-weight:600}
+        .t-ps{background:#dc2626;color:#fff}.t-mr{background:#2563eb;color:#fff}
+        .t-eco{background:#16a34a;color:#fff}.t-ptb{background:#7f1d1d;color:#fff}
+        .t-eng{background:#ea580c;color:#fff}.t-defi{background:#9333ea;color:#fff}
+        .t-nva{background:#eab308;color:#000}.t-vld{background:#0ea5e9;color:#fff}
+        .t-voor{background:#b91c1c;color:#fff}.t-cdv{background:#f97316;color:#fff}
+        .t-vb{background:#374151;color:#fff}.t-groen{background:#22c55e;color:#fff}
+        .t-csp{background:#c2410c;color:#fff}.t-prodg{background:#0891b2;color:#fff}
+        .t-pff{background:#3b82f6;color:#fff}.t-sp{background:#ef4444;color:#fff}
+        .t-vivant{background:#8b5cf6;color:#fff}
+        
+        /* Cards gouvernement */
+        .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+        .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;transition:all 0.2s}
+        .card:hover{border-color:var(--yellow);transform:translateY(-2px)}
+        .card-title{font-weight:700;font-size:0.85rem;margin-bottom:0.25rem}
+        .card-role{font-size:0.7rem;color:var(--dim);margin-bottom:0.5rem}
+        .card-meta{font-size:0.65rem;color:var(--dim)}
+        
+        /* Section BÜRGERDIALOG highlight */
+        .highlight-box{background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(168,85,247,0.1));border:2px solid var(--cyan);border-radius:12px;padding:1.5rem;margin-bottom:2rem}
+        .highlight-box h3{font-size:1rem;color:var(--cyan);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+        .highlight-box h3::before{content:"🏆";font-size:1.2rem}
+        .highlight-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+        .highlight-item{background:var(--bg3);border-radius:8px;padding:1rem}
+        .highlight-item h4{font-size:0.8rem;color:var(--yellow);margin-bottom:0.5rem}
+        .highlight-item p{font-size:0.7rem;color:var(--dim);line-height:1.5}
+        .highlight-item .num{font-size:1.5rem;font-weight:700;color:var(--cyan)}
+        
+        /* API cards */
+        .api-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem}
+        .api-card:hover{border-color:var(--cyan)}
+        .api-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+        .api-title{font-weight:700;font-size:0.85rem}
+        .api-badge{font-size:0.55rem;padding:0.2rem 0.4rem;border-radius:4px;font-weight:600}
+        .api-badge.ok{background:var(--success);color:#000}
+        .api-badge.no{background:var(--red);color:#fff}
+        .api-badge.part{background:var(--warning);color:#000}
+        .api-desc{font-size:0.7rem;color:var(--dim);margin-bottom:0.75rem}
+        .api-code{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.5rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--cyan);overflow-x:auto;white-space:nowrap}
+        .api-links{margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap}
+        .api-links a{font-size:0.6rem;color:var(--cyan);text-decoration:none}
+        .api-links a:hover{text-decoration:underline}
+        
+        /* Participation section */
+        .participation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+        .participation-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+        .participation-card h4{font-size:0.85rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem}
+        .participation-card h4 .icon{font-size:1.2rem}
+        .participation-card p{font-size:0.7rem;color:var(--dim);margin-bottom:0.75rem}
+        .participation-card .link{font-size:0.65rem;color:var(--cyan);text-decoration:none}
+        .participation-card .link:hover{text-decoration:underline}
+        
+        footer{text-align:center;padding:2rem 1.5rem;color:var(--dim);font-size:0.65rem;border-top:1px solid var(--border);margin-top:2rem}
+        footer a{color:var(--yellow);text-decoration:none}
+        footer a:hover{text-decoration:underline}
+        
+        .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg2);border:1px solid var(--yellow);padding:0.6rem 1.2rem;border-radius:8px;font-size:0.75rem;opacity:0;transition:all 0.3s;z-index:1000}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        
+        @media(max-width:768px){
+            .lvl{font-size:0.6rem;padding:0.5rem 0.8rem}
+            .l1{width:150px}.l2{width:180px}.l3{width:210px}.l4{width:240px}.l5{width:270px}.l6{width:300px}
+            .stats-grid{grid-template-columns:repeat(3,1fr)}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="flag"><div class="f1"></div><div class="f2"></div><div class="f3"></div></div>
+                <div class="logo-text">BEL<span>DATA</span> CITOYEN</div>
+            </div>
+            <div class="badge">📊 Cartographie Démocratique • Données vérifiées janvier 2025</div>
+        </div>
+    </header>
+    
+    <main>
+        <!-- DISCLAIMER LÉGAL -->
+        <div class="disclaimer">
+            <div class="disclaimer-title">⚠️ AVERTISSEMENT — DISCLAIMER</div>
+            <div class="disclaimer-content">
+                <strong>Cet outil est fourni à titre informatif uniquement.</strong> Les données présentées proviennent de sources officielles publiques mais peuvent contenir des erreurs ou être obsolètes. 
+                <strong>Vérifiez toujours auprès des sources officielles</strong> avant toute utilisation. Dernière vérification : <strong>5 janvier 2025</strong>. 
+                Les compositions parlementaires et gouvernementales sont sujettes à modification (démissions, décès, remplacements).
+                Cet outil n'est pas affilié aux institutions belges.
+            </div>
+            <div class="disclaimer-sources">
+                <strong style="width:100%;margin-bottom:0.3rem">Sources officielles :</strong>
+                <a href="https://www.europarl.europa.eu/meps/fr/search/advanced?countryCode=BE" target="_blank">europarl.europa.eu</a>
+                <a href="https://www.lachambre.be" target="_blank">lachambre.be</a>
+                <a href="https://www.parlement-wallonie.be" target="_blank">parlement-wallonie.be</a>
+                <a href="https://www.vlaamsparlement.be" target="_blank">vlaamsparlement.be</a>
+                <a href="https://www.parlement.brussels" target="_blank">parlement.brussels</a>
+                <a href="https://www.pdg.be" target="_blank">pdg.be</a>
+                <a href="https://www.pfwb.be" target="_blank">pfwb.be</a>
+                <a href="https://www.buergerdialog.be" target="_blank">buergerdialog.be</a>
+            </div>
+        </div>
+        
+        <!-- PYRAMIDE NAVIGATION -->
+        <div class="pyramid-nav">
+            <h2>Structure Institutionnelle Belge</h2>
+            <div class="lvl l1 active" data-level="eu">🇪🇺 EUROPÉEN — 22 eurodéputés</div>
+            <div class="lvl l2" data-level="fed">🇧🇪 FÉDÉRAL — Chambre 150 • Sénat 60 • Gouvernement 15</div>
+            <div class="lvl l3" data-level="com">🗣️ COMMUNAUTÉS — FWB 94 • DG 25 • VG (=VLA)</div>
+            <div class="lvl l4" data-level="reg">🏛️ RÉGIONS — Wallonie 75 • Bruxelles 89 • Flandre 124</div>
+            <div class="lvl l5" data-level="prov">🏢 PROVINCES — 10 provinces • 398 conseillers</div>
+            <div class="lvl l6" data-level="com2">🏘️ COMMUNES — 581 communes • 13 000+ conseillers</div>
+        </div>
+        
+        <!-- STATS GLOBALES -->
+        <div class="stats-grid">
+            <div class="stat"><div class="stat-value">22</div><div class="stat-label">Eurodéputés BE</div></div>
+            <div class="stat"><div class="stat-value">150</div><div class="stat-label">Députés fédéraux</div></div>
+            <div class="stat"><div class="stat-value">288</div><div class="stat-label">Députés régionaux</div></div>
+            <div class="stat"><div class="stat-value">119</div><div class="stat-label">Députés communautaires</div></div>
+            <div class="stat"><div class="stat-value">581</div><div class="stat-label">Communes</div></div>
+            <div class="stat"><div class="stat-value">11,5M</div><div class="stat-label">Habitants</div></div>
+        </div>
+        
+        <!-- ======================= NIVEAU EUROPÉEN ======================= -->
+        <div class="panel active" id="panel-eu">
+            <div class="section">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🇪🇺 Parlement Européen — Eurodéputés Belges 2024-2029 <span class="verified">✓ VÉRIFIÉ europarl.europa.eu</span></div>
+                        <div class="section-subtitle">22 eurodéputés : 13 NL + 8 FR + 1 DE • Élus le 9 juin 2024</div>
+                    </div>
+                    <div class="btns">
+                        <button class="btn" onclick="exportJSON(EU,'eurodeputes-be')">📥 Export JSON</button>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <input type="text" class="filter" id="eu-search" placeholder="🔍 Rechercher..." oninput="filterEU()">
+                    <select class="filter" id="eu-groupe" onchange="filterEU()">
+                        <option value="">Tous groupes PE</option>
+                        <option value="PPE">PPE</option>
+                        <option value="S&D">S&D</option>
+                        <option value="Renew">Renew</option>
+                        <option value="Verts">Verts/ALE</option>
+                        <option value="ECR">ECR</option>
+                        <option value="PfE">Patriotes (PfE)</option>
+                        <option value="GUE">GUE/NGL</option>
+                    </select>
+                    <select class="filter" id="eu-college" onchange="filterEU()">
+                        <option value="">Tous collèges</option>
+                        <option value="FR">Francophone (8)</option>
+                        <option value="NL">Néerlandophone (13)</option>
+                        <option value="DE">Germanophone (1)</option>
+                    </select>
+                </div>
+                
+                <div class="tbl-wrap">
+                    <div class="tbl-scroll">
+                        <table id="tbl-eu">
+                            <thead><tr><th>Nom</th><th>Parti BE</th><th>Groupe PE</th><th>Collège</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- API PE -->
+                <div class="api-card" style="margin-top:1rem">
+                    <div class="api-head">
+                        <div class="api-title">API Open Data Parlement Européen</div>
+                        <span class="api-badge ok">REST JSON/RDF</span>
+                    </div>
+                    <div class="api-desc">Données officielles sur les MEPs, votes, documents, procédures législatives</div>
+                    <div class="api-code">GET https://data.europarl.europa.eu/api/v2/meps?country-of-representation=BE</div>
+                    <div class="api-links">
+                        <a href="https://data.europarl.europa.eu/en/developer-corner/opendata-api" target="_blank">📖 Documentation API</a>
+                        <a href="https://data.europarl.europa.eu" target="_blank">🌐 Portail Open Data PE</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ======================= NIVEAU FÉDÉRAL ======================= -->
+        <div class="panel" id="panel-fed">
+            <div class="tabs">
+                <button class="tab active" onclick="showFedTab('gouv')">🏛️ Gouvernement</button>
+                <button class="tab" onclick="showFedTab('chambre')">📜 Chambre</button>
+                <button class="tab" onclick="showFedTab('senat')">🏺 Sénat</button>
+            </div>
+            
+            <!-- Gouvernement De Wever -->
+            <div class="section" id="fed-gouv">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🏛️ Gouvernement De Wever (Arizona) <span class="verified">✓ VÉRIFIÉ 3 février 2025</span></div>
+                        <div class="section-subtitle">Coalition N-VA + MR + Les Engagés + Vooruit + CD&V • 15 ministres (dont 5 Vice-PM)</div>
+                    </div>
+                    <div class="btns">
+                        <button class="btn" onclick="exportJSON(GOUV,'gouvernement-de-wever')">📥 Export JSON</button>
+                    </div>
+                </div>
+                
+                <div class="cards" id="cards-gouv"></div>
+            </div>
+            
+            <!-- Chambre -->
+            <div class="section" id="fed-chambre" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">📜 Chambre des Représentants <span class="verified">✓ 150 sièges</span></div>
+                        <div class="section-subtitle">Répartition 2024-2029 : N-VA 24 • VB 20 • MR 20 • Vooruit 17 • CD&V 14 • PS 14 • Engagés 14 • Open VLD 7 • PTB 8 • Groen 6 • Ecolo 3 • DéFI 2 • CSP 1</div>
+                    </div>
+                </div>
+                
+                <div class="info" style="background:var(--bg2);border-color:var(--border)">
+                    <strong>⚠️ Données partielles</strong> — La liste complète des 150 députés nécessite une vérification exhaustive auprès de <a href="https://www.lachambre.be/kvvcr/showpage.cfm?section=/depute&language=fr&cfm=cvlist.cfm" target="_blank">lachambre.be</a>. 
+                    Seule la répartition par parti est présentée ici car vérifiée.
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">API Chambre des Représentants</div>
+                        <span class="api-badge no">Pas d'API publique</span>
+                    </div>
+                    <div class="api-desc">Aucune API REST publique. Données accessibles via le site web uniquement.</div>
+                    <div class="api-links">
+                        <a href="https://www.lachambre.be" target="_blank">🌐 lachambre.be</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sénat -->
+            <div class="section" id="fed-senat" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🏺 Sénat de Belgique <span class="verified">✓ 60 sièges</span></div>
+                        <div class="section-subtitle">50 sénateurs des entités fédérées + 10 cooptés • Assemblée non permanente</div>
+                    </div>
+                </div>
+                
+                <div class="info" style="background:var(--bg2);border-color:var(--border)">
+                    <strong>Composition indirecte</strong> — 29 désignés par le Parlement flamand, 10 par le Parlement FWB, 8 par le Parlement wallon, 2 par le groupe FR du Parlement bruxellois, 1 par le Parlement germanophone.
+                </div>
+            </div>
+        </div>
+        
+        <!-- ======================= NIVEAU COMMUNAUTÉS ======================= -->
+        <div class="panel" id="panel-com">
+            <div class="tabs">
+                <button class="tab active" onclick="showComTab('dg')">🇩🇪 Communauté germanophone</button>
+                <button class="tab" onclick="showComTab('fwb')">🇫🇷 Fédération Wallonie-Bruxelles</button>
+                <button class="tab" onclick="showComTab('vg')">🇳🇱 Communauté flamande</button>
+            </div>
+            
+            <!-- Communauté germanophone - HIGHLIGHT BÜRGERDIALOG -->
+            <div class="section" id="com-dg">
+                <div class="highlight-box">
+                    <h3>Ostbelgien Modell — Dialogue Citoyen Permanent</h3>
+                    <p style="font-size:0.75rem;color:var(--text);margin-bottom:1rem">
+                        Première institution au monde à disposer d'un <strong>conseil citoyen permanent</strong> mandaté par la loi (décret du 25 février 2019, adopté à l'unanimité). 
+                        Un modèle de démocratie délibérative reconnu internationalement.
+                    </p>
+                    <div class="highlight-content">
+                        <div class="highlight-item">
+                            <h4>🎯 Bürgerrat</h4>
+                            <div class="num">24</div>
+                            <p>Membres du Conseil citoyen permanent, tirés au sort pour 18 mois. Définit les thèmes des assemblées.</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>👥 Bürgerversammlungen</h4>
+                            <div class="num">25-50</div>
+                            <p>Citoyens par assemblée, tirés au sort (dès 16 ans). Délibèrent et formulent des recommandations.</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>📊 Taux de participation</h4>
+                            <div class="num">~10%</div>
+                            <p>Des personnes contactées acceptent de participer (moyenne habituelle : 3%). Record mondial.</p>
+                        </div>
+                        <div class="highlight-item">
+                            <h4>🔗 Lien institutionnel</h4>
+                            <p>Les recommandations sont débattues en <strong>commission parlementaire conjointe</strong> avec les députés et ministres concernés. Suivi obligatoire.</p>
+                            <a href="https://www.buergerdialog.be" target="_blank" style="color:var(--cyan);font-size:0.7rem">buergerdialog.be →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🇩🇪 Parlement de la Communauté germanophone <span class="verified">✓ VÉRIFIÉ pdg.be</span></div>
+                        <div class="section-subtitle">25 députés • Élus directs • Siège : Eupen • ~80 000 habitants • 9 communes</div>
+                    </div>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+                    <div class="card">
+                        <div class="card-title">Parlement DG 2024-2029</div>
+                        <div class="card-role">Présidente : Patricia Creutz</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><span class="tag t-prodg">ProDG</span> 8 sièges (majorité)</div>
+                            <div><span class="tag t-csp">CSP</span> 5 sièges (majorité)</div>
+                            <div><span class="tag t-vivant">Vivant</span> 4 sièges</div>
+                            <div><span class="tag t-pff">PFF</span> 3 sièges (majorité)</div>
+                            <div><span class="tag t-sp">SP</span> 3 sièges</div>
+                            <div><span class="tag t-eco">Ecolo</span> 2 sièges</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Gouvernement Paasch III</div>
+                        <div class="card-role">Coalition ProDG-CSP-PFF (16/25)</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><strong>Oliver Paasch</strong> <span class="tag t-prodg">ProDG</span> Min.-Président</div>
+                            <div><strong>Lydia Klinkenberg</strong> <span class="tag t-prodg">ProDG</span> Famille/Santé</div>
+                            <div><strong>Jérôme Franssen</strong> <span class="tag t-csp">CSP</span> Enseignement</div>
+                            <div><strong>Gregor Freches</strong> <span class="tag t-pff">PFF</span> Culture/Sports</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FWB -->
+            <div class="section" id="com-fwb" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🇫🇷 Fédération Wallonie-Bruxelles <span class="verified">✓ VÉRIFIÉ pfwb.be</span></div>
+                        <div class="section-subtitle">94 députés = 75 PW + 19 BXL FR • Parlement non élu directement • Président : Benoît Dispa (Les Engagés)</div>
+                    </div>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                    <div class="card">
+                        <div class="card-title">Composition Parlement FWB 2024</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><span class="tag t-mr">MR</span> 31 sièges</div>
+                            <div><span class="tag t-ps">PS</span> 24 sièges</div>
+                            <div><span class="tag t-eng">Les Engagés</span> 19 sièges</div>
+                            <div><span class="tag t-ptb">PTB</span> 10 sièges</div>
+                            <div><span class="tag t-eco">Ecolo</span> 7 sièges</div>
+                            <div><span class="tag t-defi">DéFI</span> 3 sièges</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Gouvernement Degryse</div>
+                        <div class="card-role">Coalition MR - Les Engagés</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><strong>Elisabeth Degryse</strong> <span class="tag t-eng">Engagés</span> Min.-Prés.</div>
+                            <div><strong>Valérie Glatigny</strong> <span class="tag t-mr">MR</span> Éducation</div>
+                            <div><strong>Valérie Lescrenier</strong> <span class="tag t-eng">Engagés</span> Enfance</div>
+                            <div><strong>Jacqueline Galant</strong> <span class="tag t-mr">MR</span> Sports/Médias</div>
+                            <div><strong>Yves Coppieters</strong> <span class="tag t-eng">Engagés</span> Santé</div>
+                            <div><strong>Adrien Dolimont</strong> <span class="tag t-mr">MR</span> Recherche</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Communauté flamande -->
+            <div class="section" id="com-vg" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🇳🇱 Communauté flamande (Vlaamse Gemeenschap)</div>
+                        <div class="section-subtitle">Fusionnée avec la Région flamande • Parlement flamand = 124 députés</div>
+                    </div>
+                </div>
+                
+                <div class="info" style="background:var(--bg2);border-color:var(--border)">
+                    En Flandre, la Communauté et la Région sont <strong>fusionnées</strong> depuis 1980. 
+                    Il n'existe qu'un seul Parlement flamand et un seul Gouvernement flamand qui exercent les compétences communautaires ET régionales.
+                    Voir onglet "Régions" pour les données du Parlement flamand.
+                </div>
+            </div>
+        </div>
+        
+        <!-- ======================= NIVEAU RÉGIONS ======================= -->
+        <div class="panel" id="panel-reg">
+            <div class="tabs">
+                <button class="tab active" onclick="showRegTab('wal')">🟡 Wallonie</button>
+                <button class="tab" onclick="showRegTab('bxl')">🔵 Bruxelles</button>
+                <button class="tab" onclick="showRegTab('vla')">🟠 Flandre</button>
+            </div>
+            
+            <!-- Wallonie -->
+            <div class="section" id="reg-wal">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🟡 Parlement de Wallonie <span class="verified">✓ VÉRIFIÉ parlement-wallonie.be</span></div>
+                        <div class="section-subtitle">75 députés • Président : Willy Borsus (MR) • Siège : Namur</div>
+                    </div>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+                    <div class="card">
+                        <div class="card-title">Répartition 2024-2029</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><span class="tag t-mr">MR</span> 26 sièges (+6)</div>
+                            <div><span class="tag t-ps">PS</span> 19 sièges (-4)</div>
+                            <div><span class="tag t-eng">Les Engagés</span> 17 sièges (+7)</div>
+                            <div><span class="tag t-ptb">PTB</span> 8 sièges (-2)</div>
+                            <div><span class="tag t-eco">Ecolo</span> 5 sièges (-7)</div>
+                        </div>
+                        <div style="font-size:0.65rem;color:var(--dim);margin-top:0.5rem">Majorité : MR + Engagés = 43/75</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Gouvernement Dolimont</div>
+                        <div class="card-role">Coalition "Azur" MR - Les Engagés</div>
+                        <div style="font-size:0.7rem;margin-top:0.5rem">
+                            <div><strong>Adrien Dolimont</strong> <span class="tag t-mr">MR</span> Min.-Prés.</div>
+                            <div><strong>François Desquesnes</strong> <span class="tag t-eng">Engagés</span> Vice-PM</div>
+                            <div><strong>Pierre-Yves Jeholet</strong> <span class="tag t-mr">MR</span> Vice-PM</div>
+                            <div><strong>+ 5 autres ministres</strong></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">API Open Data Parlement Wallon</div>
+                        <span class="api-badge ok">REST JSON/CSV</span>
+                    </div>
+                    <div class="api-desc">Données officielles : députés, commissions, publications, agenda</div>
+                    <div class="api-code">GET https://parlement-wallonie.be/opendata/composition_dep_od.php?f=json</div>
+                    <div class="api-links">
+                        <a href="https://www.parlement-wallonie.be/opendata/" target="_blank">📖 Documentation</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bruxelles -->
+            <div class="section" id="reg-bxl" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🔵 Parlement bruxellois <span class="verified">✓ 89 sièges</span></div>
+                        <div class="section-subtitle">72 francophones + 17 néerlandophones • Siège : rue du Lombard</div>
+                    </div>
+                </div>
+                
+                <div class="info" style="background:var(--bg2);border-color:var(--border)">
+                    <strong>API :</strong> Pas d'API publique REST. Données via <a href="https://www.parlement.brussels" target="_blank">parlement.brussels</a>
+                </div>
+            </div>
+            
+            <!-- Flandre -->
+            <div class="section" id="reg-vla" style="display:none">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🟠 Parlement flamand <span class="verified">✓ 124 sièges</span></div>
+                        <div class="section-subtitle">118 élus région + 6 Bruxellois NL • Siège : Bruxelles</div>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">API Open Data Vlaams Parlement</div>
+                        <span class="api-badge part">Webservices</span>
+                    </div>
+                    <div class="api-desc">Open Data sous licence Gratis Open Data Licentie Vlaanderen v1.0. Endpoints non documentés publiquement.</div>
+                    <div class="api-links">
+                        <a href="https://www.vlaamsparlement.be/nl/parlementair-werk/dossiers/dossiers/open-data" target="_blank">📖 Info Open Data VP</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ======================= NIVEAU PROVINCES ======================= -->
+        <div class="panel" id="panel-prov">
+            <div class="section">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🏢 Les 10 Provinces Belges</div>
+                        <div class="section-subtitle">398 conseillers provinciaux au total • Élus le 13 octobre 2024</div>
+                    </div>
+                </div>
+                
+                <div class="tbl-wrap">
+                    <table>
+                        <thead><tr><th>Province</th><th>Région</th><th>Chef-lieu</th><th>Population</th><th>Conseillers</th></tr></thead>
+                        <tbody>
+                            <tr><td>Anvers</td><td>Flandre</td><td>Anvers</td><td>1,9M</td><td>36</td></tr>
+                            <tr><td>Brabant flamand</td><td>Flandre</td><td>Louvain</td><td>1,2M</td><td>36</td></tr>
+                            <tr><td>Brabant wallon</td><td>Wallonie</td><td>Wavre</td><td>410K</td><td>37</td></tr>
+                            <tr><td>Flandre occidentale</td><td>Flandre</td><td>Bruges</td><td>1,2M</td><td>36</td></tr>
+                            <tr><td>Flandre orientale</td><td>Flandre</td><td>Gand</td><td>1,5M</td><td>36</td></tr>
+                            <tr><td>Hainaut</td><td>Wallonie</td><td>Mons</td><td>1,35M</td><td>56</td></tr>
+                            <tr><td>Liège</td><td>Wallonie</td><td>Liège</td><td>1,1M</td><td>56</td></tr>
+                            <tr><td>Limbourg</td><td>Flandre</td><td>Hasselt</td><td>880K</td><td>36</td></tr>
+                            <tr><td>Luxembourg</td><td>Wallonie</td><td>Arlon</td><td>290K</td><td>37</td></tr>
+                            <tr><td>Namur</td><td>Wallonie</td><td>Namur</td><td>500K</td><td>37</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="info" style="background:var(--bg2);border-color:var(--border);margin-top:1rem">
+                    <strong>Note :</strong> Bruxelles-Capitale n'est pas une province mais une région à part entière (19 communes).
+                </div>
+            </div>
+        </div>
+        
+        <!-- ======================= NIVEAU COMMUNES ======================= -->
+        <div class="panel" id="panel-com2">
+            <div class="section">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🏘️ Les 581 Communes Belges</div>
+                        <div class="section-subtitle">300 en Flandre • 262 en Wallonie (dont 9 germanophones) • 19 à Bruxelles</div>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">API BeSt Address (BOSA)</div>
+                        <span class="api-badge ok">REST JSON/XML/CSV</span>
+                    </div>
+                    <div class="api-desc">Registre officiel : communes, rues, adresses, codes postaux, coordonnées GPS</div>
+                    <div class="api-code">GET https://best.pr.fedservices.be/api/opendata/best/v1/belgianAddress/v2/municipalities</div>
+                    <div class="api-links">
+                        <a href="https://opendata.bosa.be" target="_blank">📖 opendata.bosa.be</a>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">API Statbel beSTAT</div>
+                        <span class="api-badge ok">REST JSON/CSV/XML</span>
+                    </div>
+                    <div class="api-desc">Statistiques par commune : population, revenus, immobilier, entreprises</div>
+                    <div class="api-code">GET https://bestat.statbel.fgov.be/bestat/api/views/{uuid}/result/JSON</div>
+                    <div class="api-links">
+                        <a href="https://statbel.fgov.be/fr/statistiques/bestat/faq" target="_blank">📖 Documentation</a>
+                    </div>
+                </div>
+                
+                <div class="api-card">
+                    <div class="api-head">
+                        <div class="api-title">Portail data.gov.be</div>
+                        <span class="api-badge ok">15 000+ datasets</span>
+                    </div>
+                    <div class="api-desc">Portail fédéral Open Data : datasets fédéraux, régionaux et locaux</div>
+                    <div class="api-links">
+                        <a href="https://data.gov.be" target="_blank">🌐 data.gov.be</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECTION PARTICIPATION CITOYENNE -->
+            <div class="section" style="margin-top:2rem">
+                <div class="section-head">
+                    <div>
+                        <div class="section-title">🗳️ Outils de Participation Citoyenne en Belgique</div>
+                        <div class="section-subtitle">Cartographie des mécanismes existants</div>
+                    </div>
+                </div>
+                
+                <div class="participation-grid">
+                    <div class="participation-card" style="border-color:var(--cyan)">
+                        <h4><span class="icon">🏆</span> Bürgerdialog (DG)</h4>
+                        <p>Dialogue citoyen permanent avec conseil citoyen (24 membres) et assemblées délibératives. Modèle mondial.</p>
+                        <a href="https://www.buergerdialog.be" target="_blank" class="link">buergerdialog.be →</a>
+                    </div>
+                    <div class="participation-card">
+                        <h4><span class="icon">🗣️</span> Commissions délibératives (BXL)</h4>
+                        <p>Panels citoyens mixtes (élus + citoyens tirés au sort) au Parlement bruxellois depuis 2019.</p>
+                        <a href="https://www.parlement.brussels" target="_blank" class="link">parlement.brussels →</a>
+                    </div>
+                    <div class="participation-card">
+                        <h4><span class="icon">📝</span> Droit de pétition</h4>
+                        <p>Pétitions aux parlements régionaux et fédéral. Seuils variables selon l'entité.</p>
+                    </div>
+                    <div class="participation-card">
+                        <h4><span class="icon">🏛️</span> Conseils consultatifs</h4>
+                        <p>CESE Wallonie, Brupartners (BXL), SERV (Flandre) - organes de concertation sociale.</p>
+                    </div>
+                    <div class="participation-card">
+                        <h4><span class="icon">🌐</span> Consultations publiques</h4>
+                        <p>Enquêtes publiques pour projets d'aménagement, permis d'environnement, etc.</p>
+                    </div>
+                    <div class="participation-card">
+                        <h4><span class="icon">🏘️</span> Participation communale</h4>
+                        <p>Budgets participatifs, conseils de quartier, consultations populaires locales.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        🇧🇪 <strong>BELDATA CITOYEN</strong> — Cartographie démocratique belge • Outil open source à but informatif<br>
+        <strong>⚠️ Vérifiez toujours auprès des sources officielles</strong> — Données janvier 2025<br>
+        Sources : <a href="https://www.europarl.europa.eu">europarl.europa.eu</a> • 
+        <a href="https://www.lachambre.be">lachambre.be</a> • 
+        <a href="https://www.parlement-wallonie.be">parlement-wallonie.be</a> • 
+        <a href="https://www.pdg.be">pdg.be</a> • 
+        <a href="https://www.buergerdialog.be">buergerdialog.be</a>
+    </footer>
+    
+    <div class="toast" id="toast"></div>
+    
+<script>
+// === DONNÉES EURODÉPUTÉS BELGES 2024-2029 ===
+// Source: europarl.europa.eu/meps/fr/search/advanced?countryCode=BE (vérifié 5 janv 2025)
+const EU = [
+    {nom:"WILMÈS Sophie",parti:"MR",groupe:"Renew",college:"FR"},
+    {nom:"CHASTEL Olivier",parti:"MR",groupe:"Renew",college:"FR"},
+    {nom:"CASSART Benoit",parti:"MR",groupe:"Renew",college:"FR"},
+    {nom:"DI RUPO Elio",parti:"PS",groupe:"S&D",college:"FR"},
+    {nom:"CEULEMANS Estelle",parti:"PS",groupe:"S&D",college:"FR"},
+    {nom:"BRICMONT Saskia",parti:"Ecolo",groupe:"Verts/ALE",college:"FR"},
+    {nom:"VEROUGSTRAETE Yvan",parti:"Les Engagés",groupe:"Renew",college:"FR"},
+    {nom:"ARIMONT Pascal",parti:"CSP",groupe:"PPE",college:"DE"},
+    {nom:"VAN OVERTVELDT Johan",parti:"N-VA",groupe:"ECR",college:"NL"},
+    {nom:"KANKO Assita",parti:"N-VA",groupe:"ECR",college:"NL"},
+    {nom:"VAN DIJCK Kris",parti:"N-VA",groupe:"ECR",college:"NL"},
+    {nom:"VANDENDRIESSCHE Tom",parti:"Vlaams Belang",groupe:"PfE",college:"NL"},
+    {nom:"BONTE Barbara",parti:"Vlaams Belang",groupe:"PfE",college:"NL"},
+    {nom:"ANNEMANS Gerolf",parti:"Vlaams Belang",groupe:"PfE",college:"NL"},
+    {nom:"BEKE Wouter",parti:"CD&V",groupe:"PPE",college:"NL"},
+    {nom:"SOMMEN Liesbet",parti:"CD&V",groupe:"PPE",college:"NL"},
+    {nom:"VAUTMANS Hilde",parti:"Open VLD",groupe:"Renew",college:"NL"},
+    {nom:"BOTENGA Marc",parti:"PTB-PVDA",groupe:"GUE/NGL",college:"NL"},
+    {nom:"KENNES Rudi",parti:"Indépendant",groupe:"GUE/NGL",college:"NL"},
+    {nom:"MATTHIEU Sara",parti:"Groen",groupe:"Verts/ALE",college:"NL"},
+    {nom:"TOBBACK Bruno",parti:"Vooruit",groupe:"S&D",college:"NL"},
+    {nom:"VAN BREMPT Kathleen",parti:"Vooruit",groupe:"S&D",college:"NL"}
+];
+
+// === GOUVERNEMENT DE WEVER (Arizona) - 3 février 2025 ===
+// Source: vrt.be, wikipedia, rtbf.be (vérifié 5 janv 2025)
+const GOUV = [
+    {nom:"Bart De Wever",fonction:"Premier ministre",parti:"N-VA",type:"PM"},
+    {nom:"Jan Jambon",fonction:"Vice-PM • Finances, Pensions",parti:"N-VA",type:"VPM"},
+    {nom:"David Clarinval",fonction:"Vice-PM • Emploi, Économie, Agriculture",parti:"MR",type:"VPM"},
+    {nom:"Maxime Prévot",fonction:"Vice-PM • Affaires étrangères",parti:"Les Engagés",type:"VPM"},
+    {nom:"Frank Vandenbroucke",fonction:"Vice-PM • Santé, Affaires sociales",parti:"Vooruit",type:"VPM"},
+    {nom:"Vincent Van Peteghem",fonction:"Vice-PM • Budget",parti:"CD&V",type:"VPM"},
+    {nom:"Theo Francken",fonction:"Défense, Commerce extérieur",parti:"N-VA",type:"MIN"},
+    {nom:"Anneleen Van Bossuyt",fonction:"Asile, Migration",parti:"N-VA",type:"MIN"},
+    {nom:"Annelies Verlinden",fonction:"Justice",parti:"CD&V",type:"MIN"},
+    {nom:"Bernard Quintin",fonction:"Intérieur",parti:"MR",type:"MIN"},
+    {nom:"Mathieu Bihet",fonction:"Énergie",parti:"MR",type:"MIN"},
+    {nom:"Éléonore Simonet",fonction:"Classes moyennes, PME",parti:"MR",type:"MIN"},
+    {nom:"Jean-Luc Crucke",fonction:"Mobilité, Climat",parti:"Les Engagés",type:"MIN"},
+    {nom:"Vanessa Matz",fonction:"Modernisation publique",parti:"Les Engagés",type:"MIN"},
+    {nom:"Rob Beenders",fonction:"Protection consommateurs",parti:"Vooruit",type:"MIN"}
+];
+
+// Couleurs partis
+const COLORS = {
+    "PS":"t-ps","MR":"t-mr","Ecolo":"t-eco","PTB-PVDA":"t-ptb","PTB":"t-ptb",
+    "Les Engagés":"t-eng","DéFI":"t-defi","N-VA":"t-nva","Open VLD":"t-vld",
+    "Vooruit":"t-voor","CD&V":"t-cdv","Vlaams Belang":"t-vb","Groen":"t-groen",
+    "CSP":"t-csp","ProDG":"t-prodg","PFF":"t-pff","SP":"t-sp","Vivant":"t-vivant",
+    "Indépendant":"t-def"
+};
+
+// Render EU table
+function renderEU(data) {
+    const tbody = document.querySelector('#tbl-eu tbody');
+    tbody.innerHTML = data.map(d => `
+        <tr>
+            <td><strong>${d.nom}</strong></td>
+            <td><span class="tag ${COLORS[d.parti] || 't-def'}">${d.parti}</span></td>
+            <td>${d.groupe}</td>
+            <td>${d.college === 'FR' ? '🇫🇷 FR' : d.college === 'NL' ? '🇳🇱 NL' : '🇩🇪 DE'}</td>
+        </tr>
+    `).join('');
+}
+
+function filterEU() {
+    const search = document.getElementById('eu-search').value.toLowerCase();
+    const groupe = document.getElementById('eu-groupe').value;
+    const college = document.getElementById('eu-college').value;
+    
+    const filtered = EU.filter(d => {
+        const matchSearch = d.nom.toLowerCase().includes(search) || d.parti.toLowerCase().includes(search);
+        const matchGroupe = !groupe || d.groupe.includes(groupe);
+        const matchCollege = !college || d.college === college;
+        return matchSearch && matchGroupe && matchCollege;
+    });
+    renderEU(filtered);
+}
+
+// Render gouvernement cards
+function renderGouv() {
+    const container = document.getElementById('cards-gouv');
+    container.innerHTML = GOUV.map(m => `
+        <div class="card" style="${m.type === 'PM' ? 'border-color:var(--yellow);background:rgba(244,180,0,0.05)' : m.type === 'VPM' ? 'border-color:var(--cyan)' : ''}">
+            <div class="card-title">${m.nom}</div>
+            <div class="card-role">${m.fonction}</div>
+            <div class="card-meta"><span class="tag ${COLORS[m.parti]}">${m.parti}</span></div>
+        </div>
+    `).join('');
+}
+
+// Export JSON
+function exportJSON(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.json`;
+    a.click();
+    showToast(`✓ ${filename}.json téléchargé`);
+}
+
+// Navigation pyramide
+document.querySelectorAll('.lvl').forEach(lvl => {
+    lvl.addEventListener('click', () => {
+        document.querySelectorAll('.lvl').forEach(l => l.classList.remove('active'));
+        lvl.classList.add('active');
+        
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + lvl.dataset.level).classList.add('active');
+    });
+});
+
+// Tabs fédéral
+function showFedTab(tab) {
+    document.querySelectorAll('#panel-fed .tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('fed-gouv').style.display = tab === 'gouv' ? 'block' : 'none';
+    document.getElementById('fed-chambre').style.display = tab === 'chambre' ? 'block' : 'none';
+    document.getElementById('fed-senat').style.display = tab === 'senat' ? 'block' : 'none';
+}
+
+// Tabs communautés
+function showComTab(tab) {
+    document.querySelectorAll('#panel-com .tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('com-dg').style.display = tab === 'dg' ? 'block' : 'none';
+    document.getElementById('com-fwb').style.display = tab === 'fwb' ? 'block' : 'none';
+    document.getElementById('com-vg').style.display = tab === 'vg' ? 'block' : 'none';
+}
+
+// Tabs régions
+function showRegTab(tab) {
+    document.querySelectorAll('#panel-reg .tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('reg-wal').style.display = tab === 'wal' ? 'block' : 'none';
+    document.getElementById('reg-bxl').style.display = tab === 'bxl' ? 'block' : 'none';
+    document.getElementById('reg-vla').style.display = tab === 'vla' ? 'block' : 'none';
+}
+
+// Toast
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Init
+renderEU(EU);
+renderGouv();
+</script>
+</body>
+</html>

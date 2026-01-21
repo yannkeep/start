@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇧🇪 BELDATA — Tous Niveaux de Pouvoir + APIs</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--bg:#090910;--bg2:#0f0f18;--bg3:#16162a;--border:#252540;--yellow:#f4b400;--red:#e53935;--blue:#3b82f6;--green:#22c55e;--purple:#a855f7;--cyan:#06b6d4;--text:#e2e8f0;--dim:#64748b}
+        body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+        
+        header{background:linear-gradient(135deg,var(--bg2),var(--bg));border-bottom:3px solid;border-image:linear-gradient(90deg,#000,var(--yellow),var(--red))1;padding:0.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;position:sticky;top:0;z-index:100}
+        .logo{display:flex;align-items:center;gap:0.5rem;font-weight:700;font-size:1.1rem}
+        .flag{display:flex;width:28px;height:18px;border-radius:2px;overflow:hidden}
+        .flag div{flex:1}.f1{background:#000}.f2{background:var(--yellow)}.f3{background:var(--red)}
+        .logo span{color:var(--yellow)}
+        .badge{font-size:0.65rem;padding:0.25rem 0.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:20px}
+        
+        main{max-width:1600px;margin:0 auto;padding:1rem}
+        
+        /* Pyramide */
+        .pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:1.5rem;padding:1rem 0}
+        .lvl{display:flex;align-items:center;justify-content:center;padding:0.5rem 1rem;border-radius:6px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center}
+        .lvl:hover{transform:scale(1.03);filter:brightness(1.1)}
+        .lvl.active{box-shadow:0 0 0 2px var(--yellow)}
+        .l1{background:linear-gradient(135deg,#003399,#1a237e);width:180px}
+        .l2{background:linear-gradient(135deg,#1e293b,#334155);width:240px}
+        .l3{background:linear-gradient(135deg,#7c3aed,#9333ea);width:300px}
+        .l4{background:linear-gradient(135deg,#047857,#10b981);width:360px}
+        .l5{background:linear-gradient(135deg,#0369a1,#0284c7);width:420px}
+        .l6{background:linear-gradient(135deg,#b45309,#d97706);width:480px}
+        
+        /* Stats */
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:0.5rem;margin-bottom:1rem}
+        .stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.75rem;text-align:center}
+        .stat-v{font-size:1.3rem;font-weight:700;color:var(--yellow)}
+        .stat-l{font-size:0.55rem;color:var(--dim);margin-top:0.15rem}
+        
+        /* Tabs */
+        .tabs{display:flex;gap:2px;background:var(--bg2);padding:2px;border-radius:6px;margin-bottom:1rem;flex-wrap:wrap}
+        .tab{padding:0.4rem 0.6rem;background:transparent;border:none;border-radius:4px;color:var(--dim);font-size:0.65rem;cursor:pointer}
+        .tab:hover{color:var(--text)}
+        .tab.active{background:var(--yellow);color:#000;font-weight:600}
+        
+        .panel{display:none}.panel.active{display:block}
+        
+        /* Section */
+        .section{margin-bottom:1.5rem}
+        .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+        .section-title{font-size:0.9rem;font-weight:600}
+        .btns{display:flex;gap:0.3rem;flex-wrap:wrap}
+        .btn{padding:0.3rem 0.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:0.6rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.2rem}
+        .btn:hover{border-color:var(--yellow)}
+        
+        /* Filters */
+        .filters{display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap}
+        .filter{padding:0.35rem 0.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:0.65rem;min-width:120px}
+        .filter:focus{outline:none;border-color:var(--yellow)}
+        
+        /* Table */
+        .tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+        .tbl-scroll{max-height:350px;overflow:auto}
+        table{width:100%;border-collapse:collapse;font-size:0.7rem}
+        th{background:var(--bg3);padding:0.5rem;text-align:left;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--dim);position:sticky;top:0}
+        td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border)}
+        tr:hover td{background:var(--bg3)}
+        
+        .tag{display:inline-block;padding:0.1rem 0.35rem;border-radius:3px;font-size:0.55rem;font-weight:600}
+        .t-ps{background:#dc2626;color:#fff}.t-mr{background:#2563eb;color:#fff}.t-eco{background:#16a34a;color:#fff}
+        .t-ptb{background:#b91c1c;color:#fff}.t-eng{background:#ea580c;color:#fff}.t-defi{background:#9333ea;color:#fff}
+        .t-nva{background:#eab308;color:#000}.t-vld{background:#0284c7;color:#fff}.t-voor{background:#dc2626;color:#fff}
+        .t-cdv{background:#f97316;color:#fff}.t-vb{background:#374151;color:#fff}.t-groen{background:#22c55e;color:#fff}
+        .t-csp{background:#f97316;color:#fff}.t-def{background:var(--bg3);color:var(--text)}
+        
+        /* Cards */
+        .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem}
+        .card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.75rem}
+        .card:hover{border-color:var(--yellow)}
+        .card-t{font-weight:600;font-size:0.8rem;margin-bottom:0.3rem}
+        .card-m{font-size:0.65rem;color:var(--dim)}
+        
+        /* Info */
+        .info{background:rgba(244,180,0,0.08);border:1px solid rgba(244,180,0,0.25);border-radius:6px;padding:0.75rem;margin-bottom:1rem;font-size:0.7rem;line-height:1.5}
+        .info a{color:var(--yellow)}
+        .info code{background:var(--bg3);padding:0.1rem 0.3rem;border-radius:3px;font-size:0.6rem}
+        
+        /* API */
+        .api{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:0.4rem;font-family:monospace;font-size:0.55rem;color:var(--cyan);margin-top:0.4rem;overflow-x:auto;white-space:nowrap}
+        .api-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.75rem;margin-bottom:0.75rem}
+        .api-card:hover{border-color:var(--cyan)}
+        .api-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+        .api-title{font-weight:600;font-size:0.8rem}
+        .api-tag{font-size:0.5rem;padding:0.15rem 0.3rem;background:var(--cyan);color:#000;border-radius:3px}
+        .api-desc{font-size:0.65rem;color:var(--dim);margin-bottom:0.5rem}
+        
+        footer{text-align:center;padding:1.5rem;color:var(--dim);font-size:0.6rem;border-top:1px solid var(--border)}
+        footer a{color:var(--yellow)}
+        
+        .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg2);border:1px solid var(--yellow);padding:0.5rem 1rem;border-radius:6px;font-size:0.7rem;opacity:0;transition:all 0.3s;z-index:1000}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        
+        ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+        
+        @media(max-width:768px){header{padding:0.5rem}.lvl{width:90%!important;font-size:0.6rem}main{padding:0.5rem}}
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo"><div class="flag"><div class="f1"></div><div class="f2"></div><div class="f3"></div></div>BEL<span>DATA</span></div>
+    <div class="badge">📊 Du communal à l'européen • Données + APIs officielles • <span style="color:#f59e0b">Échantillons vérifiés</span></div>
+</header>
+
+<main>
+    <!-- Pyramide -->
+    <div class="pyramid">
+        <div class="lvl l1" onclick="show('eu')">🇪🇺 EUROPÉEN — 22 eurodéputés BE</div>
+        <div class="lvl l2" onclick="show('fed')">🇧🇪 FÉDÉRAL — Chambre 150 • Sénat 60</div>
+        <div class="lvl l3" onclick="show('comm')">🗣️ COMMUNAUTÉS — FR 94 • FL • DE 25</div>
+        <div class="lvl l4 active" onclick="show('reg')">🏛️ RÉGIONS — Wallonie 75 • Bruxelles 89 • Flandre 124</div>
+        <div class="lvl l5" onclick="show('prov')">🏢 PROVINCES — 10 provinces • 398 conseillers</div>
+        <div class="lvl l6" onclick="show('mun')">🏘️ COMMUNES — 581 communes • 13 000+ conseillers</div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat"><div class="stat-v">22</div><div class="stat-l">Eurodéputés BE</div></div>
+        <div class="stat"><div class="stat-v">150</div><div class="stat-l">Chambre</div></div>
+        <div class="stat"><div class="stat-v">60</div><div class="stat-l">Sénat</div></div>
+        <div class="stat"><div class="stat-v">75</div><div class="stat-l">Wallonie</div></div>
+        <div class="stat"><div class="stat-v">89</div><div class="stat-l">Bruxelles</div></div>
+        <div class="stat"><div class="stat-v">124</div><div class="stat-l">Flandre</div></div>
+        <div class="stat"><div class="stat-v">581</div><div class="stat-l">Communes</div></div>
+    </div>
+    
+    <!-- ============ EUROPÉEN ============ -->
+    <div id="p-eu" class="panel">
+        <div class="info">
+            <strong>🇪🇺 Parlement européen — 22 eurodéputés belges (2024-2029)</strong><br>
+            • 13 néerlandophones (collège NL) • 8 francophones (collège FR) • 1 germanophone (collège DE)<br>
+            <strong>API officielle :</strong> <code>data.europarl.europa.eu/api/v2/meps?country-of-representation=BE</code>
+        </div>
+        
+        <div class="api-card">
+            <div class="api-head"><div class="api-title">📡 European Parliament Open Data API</div><span class="api-tag">REST JSON</span></div>
+            <div class="api-desc">API officielle du Parlement européen - MEPs, votes, documents, procédures législatives</div>
+            <a class="btn" href="https://data.europarl.europa.eu/en/developer-corner/opendata-api" target="_blank">📖 Documentation</a>
+            <a class="btn" href="https://data.europarl.europa.eu/en/home" target="_blank">🌐 Portail</a>
+            <div class="api">GET https://data.europarl.europa.eu/api/v2/meps?country-of-representation=BE&format=application%2Fld%2Bjson</div>
+            <div class="api">GET https://data.europarl.europa.eu/api/v2/meps/{mepId}</div>
+        </div>
+        
+        <section class="section">
+            <div class="section-head">
+                <div class="section-title">👥 Eurodéputés belges 2024-2029</div>
+                <div class="btns"><button class="btn" onclick="exp('eu')">📥 JSON</button></div>
+            </div>
+            <div class="tbl-wrap"><div class="tbl-scroll">
+                <table><thead><tr><th>Nom</th><th>Parti BE</th><th>Groupe EU</th><th>Collège</th></tr></thead><tbody id="t-eu"></tbody></table>
+            </div></div>
+        </section>
+    </div>
+    
+    <!-- ============ FÉDÉRAL ============ -->
+    <div id="p-fed" class="panel">
+        <div class="info">
+            <strong>🇧🇪 Niveau fédéral belge</strong><br>
+            • Chambre des Représentants : 150 députés élus directs<br>
+            • Sénat : 60 membres (50 désignés + 10 cooptés)<br>
+            <strong>⚠️ Pas d'API publique</strong> — Données via scraping ou demande officielle
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="fedTab('ch')">Chambre (150)</button>
+            <button class="tab" onclick="fedTab('se')">Sénat (60)</button>
+            <button class="tab" onclick="fedTab('go')">Gouvernement</button>
+        </div>
+        
+        <div id="fed-ch" class="fed-p">
+            <section class="section">
+                <div class="section-head">
+                    <div class="section-title">🏛️ Chambre des Représentants 2024-2029</div>
+                    <div class="btns">
+                        <button class="btn" onclick="exp('ch')">📥 JSON</button>
+                        <a class="btn" href="https://www.lachambre.be" target="_blank">🔗 lachambre.be</a>
+                    </div>
+                </div>
+                <div class="filters">
+                    <select class="filter" id="f-ch-p" onchange="fCh()"><option value="">Tous partis</option></select>
+                    <input class="filter" id="f-ch-s" placeholder="Recherche..." oninput="fCh()">
+                </div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th><th>Circo</th></tr></thead><tbody id="t-ch"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+        
+        <div id="fed-se" class="fed-p" style="display:none">
+            <section class="section">
+                <div class="section-head"><div class="section-title">🏛️ Sénat de Belgique</div><a class="btn" href="https://www.senate.be" target="_blank">🔗 senate.be</a></div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th><th>Désignation</th></tr></thead><tbody id="t-se"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+        
+        <div id="fed-go" class="fed-p" style="display:none">
+            <section class="section">
+                <div class="section-head"><div class="section-title">🏛️ Gouvernement De Wever (Arizona) — depuis 2025</div></div>
+                <div class="info">Coalition <strong>Arizona</strong> : N-VA + MR + Les Engagés + Vooruit + CD&V</div>
+                <div class="cards" id="c-go"></div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- ============ COMMUNAUTÉS ============ -->
+    <div id="p-comm" class="panel">
+        <div class="info">
+            <strong>🗣️ Communautés linguistiques</strong><br>
+            • Fédération Wallonie-Bruxelles (94 membres = 75 PW + 19 BXL)<br>
+            • Communauté flamande (fusionnée avec Région → Parlement flamand)<br>
+            • Communauté germanophone (25 députés, Eupen)
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="commTab('fwb')">Féd. Wallonie-Bruxelles</button>
+            <button class="tab" onclick="commTab('dg')">Com. germanophone (25)</button>
+        </div>
+        
+        <div id="comm-fwb" class="comm-p">
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">🎭 Parlement FWB</div><span class="api-tag">Pas d'API</span></div>
+                <div class="api-desc">94 membres = 75 députés wallons + 19 députés bruxellois francophones</div>
+                <a class="btn" href="https://www.pfwb.be" target="_blank">🔗 pfwb.be</a>
+            </div>
+        </div>
+        
+        <div id="comm-dg" class="comm-p" style="display:none">
+            <section class="section">
+                <div class="section-head"><div class="section-title">🇩🇪 Parlement Communauté germanophone (PDG)</div><a class="btn" href="https://www.pdg.be" target="_blank">🔗 pdg.be</a></div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th></tr></thead><tbody id="t-dg"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- ============ RÉGIONS ============ -->
+    <div id="p-reg" class="panel active">
+        <div class="info">
+            <strong>🏛️ Parlements régionaux</strong><br>
+            • Wallonie : 75 députés — <strong>✅ API Open Data officielle</strong><br>
+            • Bruxelles : 89 députés (72 FR + 17 NL)<br>
+            • Flandre : 124 députés — <strong>✅ Open Data via webservices</strong>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="regTab('pw')">🌲 Wallonie (75)</button>
+            <button class="tab" onclick="regTab('bxl')">🏙️ Bruxelles (89)</button>
+            <button class="tab" onclick="regTab('vla')">🦁 Flandre (124)</button>
+        </div>
+        
+        <div id="reg-pw" class="reg-p">
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📡 Parlement Wallon Open Data</div><span class="api-tag">JSON/CSV</span></div>
+                <div class="api-desc">API officielle : députés, commissions, publications, agenda</div>
+                <a class="btn" href="https://www.parlement-wallonie.be/opendata/" target="_blank">📖 Documentation</a>
+                <div class="api">GET https://www.parlement-wallonie.be/opendata/composition_dep_od.php?f=json</div>
+                <div class="api">GET https://www.parlement-wallonie.be/opendata/commissions_od.php?f=json</div>
+                <div class="api">GET https://www.parlement-wallonie.be/opendata/publications_od.php?f=json&idleg=11</div>
+                <div class="api">GET https://www.parlement-wallonie.be/opendata/agenda_od.php?cal=recherche&f=json&idleg=11&idses=1</div>
+            </div>
+            <section class="section">
+                <div class="section-head">
+                    <div class="section-title">👥 Députés wallons 2024-2029</div>
+                    <div class="btns"><button class="btn" onclick="exp('pw')">📥 JSON</button></div>
+                </div>
+                <div class="filters">
+                    <select class="filter" id="f-pw-p" onchange="fPW()"><option value="">Tous</option></select>
+                    <select class="filter" id="f-pw-c" onchange="fPW()"><option value="">Toutes circos</option></select>
+                    <input class="filter" id="f-pw-s" placeholder="Recherche..." oninput="fPW()">
+                </div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th><th>Circo</th><th>Fonction</th></tr></thead><tbody id="t-pw"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+        
+        <div id="reg-bxl" class="reg-p" style="display:none">
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">🏙️ Parlement bruxellois</div><span class="api-tag">Pas d'API publique</span></div>
+                <div class="api-desc">89 députés : 72 francophones + 17 néerlandophones</div>
+                <a class="btn" href="https://www.parlement.brussels/deputes/" target="_blank">🔗 parlement.brussels</a>
+            </div>
+            <section class="section">
+                <div class="section-head"><div class="section-title">👥 Députés bruxellois 2024-2029</div><div class="btns"><button class="btn" onclick="exp('bxl')">📥 JSON</button></div></div>
+                <div class="filters">
+                    <select class="filter" id="f-bxl-p" onchange="fBXL()"><option value="">Tous</option></select>
+                    <select class="filter" id="f-bxl-g" onchange="fBXL()"><option value="">Groupe</option><option>FR</option><option>NL</option></select>
+                </div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th><th>Groupe</th></tr></thead><tbody id="t-bxl"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+        
+        <div id="reg-vla" class="reg-p" style="display:none">
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📡 Vlaams Parlement Open Data</div><span class="api-tag">Webservices</span></div>
+                <div class="api-desc">Données parlementaires flamandes via webservices</div>
+                <a class="btn" href="https://www.vlaamsparlement.be/nl/parlementair-werk/dossiers/dossiers/open-data" target="_blank">📖 Open Data</a>
+            </div>
+            <section class="section">
+                <div class="section-head"><div class="section-title">👥 Parlement flamand 2024-2029</div><div class="btns"><button class="btn" onclick="exp('vla')">📥 JSON</button></div></div>
+                <div class="filters">
+                    <select class="filter" id="f-vla-p" onchange="fVLA()"><option value="">Tous</option></select>
+                </div>
+                <div class="tbl-wrap"><div class="tbl-scroll">
+                    <table><thead><tr><th>Nom</th><th>Parti</th><th>Circo</th></tr></thead><tbody id="t-vla"></tbody></table>
+                </div></div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- ============ PROVINCES ============ -->
+    <div id="p-prov" class="panel">
+        <div class="info">
+            <strong>🏢 10 Provinces belges</strong> (Bruxelles = région, pas province)<br>
+            398 conseillers provinciaux au total • Dernières élections : octobre 2024
+        </div>
+        <div class="cards" id="c-prov"></div>
+    </div>
+    
+    <!-- ============ COMMUNES ============ -->
+    <div id="p-mun" class="panel">
+        <div class="info">
+            <strong>🏘️ 581 Communes belges</strong><br>
+            • 300 en Flandre • 262 en Wallonie • 19 à Bruxelles<br>
+            • 13 000+ conseillers communaux • Élections : 13 octobre 2024
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="munTab('bxl19')">Bruxelles (19)</button>
+            <button class="tab" onclick="munTab('grandes')">Grandes villes</button>
+            <button class="tab" onclick="munTab('apis')">🔌 APIs Communales</button>
+        </div>
+        
+        <div id="mun-bxl19" class="mun-p">
+            <div class="cards" id="c-bxl19"></div>
+        </div>
+        
+        <div id="mun-grandes" class="mun-p" style="display:none">
+            <div class="tbl-wrap"><div class="tbl-scroll">
+                <table><thead><tr><th>Commune</th><th>Région</th><th>Pop.</th><th>Bourgmestre</th><th>Parti</th></tr></thead><tbody id="t-grandes"></tbody></table>
+            </div></div>
+        </div>
+        
+        <div id="mun-apis" class="mun-p" style="display:none">
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📍 BeSt Address (BOSA)</div><span class="api-tag">REST JSON</span></div>
+                <div class="api-desc">Registre consolidé des adresses belges - communes, rues, codes postaux</div>
+                <a class="btn" href="https://opendata.bosa.be" target="_blank">📖 opendata.bosa.be</a>
+                <div class="api">GET https://best.pr.fedservices.be/api/opendata/best/v1/belgianAddress/v2/municipalities</div>
+                <div class="api">GET .../streets?nisCode=62063 (Liège)</div>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📊 Statbel beSTAT</div><span class="api-tag">JSON/CSV/XML</span></div>
+                <div class="api-desc">Statistiques officielles par commune : population, revenus, immobilier</div>
+                <a class="btn" href="https://statbel.fgov.be/fr/statistiques/bestat/faq" target="_blank">📖 FAQ API</a>
+                <a class="btn" href="https://bestat.statbel.fgov.be/bestat/" target="_blank">🌐 beSTAT</a>
+                <div class="api">GET https://bestat.statbel.fgov.be/bestat/api/views/{uuid}/result/JSON</div>
+                <div class="api">GET https://bestat.statbel.fgov.be/bestat/api/datasources/</div>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📈 IWEPS Wallonie</div><span class="api-tag">JSON/CSV</span></div>
+                <div class="api-desc">Indicateurs économiques et sociaux par commune wallonne</div>
+                <a class="btn" href="https://www.iweps.be/outils/open-data/" target="_blank">📖 Documentation</a>
+                <div class="api">GET https://opendata.iweps.be/api/data/json/{indicateur}/com+period=all</div>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">🗺️ UrbIS Bruxelles</div><span class="api-tag">WMS/WFS</span></div>
+                <div class="api-desc">Données géographiques bruxelloises</div>
+                <a class="btn" href="https://datastore.brussels" target="_blank">🌐 datastore.brussels</a>
+                <div class="api">https://geoservices.irisnet.be/</div>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">🇧🇪 data.gov.be</div><span class="api-tag">Portail CKAN</span></div>
+                <div class="api-desc">Portail fédéral avec 15 000+ datasets de toutes administrations</div>
+                <a class="btn" href="https://data.gov.be" target="_blank">🌐 Portail</a>
+            </div>
+            
+            <div class="api-card">
+                <div class="api-head"><div class="api-title">📂 ODWB Wallonie</div><span class="api-tag">OpenDataSoft</span></div>
+                <div class="api-desc">Portail Open Data Wallonie-Bruxelles</div>
+                <a class="btn" href="https://www.odwb.be" target="_blank">🌐 odwb.be</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    🇧🇪 <strong>BELDATA</strong> — Tous les niveaux de pouvoir belges + APIs officielles<br>
+    Sources : <a href="https://www.europarl.europa.eu/meps/fr/search/advanced?countryCode=BE">PE officiel</a> • <a href="https://www.parlement-wallonie.be/opendata/">PW</a> • <a href="https://www.vlaamsparlement.be">VP</a> • <a href="https://opendata.bosa.be">BOSA</a> • <a href="https://statbel.fgov.be">Statbel</a> • <a href="https://data.gov.be">data.gov.be</a><br>
+    ⚠️ Données : <strong>Échantillons vérifiés janvier 2025</strong> — Eurodéputés (22/22), Gouv. fédéral (15/15), Régionaux (samples) • KERN
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// === DONNÉES EURODÉPUTÉS BELGES 2024-2029 (source: europarl.europa.eu janv 2025) ===
+const EU=[
+{nom:"WILMÈS Sophie",p:"MR",g:"Renew",c:"FR"},
+{nom:"CHASTEL Olivier",p:"MR",g:"Renew",c:"FR"},
+{nom:"CASSART Benoit",p:"MR",g:"Renew",c:"FR"},
+{nom:"DI RUPO Elio",p:"PS",g:"S&D",c:"FR"},
+{nom:"CEULEMANS Estelle",p:"PS",g:"S&D",c:"FR"},
+{nom:"BRICMONT Saskia",p:"Ecolo",g:"Verts/ALE",c:"FR"},
+{nom:"VEROUGSTRAETE Yvan",p:"Les Engagés",g:"Renew",c:"FR"},
+{nom:"ARIMONT Pascal",p:"CSP",g:"PPE",c:"DE"},
+{nom:"VAN OVERTVELDT Johan",p:"N-VA",g:"ECR",c:"NL"},
+{nom:"KANKO Assita",p:"N-VA",g:"ECR",c:"NL"},
+{nom:"VAN DIJCK Kris",p:"N-VA",g:"ECR",c:"NL"},
+{nom:"VANDENDRIESSCHE Tom",p:"Vlaams Belang",g:"PfE",c:"NL"},
+{nom:"BONTE Barbara",p:"Vlaams Belang",g:"PfE",c:"NL"},
+{nom:"ANNEMANS Gerolf",p:"Vlaams Belang",g:"PfE",c:"NL"},
+{nom:"BEKE Wouter",p:"CD&V",g:"PPE",c:"NL"},
+{nom:"SOMMEN Liesbet",p:"CD&V",g:"PPE",c:"NL"},
+{nom:"VAUTMANS Hilde",p:"Open VLD",g:"Renew",c:"NL"},
+{nom:"BOTENGA Marc",p:"PTB-PVDA",g:"GUE/NGL",c:"NL"},
+{nom:"KENNES Rudi",p:"Indépendant",g:"GUE/NGL",c:"NL"},
+{nom:"MATTHIEU Sara",p:"Groen",g:"Verts/ALE",c:"NL"},
+{nom:"TOBBACK Bruno",p:"Vooruit",g:"S&D",c:"NL"},
+{nom:"VAN BREMPT Kathleen",p:"Vooruit",g:"S&D",c:"NL"}
+];
+
+// === CHAMBRE FÉDÉRALE ===
+const CH=[
+{nom:"DE WEVER Bart",p:"N-VA",c:"Anvers"},{nom:"JAMBON Jan",p:"N-VA",c:"Anvers"},{nom:"FRANCKEN Theo",p:"N-VA",c:"Brabant fl."},
+{nom:"BOUCHEZ Georges-Louis",p:"MR",c:"Hainaut"},{nom:"CLARINVAL David",p:"MR",c:"Luxembourg"},{nom:"DUCARME Denis",p:"MR",c:"Hainaut"},
+{nom:"PRÉVOT Maxime",p:"Les Engagés",c:"Namur"},{nom:"FONCK Catherine",p:"Les Engagés",c:"Bruxelles"},{nom:"DALLEMAGNE Georges",p:"Les Engagés",c:"Bruxelles"},
+{nom:"DI RUPO Elio",p:"PS",c:"Hainaut"},{nom:"LAAOUEJ Ahmed",p:"PS",c:"Bruxelles"},{nom:"ONKELINX Laurette",p:"PS",c:"Bruxelles"},
+{nom:"HEDEBOUW Raoul",p:"PTB-PVDA",c:"Liège"},{nom:"MERTENS Peter",p:"PTB-PVDA",c:"Anvers"},{nom:"MERCKX Sofie",p:"PTB-PVDA",c:"Bruxelles"},
+{nom:"VAN GRIEKEN Tom",p:"Vlaams Belang",c:"Anvers"},{nom:"DEWULF Nathalie",p:"Vlaams Belang",c:"Flandre or."},
+{nom:"DE CROO Alexander",p:"Open VLD",c:"Flandre or."},{nom:"LACHAERT Egbert",p:"Open VLD",c:"Flandre or."},
+{nom:"VANDENBROUCKE Frank",p:"Vooruit",c:"Brabant fl."},{nom:"KITIR Meryame",p:"Vooruit",c:"Limbourg"},
+{nom:"GILKINET Georges",p:"Ecolo",c:"Namur"},{nom:"KHATTABI Zakia",p:"Ecolo",c:"Bruxelles"},
+{nom:"ALMACI Meyrem",p:"Groen",c:"Anvers"},{nom:"VAN HECKE Stefaan",p:"Groen",c:"Flandre or."},
+{nom:"DE SMET François",p:"DéFI",c:"Bruxelles"},{nom:"ROHONYI Sophie",p:"DéFI",c:"Bruxelles"},
+{nom:"BOGAERT Hendrik",p:"CD&V",c:"Flandre occ."},{nom:"DIERICK Leen",p:"CD&V",c:"Flandre or."}
+];
+
+// === SÉNAT ===
+const SE=[
+{nom:"BARZIN Anne",p:"MR",d:"Parlement Wallon"},{nom:"DESQUESNES François",p:"Les Engagés",d:"Parlement Wallon"},
+{nom:"FREDERIC André",p:"PS",d:"Parlement Wallon"},{nom:"HAZEE Stéphane",p:"Ecolo",d:"Parlement Wallon"},
+{nom:"DAERDEN Frédéric",p:"PS",d:"Parl. Bruxellois"},{nom:"DIEPENDAELE Matthias",p:"N-VA",d:"Parl. Flamand"},
+{nom:"SOMERS Bart",p:"Open VLD",d:"Parl. Flamand"},{nom:"DEMIR Zuhal",p:"N-VA",d:"Parl. Flamand"},
+{nom:"GENNEZ Caroline",p:"Vooruit",d:"Parl. Flamand"},{nom:"JANSSENS Chris",p:"Vlaams Belang",d:"Parl. Flamand"},
+{nom:"ARIMONT Pascal",p:"CSP",d:"Parl. Germanophone"}
+];
+
+// === GOUVERNEMENT DE WEVER (Arizona) - 3 février 2025 (source: vrt.be, wikipedia) ===
+const GO=[
+{f:"Premier ministre",n:"Bart De Wever",p:"N-VA"},
+{f:"Vice-PM Finances/Pensions",n:"Jan Jambon",p:"N-VA"},
+{f:"Vice-PM Emploi/Économie/Agriculture",n:"David Clarinval",p:"MR"},
+{f:"Vice-PM Affaires étrangères",n:"Maxime Prévot",p:"Les Engagés"},
+{f:"Vice-PM Santé/Affaires sociales",n:"Frank Vandenbroucke",p:"Vooruit"},
+{f:"Vice-PM Budget",n:"Vincent Van Peteghem",p:"CD&V"},
+{f:"Défense/Commerce extérieur",n:"Theo Francken",p:"N-VA"},
+{f:"Asile/Migration",n:"Anneleen Van Bossuyt",p:"N-VA"},
+{f:"Justice",n:"Annelies Verlinden",p:"CD&V"},
+{f:"Intérieur",n:"Bernard Quintin",p:"MR"},
+{f:"Énergie",n:"Mathieu Bihet",p:"MR"},
+{f:"Classes moyennes/PME",n:"Éléonore Simonet",p:"MR"},
+{f:"Mobilité/Climat",n:"Jean-Luc Crucke",p:"Les Engagés"},
+{f:"Modernisation publique",n:"Vanessa Matz",p:"Les Engagés"},
+{f:"Protection consommateurs",n:"Rob Beenders",p:"Vooruit"}
+];
+
+// === PARLEMENT WALLON ===
+const PW=[
+{nom:"DOLIMONT Adrien",p:"MR",c:"Hainaut",f:"Min.-Président"},{nom:"BORSUS Willy",p:"MR",c:"Luxembourg",f:"Président PW"},
+{nom:"COLLIGNON Christophe",p:"PS",c:"Liège",f:"Ministre"},{nom:"MORREALE Christie",p:"PS",c:"Liège",f:"Ministre"},
+{nom:"TELLIER Céline",p:"Ecolo",c:"Namur",f:"Ministre"},{nom:"PREVOT Maxime",p:"Les Engagés",c:"Namur",f:"Député"},
+{nom:"DI RUPO Elio",p:"PS",c:"Hainaut",f:"Député"},{nom:"BOUCHEZ Georges-Louis",p:"MR",c:"Hainaut",f:"Député"},
+{nom:"HEDEBOUW Raoul",p:"PTB",c:"Liège",f:"Député"},{nom:"HAZEE Stéphane",p:"Ecolo",c:"Namur",f:"Chef groupe"},
+{nom:"MUGEMANGANGO Germain",p:"PTB",c:"Hainaut",f:"Chef groupe"},{nom:"ANTOINE André",p:"Les Engagés",c:"Brabant wallon",f:"Député"},
+{nom:"BARZIN Anne",p:"MR",c:"Namur",f:"Députée"},{nom:"BASTIN Christophe",p:"Les Engagés",c:"Namur",f:"Député"},
+{nom:"BIERIN Olivier",p:"Ecolo",c:"Liège",f:"Député"},{nom:"CREMASCO Veronica",p:"Ecolo",c:"Brabant wallon",f:"Députée"},
+{nom:"DESQUESNES François",p:"Les Engagés",c:"Brabant wallon",f:"Député"},{nom:"GALANT Jacqueline",p:"MR",c:"Hainaut",f:"Députée"},
+{nom:"GREOLI Alda",p:"Les Engagés",c:"Liège",f:"Députée"},{nom:"JEHOLET Pierre-Yves",p:"MR",c:"Liège",f:"Député"},
+{nom:"LEONARD Laurent",p:"PS",c:"Liège",f:"Député"},{nom:"MAROY Olivier",p:"MR",c:"Brabant wallon",f:"Député"},
+{nom:"MARTIN Nicolas",p:"PS",c:"Hainaut",f:"Député"},{nom:"PECRIAUX Sophie",p:"PS",c:"Hainaut",f:"Députée"},
+{nom:"SCHYNS Marie-Martine",p:"Les Engagés",c:"Liège",f:"Députée"},{nom:"VANDORPE Mathilde",p:"Les Engagés",c:"Hainaut",f:"Députée"}
+];
+
+// === PARLEMENT BRUXELLOIS ===
+const BXL=[
+{nom:"MADRANE Rachid",p:"PS",g:"FR"},{nom:"VERVOORT Rudi",p:"PS",g:"FR"},{nom:"CLOSE Christophe",p:"PS",g:"FR"},
+{nom:"MAMPAKA MANKAMBA Bertin",p:"MR",g:"FR"},{nom:"LEISTERH David",p:"MR",g:"FR"},{nom:"SCHEPMANS Françoise",p:"MR",g:"FR"},
+{nom:"MARON Alain",p:"Ecolo",g:"FR"},{nom:"DOULKERIDIS Christos",p:"Ecolo",g:"FR"},
+{nom:"MAINGAIN Olivier",p:"DéFI",g:"FR"},{nom:"DE BOCK Emmanuel",p:"DéFI",g:"FR"},
+{nom:"OBOLENSKY Petya",p:"PTB",g:"FR"},{nom:"NDIAYE Fatima",p:"PTB",g:"FR"},
+{nom:"BENNANI Sofia",p:"Les Engagés",g:"FR"},{nom:"DE MAGHT Vanessa",p:"Les Engagés",g:"FR"},
+{nom:"VANHENGEL Guy",p:"Open VLD",g:"NL"},{nom:"GATZ Sven",p:"Open VLD",g:"NL"},
+{nom:"SMET Pascal",p:"Vooruit",g:"NL"},{nom:"PERSOONS Barbara",p:"Vooruit",g:"NL"},
+{nom:"DEBAETS Bianca",p:"CD&V",g:"NL"},{nom:"DE BRABANDERE Bob",p:"Vlaams Belang",g:"NL"},
+{nom:"CIELTJE VAN ACHTER",p:"N-VA",g:"NL"}
+];
+
+// === PARLEMENT FLAMAND ===
+const VLA=[
+{nom:"JAMBON Jan",p:"N-VA",c:"Anvers"},{nom:"DE WEVER Bart",p:"N-VA",c:"Anvers"},{nom:"DIEPENDAELE Matthias",p:"N-VA",c:"Flandre or."},
+{nom:"DEMIR Zuhal",p:"N-VA",c:"Limbourg"},{nom:"WEYTS Ben",p:"N-VA",c:"Brabant fl."},{nom:"SOMERS Bart",p:"Open VLD",c:"Anvers"},
+{nom:"RUTTEN Gwendolyn",p:"Open VLD",c:"Brabant fl."},{nom:"TOMMELEIN Bart",p:"Open VLD",c:"Flandre occ."},
+{nom:"VANDENBROUCKE Frank",p:"Vooruit",c:"Brabant fl."},{nom:"GENNEZ Caroline",p:"Vooruit",c:"Anvers"},
+{nom:"VAN GRIEKEN Tom",p:"Vlaams Belang",c:"Anvers"},{nom:"JANSSENS Chris",p:"Vlaams Belang",c:"Flandre occ."},
+{nom:"ALMACI Meyrem",p:"Groen",c:"Anvers"},{nom:"VAN DER STRAETEN Tinne",p:"Groen",c:"Anvers"},
+{nom:"SCHAUVLIEGE Joke",p:"CD&V",c:"Flandre or."},{nom:"ROMBOUTS Tinne",p:"CD&V",c:"Anvers"}
+];
+
+// === COMMUNAUTÉ GERMANOPHONE ===
+const DG=[
+{nom:"PAASCH Oliver",p:"ProDG"},{nom:"ANTONIADIS Antonios",p:"SP"},{nom:"ARIMONT Pascal",p:"CSP"},
+{nom:"KLINKENBERG Lydia",p:"ProDG"},{nom:"NIESSEN Karl-Heinz",p:"ProDG"},{nom:"JADIN Kattrin",p:"PFF"},
+{nom:"JERUSALEM Jenny",p:"Ecolo"},{nom:"SERVATY Rita",p:"SP"},{nom:"FRANZEN Gregor",p:"CSP"}
+];
+
+// === PROVINCES ===
+const PROV=[
+{nom:"Anvers",r:"Flandre",chef:"Anvers",pop:"1.9M",cons:36},{nom:"Brabant flamand",r:"Flandre",chef:"Louvain",pop:"1.2M",cons:36},
+{nom:"Brabant wallon",r:"Wallonie",chef:"Wavre",pop:"410K",cons:37},{nom:"Flandre occidentale",r:"Flandre",chef:"Bruges",pop:"1.2M",cons:36},
+{nom:"Flandre orientale",r:"Flandre",chef:"Gand",pop:"1.5M",cons:36},{nom:"Hainaut",r:"Wallonie",chef:"Mons",pop:"1.3M",cons:56},
+{nom:"Liège",r:"Wallonie",chef:"Liège",pop:"1.1M",cons:56},{nom:"Limbourg",r:"Flandre",chef:"Hasselt",pop:"880K",cons:36},
+{nom:"Luxembourg",r:"Wallonie",chef:"Arlon",pop:"290K",cons:37},{nom:"Namur",r:"Wallonie",chef:"Namur",pop:"500K",cons:37}
+];
+
+// === 19 COMMUNES BRUXELLOISES ===
+const BXL19=[
+{nom:"Anderlecht",pop:"122K",b:"Fabrice Cumps",p:"PS"},{nom:"Auderghem",pop:"35K",b:"Sophie de Vos",p:"DéFI"},
+{nom:"Bruxelles-Ville",pop:"190K",b:"Philippe Close",p:"PS"},{nom:"Etterbeek",pop:"48K",b:"Vincent De Wolf",p:"MR"},
+{nom:"Forest",pop:"56K",b:"Mariam El Hamidine",p:"Ecolo"},{nom:"Ixelles",pop:"87K",b:"Christos Doulkeridis",p:"Ecolo"},
+{nom:"Jette",pop:"53K",b:"Claire Vandevivere",p:"Ecolo"},{nom:"Molenbeek",pop:"98K",b:"Catherine Moureaux",p:"PS"},
+{nom:"Saint-Gilles",pop:"50K",b:"Jean Spinette",p:"PS"},{nom:"Schaerbeek",pop:"133K",b:"Cécile Jodogne",p:"DéFI"},
+{nom:"Uccle",pop:"84K",b:"Boris Dilliès",p:"MR"},{nom:"Woluwe-St-Lambert",pop:"58K",b:"Olivier Maingain",p:"DéFI"},
+{nom:"Woluwe-St-Pierre",pop:"42K",b:"Benoît Cerexhe",p:"Les Engagés"}
+];
+
+// === GRANDES VILLES ===
+const GRANDES=[
+{nom:"Bruxelles",r:"Bruxelles",pop:"190K",b:"Philippe Close",p:"PS"},{nom:"Anvers",r:"Flandre",pop:"530K",b:"Bart De Wever",p:"N-VA"},
+{nom:"Gand",r:"Flandre",pop:"265K",b:"Mathias De Clercq",p:"Open VLD"},{nom:"Charleroi",r:"Wallonie",pop:"202K",b:"Thomas Dermine",p:"PS"},
+{nom:"Liège",r:"Wallonie",pop:"197K",b:"Willy Demeyer",p:"PS"},{nom:"Bruges",r:"Flandre",pop:"118K",b:"Dirk De fauw",p:"CD&V"},
+{nom:"Namur",r:"Wallonie",pop:"112K",b:"Charlotte Bazelaire (ff)",p:"Les Engagés"},{nom:"Mons",r:"Wallonie",pop:"96K",b:"Nicolas Martin",p:"PS"},
+{nom:"Louvain",r:"Flandre",pop:"102K",b:"Mohamed Ridouani",p:"Vooruit"}
+];
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded',()=>{
+    initFilters();
+    renderAll();
+});
+
+function initFilters(){
+    const sets=[
+        ['f-ch-p',CH,'p'],['f-pw-p',PW,'p'],['f-pw-c',PW,'c'],['f-bxl-p',BXL,'p'],['f-vla-p',VLA,'p']
+    ];
+    sets.forEach(([id,data,key])=>{
+        const el=document.getElementById(id);
+        if(el){
+            const vals=[...new Set(data.map(d=>d[key]))].filter(Boolean).sort();
+            el.innerHTML='<option value="">Tous</option>'+vals.map(v=>`<option>${v}</option>`).join('');
+        }
+    });
+}
+
+function renderAll(){
+    render('t-eu',EU,['nom','p','g','c']);
+    render('t-ch',CH,['nom','p','c']);
+    render('t-se',SE,['nom','p','d']);
+    render('t-pw',PW,['nom','p','c','f']);
+    render('t-bxl',BXL,['nom','p','g']);
+    render('t-vla',VLA,['nom','p','c']);
+    render('t-dg',DG,['nom','p']);
+    render('t-grandes',GRANDES,['nom','r','pop','b','p']);
+    
+    document.getElementById('c-go').innerHTML=GO.map(m=>`<div class="card"><div class="card-t">${m.f}</div><div class="card-m">${m.n} <span class="tag ${tc(m.p)}">${m.p}</span></div></div>`).join('');
+    document.getElementById('c-prov').innerHTML=PROV.map(p=>`<div class="card"><div class="card-t">${p.nom}</div><div class="card-m">${p.r} • ${p.chef} • ${p.pop} • ${p.cons} cons.</div></div>`).join('');
+    document.getElementById('c-bxl19').innerHTML=BXL19.map(c=>`<div class="card"><div class="card-t">${c.nom}</div><div class="card-m">${c.pop} • ${c.b} <span class="tag ${tc(c.p)}">${c.p}</span></div></div>`).join('');
+}
+
+function render(id,data,cols){
+    document.getElementById(id).innerHTML=data.map(d=>`<tr>${cols.map(c=>c==='p'?`<td><span class="tag ${tc(d[c])}">${d[c]}</span></td>`:`<td>${d[c]||''}</td>`).join('')}</tr>`).join('');
+}
+
+// === NAVIGATION ===
+function show(id){
+    document.querySelectorAll('.lvl').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('p-'+id).classList.add('active');
+}
+
+function fedTab(id){
+    document.querySelectorAll('#p-fed .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.fed-p').forEach(p=>p.style.display='none');
+    event.target.classList.add('active');
+    document.getElementById('fed-'+id).style.display='block';
+}
+
+function commTab(id){
+    document.querySelectorAll('#p-comm .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.comm-p').forEach(p=>p.style.display='none');
+    event.target.classList.add('active');
+    document.getElementById('comm-'+id).style.display='block';
+}
+
+function regTab(id){
+    document.querySelectorAll('#p-reg .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.reg-p').forEach(p=>p.style.display='none');
+    event.target.classList.add('active');
+    document.getElementById('reg-'+id).style.display='block';
+}
+
+function munTab(id){
+    document.querySelectorAll('#p-mun .tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.mun-p').forEach(p=>p.style.display='none');
+    event.target.classList.add('active');
+    document.getElementById('mun-'+id).style.display='block';
+}
+
+// === FILTERS ===
+function fCh(){
+    const p=document.getElementById('f-ch-p').value,s=document.getElementById('f-ch-s').value.toLowerCase();
+    render('t-ch',CH.filter(d=>(!p||d.p===p)&&(!s||d.nom.toLowerCase().includes(s))),['nom','p','c']);
+}
+
+function fPW(){
+    const p=document.getElementById('f-pw-p').value,c=document.getElementById('f-pw-c').value,s=document.getElementById('f-pw-s').value.toLowerCase();
+    render('t-pw',PW.filter(d=>(!p||d.p===p)&&(!c||d.c===c)&&(!s||d.nom.toLowerCase().includes(s))),['nom','p','c','f']);
+}
+
+function fBXL(){
+    const p=document.getElementById('f-bxl-p').value,g=document.getElementById('f-bxl-g').value;
+    render('t-bxl',BXL.filter(d=>(!p||d.p===p)&&(!g||d.g===g)),['nom','p','g']);
+}
+
+function fVLA(){
+    const p=document.getElementById('f-vla-p').value;
+    render('t-vla',VLA.filter(d=>!p||d.p===p),['nom','p','c']);
+}
+
+// === TAG CLASS ===
+function tc(p){
+    if(!p)return't-def';const l=p.toLowerCase();
+    if(l.includes('ps')||l.includes('vooruit')||l.includes('sp'))return't-ps';
+    if(l.includes('mr')||l.includes('open vld')||l.includes('pff'))return't-mr';
+    if(l.includes('ecolo')||l.includes('groen'))return't-eco';
+    if(l.includes('ptb')||l.includes('pvda'))return't-ptb';
+    if(l.includes('engag')||l.includes('cdh')||l.includes('csp'))return't-eng';
+    if(l.includes('défi')||l.includes('defi'))return't-defi';
+    if(l.includes('n-va'))return't-nva';
+    if(l.includes('cd&v'))return't-cdv';
+    if(l.includes('vlaams belang'))return't-vb';
+    if(l.includes('prodg'))return't-eco';
+    return't-def';
+}
+
+// === EXPORT ===
+function exp(type){
+    const map={eu:EU,ch:CH,pw:PW,bxl:BXL,vla:VLA};
+    const blob=new Blob([JSON.stringify(map[type],null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`beldata-${type}.json`;a.click();
+    toast(`📥 beldata-${type}.json`);
+}
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>

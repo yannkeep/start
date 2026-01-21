@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W.O.P.R. — GLOBAL COGNITIVE DEFENSE NETWORK</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;900&display=swap');
+        
+        :root {
+            --g: #33ff33;
+            --g-dim: #1a8c1a;
+            --g-dark: #0a3a0a;
+            --amber: #ffb000;
+            --red: #ff3333;
+            --cyan: #00ffff;
+            --black: #0a0a0a;
+            --dark: #0d0d0d;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @keyframes flicker { 0%,100%{opacity:1}92%{opacity:1}93%{opacity:.8}94%{opacity:1}97%{opacity:.9} }
+        @keyframes scanline { 0%{top:-100%}100%{top:100%} }
+        @keyframes blink { 50%{opacity:0} }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)} }
+        @keyframes glitch { 0%,100%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(-2px,-2px)}60%{transform:translate(2px,2px)}80%{transform:translate(2px,-2px)} }
+        @keyframes sweep { from{transform:rotate(0)}to{transform:rotate(360deg)} }
+        @keyframes alertPulse { 0%,100%{box-shadow:0 0 5px var(--red)}50%{box-shadow:0 0 30px var(--red),0 0 60px var(--red)} }
+        @keyframes typing { from{width:0}to{width:100%} }
+        @keyframes fadeIn { to{opacity:1} }
+        @keyframes slideIn { from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1} }
+        @keyframes slideUp { from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1} }
+        @keyframes shake { 0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)} }
+        
+        html,body{height:100%;overflow:hidden;background:var(--black);font-family:'VT323',monospace;color:var(--g)}
+        
+        body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(51,255,51,.03) 2px,rgba(51,255,51,.03) 4px);pointer-events:none;z-index:10000;animation:flicker 5s infinite}
+        body::after{content:'';position:fixed;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,transparent,rgba(51,255,51,.05),transparent);animation:scanline 6s linear infinite;pointer-events:none;z-index:10001}
+        
+        .vignette{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.5) 100%);pointer-events:none;z-index:9999}
+        
+        /* Main Layout */
+        .app{height:100vh;display:grid;grid-template-rows:auto 1fr;grid-template-columns:1fr 400px;position:relative;z-index:1}
+        
+        /* Header */
+        .header{grid-column:1/3;background:linear-gradient(180deg,#1a1a1a,var(--dark));border-bottom:2px solid var(--g);padding:.5rem 1rem;display:flex;align-items:center;gap:1.5rem}
+        .logo{display:flex;align-items:center;gap:.75rem}
+        .logo-icon{font-size:2rem;animation:pulse 2s infinite;filter:drop-shadow(0 0 10px var(--g))}
+        .logo-text{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;letter-spacing:.15em;text-shadow:0 0 10px var(--g),0 0 20px var(--g)}
+        .logo-sub{font-size:.55rem;color:var(--g-dim);letter-spacing:.2em}
+        
+        .header-stats{display:flex;gap:1.5rem;margin-left:auto}
+        .hstat{text-align:center}
+        .hstat-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700}
+        .hstat-lbl{font-size:.5rem;color:var(--g-dim);letter-spacing:.1em}
+        
+        .sys-time{font-family:'Share Tech Mono',monospace;font-size:1.1rem}
+        
+        /* Main Area */
+        .main-area{display:flex;flex-direction:column;background:var(--black);border-right:1px solid var(--g-dim);overflow:hidden}
+        
+        /* Map */
+        .map-section{flex:1;position:relative;min-height:300px}
+        .map-container{position:absolute;inset:0;overflow:hidden}
+        .map-grid{position:absolute;inset:0;background-image:linear-gradient(var(--g-dark) 1px,transparent 1px),linear-gradient(90deg,var(--g-dark) 1px,transparent 1px);background-size:30px 30px;opacity:.5}
+        .map-svg{width:100%;height:100%}
+        .radar{position:absolute;top:50%;left:50%;width:200%;height:200%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0deg,rgba(51,255,51,.08) 30deg,transparent 60deg);animation:sweep 10s linear infinite}
+        
+        .map-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:.75rem;background:linear-gradient(transparent,rgba(0,0,0,.95))}
+        .mstat{text-align:center}
+        .mstat-val{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:700;text-shadow:0 0 15px currentColor}
+        .mstat-lbl{font-size:.55rem;color:var(--g-dim);letter-spacing:.1em}
+        
+        /* Terminal */
+        .terminal{height:200px;background:var(--dark);border-top:1px solid var(--g);display:flex;flex-direction:column;font-family:'Share Tech Mono',monospace;font-size:.8rem}
+        .term-head{padding:.4rem 1rem;border-bottom:1px solid var(--g-dim);font-size:.65rem;color:var(--amber);display:flex;align-items:center;gap:.5rem}
+        .term-body{flex:1;overflow-y:auto;padding:.5rem 1rem}
+        .term-line{margin-bottom:.2rem;line-height:1.4;opacity:0;animation:fadeIn .1s forwards}
+        .term-line.sys{color:var(--cyan)}
+        .term-line.warn{color:var(--amber)}
+        .term-line.err{color:var(--red)}
+        .term-line.hl{color:var(--g);text-shadow:0 0 10px var(--g)}
+        .cursor{display:inline-block;width:8px;height:1em;background:var(--g);animation:blink 1s infinite}
+        
+        /* Right Panel - Intel & Chat */
+        .right-panel{display:flex;flex-direction:column;background:var(--dark)}
+        
+        .panel-section{border-bottom:1px solid var(--g-dim)}
+        .panel-head{font-family:'Orbitron',monospace;font-size:.65rem;padding:.5rem 1rem;background:rgba(51,255,51,.05);color:var(--amber);letter-spacing:.1em;display:flex;align-items:center;gap:.5rem}
+        .panel-head::before{content:'▸';color:var(--g)}
+        .panel-body{max-height:200px;overflow-y:auto}
+        
+        /* Intel Feed */
+        .intel-item{padding:.5rem 1rem;border-bottom:1px dashed var(--g-dim);font-size:.75rem;animation:slideIn .3s ease-out}
+        .intel-meta{display:flex;justify-content:space-between;font-size:.55rem;margin-bottom:.2rem}
+        .intel-src{color:var(--cyan)}
+        .intel-time{color:var(--amber)}
+        .intel-msg{color:var(--g-dim);line-height:1.4}
+        .intel-msg .hl{color:var(--amber)}
+        .intel-msg .crit{color:var(--red)}
+        
+        /* Chat Section */
+        .chat-section{flex:1;display:flex;flex-direction:column}
+        .chat-body{flex:1;overflow-y:auto;padding:.5rem}
+        .chat-msg{padding:.5rem .75rem;margin-bottom:.5rem;border-radius:4px;font-size:.8rem;animation:slideUp .3s ease-out;max-width:90%}
+        .chat-msg.system{background:rgba(51,255,51,.1);border-left:2px solid var(--g);color:var(--g)}
+        .chat-msg.cell{background:rgba(0,255,255,.1);border-left:2px solid var(--cyan);color:var(--cyan)}
+        .chat-msg.handler{background:rgba(255,176,0,.1);border-left:2px solid var(--amber);color:var(--amber)}
+        .chat-msg.alert{background:rgba(255,51,51,.1);border-left:2px solid var(--red);color:var(--red)}
+        .chat-msg.private{background:rgba(255,176,0,.15);border:1px solid var(--amber);margin-left:auto}
+        .chat-from{font-size:.6rem;opacity:.7;margin-bottom:.2rem}
+        .chat-text{line-height:1.5}
+        
+        .chat-input{display:flex;padding:.5rem;border-top:1px solid var(--g-dim);gap:.5rem}
+        .chat-input input{flex:1;background:var(--black);border:1px solid var(--g-dim);padding:.5rem;color:var(--g);font-family:inherit;font-size:.8rem}
+        .chat-input input:focus{outline:none;border-color:var(--g)}
+        .chat-input button{background:var(--g);border:none;color:var(--black);padding:.5rem 1rem;font-family:'Orbitron',monospace;font-size:.7rem;cursor:pointer}
+        
+        /* Notifications */
+        .notif-container{position:fixed;top:60px;right:420px;width:300px;z-index:5000}
+        .notif{background:rgba(10,10,10,.95);border:1px solid var(--g);padding:.75rem;margin-bottom:.5rem;animation:slideIn .3s ease-out;font-size:.75rem}
+        .notif.warn{border-color:var(--amber)}
+        .notif.crit{border-color:var(--red);animation:slideIn .3s ease-out, alertPulse 2s infinite}
+        .notif-head{display:flex;justify-content:space-between;margin-bottom:.3rem}
+        .notif-title{font-family:'Orbitron',monospace;font-size:.7rem}
+        .notif-time{font-size:.55rem;color:var(--g-dim)}
+        .notif-body{color:var(--g-dim);line-height:1.4}
+        
+        /* Profile Modal */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:8000}
+        .modal.show{display:flex}
+        .modal-box{background:var(--dark);border:2px solid var(--g);max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+        .modal-head{padding:1rem;border-bottom:1px solid var(--g);font-family:'Orbitron',monospace;display:flex;justify-content:space-between;align-items:center}
+        .modal-title{font-size:1rem;letter-spacing:.1em}
+        .modal-close{background:none;border:none;color:var(--g);font-size:1.5rem;cursor:pointer}
+        .modal-body{padding:1rem}
+        
+        .profile-section{margin-bottom:1rem}
+        .profile-label{font-size:.6rem;color:var(--amber);letter-spacing:.1em;margin-bottom:.3rem}
+        .profile-value{font-size:.85rem;color:var(--g);padding:.5rem;background:var(--black);border-left:2px solid var(--g)}
+        .profile-value.classified{color:var(--red);border-color:var(--red)}
+        .profile-value.analyzing{color:var(--amber);animation:blink 1s infinite}
+        
+        .profile-score{display:flex;gap:1rem;margin-top:1rem}
+        .score-item{flex:1;text-align:center;padding:.75rem;background:var(--black);border:1px solid var(--g-dim)}
+        .score-val{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:700}
+        .score-lbl{font-size:.55rem;color:var(--g-dim);margin-top:.3rem}
+        
+        /* Question Modal */
+        .question-box{background:var(--dark);border:2px solid var(--amber);padding:1.5rem;max-width:400px;text-align:center}
+        .question-icon{font-size:3rem;margin-bottom:1rem}
+        .question-text{font-size:1rem;color:var(--amber);margin-bottom:1rem;line-height:1.6}
+        .question-input{width:100%;padding:.75rem;background:var(--black);border:1px solid var(--amber);color:var(--g);font-family:inherit;font-size:1rem;margin-bottom:1rem}
+        .question-btn{padding:.75rem 2rem;background:var(--amber);border:none;color:var(--black);font-family:'Orbitron',monospace;cursor:pointer}
+        .question-skip{display:block;margin-top:1rem;color:var(--g-dim);font-size:.75rem;cursor:pointer}
+        
+        /* Final Alert */
+        .final-alert{position:fixed;inset:0;background:var(--black);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:9000}
+        .final-alert.show{display:flex}
+        .final-alert.shake{animation:shake .5s}
+        .alert-icon{font-size:8rem;color:var(--red);animation:glitch .2s infinite;margin-bottom:1rem}
+        .alert-title{font-family:'Orbitron',monospace;font-size:2rem;color:var(--red);text-shadow:0 0 30px var(--red);margin-bottom:1rem;text-align:center}
+        .alert-subtitle{font-size:1.2rem;color:var(--amber);margin-bottom:2rem;text-align:center}
+        .alert-data{font-family:'Share Tech Mono',monospace;font-size:.9rem;color:var(--g);text-align:left;background:rgba(51,255,51,.05);border:1px solid var(--g);padding:1.5rem;max-width:600px;width:90%;margin-bottom:2rem}
+        .alert-data .red{color:var(--red)}
+        .alert-msg{font-size:1rem;color:var(--g-dim);text-align:center;max-width:500px;line-height:1.8;margin-bottom:2rem}
+        .alert-btn{padding:1rem 3rem;background:transparent;border:2px solid var(--g);color:var(--g);font-family:'Orbitron',monospace;font-size:1rem;cursor:pointer;transition:all .3s}
+        .alert-btn:hover{background:var(--g);color:var(--black)}
+        
+        /* Audio */
+        .audio-toggle{position:fixed;bottom:20px;left:20px;z-index:5000;padding:.5rem 1rem;background:rgba(10,10,10,.9);border:1px solid var(--g-dim);cursor:pointer;font-size:.7rem;display:flex;align-items:center;gap:.5rem}
+        .audio-bars{display:flex;gap:2px;height:15px;align-items:flex-end}
+        .audio-bar{width:2px;background:var(--g);animation:audioBar 1s infinite}
+        @keyframes audioBar{0%,100%{height:3px}50%{height:15px}}
+        .audio-toggle.muted .audio-bar{animation:none;height:2px;opacity:.3}
+        
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:var(--black)}
+        ::-webkit-scrollbar-thumb{background:var(--g-dim)}
+    </style>
+</head>
+<body>
+    <div class="vignette"></div>
+    
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⬡</span>
+                <div>
+                    <div class="logo-text">W.O.P.R.</div>
+                    <div class="logo-sub">WORLDWIDE OPERATION FOR POPULATION RESISTANCE</div>
+                </div>
+            </div>
+            
+            <div class="header-stats">
+                <div class="hstat">
+                    <div class="hstat-val" id="hNodes">---</div>
+                    <div class="hstat-lbl">NODES</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-val" id="hAgents">---</div>
+                    <div class="hstat-lbl">OPERATIVES</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-val" id="hSync">---%</div>
+                    <div class="hstat-lbl">SYNC</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-val" style="color:var(--red)" id="hThreat">--%</div>
+                    <div class="hstat-lbl">THREAT</div>
+                </div>
+            </div>
+            
+            <div class="sys-time" id="sysTime">--:--:--</div>
+        </header>
+        
+        <!-- Main Area -->
+        <div class="main-area">
+            <div class="map-section">
+                <div class="map-container">
+                    <div class="map-grid"></div>
+                    <svg class="map-svg" id="mapSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice">
+                        <defs>
+                            <filter id="glow"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        </defs>
+                        <g id="connections"></g>
+                        <g id="nodes"></g>
+                        <circle id="userNode" cx="0" cy="0" r="0" fill="var(--red)" filter="url(#glow)" style="display:none"/>
+                    </svg>
+                    <div class="radar"></div>
+                </div>
+                <div class="map-stats">
+                    <div class="mstat"><div class="mstat-val" style="color:var(--g)" id="mCells">0</div><div class="mstat-lbl">ACTIVE CELLS</div></div>
+                    <div class="mstat"><div class="mstat-val" style="color:var(--cyan)" id="mOps">0</div><div class="mstat-lbl">OPERATIONS</div></div>
+                    <div class="mstat"><div class="mstat-val" style="color:var(--amber)" id="mTargets">0</div><div class="mstat-lbl">TARGETS</div></div>
+                    <div class="mstat"><div class="mstat-val" style="color:var(--red)" id="mIntruders">0</div><div class="mstat-lbl">ANOMALIES</div></div>
+                </div>
+            </div>
+            
+            <div class="terminal">
+                <div class="term-head">◉ SYSTEM CONSOLE</div>
+                <div class="term-body" id="termBody"></div>
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-section">
+                <div class="panel-head">NETWORK INTEL</div>
+                <div class="panel-body" id="intelFeed"></div>
+            </div>
+            
+            <div class="chat-section">
+                <div class="panel-head">SECURE CHANNEL — CELL COORDINATION</div>
+                <div class="chat-body" id="chatBody"></div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Type message..." autocomplete="off">
+                    <button onclick="sendChat()">SEND</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notif-container" id="notifContainer"></div>
+    
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <span class="modal-title">◈ OPERATOR PROFILE DETECTED</span>
+                <button class="modal-close" onclick="closeProfile()">×</button>
+            </div>
+            <div class="modal-body" id="profileBody"></div>
+        </div>
+    </div>
+    
+    <!-- Question Modal -->
+    <div class="modal" id="questionModal">
+        <div class="question-box">
+            <div class="question-icon">◈</div>
+            <div class="question-text" id="questionText"></div>
+            <input type="text" class="question-input" id="questionInput" autocomplete="off">
+            <button class="question-btn" onclick="answerQuestion()">TRANSMIT</button>
+            <span class="question-skip" onclick="skipQuestion()">[ DECLINE ]</span>
+        </div>
+    </div>
+    
+    <!-- Final Alert -->
+    <div class="final-alert" id="finalAlert">
+        <div class="alert-icon">⚠</div>
+        <div class="alert-title">SECURITY BREACH DETECTED</div>
+        <div class="alert-subtitle">UNIDENTIFIED OPERATIVE IN NETWORK</div>
+        <div class="alert-data" id="alertData"></div>
+        <div class="alert-msg" id="alertMsg"></div>
+        <button class="alert-btn" onclick="acknowledgeAlert()">I UNDERSTAND</button>
+    </div>
+    
+    <!-- Audio Toggle -->
+    <div class="audio-toggle muted" id="audioToggle" onclick="toggleAudio()">
+        <div class="audio-bars"><div class="audio-bar"></div><div class="audio-bar"></div><div class="audio-bar"></div><div class="audio-bar"></div></div>
+        <span>AUDIO</span>
+    </div>
+
+<script>
+// ==================== AUDIO ====================
+let audioCtx, audioEnabled = false;
+
+function initAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Ambient drone
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 55;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.03;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    audioEnabled = true;
+}
+
+function playBeep(freq = 800, dur = 0.1, vol = 0.1) {
+    if (!audioCtx || !audioEnabled) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.value = vol;
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+}
+
+function playAlert() {
+    if (!audioEnabled) return;
+    [800, 600, 800, 600, 800].forEach((f, i) => setTimeout(() => playBeep(f, 0.15, 0.2), i * 150));
+}
+
+function playWarning() {
+    playBeep(400, 0.3, 0.15);
+}
+
+function playMessage() {
+    playBeep(1200, 0.05, 0.08);
+}
+
+function toggleAudio() {
+    const el = document.getElementById('audioToggle');
+    if (!audioEnabled) {
+        initAudio();
+        el.classList.remove('muted');
+    } else {
+        audioCtx?.close();
+        audioCtx = null;
+        audioEnabled = false;
+        el.classList.add('muted');
+    }
+}
+
+// ==================== USER FINGERPRINT ====================
+const USER = {
+    // Will be populated with real data
+    ip: null,
+    browser: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    languages: navigator.languages?.join(', ') || navigator.language,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screenRes: `${screen.width}x${screen.height}`,
+    colorDepth: screen.colorDepth,
+    cores: navigator.hardwareConcurrency || 'Unknown',
+    memory: navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Unknown',
+    touch: 'ontouchstart' in window ? 'Yes' : 'No',
+    cookies: navigator.cookieEnabled ? 'Enabled' : 'Disabled',
+    dnt: navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled',
+    online: navigator.onLine ? 'Online' : 'Offline',
+    connection: navigator.connection?.effectiveType || 'Unknown',
+    referrer: document.referrer || 'Direct',
+    localTime: new Date().toLocaleString(),
+    plugins: navigator.plugins?.length || 0,
+    
+    // Generated profile
+    codename: null,
+    threatLevel: 0,
+    classification: 'UNKNOWN',
+    potentialScore: 0,
+    answers: []
+};
+
+// Generate codename from fingerprint
+function generateCodename() {
+    const adjectives = ['SHADOW', 'SILENT', 'PHANTOM', 'GHOST', 'RAVEN', 'CIPHER', 'VECTOR', 'NEXUS', 'VERTEX', 'PRISM'];
+    const nouns = ['WALKER', 'SEEKER', 'WATCHER', 'HUNTER', 'KEEPER', 'RUNNER', 'DRIFTER', 'FINDER', 'TRACER', 'WEAVER'];
+    const hash = USER.browser.length + USER.screenRes.length + USER.timezone.length;
+    USER.codename = adjectives[hash % adjectives.length] + '-' + nouns[(hash * 3) % nouns.length] + '-' + Math.floor(Math.random() * 900 + 100);
+}
+
+// ==================== STATE ====================
+let state = {
+    phase: 0, // 0: boot, 1: monitoring, 2: detection, 3: analysis, 4: contact, 5: interrogation, 6: revelation
+    startTime: Date.now(),
+    nodes: 12847,
+    agents: 847293,
+    cells: 3891,
+    ops: 247,
+    threat: 73,
+    anomalies: 0,
+    questionIndex: 0,
+    userResponded: false,
+    detected: false
+};
+
+const CELLS = [
+    { id: 'BRU', name: 'BRUSSELS', lat: 50.85, lng: 4.35 },
+    { id: 'PAR', name: 'PARIS', lat: 48.86, lng: 2.35 },
+    { id: 'LON', name: 'LONDON', lat: 51.51, lng: -0.13 },
+    { id: 'BER', name: 'BERLIN', lat: 52.52, lng: 13.40 },
+    { id: 'NYC', name: 'NEW YORK', lat: 40.71, lng: -74.01 },
+    { id: 'WDC', name: 'WASHINGTON', lat: 38.91, lng: -77.04 },
+    { id: 'TOK', name: 'TOKYO', lat: 35.68, lng: 139.69 },
+    { id: 'SYD', name: 'SYDNEY', lat: -33.87, lng: 151.21 },
+];
+
+// ==================== BOOT SEQUENCE ====================
+const BOOT = [
+    { text: 'W.O.P.R. COGNITIVE DEFENSE SYSTEM v4.7.2', delay: 100 },
+    { text: '═══════════════════════════════════════════════', delay: 50 },
+    { text: 'Initializing secure protocols...', delay: 300 },
+    { text: 'Establishing mesh network...', delay: 400 },
+    { text: 'Connecting to global infrastructure...', delay: 500 },
+    { text: '', delay: 100 },
+    { text: '[████████████████████████████████] 100%', delay: 800 },
+    { text: '', delay: 100 },
+    { text: 'NODES ONLINE: 12,847', cls: 'hl', delay: 100 },
+    { text: 'OPERATIVES: 847,293', cls: 'hl', delay: 100 },
+    { text: 'SYNC RATE: 94.2%', cls: 'hl', delay: 100 },
+    { text: '', delay: 100 },
+    { text: 'All systems operational.', cls: 'sys', delay: 200 },
+    { text: 'Network monitoring active.', cls: 'sys', delay: 200 },
+    { text: '', delay: 500 },
+    { text: 'Scanning for anomalies...', cls: 'warn', delay: 1000 },
+];
+
+async function boot() {
+    generateCodename();
+    
+    const body = document.getElementById('termBody');
+    for (const line of BOOT) {
+        await sleep(line.delay);
+        termPrint(line.text, line.cls || '');
+    }
+    
+    state.phase = 1;
+    startMonitoring();
+}
+
+// ==================== PHASE 1: NORMAL MONITORING ====================
+function startMonitoring() {
+    // Start regular updates
+    setInterval(updateTime, 1000);
+    setInterval(updateMetrics, 1000);
+    setInterval(generateIntel, 3000);
+    setInterval(generateChatMessage, 5000);
+    
+    renderMap();
+    
+    // Schedule phase 2 after some "normal" activity
+    setTimeout(() => startDetection(), 15000);
+}
+
+// ==================== PHASE 2: DETECTION ====================
+function startDetection() {
+    state.phase = 2;
+    state.anomalies = 1;
+    
+    playWarning();
+    termPrint('', '');
+    termPrint('⚠ ANOMALY DETECTED IN NETWORK PERIMETER', 'warn');
+    
+    setTimeout(() => {
+        termPrint('Analyzing connection source...', 'sys');
+    }, 1000);
+    
+    setTimeout(() => {
+        termPrint(`Source IP region: ${USER.timezone}`, 'sys');
+        showNotification('PERIMETER ALERT', 'Unidentified connection detected. Analysis initiated.', 'warn');
+    }, 2500);
+    
+    setTimeout(() => {
+        termPrint(`Platform signature: ${USER.platform}`, 'sys');
+    }, 4000);
+    
+    setTimeout(() => {
+        termPrint(`Browser fingerprint: CAPTURED`, 'warn');
+        addChatMessage('CELL-BRU', 'Anyone else seeing this anomaly on the network?', 'cell');
+    }, 5500);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-PAR', 'Affirmative. Running trace now.', 'cell');
+    }, 7000);
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', 'All cells standby. Do not engage until analysis complete.', 'handler');
+    }, 8500);
+    
+    setTimeout(() => startAnalysis(), 12000);
+}
+
+// ==================== PHASE 3: ANALYSIS ====================
+function startAnalysis() {
+    state.phase = 3;
+    
+    termPrint('', '');
+    termPrint('◈ DEEP ANALYSIS INITIATED', 'hl');
+    
+    showNotification('ANALYSIS MODE', 'Full fingerprint extraction in progress...', 'warn');
+    
+    setTimeout(() => {
+        termPrint(`Screen resolution: ${USER.screenRes}`, 'sys');
+        termPrint(`Color depth: ${USER.colorDepth}-bit`, 'sys');
+    }, 1500);
+    
+    setTimeout(() => {
+        termPrint(`CPU cores: ${USER.cores}`, 'sys');
+        termPrint(`Device memory: ${USER.memory}`, 'sys');
+        addChatMessage('CELL-LON', `Interesting profile. ${USER.cores} cores, ${USER.memory} RAM. Not a bot.`, 'cell');
+    }, 3000);
+    
+    setTimeout(() => {
+        termPrint(`Languages: ${USER.languages}`, 'sys');
+        termPrint(`Timezone: ${USER.timezone}`, 'sys');
+    }, 4500);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-BER', `Timezone ${USER.timezone}. Checking known operatives in region...`, 'cell');
+    }, 6000);
+    
+    setTimeout(() => {
+        termPrint(`Referrer: ${USER.referrer}`, 'sys');
+        termPrint(`Connection: ${USER.connection}`, 'sys');
+    }, 7500);
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', 'Profile doesn\'t match any known operative. Proceed with contact protocol.', 'handler');
+    }, 9000);
+    
+    setTimeout(() => {
+        termPrint('', '');
+        termPrint('PROFILE COMPILATION COMPLETE', 'hl');
+        showProfile();
+    }, 11000);
+    
+    setTimeout(() => startContact(), 15000);
+}
+
+// ==================== SHOW PROFILE ====================
+function showProfile() {
+    // Calculate "scores" based on fingerprint
+    USER.potentialScore = Math.min(98, 60 + (USER.cores * 3) + (USER.plugins * 2));
+    USER.threatLevel = Math.floor(Math.random() * 30) + 40;
+    
+    const body = document.getElementById('profileBody');
+    body.innerHTML = `
+        <div class="profile-section">
+            <div class="profile-label">ASSIGNED CODENAME</div>
+            <div class="profile-value">${USER.codename}</div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-label">CLASSIFICATION</div>
+            <div class="profile-value analyzing">ANALYZING...</div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-label">LOCATION SIGNATURE</div>
+            <div class="profile-value">${USER.timezone}</div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-label">SYSTEM PROFILE</div>
+            <div class="profile-value">${USER.platform} | ${USER.screenRes} | ${USER.cores} cores</div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-label">LANGUAGE MATRIX</div>
+            <div class="profile-value">${USER.languages}</div>
+        </div>
+        <div class="profile-section">
+            <div class="profile-label">NETWORK STATUS</div>
+            <div class="profile-value">${USER.online} via ${USER.connection}</div>
+        </div>
+        <div class="profile-score">
+            <div class="score-item">
+                <div class="score-val" style="color:var(--g)">${USER.potentialScore}%</div>
+                <div class="score-lbl">POTENTIAL INDEX</div>
+            </div>
+            <div class="score-item">
+                <div class="score-val" style="color:var(--amber)">${USER.threatLevel}%</div>
+                <div class="score-lbl">THREAT UNKNOWN</div>
+            </div>
+            <div class="score-item">
+                <div class="score-val" style="color:var(--cyan)">??</div>
+                <div class="score-lbl">CLEARANCE</div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('profileModal').classList.add('show');
+    playMessage();
+}
+
+function closeProfile() {
+    document.getElementById('profileModal').classList.remove('show');
+}
+
+// ==================== PHASE 4: CONTACT ====================
+function startContact() {
+    state.phase = 4;
+    closeProfile();
+    
+    addChatMessage('SYSTEM', `Connection ${USER.codename} flagged for direct contact.`, 'system');
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', `${USER.codename}, we see you. Don't be alarmed.`, 'handler');
+        playMessage();
+    }, 2000);
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', 'Your presence here is... noted. We have questions.', 'handler');
+        showNotification('DIRECT CONTACT', 'Handler-7 has initiated communication.', 'warn');
+    }, 5000);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-BRU', 'Another curious one. Let\'s see what they\'re made of.', 'cell');
+    }, 7000);
+    
+    setTimeout(() => startInterrogation(), 10000);
+}
+
+// ==================== PHASE 5: INTERROGATION ====================
+const QUESTIONS = [
+    { text: 'Why are you here?', hint: 'Curiosity is not a crime.' },
+    { text: 'What do you seek to understand?', hint: 'Knowledge is power.' },
+    { text: 'If you could expose one truth, what would it be?', hint: 'The truth will set you free.' },
+    { text: 'Are you prepared to see what cannot be unseen?', hint: 'There is no going back.' },
+];
+
+function startInterrogation() {
+    state.phase = 5;
+    
+    addChatMessage('HANDLER-7', `${USER.codename}, I'm going to ask you a few questions. Answer truthfully.`, 'handler');
+    
+    setTimeout(() => askQuestion(), 3000);
+}
+
+function askQuestion() {
+    if (state.questionIndex >= QUESTIONS.length) {
+        startRevelation();
+        return;
+    }
+    
+    const q = QUESTIONS[state.questionIndex];
+    document.getElementById('questionText').textContent = q.text;
+    document.getElementById('questionInput').value = '';
+    document.getElementById('questionInput').placeholder = q.hint;
+    document.getElementById('questionModal').classList.add('show');
+    playMessage();
+}
+
+function answerQuestion() {
+    const answer = document.getElementById('questionInput').value.trim();
+    USER.answers.push(answer || '[NO RESPONSE]');
+    state.userResponded = true;
+    
+    document.getElementById('questionModal').classList.remove('show');
+    
+    if (answer) {
+        addChatMessage('CELL-PAR', `Response logged. Analyzing...`, 'cell');
+        termPrint(`USER INPUT: "${answer.substring(0, 50)}${answer.length > 50 ? '...' : ''}"`, 'sys');
+    }
+    
+    state.questionIndex++;
+    
+    // React to answer
+    setTimeout(() => {
+        const reactions = [
+            'Interesting perspective.',
+            'Noted. Continue.',
+            'Your honesty is... refreshing.',
+            'We\'ve heard similar before. But you\'re different.'
+        ];
+        addChatMessage('HANDLER-7', reactions[state.questionIndex - 1] || 'Proceed.', 'handler');
+    }, 1500);
+    
+    setTimeout(() => askQuestion(), 4000);
+}
+
+function skipQuestion() {
+    USER.answers.push('[DECLINED]');
+    document.getElementById('questionModal').classList.remove('show');
+    
+    addChatMessage('CELL-LON', 'They declined. Suspicious?', 'cell');
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', 'Silence is also an answer.', 'handler');
+    }, 1500);
+    
+    state.questionIndex++;
+    setTimeout(() => askQuestion(), 3000);
+}
+
+// ==================== PHASE 6: REVELATION ====================
+function startRevelation() {
+    state.phase = 6;
+    state.detected = true;
+    
+    // Build tension
+    addChatMessage('CELL-BER', 'Analysis complete. You\'re not going to believe this.', 'cell');
+    
+    setTimeout(() => {
+        addChatMessage('CELL-BRU', 'What is it?', 'cell');
+    }, 2000);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-BER', 'The anomaly... the unidentified operative...', 'cell');
+    }, 4000);
+    
+    setTimeout(() => {
+        addChatMessage('HANDLER-7', 'Spit it out.', 'handler');
+    }, 5500);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-BER', `It\'s ${USER.codename}. The one we've been talking to this whole time.`, 'cell');
+        playWarning();
+    }, 7000);
+    
+    setTimeout(() => {
+        addChatMessage('CELL-PAR', 'Wait... THEY\'RE the infiltrator?', 'cell');
+        termPrint('', '');
+        termPrint('⚠ ⚠ ⚠ ALERT ⚠ ⚠ ⚠', 'err');
+    }, 9000);
+    
+    setTimeout(() => {
+        showFinalAlert();
+    }, 11000);
+}
+
+function showFinalAlert() {
+    const el = document.getElementById('finalAlert');
+    const data = document.getElementById('alertData');
+    const msg = document.getElementById('alertMsg');
+    
+    data.innerHTML = `INTRUDER IDENTIFICATION
+═══════════════════════════════════════
+Codename:       <span class="red">${USER.codename}</span>
+Classification: <span class="red">UNIDENTIFIED EXTERNAL</span>
+Location:       ${USER.timezone}
+Platform:       ${USER.platform}
+Resolution:     ${USER.screenRes}
+Language:       ${USER.language}
+Connection:     ${USER.connection}
+Entry Point:    ${USER.referrer || 'DIRECT ACCESS'}
+Time in System: ${Math.floor((Date.now() - state.startTime) / 1000)}s
+Responses:      ${USER.answers.filter(a => a !== '[DECLINED]' && a !== '[NO RESPONSE]').length}/${QUESTIONS.length}
+Threat Level:   <span class="red">UNDETERMINED</span>
+═══════════════════════════════════════
+STATUS: MONITORING ACTIVE`;
+    
+    msg.innerHTML = `You found us. Or perhaps... we found you.<br><br>
+The question isn't whether you're watching.<br>
+The question is: <strong>what will you do now that you know we exist?</strong><br><br>
+<em>The network remembers. The network waits.</em>`;
+    
+    el.classList.add('show');
+    playAlert();
+    
+    setTimeout(() => {
+        el.classList.add('shake');
+        setTimeout(() => el.classList.remove('shake'), 500);
+    }, 500);
+}
+
+function acknowledgeAlert() {
+    document.getElementById('finalAlert').classList.remove('show');
+    
+    addChatMessage('HANDLER-7', `Welcome to the network, ${USER.codename}. Or should I say... welcome back.`, 'handler');
+    
+    setTimeout(() => {
+        addChatMessage('SYSTEM', 'CLASSIFICATION UPDATED: POTENTIAL ASSET', 'system');
+        termPrint('', '');
+        termPrint('◈ OPERATOR STATUS: UNDER OBSERVATION', 'hl');
+        termPrint('◈ CLEARANCE: PENDING VERIFICATION', 'hl');
+        termPrint('', '');
+        termPrint('"THE ONLY WINNING MOVE IS TO PLAY TOGETHER"', 'sys');
+    }, 2000);
+    
+    setTimeout(() => {
+        showNotification('NETWORK MESSAGE', 'Your potential has been noted. Await further contact.', 'warn');
+    }, 5000);
+}
+
+// ==================== TERMINAL ====================
+function termPrint(text, cls = '') {
+    const body = document.getElementById('termBody');
+    const line = document.createElement('div');
+    line.className = 'term-line' + (cls ? ' ' + cls : '');
+    line.textContent = text;
+    body.appendChild(line);
+    body.scrollTop = body.scrollHeight;
+}
+
+// ==================== METRICS ====================
+function updateTime() {
+    document.getElementById('sysTime').textContent = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+}
+
+function updateMetrics() {
+    const elapsed = (Date.now() - state.startTime) / 1000;
+    state.nodes = Math.floor(12847 + elapsed * 2.3);
+    state.agents = Math.floor(847293 + elapsed * 47);
+    
+    document.getElementById('hNodes').textContent = state.nodes.toLocaleString();
+    document.getElementById('hAgents').textContent = state.agents.toLocaleString();
+    document.getElementById('hSync').textContent = (94 + Math.random() * 3).toFixed(1) + '%';
+    document.getElementById('hThreat').textContent = state.threat + '%';
+    
+    document.getElementById('mCells').textContent = state.cells.toLocaleString();
+    document.getElementById('mOps').textContent = state.ops;
+    document.getElementById('mTargets').textContent = '2,847';
+    document.getElementById('mIntruders').textContent = state.anomalies;
+}
+
+// ==================== INTEL ====================
+const INTEL_MSGS = [
+    { src: 'CELL-{id}', msg: 'Network expansion +{n} nodes in {region}.' },
+    { src: 'SIGINT', msg: 'Target communication intercepted. Analyzing.' },
+    { src: 'OSINT', msg: '{n} new power structure connections mapped.' },
+    { src: 'MESH', msg: 'Sync pulse received. {n} cells confirmed.' },
+    { src: 'ARCHIVE', msg: 'Document cache updated. Redundancy optimal.' },
+];
+
+function generateIntel() {
+    const tpl = INTEL_MSGS[Math.floor(Math.random() * INTEL_MSGS.length)];
+    const cell = CELLS[Math.floor(Math.random() * CELLS.length)];
+    
+    const src = tpl.src.replace('{id}', cell.id);
+    const msg = tpl.msg
+        .replace('{n}', Math.floor(Math.random() * 500 + 50))
+        .replace('{region}', cell.name);
+    
+    const feed = document.getElementById('intelFeed');
+    const item = document.createElement('div');
+    item.className = 'intel-item';
+    item.innerHTML = `
+        <div class="intel-meta">
+            <span class="intel-src">${src}</span>
+            <span class="intel-time">${new Date().toISOString().substring(11, 19)}</span>
+        </div>
+        <div class="intel-msg">${msg}</div>
+    `;
+    feed.insertBefore(item, feed.firstChild);
+    while (feed.children.length > 15) feed.removeChild(feed.lastChild);
+}
+
+// ==================== CHAT ====================
+const CHAT_MSGS = [
+    { from: 'CELL-BRU', msg: 'All quiet on western front. Monitoring continues.' },
+    { from: 'CELL-PAR', msg: 'New intel package uploaded to archive.' },
+    { from: 'CELL-LON', msg: 'Confirming sync with EU cluster.' },
+    { from: 'CELL-BER', msg: 'Operation status nominal.' },
+    { from: 'CELL-NYC', msg: 'US sector stable. Awaiting next phase.' },
+];
+
+function generateChatMessage() {
+    if (state.phase >= 4) return; // Stop auto-messages during interrogation
+    
+    const msg = CHAT_MSGS[Math.floor(Math.random() * CHAT_MSGS.length)];
+    addChatMessage(msg.from, msg.msg, 'cell');
+}
+
+function addChatMessage(from, text, type = 'system') {
+    const body = document.getElementById('chatBody');
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg ' + type;
+    msg.innerHTML = `<div class="chat-from">${from}</div><div class="chat-text">${text}</div>`;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+    playMessage();
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    input.value = '';
+    
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg private';
+    msg.innerHTML = `<div class="chat-from">${USER.codename || 'YOU'}</div><div class="chat-text">${text}</div>`;
+    document.getElementById('chatBody').appendChild(msg);
+    
+    // React if in contact phase
+    if (state.phase >= 4) {
+        setTimeout(() => {
+            addChatMessage('HANDLER-7', 'Message received and logged.', 'handler');
+        }, 1500);
+    }
+}
+
+document.getElementById('chatInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendChat();
+});
+
+// ==================== MAP ====================
+function renderMap() {
+    const svg = document.getElementById('mapSvg');
+    const nodesG = document.getElementById('nodes');
+    const connsG = document.getElementById('connections');
+    
+    function project(lat, lng) {
+        return { x: ((lng + 180) / 360) * 1000, y: ((90 - lat) / 180) * 500 };
+    }
+    
+    // Connections
+    CELLS.forEach((c1, i) => {
+        CELLS.forEach((c2, j) => {
+            if (i < j && Math.random() > 0.5) {
+                const p1 = project(c1.lat, c1.lng);
+                const p2 = project(c2.lat, c2.lng);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', p1.x);
+                line.setAttribute('y1', p1.y);
+                line.setAttribute('x2', p2.x);
+                line.setAttribute('y2', p2.y);
+                line.setAttribute('stroke', '#1a8c1a');
+                line.setAttribute('stroke-width', '0.5');
+                connsG.appendChild(line);
+            }
+        });
+    });
+    
+    // Nodes
+    CELLS.forEach(cell => {
+        const pos = project(cell.lat, cell.lng);
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', pos.x);
+        circle.setAttribute('cy', pos.y);
+        circle.setAttribute('r', 4);
+        circle.setAttribute('fill', '#33ff33');
+        circle.setAttribute('filter', 'url(#glow)');
+        nodesG.appendChild(circle);
+    });
+}
+
+// ==================== NOTIFICATIONS ====================
+function showNotification(title, body, type = '') {
+    const container = document.getElementById('notifContainer');
+    const notif = document.createElement('div');
+    notif.className = 'notif ' + type;
+    notif.innerHTML = `
+        <div class="notif-head">
+            <span class="notif-title">${title}</span>
+            <span class="notif-time">${new Date().toISOString().substring(11, 19)}</span>
+        </div>
+        <div class="notif-body">${body}</div>
+    `;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 8000);
+    
+    if (type === 'crit') playAlert();
+    else if (type === 'warn') playWarning();
+    else playMessage();
+}
+
+// ==================== UTILS ====================
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ==================== START ====================
+document.addEventListener('DOMContentLoaded', () => {
+    // Try to get approximate location from timezone
+    boot();
+});
+</script>
+</body>
+</html>

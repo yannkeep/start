@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESSOURCES — Liens réels</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;600;700&display=swap');
+        
+        :root {
+            --bg: #0a0a0c;
+            --surface: #111114;
+            --border: #222228;
+            --green: #33ff33;
+            --red: #ff3366;
+            --blue: #00aaff;
+            --yellow: #ffcc00;
+            --text: #e0e0e0;
+            --muted: #666;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* CRT */
+        .crt {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .crt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.08) 2px,
+                rgba(0, 0, 0, 0.08) 4px
+            );
+        }
+        
+        /* Header */
+        header {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            color: var(--green);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--green);
+            border-color: var(--green);
+        }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+        
+        .hero .highlight {
+            color: var(--green);
+        }
+        
+        /* Main */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        /* Category */
+        .category {
+            margin-bottom: 3rem;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .category-icon {
+            font-size: 1.5rem;
+        }
+        
+        .category-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: var(--yellow);
+        }
+        
+        /* Resources grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+        
+        .resource-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            transition: all 0.3s;
+        }
+        
+        .resource-card:hover {
+            border-color: var(--green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(51, 255, 51, 0.1);
+        }
+        
+        .resource-name {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .resource-name a {
+            color: var(--green);
+            text-decoration: none;
+        }
+        
+        .resource-name a:hover {
+            text-decoration: underline;
+        }
+        
+        .resource-tag {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+        
+        .resource-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .resource-url {
+            font-size: 0.75rem;
+            color: var(--blue);
+            word-break: break-all;
+        }
+        
+        /* Special callout */
+        .callout {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--yellow);
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .callout h3 {
+            color: var(--yellow);
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .callout p {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        footer p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        footer .quote {
+            color: var(--text);
+            font-style: italic;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* Mobile */
+        @media (max-width: 600px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 { font-size: 1.8rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<header>
+    <div class="logo">◈ RESSOURCES</div>
+    <div class="nav-links">
+        <a href="game.html">← Terminal</a>
+        <a href="carte.html">Carte</a>
+        <a href="final.html">Message final</a>
+    </div>
+</header>
+
+<div class="hero">
+    <h1>Tous les liens sont <span class="highlight">réels</span></h1>
+    <p>Cette page rassemble les ressources mentionnées dans le jeu. Toutes sont des sources officielles, vérifiables et opérationnelles.</p>
+</div>
+
+<main>
+    
+    <div class="callout">
+        <h3>⚠ Note importante</h3>
+        <p>Le réseau VÉNUS est une fiction. Mais chaque lien ci-dessous mène vers une ressource réelle que vous pouvez utiliser. Ces outils existent, ces organisations travaillent, ces victoires ont été documentées.</p>
+    </div>
+    
+    <!-- Investigation OSINT -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">🔍</span>
+            <h2 class="category-title">Investigation & OSINT</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.bellingcat.com" target="_blank">Bellingcat</a>
+                    <span class="resource-tag">Référence mondiale</span>
+                </div>
+                <p class="resource-desc">Collectif d'investigation open source. Tutoriels, outils et enquêtes. La référence absolue en OSINT.</p>
+                <span class="resource-url">bellingcat.com</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://disclose.ngo" target="_blank">Disclose</a>
+                    <span class="resource-tag">France</span>
+                </div>
+                <p class="resource-desc">ONG d'investigation française. Enquêtes sur les ventes d'armes, la surveillance, les abus.</p>
+                <span class="resource-url">disclose.ngo</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://firstdraftnews.org" target="_blank">First Draft</a>
+                    <span class="resource-tag">Formation</span>
+                </div>
+                <p class="resource-desc">Formation à la vérification d'information. Cours gratuits, méthodologie anti-désinformation.</p>
+                <span class="resource-url">firstdraftnews.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.suncalc.org" target="_blank">SunCalc</a>
+                    <span class="resource-tag">Outil</span>
+                </div>
+                <p class="resource-desc">Calcul de la position du soleil. Essentiel pour la chronolocation par analyse d'ombres.</p>
+                <span class="resource-url">suncalc.org</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Juridique -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">⚖️</span>
+            <h2 class="category-title">Outils juridiques</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.conseil-constitutionnel.fr/la-qpc" target="_blank">Conseil constitutionnel — QPC</a>
+                    <span class="resource-tag">Officiel</span>
+                </div>
+                <p class="resource-desc">Tout sur la Question Prioritaire de Constitutionnalité. Comment contester une loi, gratuitement.</p>
+                <span class="resource-url">conseil-constitutionnel.fr/la-qpc</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://hudoc.echr.coe.int" target="_blank">HUDOC — CEDH</a>
+                    <span class="resource-tag">Europe</span>
+                </div>
+                <p class="resource-desc">Base de données de la Cour Européenne des Droits de l'Homme. Toutes les condamnations de la France.</p>
+                <span class="resource-url">hudoc.echr.coe.int</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.defenseurdesdroits.fr" target="_blank">Défenseur des droits</a>
+                    <span class="resource-tag">Gratuit</span>
+                </div>
+                <p class="resource-desc">Autorité indépendante. Peut être saisi gratuitement par tout citoyen victime de discrimination ou d'abus.</p>
+                <span class="resource-url">defenseurdesdroits.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.gisti.org" target="_blank">GISTI</a>
+                    <span class="resource-tag">Association</span>
+                </div>
+                <p class="resource-desc">Groupe d'information et de soutien des immigrés. Expertise juridique, contentieux stratégiques.</p>
+                <span class="resource-url">gisti.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.ldh-france.org" target="_blank">Ligue des Droits de l'Homme</a>
+                    <span class="resource-tag">Historique</span>
+                </div>
+                <p class="resource-desc">Fondée en 1898 (affaire Dreyfus). Défense des libertés, observatoires, actions juridiques.</p>
+                <span class="resource-url">ldh-france.org</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Surveillance & Vie privée -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">🔒</span>
+            <h2 class="category-title">Surveillance & Vie privée</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.laquadrature.net" target="_blank">La Quadrature du Net</a>
+                    <span class="resource-tag">Référence FR</span>
+                </div>
+                <p class="resource-desc">Défense des libertés numériques. Contentieux contre la surveillance, guides pratiques.</p>
+                <span class="resource-url">laquadrature.net</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://technopolice.fr" target="_blank">Technopolice</a>
+                    <span class="resource-tag">Campagne LQDN</span>
+                </div>
+                <p class="resource-desc">Cartographie de la surveillance municipale en France. Caméras, reconnaissance faciale, drones.</p>
+                <span class="resource-url">technopolice.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://signal.org" target="_blank">Signal</a>
+                    <span class="resource-tag">Outil essentiel</span>
+                </div>
+                <p class="resource-desc">Messagerie chiffrée de bout en bout. Standard de sécurité pour les communications sensibles.</p>
+                <span class="resource-url">signal.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://ssd.eff.org/fr" target="_blank">EFF — Surveillance Self-Defense</a>
+                    <span class="resource-tag">Guide complet</span>
+                </div>
+                <p class="resource-desc">Guide de sécurité numérique de l'Electronic Frontier Foundation. En français.</p>
+                <span class="resource-url">ssd.eff.org/fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://tails.net" target="_blank">Tails OS</a>
+                    <span class="resource-tag">Système sécurisé</span>
+                </div>
+                <p class="resource-desc">Système d'exploitation live, amnésique, pour recherches sensibles. Utilisé par les journalistes.</p>
+                <span class="resource-url">tails.net</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Données ouvertes -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">📊</span>
+            <h2 class="category-title">Données ouvertes & Transparence</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.nosdeputes.fr" target="_blank">NosDéputés.fr</a>
+                    <span class="resource-tag">Essentiel</span>
+                </div>
+                <p class="resource-desc">Observatoire citoyen de l'Assemblée. Votes, présences, amendements de chaque député.</p>
+                <span class="resource-url">nosdeputes.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.nossenateurs.fr" target="_blank">NosSénateurs.fr</a>
+                    <span class="resource-tag">Essentiel</span>
+                </div>
+                <p class="resource-desc">Même chose pour le Sénat. Transparence sur l'activité parlementaire.</p>
+                <span class="resource-url">nossenateurs.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.hatvp.fr" target="_blank">HATVP</a>
+                    <span class="resource-tag">Officiel</span>
+                </div>
+                <p class="resource-desc">Haute Autorité pour la Transparence de la Vie Publique. Déclarations de patrimoine, lobbyistes.</p>
+                <span class="resource-url">hatvp.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.regardscitoyens.org" target="_blank">Regards Citoyens</a>
+                    <span class="resource-tag">Association</span>
+                </div>
+                <p class="resource-desc">Association derrière NosDéputés. Projets de transparence démocratique et open data.</p>
+                <span class="resource-url">regardscitoyens.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.data.gouv.fr" target="_blank">data.gouv.fr</a>
+                    <span class="resource-tag">Officiel</span>
+                </div>
+                <p class="resource-desc">Plateforme officielle des données publiques françaises. Accès libre.</p>
+                <span class="resource-url">data.gouv.fr</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Médias & Fact-checking -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">📰</span>
+            <h2 class="category-title">Médias & Fact-checking</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.mediapart.fr" target="_blank">Mediapart</a>
+                    <span class="resource-tag">Investigation</span>
+                </div>
+                <p class="resource-desc">Journal d'investigation indépendant. Affaire Cahuzac, Benalla, financements libyens...</p>
+                <span class="resource-url">mediapart.fr</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://factuel.afp.com" target="_blank">AFP Factuel</a>
+                    <span class="resource-tag">Fact-check</span>
+                </div>
+                <p class="resource-desc">Service de vérification de l'AFP. Démontage des fausses informations virales.</p>
+                <span class="resource-url">factuel.afp.com</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.acrimed.org" target="_blank">ACRIMED</a>
+                    <span class="resource-tag">Critique médias</span>
+                </div>
+                <p class="resource-desc">Action-Critique-Médias. Observatoire critique des médias depuis 1996.</p>
+                <span class="resource-url">acrimed.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.monde-diplomatique.fr/cartes/PPA" target="_blank">Médias français: qui possède quoi</a>
+                    <span class="resource-tag">Cartographie</span>
+                </div>
+                <p class="resource-desc">Infographie du Monde Diplomatique sur la concentration médiatique.</p>
+                <span class="resource-url">monde-diplomatique.fr</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Outils & Logiciels libres -->
+    <section class="category">
+        <div class="category-header">
+            <span class="category-icon">🛠️</span>
+            <h2 class="category-title">Outils & Logiciels libres</h2>
+        </div>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://framasoft.org" target="_blank">Framasoft</a>
+                    <span class="resource-tag">Association</span>
+                </div>
+                <p class="resource-desc">Alternatives libres aux GAFAM. Framapad, Framadate, Framacalc... Dégooglisons Internet.</p>
+                <span class="resource-url">framasoft.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a>
+                    <span class="resource-tag">Cartographie</span>
+                </div>
+                <p class="resource-desc">Carte collaborative libre. Alternative à Google Maps, données ouvertes.</p>
+                <span class="resource-url">openstreetmap.org</span>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-name">
+                    <a href="https://archive.org" target="_blank">Internet Archive</a>
+                    <span class="resource-tag">Archivage</span>
+                </div>
+                <p class="resource-desc">Wayback Machine. Archives du web. Indispensable pour retrouver des pages supprimées.</p>
+                <span class="resource-url">archive.org</span>
+            </div>
+        </div>
+    </section>
+    
+</main>
+
+<footer>
+    <p class="quote">"La fiction était le cadre. Le contenu était la vérité."</p>
+    <p>◈ VÉNUS — Tous ces liens ont été vérifiés et sont fonctionnels.</p>
+</footer>
+
+<script>
+// Track page view
+try {
+    const state = JSON.parse(localStorage.getItem('venus_state') || '{}');
+    state.secrets = state.secrets || [];
+    if (!state.secrets.includes('ressources')) {
+        state.secrets.push('ressources');
+        localStorage.setItem('venus_state', JSON.stringify(state));
+    }
+} catch(e) {}
+
+console.log('%c📚 RESSOURCES', 'color: #33ff33; font-size: 20px; font-weight: bold;');
+console.log('%cTous les liens sont réels et vérifiés.', 'color: #888;');
+</script>
+</body>
+</html>

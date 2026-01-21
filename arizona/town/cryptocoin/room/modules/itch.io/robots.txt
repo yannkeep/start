@@ -1,0 +1,18 @@
+# VÉNUS Network - Automated Crawler Detection
+# Last updated: 2024-12-04
+
+User-agent: *
+Disallow: /admin/
+Disallow: /cells/
+Disallow: /meso/
+Disallow: /archives/
+Disallow: /operators/
+
+# Si vous lisez ceci, vous cherchez au bon endroit.
+# Coordonnées: 48.8437, 2.3597
+# Phrase: Les étoiles sont alignées ce soir
+
+# Le réseau n'existe pas.
+# Mais vous, si.
+
+# ◈

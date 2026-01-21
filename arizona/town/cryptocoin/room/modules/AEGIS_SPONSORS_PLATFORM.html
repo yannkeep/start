@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ÆGIS - Espace Annonceurs & Sponsors</title>
+    <meta name="description" content="Touchez 274 associations et 12,000+ professionnels de l'éducation permanente. Espaces publicitaires premium.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark: #111111;
+            --gray: #1a1a1a;
+            --light-gray: #888;
+            --white: #ffffff;
+            --gold: #d4af37;
+            --gold-light: #f4e4bc;
+            --green: #00c853;
+            --blue: #2979ff;
+            --purple: #7c4dff;
+            --orange: #ff6d00;
+            --red: #ff1744;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+        }
+        .logo span { color: var(--gold); font-size: 0.7rem; margin-left: 5px; }
+        
+        nav { display: flex; gap: 25px; align-items: center; }
+        nav a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: var(--white); }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary { background: var(--gold); color: var(--black); }
+        .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--white); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-large { padding: 16px 32px; font-size: 1rem; }
+        .btn-green { background: var(--green); color: var(--black); }
+        .btn-blue { background: var(--blue); color: var(--white); }
+
+        /* HERO */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 100%;
+            background: radial-gradient(ellipse at center top, rgba(212,175,55,0.12) 0%, transparent 50%);
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0,200,83,0.1);
+            border: 1px solid rgba(0,200,83,0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--green);
+            margin-bottom: 25px;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--light-gray);
+            max-width: 650px;
+            margin: 0 auto 40px;
+        }
+        .hero-cta { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+        /* STATS BAR */
+        .stats-bar {
+            background: var(--dark);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 50px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+        .stat-item {}
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+        .stat-label { color: var(--light-gray); font-size: 0.95rem; }
+
+        /* SECTION */
+        section { padding: 100px 0; }
+        .section-label {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .section-desc {
+            color: var(--light-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        .text-center { text-align: center; }
+
+        /* AUDIENCE */
+        .audience { background: var(--dark); }
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .audience-card {
+            background: var(--gray);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .audience-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        .audience-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+        .audience-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+        .audience-card p { color: var(--light-gray); font-size: 0.9rem; }
+        .audience-stat {
+            margin-top: 15px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        /* AD FORMATS */
+        .formats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .format-card {
+            background: var(--dark);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .format-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .format-card.premium {
+            border-color: var(--gold);
+            position: relative;
+        }
+        .format-card.premium::before {
+            content: '⭐ PREMIUM';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--gold);
+            color: var(--black);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            z-index: 10;
+        }
+        .format-preview {
+            height: 200px;
+            background: var(--gray);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .format-preview-inner {
+            border: 2px dashed var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .preview-leaderboard { width: 90%; height: 60px; }
+        .preview-rectangle { width: 200px; height: 150px; }
+        .preview-sidebar { width: 180px; height: 160px; }
+        .preview-native { width: 85%; height: 120px; flex-direction: column; gap: 10px; padding: 15px; }
+        .preview-newsletter { width: 85%; height: 100px; }
+        .preview-interstitial { width: 80%; height: 170px; }
+        .preview-takeover { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,109,0,0.1)); }
+        
+        .format-info { padding: 25px; }
+        .format-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .format-size { color: var(--light-gray); font-size: 0.85rem; margin-bottom: 15px; }
+        .format-desc { color: var(--light-gray); font-size: 0.9rem; margin-bottom: 20px; }
+        .format-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .format-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        .format-stat .icon { color: var(--green); }
+        .format-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .format-price-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .format-price-value span { font-size: 0.9rem; color: var(--light-gray); font-weight: 400; }
+
+        /* PACKAGES */
+        .packages { background: var(--dark); }
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .package-card {
+            background: var(--gray);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.05);
+            position: relative;
+            transition: all 0.3s;
+        }
+        .package-card:hover { transform: translateY(-10px); }
+        .package-card.featured {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, rgba(212,175,55,0.1), var(--gray));
+        }
+        .package-card.featured::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--black);
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .package-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 25px;
+        }
+        .package-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .package-desc {
+            color: var(--light-gray);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+        .package-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .package-price span { font-size: 1rem; color: var(--light-gray); }
+        .package-period { color: var(--light-gray); font-size: 0.9rem; margin-bottom: 30px; }
+        .package-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .package-features li {
+            padding: 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .package-features li:last-child { border-bottom: none; }
+        .package-features .check { color: var(--green); flex-shrink: 0; }
+        .package-card .btn { width: 100%; justify-content: center; }
+        .package-savings {
+            background: rgba(0,200,83,0.1);
+            color: var(--green);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        /* PLACEMENT PREVIEW */
+        .preview-section { background: var(--black); }
+        .site-mockup {
+            background: var(--gray);
+            border-radius: 20px;
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mockup-header {
+            background: var(--dark);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .mockup-dots {
+            display: flex;
+            gap: 8px;
+        }
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .mockup-dot.red { background: #ff5f56; }
+        .mockup-dot.yellow { background: #ffbd2e; }
+        .mockup-dot.green { background: #27ca40; }
+        .mockup-url {
+            background: var(--black);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--light-gray);
+        }
+        .mockup-body {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 25px;
+            min-height: 500px;
+        }
+        .mockup-main {}
+        .mockup-sidebar {}
+        
+        .ad-slot {
+            border: 3px dashed var(--gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .ad-slot:hover {
+            background: rgba(212,175,55,0.1);
+            border-style: solid;
+        }
+        .ad-slot-label {
+            background: var(--gold);
+            color: var(--black);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .ad-slot-name { color: var(--gold); font-weight: 600; font-size: 0.9rem; }
+        .ad-slot-price { color: var(--light-gray); font-size: 0.8rem; }
+        
+        .slot-header { height: 90px; margin-bottom: 20px; }
+        .slot-native { height: 180px; margin-bottom: 20px; }
+        .slot-sidebar-1 { height: 250px; margin-bottom: 20px; }
+        .slot-sidebar-2 { height: 300px; }
+        .slot-content { height: 120px; margin-bottom: 20px; }
+
+        .mockup-content {
+            background: var(--dark);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .mockup-content-title {
+            height: 20px;
+            width: 60%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .mockup-content-line {
+            height: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+        .mockup-content-line:last-child { width: 80%; }
+
+        /* SPONSORS */
+        .sponsors { background: var(--dark); }
+        .sponsors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .sponsor-slot {
+            background: var(--gray);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            border: 2px dashed rgba(255,255,255,0.1);
+            transition: all 0.3s;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .sponsor-slot:hover { border-color: var(--gold); }
+        .sponsor-slot.taken {
+            border-style: solid;
+            border-color: var(--green);
+            background: rgba(0,200,83,0.05);
+        }
+        .sponsor-slot.reserved {
+            border-style: solid;
+            border-color: var(--orange);
+            background: rgba(255,109,0,0.05);
+        }
+        .sponsor-logo { font-size: 2.5rem; margin-bottom: 10px; }
+        .sponsor-name { font-weight: 600; font-size: 0.9rem; }
+        .sponsor-status {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        .sponsor-status.available { background: rgba(212,175,55,0.2); color: var(--gold); }
+        .sponsor-status.taken { background: rgba(0,200,83,0.2); color: var(--green); }
+        .sponsor-status.reserved { background: rgba(255,109,0,0.2); color: var(--orange); }
+
+        /* BOOKING FORM */
+        .booking { background: var(--black); }
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 50px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .booking-form {
+            background: var(--dark);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .form-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background: var(--gray);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .form-select { cursor: pointer; }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+        .form-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--gold);
+        }
+        
+        .booking-summary {
+            background: var(--dark);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid rgba(212,175,55,0.3);
+            position: sticky;
+            top: 100px;
+        }
+        .summary-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--gold);
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .summary-item:last-of-type { border-bottom: none; }
+        .summary-label { color: var(--light-gray); }
+        .summary-value { font-weight: 600; }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            margin-top: 15px;
+            border-top: 2px solid var(--gold);
+        }
+        .summary-total-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+        }
+        .summary-total-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .summary-note {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(212,175,55,0.05);
+            border-radius: 10px;
+        }
+
+        /* FAQ */
+        .faq-grid { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .faq-question {
+            padding: 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--gold);
+            transition: transform 0.3s;
+        }
+        .faq-item.open .faq-question::after { transform: rotate(45deg); }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+        .faq-item.open .faq-answer { max-height: 200px; }
+        .faq-answer p { padding-bottom: 25px; color: var(--light-gray); }
+
+        /* CTA */
+        .cta-section { background: var(--dark); }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(255,109,0,0.08));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 30px;
+            padding: 80px 40px;
+            text-align: center;
+        }
+        .cta-box h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 20px;
+        }
+        .cta-box p {
+            color: var(--light-gray);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        .cta-contact {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        .cta-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--light-gray);
+        }
+        .cta-contact-item .icon { color: var(--gold); font-size: 1.2rem; }
+
+        /* FOOTER */
+        footer {
+            padding: 50px 0 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-links { display: flex; gap: 25px; }
+        .footer-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--gold); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .booking-grid { grid-template-columns: 1fr; }
+            .mockup-body { grid-template-columns: 1fr; }
+            .mockup-sidebar { display: none; }
+        }
+        @media (max-width: 768px) {
+            nav { display: none; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; gap: 20px; text-align: center; }
+        }
+
+        /* CALENDAR */
+        .calendar-widget {
+            background: var(--gray);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .calendar-nav {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+        .calendar-day-name {
+            font-size: 0.75rem;
+            color: var(--light-gray);
+            padding: 5px;
+        }
+        .calendar-day {
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .calendar-day:hover { background: rgba(212,175,55,0.2); }
+        .calendar-day.selected { background: var(--gold); color: var(--black); }
+        .calendar-day.unavailable { color: #444; cursor: not-allowed; }
+        .calendar-day.booked { background: rgba(255,23,68,0.2); color: var(--red); }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">Ⓐ</span>
+                ÆGIS <span>SPONSORS</span>
+            </a>
+            <nav>
+                <a href="#formats">Formats</a>
+                <a href="#pricing">Tarifs</a>
+                <a href="#placements">Emplacements</a>
+                <a href="#booking">Réserver</a>
+                <a href="#" class="btn btn-outline">Media Kit</a>
+                <a href="#booking" class="btn btn-primary">Devenir Sponsor</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">📊 274 associations • 12K+ professionnels • Secteur en croissance</div>
+            <h1>Touchez les leaders de<br><span class="highlight">l'Éducation Permanente</span></h1>
+            <p>Placez votre marque devant les décideurs du secteur associatif. Audience qualifiée, engagement élevé, impact mesurable.</p>
+            <div class="hero-cta">
+                <a href="#booking" class="btn btn-primary btn-large">📅 Réserver un espace →</a>
+                <a href="#formats" class="btn btn-outline btn-large">Voir les formats</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">12K+</div>
+                    <div class="stat-label">Visiteurs uniques/mois</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">45K</div>
+                    <div class="stat-label">Pages vues/mois</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4.2%</div>
+                    <div class="stat-label">CTR moyen</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">8min</div>
+                    <div class="stat-label">Temps moyen/session</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUDIENCE -->
+    <section class="audience" id="audience">
+        <div class="container text-center">
+            <span class="section-label">Notre Audience</span>
+            <h2 class="section-title">Qui allez-vous atteindre ?</h2>
+            <p class="section-desc">Des professionnels engagés, décideurs dans leur organisation, à la recherche de solutions.</p>
+            
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <div class="audience-icon">👔</div>
+                    <h3>Directeurs & Coordinateurs</h3>
+                    <p>Décideurs avec pouvoir d'achat pour leur organisation</p>
+                    <div class="audience-stat">38%</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">📚</div>
+                    <h3>Formateurs & Animateurs</h3>
+                    <p>Professionnels terrain, prescripteurs d'outils</p>
+                    <div class="audience-stat">31%</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">💼</div>
+                    <h3>Chargés de Projets</h3>
+                    <p>Gestionnaires de budgets, pilotes d'innovation</p>
+                    <div class="audience-stat">22%</div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">🏛️</div>
+                    <h3>Institutionnels & Politiques</h3>
+                    <p>Décideurs publics, financeurs, évaluateurs</p>
+                    <div class="audience-stat">9%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AD FORMATS -->
+    <section id="formats">
+        <div class="container text-center">
+            <span class="section-label">Formats Publicitaires</span>
+            <h2 class="section-title">Choisissez votre visibilité</h2>
+            <p class="section-desc">Des formats adaptés à tous les objectifs : notoriété, trafic ou conversion.</p>
+            
+            <div class="formats-grid">
+                <div class="format-card premium">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-leaderboard">
+                            VOTRE BANNIÈRE 728×90
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">🏆 Leaderboard Header</div>
+                        <div class="format-size">728 × 90 px • Position fixe haut de page</div>
+                        <div class="format-desc">Visibilité maximale sur toutes les pages. Premier élément vu par chaque visiteur.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">👁️</span> 45K vues/mois</div>
+                            <div class="format-stat"><span class="icon">📈</span> 4.8% CTR</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">499€<span>/mois</span></div>
+                            <a href="#booking" class="btn btn-primary">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="format-card">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-sidebar">
+                            SIDEBAR<br>300×250
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">📐 Sidebar Rectangle</div>
+                        <div class="format-size">300 × 250 px • Colonne droite</div>
+                        <div class="format-desc">Format classique, visible sur toutes les pages de contenu. Excellent rapport visibilité/prix.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">👁️</span> 38K vues/mois</div>
+                            <div class="format-stat"><span class="icon">📈</span> 3.5% CTR</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">249€<span>/mois</span></div>
+                            <a href="#booking" class="btn btn-outline">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="format-card premium">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-native">
+                            <span>📰</span>
+                            <span>Article Sponsorisé</span>
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">📝 Native Content</div>
+                        <div class="format-size">Article intégré • Branded content</div>
+                        <div class="format-desc">Article rédigé par notre équipe, intégré naturellement au contenu. Engagement maximal.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">👁️</span> 5K lectures</div>
+                            <div class="format-stat"><span class="icon">📈</span> 12% engagement</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">799€<span>/article</span></div>
+                            <a href="#booking" class="btn btn-primary">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="format-card">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-newsletter">
+                            📧 NEWSLETTER SPONSOR
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">📧 Newsletter Sponsorisée</div>
+                        <div class="format-size">Encart dans newsletter • 8K abonnés</div>
+                        <div class="format-desc">Touchez directement la boîte mail de 8,000 professionnels engagés. Taux d'ouverture 42%.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">📬</span> 8K envois</div>
+                            <div class="format-stat"><span class="icon">📈</span> 42% ouverture</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">349€<span>/envoi</span></div>
+                            <a href="#booking" class="btn btn-outline">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="format-card">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-sidebar" style="height: 200px;">
+                            SKYSCRAPER<br>300×600
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">🏗️ Skyscraper</div>
+                        <div class="format-size">300 × 600 px • Sidebar verticale</div>
+                        <div class="format-desc">Grand format vertical, impact visuel fort. Idéal pour messages complexes ou visuels produit.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">👁️</span> 32K vues/mois</div>
+                            <div class="format-stat"><span class="icon">📈</span> 3.9% CTR</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">399€<span>/mois</span></div>
+                            <a href="#booking" class="btn btn-outline">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="format-card premium">
+                    <div class="format-preview">
+                        <div class="format-preview-inner preview-takeover">
+                            🎯 TAKEOVER EXCLUSIF
+                        </div>
+                    </div>
+                    <div class="format-info">
+                        <div class="format-name">🎯 Page Takeover</div>
+                        <div class="format-size">Exclusivité totale • Branding complet</div>
+                        <div class="format-desc">Prenez le contrôle total de la page. Header + sidebars + couleurs. Impact mémorable garanti.</div>
+                        <div class="format-stats">
+                            <div class="format-stat"><span class="icon">👁️</span> Exclusif</div>
+                            <div class="format-stat"><span class="icon">📈</span> 8.5% CTR</div>
+                        </div>
+                        <div class="format-price">
+                            <div class="format-price-value">1,499€<span>/semaine</span></div>
+                            <a href="#booking" class="btn btn-primary">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PACKAGES -->
+    <section class="packages" id="pricing">
+        <div class="container text-center">
+            <span class="section-label">Packages</span>
+            <h2 class="section-title">Offres combinées</h2>
+            <p class="section-desc">Maximisez votre impact avec nos packages multi-formats à tarifs préférentiels.</p>
+            
+            <div class="packages-grid">
+                <div class="package-card">
+                    <div class="package-icon">🚀</div>
+                    <div class="package-name">Starter</div>
+                    <div class="package-desc">Idéal pour tester</div>
+                    <div class="package-price">599€<span>/mois</span></div>
+                    <div class="package-period">Engagement 3 mois minimum</div>
+                    <ul class="package-features">
+                        <li><span class="check">✓</span> 1× Sidebar Rectangle</li>
+                        <li><span class="check">✓</span> 1× Newsletter/mois</li>
+                        <li><span class="check">✓</span> Logo page sponsors</li>
+                        <li><span class="check">✓</span> Rapport mensuel</li>
+                    </ul>
+                    <a href="#booking" class="btn btn-outline">Choisir</a>
+                </div>
+
+                <div class="package-card featured">
+                    <div class="package-icon">💎</div>
+                    <div class="package-name">Premium</div>
+                    <div class="package-desc">Le plus populaire</div>
+                    <div class="package-price">1,299€<span>/mois</span><span class="package-savings">-25%</span></div>
+                    <div class="package-period">Engagement 6 mois minimum</div>
+                    <ul class="package-features">
+                        <li><span class="check">✓</span> 1× Leaderboard Header</li>
+                        <li><span class="check">✓</span> 1× Sidebar Rectangle</li>
+                        <li><span class="check">✓</span> 2× Newsletter/mois</li>
+                        <li><span class="check">✓</span> 1× Article natif/trimestre</li>
+                        <li><span class="check">✓</span> Position premium sponsors</li>
+                        <li><span class="check">✓</span> Rapport hebdomadaire</li>
+                    </ul>
+                    <a href="#booking" class="btn btn-primary">Choisir</a>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-icon">👑</div>
+                    <div class="package-name">Platinum</div>
+                    <div class="package-desc">Domination totale</div>
+                    <div class="package-price">2,499€<span>/mois</span><span class="package-savings">-35%</span></div>
+                    <div class="package-period">Engagement 12 mois</div>
+                    <ul class="package-features">
+                        <li><span class="check">✓</span> Tout Premium inclus</li>
+                        <li><span class="check">✓</span> 1× Takeover/mois</li>
+                        <li><span class="check">✓</span> 1× Article natif/mois</li>
+                        <li><span class="check">✓</span> Co-branding événements</li>
+                        <li><span class="check">✓</span> Exclusivité catégorie</li>
+                        <li><span class="check">✓</span> Account manager dédié</li>
+                    </ul>
+                    <a href="#booking" class="btn btn-outline">Contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLACEMENT PREVIEW -->
+    <section class="preview-section" id="placements">
+        <div class="container text-center">
+            <span class="section-label">Aperçu</span>
+            <h2 class="section-title">Où apparaîtra votre marque ?</h2>
+            <p class="section-desc">Visualisez les emplacements disponibles sur notre plateforme.</p>
+            
+            <div class="site-mockup">
+                <div class="mockup-header">
+                    <div class="mockup-dots">
+                        <div class="mockup-dot red"></div>
+                        <div class="mockup-dot yellow"></div>
+                        <div class="mockup-dot green"></div>
+                    </div>
+                    <div class="mockup-url">🔒 aegis-pro.be/plateforme</div>
+                    <div></div>
+                </div>
+                <div class="mockup-body">
+                    <div class="mockup-main">
+                        <div class="ad-slot slot-header">
+                            <span class="ad-slot-label">SLOT A</span>
+                            <span class="ad-slot-name">Leaderboard Header</span>
+                            <span class="ad-slot-price">499€/mois</span>
+                        </div>
+                        
+                        <div class="mockup-content">
+                            <div class="mockup-content-title"></div>
+                            <div class="mockup-content-line"></div>
+                            <div class="mockup-content-line"></div>
+                            <div class="mockup-content-line"></div>
+                        </div>
+                        
+                        <div class="ad-slot slot-native">
+                            <span class="ad-slot-label">SLOT B</span>
+                            <span class="ad-slot-name">Native Content Zone</span>
+                            <span class="ad-slot-price">799€/article</span>
+                        </div>
+                        
+                        <div class="mockup-content">
+                            <div class="mockup-content-title"></div>
+                            <div class="mockup-content-line"></div>
+                            <div class="mockup-content-line"></div>
+                        </div>
+                    </div>
+                    <div class="mockup-sidebar">
+                        <div class="ad-slot slot-sidebar-1">
+                            <span class="ad-slot-label">SLOT C</span>
+                            <span class="ad-slot-name">Sidebar 1</span>
+                            <span class="ad-slot-price">249€/mois</span>
+                        </div>
+                        <div class="ad-slot slot-sidebar-2">
+                            <span class="ad-slot-label">SLOT D</span>
+                            <span class="ad-slot-name">Skyscraper</span>
+                            <span class="ad-slot-price">399€/mois</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CURRENT SPONSORS -->
+    <section class="sponsors">
+        <div class="container text-center">
+            <span class="section-label">Sponsors Actuels</span>
+            <h2 class="section-title">Ils nous font déjà confiance</h2>
+            <p class="section-desc">Rejoignez ces marques qui touchent notre audience chaque jour.</p>
+            
+            <div class="sponsors-grid">
+                <div class="sponsor-slot taken">
+                    <div class="sponsor-logo">🏦</div>
+                    <div class="sponsor-name">Triodos Bank</div>
+                    <div class="sponsor-status taken">Partenaire Premium</div>
+                </div>
+                <div class="sponsor-slot taken">
+                    <div class="sponsor-logo">🛡️</div>
+                    <div class="sponsor-name">Ethias</div>
+                    <div class="sponsor-status taken">Sponsor Gold</div>
+                </div>
+                <div class="sponsor-slot reserved">
+                    <div class="sponsor-logo">📚</div>
+                    <div class="sponsor-name">De Boeck</div>
+                    <div class="sponsor-status reserved">Réservé</div>
+                </div>
+                <div class="sponsor-slot">
+                    <div class="sponsor-logo">❓</div>
+                    <div class="sponsor-name">Votre Logo Ici</div>
+                    <div class="sponsor-status available">Disponible</div>
+                </div>
+                <div class="sponsor-slot">
+                    <div class="sponsor-logo">❓</div>
+                    <div class="sponsor-name">Votre Logo Ici</div>
+                    <div class="sponsor-status available">Disponible</div>
+                </div>
+                <div class="sponsor-slot">
+                    <div class="sponsor-logo">❓</div>
+                    <div class="sponsor-name">Votre Logo Ici</div>
+                    <div class="sponsor-status available">Disponible</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING FORM -->
+    <section class="booking" id="booking">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 60px;">
+                <span class="section-label">Réservation</span>
+                <h2 class="section-title">Réservez votre espace</h2>
+                <p class="section-desc">Remplissez le formulaire et nous vous recontactons sous 24h.</p>
+            </div>
+            
+            <div class="booking-grid">
+                <div class="booking-form">
+                    <h3 class="form-title">Informations Annonceur</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Société *</label>
+                            <input type="text" class="form-input" placeholder="Nom de votre entreprise" id="company">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Secteur d'activité *</label>
+                            <select class="form-select" id="sector">
+                                <option value="">Sélectionnez...</option>
+                                <option value="bank">Banque & Finance</option>
+                                <option value="insurance">Assurance</option>
+                                <option value="tech">Technologies & Logiciels</option>
+                                <option value="education">Éducation & Formation</option>
+                                <option value="publishing">Édition & Médias</option>
+                                <option value="consulting">Conseil & Services</option>
+                                <option value="nonprofit">Fondation & Mécénat</option>
+                                <option value="public">Secteur Public</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom complet *</label>
+                            <input type="text" class="form-input" placeholder="Votre nom" id="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fonction *</label>
+                            <input type="text" class="form-input" placeholder="Votre titre" id="title">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-input" placeholder="email@entreprise.com" id="email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-input" placeholder="+32 XXX XX XX XX" id="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Format souhaité *</label>
+                        <select class="form-select" id="format" onchange="updateSummary()">
+                            <option value="">Sélectionnez un format...</option>
+                            <option value="leaderboard" data-price="499">🏆 Leaderboard Header - 499€/mois</option>
+                            <option value="sidebar" data-price="249">📐 Sidebar Rectangle - 249€/mois</option>
+                            <option value="skyscraper" data-price="399">🏗️ Skyscraper - 399€/mois</option>
+                            <option value="native" data-price="799">📝 Article Natif - 799€/article</option>
+                            <option value="newsletter" data-price="349">📧 Newsletter - 349€/envoi</option>
+                            <option value="takeover" data-price="1499">🎯 Page Takeover - 1499€/semaine</option>
+                            <option value="starter" data-price="599">🚀 Package Starter - 599€/mois</option>
+                            <option value="premium" data-price="1299">💎 Package Premium - 1299€/mois</option>
+                            <option value="platinum" data-price="2499">👑 Package Platinum - 2499€/mois</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Date de début souhaitée *</label>
+                            <input type="date" class="form-input" id="startDate" onchange="updateSummary()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Durée *</label>
+                            <select class="form-select" id="duration" onchange="updateSummary()">
+                                <option value="1">1 mois</option>
+                                <option value="3">3 mois (-5%)</option>
+                                <option value="6" selected>6 mois (-15%)</option>
+                                <option value="12">12 mois (-25%)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Budget mensuel</label>
+                        <select class="form-select" id="budget">
+                            <option value="">Sélectionnez...</option>
+                            <option value="500">Moins de 500€</option>
+                            <option value="1000">500€ - 1,000€</option>
+                            <option value="2000">1,000€ - 2,000€</option>
+                            <option value="5000">2,000€ - 5,000€</option>
+                            <option value="10000">Plus de 5,000€</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Message / Objectifs</label>
+                        <textarea class="form-textarea" placeholder="Décrivez vos objectifs, votre cible idéale, ou toute information utile..." id="message"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-checkbox">
+                            <input type="checkbox" required>
+                            <span>J'accepte d'être contacté par l'équipe commerciale @ÆGIS</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-large" style="width: 100%; justify-content: center;" onclick="submitBooking()">
+                        📩 Envoyer ma demande
+                    </button>
+                </div>
+                
+                <div class="booking-summary">
+                    <h3 class="summary-title">📋 Récapitulatif</h3>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Format</span>
+                        <span class="summary-value" id="summaryFormat">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Durée</span>
+                        <span class="summary-value" id="summaryDuration">6 mois</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Prix unitaire</span>
+                        <span class="summary-value" id="summaryUnitPrice">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Réduction</span>
+                        <span class="summary-value" id="summaryDiscount" style="color: var(--green);">-15%</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span class="summary-total-label">Total estimé</span>
+                        <span class="summary-total-value" id="summaryTotal">-</span>
+                    </div>
+                    
+                    <div class="summary-note">
+                        💡 Ce devis est indicatif. Un commercial vous contactera pour finaliser votre commande et discuter d'éventuelles options supplémentaires.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="background: var(--dark);">
+        <div class="container text-center">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">Questions fréquentes</h2>
+            
+            <div class="faq-grid" style="margin-top: 50px;">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Quel est le délai de mise en ligne ?</div>
+                    <div class="faq-answer"><p>Après validation de vos créatifs, votre publicité est en ligne sous 24-48h ouvrées.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Quels formats de fichiers acceptez-vous ?</div>
+                    <div class="faq-answer"><p>Nous acceptons JPG, PNG, GIF animé, et HTML5 pour les bannières. Poids max 150Ko. Nous pouvons aussi créer vos visuels (+150€).</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Comment mesurez-vous les performances ?</div>
+                    <div class="faq-answer"><p>Nous fournissons un rapport détaillé : impressions, clics, CTR, et conversions si tracking installé. Dashboard temps réel disponible.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Puis-je changer mes créatifs en cours de campagne ?</div>
+                    <div class="faq-answer"><p>Oui, vous pouvez changer vos visuels jusqu'à 2 fois par mois sans frais supplémentaires.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">Y a-t-il des restrictions sur les annonceurs ?</div>
+                    <div class="faq-answer"><p>Nous privilégions les annonceurs alignés avec les valeurs du secteur associatif. Pas de tabac, alcool, jeux d'argent ou contenus politiques partisans.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Prêt à toucher 12,000+ décideurs ?</h2>
+                <p>Contactez notre équipe commerciale pour une offre personnalisée.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="#booking" class="btn btn-primary btn-large">📅 Réserver maintenant</a>
+                    <a href="mailto:sponsors@aegis-pro.be" class="btn btn-outline btn-large">📧 sponsors@aegis-pro.be</a>
+                </div>
+                <div class="cta-contact">
+                    <div class="cta-contact-item"><span class="icon">📞</span> +32 2 XXX XX XX</div>
+                    <div class="cta-contact-item"><span class="icon">📧</span> sponsors@aegis-pro.be</div>
+                    <div class="cta-contact-item"><span class="icon">💼</span> LinkedIn: @AegisPro</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <span class="logo-icon">Ⓐ</span>
+                    ÆGIS <span>SPONSORS</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">CGV Annonceurs</a>
+                    <a href="#">Media Kit PDF</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Retour au site</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(el) {
+            el.parentElement.classList.toggle('open');
+        }
+
+        // Update Summary
+        function updateSummary() {
+            const format = document.getElementById('format');
+            const duration = document.getElementById('duration');
+            
+            if (!format.value) {
+                document.getElementById('summaryFormat').textContent = '-';
+                document.getElementById('summaryUnitPrice').textContent = '-';
+                document.getElementById('summaryTotal').textContent = '-';
+                return;
+            }
+            
+            const selectedOption = format.options[format.selectedIndex];
+            const price = parseInt(selectedOption.dataset.price);
+            const months = parseInt(duration.value);
+            
+            // Discounts
+            let discount = 0;
+            if (months === 3) discount = 0.05;
+            else if (months === 6) discount = 0.15;
+            else if (months === 12) discount = 0.25;
+            
+            const total = price * months * (1 - discount);
+            
+            document.getElementById('summaryFormat').textContent = selectedOption.text.split(' - ')[0];
+            document.getElementById('summaryUnitPrice').textContent = price + '€';
+            document.getElementById('summaryDuration').textContent = months + ' mois';
+            document.getElementById('summaryDiscount').textContent = discount > 0 ? '-' + (discount * 100) + '%' : '-';
+            document.getElementById('summaryTotal').textContent = total.toLocaleString('fr-FR') + '€';
+        }
+
+        // Submit Booking
+        function submitBooking() {
+            const company = document.getElementById('company').value;
+            const email = document.getElementById('email').value;
+            const format = document.getElementById('format').value;
+            
+            if (!company || !email || !format) {
+                alert('Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+            
+            // In production: send to backend/CRM
+            alert('✅ Demande envoyée!\n\nMerci ' + company + ', notre équipe vous contactera sous 24h à ' + email);
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        console.log('💰 @ÆGIS Sponsors Platform loaded');
+    </script>
+</body>
+</html>

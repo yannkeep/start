@@ -1,0 +1,2610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>◈ NEXUS — CLASSIFIED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --void: #030308;
+            --deep: #0a0a12;
+            --surface: #0f1018;
+            --elevated: #151520;
+            --card: #1a1a28;
+            --border: #252538;
+            
+            --alpha: #00ff88;
+            --beta: #00d4ff;
+            --gamma: #aa66ff;
+            --delta: #ff6600;
+            --omega: #ff0066;
+            
+            --classified: #ff0033;
+            --encrypted: #00ffcc;
+            --transmission: #ffcc00;
+            
+            --text: #c8c8d8;
+            --text-dim: #555570;
+            --text-bright: #ffffff;
+            
+            --font-display: 'Orbitron', monospace;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-ui: 'Rajdhani', sans-serif;
+            
+            --glow: 0 0 20px;
+            --glow-intense: 0 0 40px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: var(--void);
+            font-family: var(--font-ui);
+            color: var(--text);
+        }
+        
+        /* Glitch effect */
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes scanline {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            97% { opacity: 0.9; }
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: var(--glow) var(--alpha); }
+            50% { box-shadow: var(--glow-intense) var(--alpha); }
+        }
+        
+        @keyframes data-stream {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 1000px; }
+        }
+        
+        /* Scanline overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 136, 0.03) 2px,
+                rgba(0, 255, 136, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 9998;
+            animation: flicker 5s infinite;
+        }
+        
+        /* Moving scanline */
+        body::after {
+            content: '';
+            position: fixed;
+            left: 0; right: 0;
+            height: 100px;
+            background: linear-gradient(
+                180deg,
+                transparent,
+                rgba(0, 255, 136, 0.1),
+                transparent
+            );
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        .app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ==================== BOOT SEQUENCE ==================== */
+        .boot-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 1s;
+        }
+        
+        .boot-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .boot-logo {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            color: var(--alpha);
+            text-shadow: var(--glow-intense) var(--alpha);
+            margin-bottom: 2rem;
+            animation: glitch 0.5s infinite;
+        }
+        
+        .boot-text {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--alpha);
+            text-align: left;
+            line-height: 1.8;
+        }
+        
+        .boot-line {
+            opacity: 0;
+            animation: fadeIn 0.1s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .boot-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: var(--alpha);
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+        
+        /* ==================== HEADER ==================== */
+        .header {
+            background: linear-gradient(180deg, var(--surface) 0%, var(--deep) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--alpha), transparent);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-symbol {
+            font-size: 1.8rem;
+            color: var(--alpha);
+            text-shadow: var(--glow) var(--alpha);
+            animation: pulse-glow 3s infinite;
+        }
+        
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: var(--alpha);
+            text-shadow: var(--glow) var(--alpha);
+        }
+        
+        .classification {
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 0, 51, 0.2);
+            border: 1px solid var(--classified);
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--classified);
+            letter-spacing: 0.15em;
+            animation: blink 2s infinite;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            padding: 0.4rem 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        
+        .agent-id {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--encrypted);
+        }
+        
+        .clearance-badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 3px;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+        
+        .clearance-badge.alpha { background: var(--alpha); color: #000; }
+        .clearance-badge.beta { background: var(--beta); color: #000; }
+        .clearance-badge.gamma { background: var(--gamma); color: #000; }
+        .clearance-badge.delta { background: var(--delta); color: #000; }
+        .clearance-badge.omega { background: var(--omega); color: #fff; }
+        
+        .transmission-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--transmission);
+        }
+        
+        .transmission-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--transmission);
+            border-radius: 50%;
+            animation: pulse-glow 1s infinite;
+        }
+        
+        /* ==================== MAIN LAYOUT ==================== */
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Nav */
+        .nav {
+            width: 60px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            gap: 0.5rem;
+        }
+        
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .nav-btn:hover {
+            background: var(--elevated);
+            color: var(--text);
+        }
+        
+        .nav-btn.active {
+            background: var(--card);
+            border-color: var(--alpha);
+            color: var(--alpha);
+        }
+        
+        .nav-btn.has-alert::after {
+            content: '';
+            position: absolute;
+            top: 8px; right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--classified);
+            border-radius: 50%;
+            animation: pulse-glow 1s infinite;
+        }
+        
+        .nav-divider {
+            width: 24px;
+            height: 1px;
+            background: var(--border);
+            margin: 0.5rem 0;
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .panel {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .panel.active {
+            display: flex;
+        }
+        
+        /* ==================== COMMAND CENTER ==================== */
+        .command-center {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 350px;
+            grid-template-rows: auto 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        
+        .terminal-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .terminal-header {
+            padding: 0.6rem 1rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--alpha);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .terminal-header::before {
+            content: '▸';
+        }
+        
+        .terminal-body {
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+        
+        /* Handler transmission */
+        .handler-card {
+            grid-column: 1 / 3;
+        }
+        
+        .transmission {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--encrypted);
+        }
+        
+        .transmission-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed var(--border);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        
+        .transmission-from {
+            color: var(--transmission);
+        }
+        
+        .transmission-content {
+            white-space: pre-wrap;
+        }
+        
+        .transmission-content .highlight {
+            color: var(--alpha);
+            font-weight: 600;
+        }
+        
+        .transmission-content .classified {
+            color: var(--classified);
+            text-decoration: line-through;
+            cursor: pointer;
+        }
+        
+        .transmission-content .classified:hover {
+            text-decoration: none;
+        }
+        
+        /* Agent profile */
+        .profile-card {
+            grid-row: 1 / 3;
+        }
+        
+        .profile-header {
+            text-align: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--alpha);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--alpha);
+            background: var(--card);
+            position: relative;
+        }
+        
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border: 2px solid var(--alpha);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .profile-codename {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+        
+        .profile-status {
+            font-size: 0.75rem;
+            color: var(--alpha);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .profile-stat {
+            padding: 0.75rem;
+            background: var(--card);
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .profile-stat-value {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--beta);
+        }
+        
+        .profile-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .clearance-display {
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .clearance-level {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .clearance-level.alpha { color: var(--alpha); text-shadow: var(--glow) var(--alpha); }
+        .clearance-level.beta { color: var(--beta); text-shadow: var(--glow) var(--beta); }
+        .clearance-level.gamma { color: var(--gamma); text-shadow: var(--glow) var(--gamma); }
+        .clearance-level.delta { color: var(--delta); text-shadow: var(--glow) var(--delta); }
+        .clearance-level.omega { color: var(--omega); text-shadow: var(--glow) var(--omega); }
+        
+        .clearance-progress {
+            height: 6px;
+            background: var(--card);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+        
+        .clearance-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--alpha), var(--beta));
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        
+        .clearance-xp {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+        
+        /* Active missions */
+        .missions-card {
+            grid-column: 1 / 3;
+        }
+        
+        .mission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .mission-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mission-item:hover {
+            border-color: var(--alpha);
+            transform: translateX(5px);
+        }
+        
+        .mission-item.urgent {
+            border-color: var(--classified);
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .mission-item.urgent .mission-priority {
+            background: var(--classified);
+        }
+        
+        .mission-priority {
+            width: 36px;
+            height: 36px;
+            background: var(--alpha);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .mission-info {
+            flex: 1;
+        }
+        
+        .mission-codename {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+        
+        .mission-desc {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        
+        .mission-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.3rem;
+            font-size: 0.65rem;
+        }
+        
+        .mission-tag {
+            padding: 0.15rem 0.4rem;
+            background: var(--elevated);
+            border-radius: 3px;
+            color: var(--beta);
+        }
+        
+        .mission-reward {
+            padding: 0.4rem 0.8rem;
+            background: var(--elevated);
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .mission-reward-value {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--transmission);
+        }
+        
+        .mission-reward-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        /* ==================== MISSIONS PANEL ==================== */
+        .missions-panel {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .mission-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .mission-category {
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .mission-category:hover {
+            border-color: var(--alpha);
+        }
+        
+        .mission-category.active {
+            border-color: var(--alpha);
+            background: var(--elevated);
+        }
+        
+        .mission-category-icon {
+            font-size: 1.5rem;
+        }
+        
+        .mission-category-info h4 {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .mission-category-info p {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        
+        .mission-category-count {
+            margin-left: auto;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--alpha);
+        }
+        
+        .mission-detail {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .mission-detail-header {
+            padding: 1.5rem;
+            background: linear-gradient(180deg, var(--elevated) 0%, var(--surface) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .mission-detail-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.7rem;
+        }
+        
+        .mission-detail-meta span {
+            padding: 0.25rem 0.6rem;
+            background: var(--card);
+            border-radius: 4px;
+        }
+        
+        .mission-detail-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mission-detail-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        
+        .mission-detail-body {
+            padding: 1.5rem;
+        }
+        
+        .mission-briefing {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--encrypted);
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+        }
+        
+        .mission-objectives {
+            margin-bottom: 1.5rem;
+        }
+        
+        .mission-objectives h4 {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--alpha);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .objective-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--card);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .objective-item:hover {
+            background: var(--elevated);
+        }
+        
+        .objective-item.completed {
+            opacity: 0.6;
+        }
+        
+        .objective-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .objective-item.completed .objective-check {
+            background: var(--alpha);
+            border-color: var(--alpha);
+            color: #000;
+        }
+        
+        .objective-text {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+        
+        .objective-xp {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--transmission);
+        }
+        
+        .mission-evidence {
+            margin-bottom: 1.5rem;
+        }
+        
+        .mission-evidence h4 {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--beta);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+        
+        .evidence-upload {
+            padding: 2rem;
+            background: var(--card);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .evidence-upload:hover {
+            border-color: var(--alpha);
+            background: var(--elevated);
+        }
+        
+        .evidence-upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .evidence-upload-text {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        
+        .mission-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            border-color: var(--alpha);
+        }
+        
+        .btn-primary {
+            background: var(--alpha);
+            border-color: var(--alpha);
+            color: #000;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: var(--glow) var(--alpha);
+        }
+        
+        .btn-danger {
+            border-color: var(--classified);
+            color: var(--classified);
+        }
+        
+        .btn-danger:hover {
+            background: var(--classified);
+            color: #fff;
+        }
+        
+        /* ==================== INTEL PANEL ==================== */
+        .intel-panel {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .intel-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .intel-search {
+            padding: 0.75rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        
+        .intel-search:focus {
+            outline: none;
+            border-color: var(--alpha);
+        }
+        
+        .intel-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .intel-item {
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .intel-item:hover {
+            border-color: var(--beta);
+        }
+        
+        .intel-item.active {
+            border-color: var(--beta);
+            background: var(--elevated);
+        }
+        
+        .intel-item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .intel-item-icon {
+            font-size: 1rem;
+        }
+        
+        .intel-item-title {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .intel-item-preview {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .intel-item-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .intel-tag {
+            padding: 0.1rem 0.4rem;
+            background: var(--card);
+            border-radius: 3px;
+            font-size: 0.55rem;
+            color: var(--beta);
+        }
+        
+        .intel-editor {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .intel-editor-header {
+            padding: 1rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .intel-editor-title {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+        }
+        
+        .intel-editor-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        
+        .intel-title-input {
+            padding: 0.75rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+        }
+        
+        .intel-content-input {
+            flex: 1;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--encrypted);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            resize: none;
+        }
+        
+        .intel-links {
+            padding: 0.75rem;
+            background: var(--card);
+            border-radius: 6px;
+        }
+        
+        .intel-links-title {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+        
+        .intel-links-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .intel-link {
+            padding: 0.3rem 0.6rem;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--beta);
+            cursor: pointer;
+        }
+        
+        .intel-link:hover {
+            border-color: var(--beta);
+        }
+        
+        /* ==================== NETWORK PANEL ==================== */
+        .network-panel {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+        
+        .network-graph {
+            flex: 1;
+            background: var(--deep);
+        }
+        
+        #networkSvg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .network-node {
+            cursor: pointer;
+        }
+        
+        .network-node circle {
+            transition: all 0.2s;
+        }
+        
+        .network-node:hover circle {
+            filter: drop-shadow(var(--glow) var(--alpha));
+        }
+        
+        .network-node text {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            fill: var(--text);
+        }
+        
+        .network-link {
+            stroke: var(--border);
+            stroke-opacity: 0.6;
+        }
+        
+        .network-sidebar {
+            width: 320px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .network-sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .network-sidebar-title {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            color: var(--alpha);
+        }
+        
+        .network-sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .contact-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .contact-avatar {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--alpha), var(--beta));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .contact-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .contact-role {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-stat {
+            padding: 0.5rem;
+            background: var(--card);
+            border-radius: 6px;
+        }
+        
+        .contact-stat-value {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--beta);
+        }
+        
+        .contact-stat-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        /* ==================== DEAD DROP MODAL ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 1rem 1.5rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--alpha);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        /* Dead drop specific */
+        .dead-drop-content {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--encrypted);
+            white-space: pre-wrap;
+        }
+        
+        .dead-drop-decrypt {
+            margin-top: 1rem;
+        }
+        
+        .decrypt-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            text-align: center;
+            letter-spacing: 0.2em;
+        }
+        
+        /* ==================== TRANSMISSION MODAL ==================== */
+        .transmission-modal .modal-body {
+            text-align: center;
+        }
+        
+        .transmission-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .transmission-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--transmission);
+            margin-bottom: 1rem;
+        }
+        
+        .transmission-text {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--encrypted);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        
+        .transmission-xp {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .transmission-xp-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--alpha);
+        }
+        
+        /* ==================== TOAST NOTIFICATIONS ==================== */
+        .toast-container {
+            position: fixed;
+            top: 4rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 8000;
+        }
+        
+        .toast {
+            padding: 1rem 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+            max-width: 350px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast.xp { border-color: var(--alpha); }
+        .toast.mission { border-color: var(--beta); }
+        .toast.alert { border-color: var(--classified); }
+        .toast.clearance { border-color: var(--transmission); }
+        
+        .toast-icon { font-size: 1.3rem; }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 600; font-size: 0.85rem; }
+        .toast-message { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* ==================== CLEARANCE UP MODAL ==================== */
+        .clearance-modal .modal-body {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .clearance-up-badge {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .clearance-up-text {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+        
+        .clearance-up-level {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            animation: pulse-glow 1s infinite;
+        }
+        
+        .clearance-up-level.alpha { color: var(--alpha); }
+        .clearance-up-level.beta { color: var(--beta); }
+        .clearance-up-level.gamma { color: var(--gamma); }
+        .clearance-up-level.delta { color: var(--delta); }
+        .clearance-up-level.omega { color: var(--omega); }
+        
+        .clearance-unlocks {
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .clearance-unlocks h4 {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+        
+        .unlock-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--card);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .unlock-icon { font-size: 1.2rem; }
+        .unlock-text { font-size: 0.85rem; }
+        
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1200px) {
+            .command-center {
+                grid-template-columns: 1fr 1fr;
+            }
+            .profile-card {
+                grid-column: 1 / 3;
+                grid-row: auto;
+            }
+        }
+        
+        @media (max-width: 800px) {
+            .nav { width: 50px; }
+            .nav-btn { width: 36px; height: 36px; font-size: 1rem; }
+            .command-center { grid-template-columns: 1fr; }
+            .handler-card, .missions-card, .profile-card { grid-column: 1; }
+            .agent-status { display: none; }
+            .missions-panel, .intel-panel { grid-template-columns: 1fr; }
+            .network-sidebar { display: none; }
+        }
+        
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--void); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <!-- Boot Screen -->
+    <div class="boot-screen" id="bootScreen">
+        <div class="boot-logo">◈ NEXUS</div>
+        <div class="boot-text" id="bootText"></div>
+    </div>
+    
+    <div class="app" style="display:none" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-symbol">◈</span>
+                <span class="logo-text">NEXUS</span>
+            </div>
+            
+            <div class="classification">CLASSIFIED // CITOYENS UNIQUEMENT</div>
+            
+            <div class="agent-status">
+                <span class="agent-id" id="agentId">AGENT-0000</span>
+                <span class="clearance-badge alpha" id="clearanceBadge">ALPHA</span>
+            </div>
+            
+            <div class="transmission-indicator">
+                <span class="transmission-dot"></span>
+                <span>HANDLER EN LIGNE</span>
+            </div>
+        </header>
+        
+        <!-- Main -->
+        <div class="main">
+            <!-- Nav -->
+            <nav class="nav">
+                <button class="nav-btn active has-alert" data-panel="command" onclick="showPanel('command')" title="Command Center">📡</button>
+                <button class="nav-btn" data-panel="missions" onclick="showPanel('missions')" title="Missions">🎯</button>
+                <button class="nav-btn" data-panel="intel" onclick="showPanel('intel')" title="Intel Database">🧠</button>
+                <button class="nav-btn" data-panel="network" onclick="showPanel('network')" title="Network">🔗</button>
+                <div class="nav-divider"></div>
+                <button class="nav-btn" data-panel="dead-drops" onclick="showPanel('dead-drops')" title="Dead Drops">📦</button>
+                <button class="nav-btn" onclick="showTransmission()" title="Transmissions">📨</button>
+            </nav>
+            
+            <!-- Content -->
+            <main class="content">
+                <!-- Command Center -->
+                <div class="panel active" id="panel-command">
+                    <div class="command-center">
+                        <!-- Handler Message -->
+                        <div class="terminal-card handler-card">
+                            <div class="terminal-header">Transmission Handler</div>
+                            <div class="terminal-body">
+                                <div class="transmission">
+                                    <div class="transmission-meta">
+                                        <span class="transmission-from">FROM: HANDLER_PRIME</span>
+                                        <span>ENCRYPTED: AES-256</span>
+                                        <span id="transmissionTime">--:--:--</span>
+                                    </div>
+                                    <div class="transmission-content" id="handlerMessage">
+Agent,
+
+Bienvenue dans <span class="highlight">NEXUS</span>. Vous avez été sélectionné·e pour rejoindre notre réseau d'agents citoyens.
+
+Votre mission : <span class="highlight">observer, documenter, et agir</span> pour renforcer la transparence démocratique.
+
+Chaque action sur le terrain vous rapporte de l'expérience et fait progresser votre niveau de <span class="highlight">CLEARANCE</span>.
+
+<span class="classified">[REDACTED]</span> vous sera révélé au niveau GAMMA.
+
+Vos premières missions sont disponibles. Le temps presse.
+
+— HANDLER_PRIME
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profile -->
+                        <div class="terminal-card profile-card">
+                            <div class="terminal-header">Profil Agent</div>
+                            <div class="profile-header">
+                                <div class="profile-avatar" id="profileAvatar">??</div>
+                                <div class="profile-codename" id="profileCodename">NON ASSIGNÉ</div>
+                                <div class="profile-status">En attente d'activation</div>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value" id="statMissions">0</div>
+                                    <div class="profile-stat-label">Missions</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value" id="statIntel">0</div>
+                                    <div class="profile-stat-label">Intel</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value" id="statContacts">0</div>
+                                    <div class="profile-stat-label">Contacts</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-value" id="statStreak">0</div>
+                                    <div class="profile-stat-label">Streak</div>
+                                </div>
+                            </div>
+                            <div class="clearance-display">
+                                <div class="clearance-level alpha" id="clearanceLevel">ALPHA</div>
+                                <div class="clearance-progress">
+                                    <div class="clearance-progress-fill" id="clearanceProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="clearance-xp"><span id="xpCurrent">0</span> / <span id="xpRequired">100</span> XP</div>
+                            </div>
+                            <div style="padding: 1rem">
+                                <button class="btn btn-primary" style="width: 100%" onclick="activateAgent()">
+                                    ⚡ ACTIVER PROFIL
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Missions -->
+                        <div class="terminal-card missions-card">
+                            <div class="terminal-header">Missions Actives</div>
+                            <div class="terminal-body">
+                                <div class="mission-list" id="activeMissions"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Missions Panel -->
+                <div class="panel" id="panel-missions">
+                    <div class="missions-panel">
+                        <div class="mission-categories" id="missionCategories"></div>
+                        <div class="mission-detail" id="missionDetail">
+                            <div style="padding: 3rem; text-align: center; color: var(--text-dim)">
+                                Sélectionnez une catégorie de mission
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intel Panel -->
+                <div class="panel" id="panel-intel">
+                    <div class="intel-panel">
+                        <div class="intel-sidebar">
+                            <input type="text" class="intel-search" placeholder="🔍 Rechercher intel..." id="intelSearch">
+                            <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem" onclick="createIntel()">+ NOUVELLE INTEL</button>
+                            <div class="intel-list" id="intelList"></div>
+                        </div>
+                        <div class="intel-editor">
+                            <div class="intel-editor-header">
+                                <span class="intel-editor-title">📄 Éditeur Intel</span>
+                                <button class="btn" onclick="saveIntel()">💾 Sauvegarder</button>
+                            </div>
+                            <div class="intel-editor-body">
+                                <input type="text" class="intel-title-input" id="intelTitle" placeholder="Titre du rapport...">
+                                <textarea class="intel-content-input" id="intelContent" placeholder="Contenu de l'intel...
+
+Utilisez [[lien]] pour créer des connexions.
+Utilisez #tag pour catégoriser.
+
+Formats acceptés:
+- Observations terrain
+- Contacts identifiés  
+- Documents analysés
+- Patterns détectés"></textarea>
+                                <div class="intel-links">
+                                    <div class="intel-links-title">🔗 Connexions détectées</div>
+                                    <div class="intel-links-list" id="intelLinks"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Network Panel -->
+                <div class="panel" id="panel-network">
+                    <div class="network-panel">
+                        <div class="network-graph">
+                            <svg id="networkSvg"></svg>
+                        </div>
+                        <div class="network-sidebar">
+                            <div class="network-sidebar-header">
+                                <div class="network-sidebar-title">🔗 RÉSEAU D'AGENTS</div>
+                            </div>
+                            <div style="padding: 0.5rem">
+                                <button class="btn btn-primary" style="width: 100%" onclick="addContact()">+ AJOUTER CONTACT</button>
+                            </div>
+                            <div class="network-sidebar-body" id="contactDetail">
+                                <div style="text-align: center; color: var(--text-dim); padding: 2rem">
+                                    Sélectionnez un node
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dead Drops Panel -->
+                <div class="panel" id="panel-dead-drops">
+                    <div style="padding: 2rem; max-width: 800px; margin: 0 auto">
+                        <h2 style="font-family: var(--font-display); color: var(--alpha); margin-bottom: 1.5rem">📦 DEAD DROPS</h2>
+                        <p style="color: var(--text-dim); margin-bottom: 2rem">Messages chiffrés et packages d'intel laissés par d'autres agents.</p>
+                        <div id="deadDropsList"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Transmission Modal -->
+    <div class="modal-overlay" id="transmissionModal">
+        <div class="modal transmission-modal">
+            <div class="modal-header">
+                <span class="modal-title">📨 TRANSMISSION ENTRANTE</span>
+                <button class="modal-close" onclick="closeModal('transmissionModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="transmission-icon">📡</div>
+                <div class="transmission-title" id="modalTransmissionTitle">NOUVEAU MESSAGE</div>
+                <div class="transmission-text" id="modalTransmissionText"></div>
+                <div class="transmission-xp" id="modalTransmissionXP" style="display: none">
+                    <span>+</span>
+                    <span class="transmission-xp-value" id="modalXPValue">0</span>
+                    <span>XP</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('transmissionModal')">ACCUSÉ RÉCEPTION</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clearance Up Modal -->
+    <div class="modal-overlay" id="clearanceModal">
+        <div class="modal clearance-modal">
+            <div class="modal-body">
+                <div class="clearance-up-badge">🔓</div>
+                <div class="clearance-up-text">CLEARANCE NIVEAU</div>
+                <div class="clearance-up-level" id="newClearanceLevel">BETA</div>
+                <div class="clearance-unlocks" id="clearanceUnlocks"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('clearanceModal')">ACCEPTER RESPONSABILITÉS</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+// ==================== GAME STATE ====================
+let state = {
+    agent: {
+        id: null,
+        codename: null,
+        clearance: 'alpha',
+        xp: 0,
+        xpToNext: 100,
+        missionsCompleted: 0,
+        streak: 0,
+        lastActive: null,
+        activated: false
+    },
+    intel: [],
+    contacts: [],
+    missions: {
+        active: [],
+        completed: []
+    },
+    deadDrops: [],
+    flags: {}
+};
+
+// ==================== CLEARANCE LEVELS ====================
+const clearanceLevels = [
+    { id: 'alpha', name: 'ALPHA', xpRequired: 0, color: '#00ff88', unlocks: ['Missions de reconnaissance', 'Intel basique'] },
+    { id: 'beta', name: 'BETA', xpRequired: 100, color: '#00d4ff', unlocks: ['Missions HUMINT', 'Réseau de contacts', 'Dead Drops'] },
+    { id: 'gamma', name: 'GAMMA', xpRequired: 350, color: '#aa66ff', unlocks: ['Missions d\'infiltration', 'Documents classifiés', 'Accès archives'] },
+    { id: 'delta', name: 'DELTA', xpRequired: 800, color: '#ff6600', unlocks: ['Coordination de cellule', 'Opérations conjointes', 'Intel sensible'] },
+    { id: 'omega', name: 'OMEGA', xpRequired: 2000, color: '#ff0066', unlocks: ['Accès total', 'Handler secondaire', 'Opérations critiques'] }
+];
+
+// ==================== MISSION TEMPLATES ====================
+const missionTemplates = {
+    recon: {
+        name: 'Reconnaissance',
+        icon: '👁️',
+        desc: 'Observer et documenter',
+        clearance: 'alpha',
+        missions: [
+            {
+                id: 'm_recon_1',
+                codename: 'ŒEIL OUVERT',
+                brief: 'Assister à une séance publique du conseil communal et documenter les décisions prises.',
+                objectives: [
+                    { text: 'Localiser la prochaine séance publique', xp: 15 },
+                    { text: 'Y assister physiquement', xp: 30 },
+                    { text: 'Documenter 3 décisions votées', xp: 25 },
+                    { text: 'Identifier les élus présents', xp: 20 }
+                ],
+                reward: 100,
+                tags: ['terrain', 'observation']
+            },
+            {
+                id: 'm_recon_2',
+                codename: 'CARTOGRAPHE',
+                brief: 'Mapper les structures de pouvoir local. Qui décide vraiment?',
+                objectives: [
+                    { text: 'Identifier le bourgmestre et échevins', xp: 15 },
+                    { text: 'Trouver leurs attributions', xp: 20 },
+                    { text: 'Créer une fiche pour chacun', xp: 30 }
+                ],
+                reward: 75,
+                tags: ['recherche', 'documentation']
+            }
+        ]
+    },
+    humint: {
+        name: 'HUMINT',
+        icon: '🗣️',
+        desc: 'Intelligence humaine - contacts terrain',
+        clearance: 'beta',
+        missions: [
+            {
+                id: 'm_humint_1',
+                codename: 'PREMIER CONTACT',
+                brief: 'Établir un premier contact avec un acteur local (élu, fonctionnaire, militant).',
+                objectives: [
+                    { text: 'Identifier une cible appropriée', xp: 15 },
+                    { text: 'Trouver un prétexte de contact', xp: 20 },
+                    { text: 'Effectuer le premier contact', xp: 40 },
+                    { text: 'Obtenir une information utile', xp: 25 }
+                ],
+                reward: 120,
+                tags: ['contact', 'terrain']
+            },
+            {
+                id: 'm_humint_2',
+                codename: 'RÉSEAU DORMANT',
+                brief: 'Identifier 3 personnes partageant vos préoccupations citoyennes.',
+                objectives: [
+                    { text: 'Repérer des alliés potentiels', xp: 20 },
+                    { text: 'Engager une conversation', xp: 25 },
+                    { text: 'Évaluer leur motivation', xp: 25 },
+                    { text: 'Les ajouter à votre réseau', xp: 30 }
+                ],
+                reward: 110,
+                tags: ['réseau', 'recrutement']
+            }
+        ]
+    },
+    infiltration: {
+        name: 'Infiltration',
+        icon: '🕵️',
+        desc: 'S\'intégrer pour mieux comprendre',
+        clearance: 'gamma',
+        missions: [
+            {
+                id: 'm_infil_1',
+                codename: 'CAMÉLÉON',
+                brief: 'Rejoindre une commission consultative ou un groupe de travail municipal.',
+                objectives: [
+                    { text: 'Identifier les commissions ouvertes', xp: 20 },
+                    { text: 'Candidater ou s\'inscrire', xp: 30 },
+                    { text: 'Participer à une réunion', xp: 40 },
+                    { text: 'Rapport d\'observation', xp: 30 }
+                ],
+                reward: 150,
+                tags: ['infiltration', 'participation']
+            }
+        ]
+    },
+    activation: {
+        name: 'Activation',
+        icon: '⚡',
+        desc: 'Passer à l\'action',
+        clearance: 'delta',
+        missions: [
+            {
+                id: 'm_activ_1',
+                codename: 'ÉTINCELLE',
+                brief: 'Organiser une réunion citoyenne sur un enjeu local identifié.',
+                objectives: [
+                    { text: 'Choisir un thème mobilisateur', xp: 25 },
+                    { text: 'Trouver un lieu', xp: 20 },
+                    { text: 'Mobiliser 10 personnes', xp: 40 },
+                    { text: 'Animer la réunion', xp: 35 },
+                    { text: 'Documenter les conclusions', xp: 30 }
+                ],
+                reward: 200,
+                tags: ['action', 'mobilisation']
+            }
+        ]
+    }
+};
+
+// ==================== BOOT SEQUENCE ====================
+const bootLines = [
+    '> NEXUS SYSTEM v3.7.2',
+    '> Initializing secure connection...',
+    '> Establishing encrypted tunnel... OK',
+    '> Verifying agent credentials...',
+    '> Loading mission database...',
+    '> Synchronizing with handler...',
+    '> SYSTEM READY',
+    '',
+    '> Welcome, Agent.',
+];
+
+async function bootSequence() {
+    const bootText = document.getElementById('bootText');
+    
+    for (let i = 0; i < bootLines.length; i++) {
+        await sleep(200 + Math.random() * 300);
+        const line = document.createElement('div');
+        line.className = 'boot-line';
+        line.style.animationDelay = `${i * 0.1}s`;
+        line.innerHTML = bootLines[i] + (i === bootLines.length - 1 ? '<span class="boot-cursor"></span>' : '');
+        bootText.appendChild(line);
+    }
+    
+    await sleep(1500);
+    document.getElementById('bootScreen').classList.add('hidden');
+    document.getElementById('app').style.display = 'flex';
+    
+    loadState();
+    initApp();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', bootSequence);
+
+function loadState() {
+    const saved = localStorage.getItem('nexus_arg_state');
+    if (saved) {
+        state = { ...state, ...JSON.parse(saved) };
+    }
+}
+
+function saveState() {
+    localStorage.setItem('nexus_arg_state', JSON.stringify(state));
+}
+
+function initApp() {
+    updateUI();
+    renderActiveMissions();
+    renderMissionCategories();
+    renderIntelList();
+    initNetwork();
+    renderDeadDrops();
+    checkStreak();
+    
+    // Update time
+    setInterval(() => {
+        document.getElementById('transmissionTime').textContent = new Date().toLocaleTimeString('fr-FR');
+    }, 1000);
+    
+    if (state.agent.activated) {
+        showToast('mission', '👋 Bon retour, Agent', `Streak: ${state.agent.streak} jours`);
+    }
+}
+
+// ==================== AGENT ACTIVATION ====================
+function activateAgent() {
+    if (state.agent.activated) return;
+    
+    const codename = prompt('Choisissez votre nom de code (ex: SHADOW, PHOENIX, CIPHER):');
+    if (!codename) return;
+    
+    state.agent.id = 'AGENT-' + Math.floor(1000 + Math.random() * 9000);
+    state.agent.codename = codename.toUpperCase();
+    state.agent.activated = true;
+    state.agent.lastActive = new Date().toISOString();
+    
+    // Generate initial missions
+    generateMissions();
+    
+    saveState();
+    updateUI();
+    
+    showTransmissionModal(
+        'ACTIVATION CONFIRMÉE',
+        `Agent ${state.agent.codename},
+
+Votre profil a été créé dans notre base de données.
+ID: ${state.agent.id}
+Clearance: ALPHA
+
+Vos premières missions sont disponibles.
+Chaque action vous rapproche de la vérité.
+
+Bonne chance, Agent.
+
+— HANDLER_PRIME`,
+        25
+    );
+}
+
+// ==================== MISSIONS ====================
+function generateMissions() {
+    state.missions.active = [];
+    
+    // Add recon missions for ALPHA
+    missionTemplates.recon.missions.forEach(m => {
+        state.missions.active.push({
+            ...m,
+            objectives: m.objectives.map(o => ({ ...o, completed: false })),
+            accepted: false
+        });
+    });
+    
+    // Add HUMINT if BETA+
+    if (getClearanceIndex() >= 1) {
+        missionTemplates.humint.missions.forEach(m => {
+            state.missions.active.push({
+                ...m,
+                objectives: m.objectives.map(o => ({ ...o, completed: false })),
+                accepted: false
+            });
+        });
+    }
+    
+    saveState();
+}
+
+function getClearanceIndex() {
+    return clearanceLevels.findIndex(c => c.id === state.agent.clearance);
+}
+
+function renderActiveMissions() {
+    const container = document.getElementById('activeMissions');
+    const missions = state.missions.active.filter(m => m.accepted).slice(0, 3);
+    
+    if (missions.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-dim)">
+                <p>Aucune mission active</p>
+                <button class="btn" style="margin-top: 1rem" onclick="showPanel('missions')">🎯 Voir les missions</button>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = missions.map(m => {
+        const completed = m.objectives.filter(o => o.completed).length;
+        const total = m.objectives.length;
+        return `
+            <div class="mission-item" onclick="showMission('${m.id}')">
+                <div class="mission-priority">🎯</div>
+                <div class="mission-info">
+                    <div class="mission-codename">${m.codename}</div>
+                    <div class="mission-desc">${completed}/${total} objectifs</div>
+                    <div class="mission-meta">
+                        ${m.tags.map(t => `<span class="mission-tag">${t}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="mission-reward">
+                    <div class="mission-reward-value">${m.reward}</div>
+                    <div class="mission-reward-label">XP</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderMissionCategories() {
+    const container = document.getElementById('missionCategories');
+    const clearanceIdx = getClearanceIndex();
+    
+    container.innerHTML = Object.entries(missionTemplates).map(([key, cat]) => {
+        const catClearanceIdx = clearanceLevels.findIndex(c => c.id === cat.clearance);
+        const locked = catClearanceIdx > clearanceIdx;
+        const missionCount = state.missions.active.filter(m => m.tags?.some(t => cat.missions.some(cm => cm.tags?.includes(t)))).length;
+        
+        return `
+            <div class="mission-category ${locked ? '' : ''}" onclick="${locked ? '' : `showMissionCategory('${key}')`}" style="${locked ? 'opacity: 0.4; cursor: not-allowed' : ''}">
+                <div class="mission-category-icon">${cat.icon}</div>
+                <div class="mission-category-info">
+                    <h4>${cat.name}</h4>
+                    <p>${locked ? `Requiert CLEARANCE ${cat.clearance.toUpperCase()}` : cat.desc}</p>
+                </div>
+                <div class="mission-category-count">${locked ? '🔒' : cat.missions.length}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showMissionCategory(catKey) {
+    const cat = missionTemplates[catKey];
+    if (!cat) return;
+    
+    const container = document.getElementById('missionDetail');
+    const mission = cat.missions[0];
+    const missionState = state.missions.active.find(m => m.id === mission.id) || mission;
+    
+    container.innerHTML = `
+        <div class="mission-detail-header">
+            <div class="mission-detail-meta">
+                <span>🎯 ${cat.name}</span>
+                <span>⏱️ Pas de limite</span>
+                <span>📍 Terrain</span>
+            </div>
+            <div class="mission-detail-title">${mission.codename}</div>
+            <div class="mission-detail-subtitle">${mission.brief}</div>
+        </div>
+        <div class="mission-detail-body">
+            <div class="mission-briefing">BRIEFING CLASSIFIÉ
+
+${mission.brief}
+
+Cette mission nécessite une action TERRAIN.
+Documentez chaque étape avec des preuves.</div>
+            
+            <div class="mission-objectives">
+                <h4>🎯 Objectifs</h4>
+                ${mission.objectives.map((obj, i) => `
+                    <div class="objective-item ${missionState.objectives?.[i]?.completed ? 'completed' : ''}" onclick="toggleObjective('${mission.id}', ${i})">
+                        <div class="objective-check">${missionState.objectives?.[i]?.completed ? '✓' : ''}</div>
+                        <div class="objective-text">${obj.text}</div>
+                        <div class="objective-xp">+${obj.xp} XP</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="mission-evidence">
+                <h4>📎 Preuves</h4>
+                <div class="evidence-upload" onclick="uploadEvidence()">
+                    <div class="evidence-upload-icon">📷</div>
+                    <div class="evidence-upload-text">Cliquez pour ajouter une preuve (photo, document...)</div>
+                </div>
+            </div>
+            
+            <div class="mission-actions">
+                ${missionState.accepted ? '' : `<button class="btn btn-primary" onclick="acceptMission('${mission.id}')">✅ ACCEPTER MISSION</button>`}
+                <button class="btn btn-danger" onclick="abortMission('${mission.id}')">❌ ABANDONNER</button>
+            </div>
+        </div>
+    `;
+}
+
+function acceptMission(missionId) {
+    const mission = state.missions.active.find(m => m.id === missionId);
+    if (mission) {
+        mission.accepted = true;
+        saveState();
+        renderActiveMissions();
+        showToast('mission', '🎯 Mission acceptée', mission.codename);
+    }
+}
+
+function toggleObjective(missionId, objIndex) {
+    const mission = state.missions.active.find(m => m.id === missionId);
+    if (!mission || !mission.accepted) return;
+    
+    mission.objectives[objIndex].completed = !mission.objectives[objIndex].completed;
+    
+    if (mission.objectives[objIndex].completed) {
+        gainXP(mission.objectives[objIndex].xp, 'Objectif complété');
+    }
+    
+    // Check if all completed
+    if (mission.objectives.every(o => o.completed)) {
+        completeMission(missionId);
+    }
+    
+    saveState();
+    showMissionCategory(Object.keys(missionTemplates).find(k => 
+        missionTemplates[k].missions.some(m => m.id === missionId)
+    ));
+    renderActiveMissions();
+}
+
+function completeMission(missionId) {
+    const mission = state.missions.active.find(m => m.id === missionId);
+    if (!mission) return;
+    
+    state.missions.completed.push(mission);
+    state.missions.active = state.missions.active.filter(m => m.id !== missionId);
+    state.agent.missionsCompleted++;
+    
+    gainXP(mission.reward, `Mission ${mission.codename}`);
+    
+    showTransmissionModal(
+        'MISSION ACCOMPLIE',
+        `Agent ${state.agent.codename},
+
+Mission ${mission.codename} complétée avec succès.
+
+Votre travail contribue à notre cause.
+Ces données ont été ajoutées à notre base.
+
+Nouvelles missions en cours de préparation.
+
+— HANDLER_PRIME`,
+        mission.reward
+    );
+    
+    saveState();
+}
+
+// ==================== INTEL ====================
+function createIntel() {
+    document.getElementById('intelTitle').value = '';
+    document.getElementById('intelContent').value = '';
+    document.getElementById('intelTitle').dataset.intelId = '';
+}
+
+function saveIntel() {
+    const title = document.getElementById('intelTitle').value.trim();
+    const content = document.getElementById('intelContent').value;
+    const intelId = document.getElementById('intelTitle').dataset.intelId;
+    
+    if (!title) {
+        showToast('alert', '⚠️ Erreur', 'Titre requis');
+        return;
+    }
+    
+    // Extract links
+    const links = [];
+    const linkRegex = /\[\[([^\]]+)\]\]/g;
+    let match;
+    while ((match = linkRegex.exec(content)) !== null) {
+        links.push(match[1]);
+    }
+    
+    // Extract tags
+    const tags = [];
+    const tagRegex = /#(\w+)/g;
+    while ((match = tagRegex.exec(content)) !== null) {
+        tags.push(match[1]);
+    }
+    
+    if (intelId) {
+        const intel = state.intel.find(i => i.id === intelId);
+        if (intel) {
+            intel.title = title;
+            intel.content = content;
+            intel.links = links;
+            intel.tags = tags;
+            intel.updated = new Date().toISOString();
+        }
+    } else {
+        const intel = {
+            id: 'intel_' + Date.now(),
+            title,
+            content,
+            links,
+            tags,
+            created: new Date().toISOString(),
+            updated: new Date().toISOString()
+        };
+        state.intel.push(intel);
+        gainXP(15, 'Nouvelle intel créée');
+    }
+    
+    saveState();
+    renderIntelList();
+    showToast('xp', '💾 Intel sauvegardée', title);
+}
+
+function renderIntelList() {
+    const container = document.getElementById('intelList');
+    
+    if (state.intel.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-dim)">Aucune intel</div>';
+        return;
+    }
+    
+    container.innerHTML = state.intel.map(intel => `
+        <div class="intel-item" onclick="editIntel('${intel.id}')">
+            <div class="intel-item-header">
+                <span class="intel-item-icon">📄</span>
+                <span class="intel-item-title">${intel.title}</span>
+            </div>
+            <div class="intel-item-preview">${intel.content.slice(0, 50)}...</div>
+            <div class="intel-item-meta">
+                ${intel.tags.slice(0, 3).map(t => `<span class="intel-tag">#${t}</span>`).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function editIntel(intelId) {
+    const intel = state.intel.find(i => i.id === intelId);
+    if (!intel) return;
+    
+    document.getElementById('intelTitle').value = intel.title;
+    document.getElementById('intelContent').value = intel.content;
+    document.getElementById('intelTitle').dataset.intelId = intelId;
+}
+
+// ==================== NETWORK ====================
+function addContact() {
+    const name = prompt('Nom du contact:');
+    if (!name) return;
+    
+    const role = prompt('Fonction/Rôle:') || 'Contact';
+    const trustLevel = prompt('Niveau de confiance (1-5):') || '3';
+    
+    const contact = {
+        id: 'contact_' + Date.now(),
+        name,
+        role,
+        trust: parseInt(trustLevel),
+        notes: '',
+        created: new Date().toISOString()
+    };
+    
+    state.contacts.push(contact);
+    gainXP(20, 'Nouveau contact');
+    saveState();
+    updateNetwork();
+    showToast('xp', '🔗 Contact ajouté', name);
+}
+
+function initNetwork() {
+    updateNetwork();
+}
+
+function updateNetwork() {
+    const svg = d3.select('#networkSvg');
+    const rect = svg.node()?.getBoundingClientRect();
+    const width = rect?.width || 600;
+    const height = rect?.height || 400;
+    
+    svg.selectAll('*').remove();
+    
+    // Build nodes
+    const nodes = [
+        { id: 'self', name: state.agent.codename || 'VOUS', isSelf: true },
+        ...state.contacts.map(c => ({ id: c.id, name: c.name, role: c.role, trust: c.trust }))
+    ];
+    
+    const links = state.contacts.map(c => ({ source: 'self', target: c.id }));
+    
+    const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-200))
+        .force('center', d3.forceCenter(width / 2, height / 2));
+    
+    const g = svg.append('g');
+    
+    // Zoom
+    svg.call(d3.zoom().on('zoom', e => g.attr('transform', e.transform)));
+    
+    const link = g.selectAll('line')
+        .data(links)
+        .enter().append('line')
+        .attr('class', 'network-link')
+        .attr('stroke', '#00ff88')
+        .attr('stroke-opacity', 0.4);
+    
+    const node = g.selectAll('g.node')
+        .data(nodes)
+        .enter().append('g')
+        .attr('class', 'network-node')
+        .call(d3.drag()
+            .on('start', (e, d) => {
+                if (!e.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x; d.fy = d.y;
+            })
+            .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end', (e, d) => {
+                if (!e.active) simulation.alphaTarget(0);
+                d.fx = null; d.fy = null;
+            }));
+    
+    node.append('circle')
+        .attr('r', d => d.isSelf ? 25 : 15)
+        .attr('fill', d => d.isSelf ? '#00ff88' : '#1a1a28')
+        .attr('stroke', d => d.isSelf ? '#00ff88' : '#00d4ff')
+        .attr('stroke-width', 2);
+    
+    node.append('text')
+        .attr('dy', d => d.isSelf ? 40 : 30)
+        .attr('text-anchor', 'middle')
+        .text(d => d.name);
+    
+    simulation.on('tick', () => {
+        link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+}
+
+// ==================== DEAD DROPS ====================
+function renderDeadDrops() {
+    const container = document.getElementById('deadDropsList');
+    
+    // Sample dead drops
+    const drops = [
+        { id: 'dd1', from: 'GHOST_7', time: 'Il y a 2h', encrypted: true, preview: 'URGENT: Information sur le budget communal...' },
+        { id: 'dd2', from: 'CIPHER_X', time: 'Il y a 5h', encrypted: false, preview: 'Liste des prochaines réunions publiques dans votre secteur.' }
+    ];
+    
+    container.innerHTML = drops.map(drop => `
+        <div class="mission-item" onclick="openDeadDrop('${drop.id}')">
+            <div class="mission-priority">${drop.encrypted ? '🔐' : '📄'}</div>
+            <div class="mission-info">
+                <div class="mission-codename">De: ${drop.from}</div>
+                <div class="mission-desc">${drop.preview}</div>
+                <div class="mission-meta">
+                    <span class="mission-tag">${drop.time}</span>
+                    ${drop.encrypted ? '<span class="mission-tag" style="color: var(--classified)">CHIFFRÉ</span>' : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openDeadDrop(dropId) {
+    showToast('mission', '📦 Dead Drop', 'Contenu déchiffré');
+    gainXP(10, 'Dead drop consulté');
+}
+
+// ==================== XP & CLEARANCE ====================
+function gainXP(amount, reason) {
+    state.agent.xp += amount;
+    
+    // Check clearance upgrade
+    const currentIdx = getClearanceIndex();
+    const nextLevel = clearanceLevels[currentIdx + 1];
+    
+    if (nextLevel && state.agent.xp >= nextLevel.xpRequired) {
+        upgradeClearance(nextLevel);
+    }
+    
+    saveState();
+    updateUI();
+    showToast('xp', `+${amount} XP`, reason);
+}
+
+function upgradeClearance(level) {
+    state.agent.clearance = level.id;
+    
+    // Show clearance modal
+    document.getElementById('newClearanceLevel').textContent = level.name;
+    document.getElementById('newClearanceLevel').className = `clearance-up-level ${level.id}`;
+    
+    document.getElementById('clearanceUnlocks').innerHTML = `
+        <h4>🔓 Nouvelles capacités débloquées:</h4>
+        ${level.unlocks.map(u => `
+            <div class="unlock-item">
+                <span class="unlock-icon">✓</span>
+                <span class="unlock-text">${u}</span>
+            </div>
+        `).join('')}
+    `;
+    
+    document.getElementById('clearanceModal').classList.add('show');
+    
+    // Generate new missions
+    generateMissions();
+}
+
+function checkStreak() {
+    const today = new Date().toDateString();
+    const lastActive = state.agent.lastActive ? new Date(state.agent.lastActive).toDateString() : null;
+    
+    if (!lastActive) {
+        state.agent.streak = 1;
+    } else if (lastActive !== today) {
+        const last = new Date(state.agent.lastActive);
+        const diff = Math.floor((new Date() - last) / (1000 * 60 * 60 * 24));
+        
+        if (diff === 1) {
+            state.agent.streak++;
+            gainXP(5 * state.agent.streak, `Streak ${state.agent.streak} jours`);
+        } else if (diff > 1) {
+            state.agent.streak = 1;
+        }
+    }
+    
+    state.agent.lastActive = new Date().toISOString();
+    saveState();
+}
+
+// ==================== UI ====================
+function updateUI() {
+    // Agent ID
+    document.getElementById('agentId').textContent = state.agent.id || 'NON ACTIVÉ';
+    
+    // Clearance badge
+    const badge = document.getElementById('clearanceBadge');
+    badge.textContent = state.agent.clearance.toUpperCase();
+    badge.className = `clearance-badge ${state.agent.clearance}`;
+    
+    // Profile
+    document.getElementById('profileAvatar').textContent = state.agent.codename ? state.agent.codename.slice(0, 2) : '??';
+    document.getElementById('profileCodename').textContent = state.agent.codename || 'NON ASSIGNÉ';
+    
+    // Stats
+    document.getElementById('statMissions').textContent = state.agent.missionsCompleted;
+    document.getElementById('statIntel').textContent = state.intel.length;
+    document.getElementById('statContacts').textContent = state.contacts.length;
+    document.getElementById('statStreak').textContent = state.agent.streak;
+    
+    // Clearance progress
+    const currentIdx = getClearanceIndex();
+    const currentLevel = clearanceLevels[currentIdx];
+    const nextLevel = clearanceLevels[currentIdx + 1];
+    
+    document.getElementById('clearanceLevel').textContent = currentLevel.name;
+    document.getElementById('clearanceLevel').className = `clearance-level ${currentLevel.id}`;
+    
+    if (nextLevel) {
+        const progress = ((state.agent.xp - currentLevel.xpRequired) / (nextLevel.xpRequired - currentLevel.xpRequired)) * 100;
+        document.getElementById('clearanceProgress').style.width = `${Math.min(100, progress)}%`;
+        document.getElementById('xpCurrent').textContent = state.agent.xp;
+        document.getElementById('xpRequired').textContent = nextLevel.xpRequired;
+    } else {
+        document.getElementById('clearanceProgress').style.width = '100%';
+        document.getElementById('xpCurrent').textContent = state.agent.xp;
+        document.getElementById('xpRequired').textContent = 'MAX';
+    }
+}
+
+function showPanel(panelId) {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.panel === panelId);
+    });
+    
+    document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `panel-${panelId}`);
+    });
+    
+    if (panelId === 'network') {
+        setTimeout(updateNetwork, 100);
+    }
+}
+
+function showTransmission() {
+    showTransmissionModal(
+        'MESSAGE DU HANDLER',
+        `Agent ${state.agent.codename || 'NON ACTIVÉ'},
+
+${state.agent.activated ? 
+`Votre progression est notée.
+Clearance actuelle: ${state.agent.clearance.toUpperCase()}
+Missions complétées: ${state.agent.missionsCompleted}
+
+Continuez votre excellent travail.
+De nouvelles opportunités se présenteront bientôt.` :
+`Votre profil n'est pas encore activé.
+Activez-le depuis le Command Center pour
+recevoir vos premières missions.`}
+
+— HANDLER_PRIME`
+    );
+}
+
+function showTransmissionModal(title, text, xp = 0) {
+    document.getElementById('modalTransmissionTitle').textContent = title;
+    document.getElementById('modalTransmissionText').textContent = text;
+    
+    if (xp > 0) {
+        document.getElementById('modalTransmissionXP').style.display = 'inline-flex';
+        document.getElementById('modalXPValue').textContent = xp;
+    } else {
+        document.getElementById('modalTransmissionXP').style.display = 'none';
+    }
+    
+    document.getElementById('transmissionModal').classList.add('show');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+function showToast(type, title, message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = { xp: '⭐', mission: '🎯', alert: '⚠️', clearance: '🔓' };
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || '💬'}</div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function uploadEvidence() {
+    showToast('mission', '📷 Upload', 'Fonctionnalité bientôt disponible');
+}
+
+function abortMission(missionId) {
+    if (!confirm('Abandonner cette mission?')) return;
+    state.missions.active = state.missions.active.filter(m => m.id !== missionId);
+    saveState();
+    renderActiveMissions();
+    showToast('alert', '❌ Mission abandonnée', '');
+}
+
+function showMission(missionId) {
+    showPanel('missions');
+    const catKey = Object.keys(missionTemplates).find(k => 
+        missionTemplates[k].missions.some(m => m.id === missionId)
+    );
+    if (catKey) showMissionCategory(catKey);
+}
+</script>
+</body>
+</html>

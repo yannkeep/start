@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::PARTNER DASHBOARD — Espace Partenaire</title>
+    <script src="kern-core.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .partner-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .partner-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .partner-tier {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--amber);
+            color: var(--bg-void);
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+        }
+        
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            padding-left: 0.75rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+            text-decoration: none;
+            color: var(--text-dim);
+        }
+        
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+        
+        .nav-item.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .nav-icon { font-size: 1.1rem; }
+        .nav-label { font-size: 0.85rem; font-weight: 500; }
+        
+        .nav-badge {
+            margin-left: auto;
+            padding: 0.15rem 0.5rem;
+            background: var(--red);
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .sidebar-footer {
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .sidebar-footer a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .sidebar-footer a:hover { color: var(--text); }
+        
+        /* Main Content */
+        .main {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .topbar {
+            padding: 1rem 2rem;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .topbar-search {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .topbar-search input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .topbar-search::before {
+            content: '🔍';
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        .topbar-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-left: auto;
+        }
+        
+        .topbar-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .topbar-btn:hover { background: var(--bg-hover); }
+        
+        .notif-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        
+        .stat-change {
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .stat-change.up { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .stat-change.down { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .chart-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-filter {
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+        
+        .chart-filter:hover, .chart-filter.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+        }
+        
+        /* Mock Chart with bars */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 1rem 0;
+        }
+        
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .bar {
+            width: 30px;
+            background: linear-gradient(to top, var(--accent), var(--cyan));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease-out;
+        }
+        
+        .bar-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        /* Donut Chart */
+        .donut-chart {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .donut-chart svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .donut-chart circle {
+            fill: none;
+            stroke-width: 20;
+        }
+        
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .donut-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .donut-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        
+        .donut-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        /* Products Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .product-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .product-card.empty {
+            border-style: dashed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            color: var(--text-dim);
+        }
+        
+        .product-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .product-info { flex: 1; }
+        .product-name { font-weight: 600; margin-bottom: 0.2rem; }
+        .product-price { font-size: 0.85rem; color: var(--green); font-weight: 600; }
+        
+        .product-status {
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        
+        .product-status.active { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .product-status.draft { background: rgba(136, 136, 136, 0.2); color: var(--text-dim); }
+        
+        .product-stats {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .product-stat {
+            text-align: center;
+        }
+        
+        .product-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .product-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+        
+        /* Recent Activity */
+        .activity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 10px;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .activity-icon.view { background: rgba(34, 211, 238, 0.2); }
+        .activity-icon.click { background: rgba(99, 102, 241, 0.2); }
+        .activity-icon.lead { background: rgba(74, 222, 128, 0.2); }
+        .activity-icon.order { background: rgba(251, 191, 36, 0.2); }
+        
+        .activity-content { flex: 1; }
+        .activity-text { font-size: 0.85rem; }
+        .activity-time { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* Settings View */
+        .settings-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .settings-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 900px) {
+            .app { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="partner-logo" id="partnerLogo">🏭</div>
+                <div class="partner-name" id="partnerName">Lorem Industries</div>
+                <span class="partner-tier" id="partnerTier">💎 Platinum</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <div class="nav-item active" data-view="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-view="products">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-label">Mes Produits</span>
+                        <span class="nav-badge" id="productCount">9</span>
+                    </div>
+                    <div class="nav-item" data-view="analytics">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Analytics</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Interactions</div>
+                    <div class="nav-item" data-view="leads">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-label">Leads</span>
+                        <span class="nav-badge">3</span>
+                    </div>
+                    <div class="nav-item" data-view="messages">
+                        <span class="nav-icon">💬</span>
+                        <span class="nav-label">Messages</span>
+                        <span class="nav-badge">5</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Configuration</div>
+                    <div class="nav-item" data-view="profile">
+                        <span class="nav-icon">🏢</span>
+                        <span class="nav-label">Mon Profil</span>
+                    </div>
+                    <div class="nav-item" data-view="billing">
+                        <span class="nav-icon">💳</span>
+                        <span class="nav-label">Facturation</span>
+                    </div>
+                    <div class="nav-item" data-view="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Paramètres</span>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="18-kern-partners.html">← Retour Marketplace</a>
+                <a href="00-kern-nexus.html">← KERN NEXUS</a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <div class="topbar">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="topbar-search">
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+                <div class="topbar-actions">
+                    <div class="topbar-btn">
+                        🔔
+                        <span class="notif-dot"></span>
+                    </div>
+                    <div class="topbar-btn">❓</div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <!-- Dashboard View -->
+                <div id="dashboardView">
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background: rgba(34, 211, 238, 0.2);">👁️</div>
+                                <span class="stat-change up">↑ 12%</span>
+                            </div>
+                            <div class="stat-value" style="color: var(--cyan)" id="statViews">12,847</div>
+                            <div class="stat-label">Vues ce mois</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background: rgba(99, 102, 241, 0.2);">🖱️</div>
+                                <span class="stat-change up">↑ 8%</span>
+                            </div>
+                            <div class="stat-value" style="color: var(--accent)" id="statClicks">1,423</div>
+                            <div class="stat-label">Clics produits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background: rgba(74, 222, 128, 0.2);">👥</div>
+                                <span class="stat-change up">↑ 23%</span>
+                            </div>
+                            <div class="stat-value" style="color: var(--green)" id="statLeads">47</div>
+                            <div class="stat-label">Nouveaux leads</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background: rgba(251, 191, 36, 0.2);">💰</div>
+                                <span class="stat-change up">↑ 15%</span>
+                            </div>
+                            <div class="stat-value" style="color: var(--amber)" id="statRevenue">€8,420</div>
+                            <div class="stat-label">Revenus générés</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <span class="chart-title">📈 Performance mensuelle</span>
+                                <div class="chart-filters">
+                                    <span class="chart-filter">7j</span>
+                                    <span class="chart-filter active">30j</span>
+                                    <span class="chart-filter">90j</span>
+                                </div>
+                            </div>
+                            <div class="bar-chart" id="barChart">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <span class="chart-title">🎯 Répartition trafic</span>
+                            </div>
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="var(--accent)" stroke-dasharray="125.6 125.6" stroke-dashoffset="0"/>
+                                    <circle cx="50" cy="50" r="40" stroke="var(--cyan)" stroke-dasharray="75.4 125.6" stroke-dashoffset="-125.6"/>
+                                    <circle cx="50" cy="50" r="40" stroke="var(--green)" stroke-dasharray="50.2 125.6" stroke-dashoffset="-201"/>
+                                </svg>
+                                <div class="donut-center">
+                                    <div class="donut-value">100%</div>
+                                    <div class="donut-label">Total</div>
+                                </div>
+                            </div>
+                            <div class="donut-legend">
+                                <div class="legend-item"><span class="legend-dot" style="background: var(--accent)"></span> Direct (50%)</div>
+                                <div class="legend-item"><span class="legend-dot" style="background: var(--cyan)"></span> Recherche (30%)</div>
+                                <div class="legend-item"><span class="legend-dot" style="background: var(--green)"></span> Référent (20%)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="activity-card">
+                        <div class="chart-header">
+                            <span class="chart-title">🔔 Activité récente</span>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products View -->
+                <div id="productsView" style="display: none;">
+                    <div class="section-header">
+                        <span class="section-title">📦 Mes Produits</span>
+                        <button class="btn btn-primary" onclick="addProduct()">+ Ajouter un produit</button>
+                    </div>
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+                
+                <!-- Profile View -->
+                <div id="profileView" style="display: none;">
+                    <div class="settings-section">
+                        <div class="settings-title">🏢 Informations entreprise</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nom de l'entreprise</label>
+                                <input type="text" id="profileName" value="Lorem Industries">
+                            </div>
+                            <div class="form-group">
+                                <label>Emoji / Logo</label>
+                                <input type="text" id="profileEmoji" value="🏭" maxlength="2">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tagline</label>
+                            <input type="text" id="profileTagline" value="Solutions industrielles nouvelle génération">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Secteur</label>
+                                <input type="text" id="profileSector" value="Industrie">
+                            </div>
+                            <div class="form-group">
+                                <label>Site web</label>
+                                <input type="url" id="profileWebsite" value="https://lorem-industries.example">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="profileDescription" rows="4">Lorem Industries est un leader dans les solutions industrielles innovantes. Fondée en 2010, nous accompagnons les entreprises dans leur transformation digitale.</textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveProfile()">💾 Sauvegarder</button>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <div class="settings-title">📧 Contact</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email principal</label>
+                                <input type="email" value="contact@lorem-industries.example">
+                            </div>
+                            <div class="form-group">
+                                <label>Téléphone</label>
+                                <input type="tel" value="+32 2 123 45 67">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Adresse</label>
+                            <input type="text" value="123 Rue de l'Innovation, 1000 Bruxelles, Belgique">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings View -->
+                <div id="settingsView" style="display: none;">
+                    <div class="settings-section">
+                        <div class="settings-title">🔔 Notifications</div>
+                        <div class="form-group">
+                            <label><input type="checkbox" checked> Recevoir les alertes nouveaux leads</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" checked> Recevoir le rapport hebdomadaire</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox"> Recevoir les newsletters KERN</label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <div class="settings-title">🎨 Personnalisation</div>
+                        <div class="form-group">
+                            <label>Couleur principale</label>
+                            <input type="color" value="#6366f1" style="width: 100px; height: 40px;">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <div class="settings-title">⚠️ Zone dangereuse</div>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">
+                            Attention, ces actions sont irréversibles.
+                        </p>
+                        <button class="btn btn-secondary" style="color: var(--red); border-color: var(--red);">
+                            🗑️ Supprimer mon compte partenaire
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Analytics View -->
+                <div id="analyticsView" style="display: none;">
+                    <div class="settings-section">
+                        <div class="settings-title">📊 Analytics détaillés</div>
+                        <p style="color: var(--text-dim);">Analytics avancés disponibles pour les tiers Gold et supérieurs.</p>
+                        <div class="bar-chart" id="analyticsChart" style="margin-top: 1rem;"></div>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-top: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--cyan)">3.2%</div>
+                            <div class="stat-label">Taux de conversion</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--accent)">2m 34s</div>
+                            <div class="stat-label">Temps moyen sur page</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--green)">68%</div>
+                            <div class="stat-label">Taux de rebond</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--amber)">4.2</div>
+                            <div class="stat-label">Pages / session</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Leads View -->
+                <div id="leadsView" style="display: none;">
+                    <div class="section-header">
+                        <span class="section-title">👥 Leads récents</span>
+                        <button class="btn btn-secondary">📤 Exporter CSV</button>
+                    </div>
+                    <div class="settings-section" style="padding: 0; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--bg-surface);">
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; color: var(--text-dim);">Contact</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; color: var(--text-dim);">Produit</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; color: var(--text-dim);">Date</th>
+                                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; color: var(--text-dim);">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leadsTable">
+                                <!-- Generated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Messages View -->
+                <div id="messagesView" style="display: none;">
+                    <div class="section-header">
+                        <span class="section-title">💬 Messages</span>
+                    </div>
+                    <div class="settings-section">
+                        <p style="color: var(--text-dim); text-align: center; padding: 2rem;">
+                            💬 Messagerie intégrée bientôt disponible
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Billing View -->
+                <div id="billingView" style="display: none;">
+                    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--amber)">€749</div>
+                            <div class="stat-label">Abonnement mensuel</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="color: var(--green)">Actif</div>
+                            <div class="stat-label">Statut abonnement</div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section" style="margin-top: 1.5rem;">
+                        <div class="settings-title">💳 Méthode de paiement</div>
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-surface); border-radius: 10px;">
+                            <span style="font-size: 2rem;">💳</span>
+                            <div>
+                                <div style="font-weight: 600;">Visa •••• 4242</div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim);">Expire 12/26</div>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-left: auto;">Modifier</button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section" style="margin-top: 1.5rem;">
+                        <div class="settings-title">📄 Historique factures</div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-surface); border-radius: 8px;">
+                                <span>Janvier 2026</span>
+                                <span style="color: var(--green)">€749</span>
+                                <a href="#" style="color: var(--accent);">Télécharger</a>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-surface); border-radius: 8px;">
+                                <span>Décembre 2025</span>
+                                <span style="color: var(--green)">€749</span>
+                                <a href="#" style="color: var(--accent);">Télécharger</a>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-surface); border-radius: 8px;">
+                                <span>Novembre 2025</span>
+                                <span style="color: var(--green)">€749</span>
+                                <a href="#" style="color: var(--accent);">Télécharger</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+// ==================== STATE ====================
+let currentPartner = null;
+let currentView = 'dashboard';
+
+// Demo products for Lorem Industries
+const DEMO_PRODUCTS = [
+    { name: 'LoremFlow Pro', icon: '⚙️', price: '€2,499/an', status: 'active', views: 4521, clicks: 523, leads: 12 },
+    { name: 'IpsumTrack', icon: '📍', price: '€899/an', status: 'active', views: 3287, clicks: 298, leads: 8 },
+    { name: 'DolorShield', icon: '🛡️', price: '€1,299/an', status: 'active', views: 2854, clicks: 245, leads: 6 },
+    { name: 'SitAmet Hub', icon: '🔄', price: '€699/an', status: 'active', views: 1987, clicks: 176, leads: 5 },
+    { name: 'ConsecSuite', icon: '📊', price: '€1,899/an', status: 'active', views: 2341, clicks: 198, leads: 7 },
+    { name: 'AdipCloud', icon: '☁️', price: '€449/an', status: 'active', views: 1654, clicks: 134, leads: 4 },
+    { name: 'ElitMobile', icon: '📱', price: '€299/an', status: 'draft', views: 876, clicks: 67, leads: 2 },
+    { name: 'SedDo AI', icon: '🤖', price: '€3,999/an', status: 'active', views: 5234, clicks: 456, leads: 15 },
+    { name: 'TempIncubo', icon: '🧪', price: 'Sur devis', status: 'draft', views: 432, clicks: 34, leads: 1 }
+];
+
+const DEMO_ACTIVITY = [
+    { type: 'lead', text: 'Nouveau lead pour SedDo AI', time: 'Il y a 12 min' },
+    { type: 'view', text: '234 vues sur LoremFlow Pro', time: 'Il y a 1h' },
+    { type: 'click', text: '45 clics sur votre profil', time: 'Il y a 3h' },
+    { type: 'order', text: 'Demande de devis TempIncubo', time: 'Il y a 5h' },
+    { type: 'lead', text: 'Nouveau lead pour DolorShield', time: 'Hier' },
+];
+
+const DEMO_LEADS = [
+    { name: 'Jean Dupont', email: 'jean@ipsum.example', product: 'SedDo AI', date: '06/01/2026', status: 'new' },
+    { name: 'Marie Martin', email: 'marie@dolor.example', product: 'LoremFlow Pro', date: '05/01/2026', status: 'contacted' },
+    { name: 'Pierre Bernard', email: 'pierre@amet.example', product: 'DolorShield', date: '04/01/2026', status: 'qualified' },
+];
+
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+    loadPartnerData();
+    renderDashboard();
+    renderProducts();
+    renderActivity();
+    renderLeads();
+    setupNavigation();
+});
+
+function loadPartnerData() {
+    // In real app, would load from localStorage or API
+    // For now, use Lorem Industries as default
+    const stored = localStorage.getItem('kern_partners');
+    if (stored) {
+        const partners = JSON.parse(stored);
+        currentPartner = partners.find(p => p.id === 'p1') || partners[0];
+    }
+    
+    if (currentPartner) {
+        document.getElementById('partnerLogo').textContent = currentPartner.emoji;
+        document.getElementById('partnerName').textContent = currentPartner.name;
+        document.getElementById('partnerTier').textContent = getTierDisplay(currentPartner.tier);
+        document.getElementById('productCount').textContent = (currentPartner.products || []).filter(p => p).length;
+    }
+}
+
+function getTierDisplay(tier) {
+    const tiers = {
+        free: '🌱 Gratuit',
+        bronze: '🥉 Bronze',
+        silver: '🥈 Silver',
+        gold: '🥇 Gold',
+        platinum: '💎 Platinum',
+        diamond: '👑 Diamond'
+    };
+    return tiers[tier] || tier;
+}
+
+// ==================== RENDER FUNCTIONS ====================
+function renderDashboard() {
+    // Render bar chart
+    const barChart = document.getElementById('barChart');
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    const values = [65, 78, 92, 85, 110, 95, 120, 135, 128, 145, 160, 175];
+    
+    barChart.innerHTML = months.map((month, i) => `
+        <div class="bar-item">
+            <div class="bar" style="height: ${values[i]}px;"></div>
+            <span class="bar-label">${month}</span>
+        </div>
+    `).join('');
+    
+    // Also render analytics chart
+    const analyticsChart = document.getElementById('analyticsChart');
+    if (analyticsChart) {
+        analyticsChart.innerHTML = barChart.innerHTML;
+    }
+}
+
+function renderProducts() {
+    const container = document.getElementById('productsGrid');
+    const products = DEMO_PRODUCTS;
+    
+    let html = products.map(product => `
+        <div class="product-card">
+            <div class="product-header">
+                <div class="product-icon">${product.icon}</div>
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">${product.price}</div>
+                </div>
+                <span class="product-status ${product.status}">${product.status === 'active' ? 'Actif' : 'Brouillon'}</span>
+            </div>
+            <div class="product-stats">
+                <div class="product-stat">
+                    <div class="product-stat-value">${product.views.toLocaleString()}</div>
+                    <div class="product-stat-label">Vues</div>
+                </div>
+                <div class="product-stat">
+                    <div class="product-stat-value">${product.clicks}</div>
+                    <div class="product-stat-label">Clics</div>
+                </div>
+                <div class="product-stat">
+                    <div class="product-stat-value">${product.leads}</div>
+                    <div class="product-stat-label">Leads</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Add empty slots if less than 9
+    const remaining = 9 - products.length;
+    for (let i = 0; i < remaining; i++) {
+        html += `
+            <div class="product-card empty">
+                <span>+ Ajouter un produit</span>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+function renderActivity() {
+    const container = document.getElementById('activityList');
+    
+    container.innerHTML = DEMO_ACTIVITY.map(item => `
+        <div class="activity-item">
+            <div class="activity-icon ${item.type}">
+                ${item.type === 'view' ? '👁️' : item.type === 'click' ? '🖱️' : item.type === 'lead' ? '👥' : '💰'}
+            </div>
+            <div class="activity-content">
+                <div class="activity-text">${item.text}</div>
+                <div class="activity-time">${item.time}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderLeads() {
+    const container = document.getElementById('leadsTable');
+    
+    container.innerHTML = DEMO_LEADS.map(lead => `
+        <tr>
+            <td style="padding: 1rem;">
+                <div style="font-weight: 600;">${lead.name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim);">${lead.email}</div>
+            </td>
+            <td style="padding: 1rem;">${lead.product}</td>
+            <td style="padding: 1rem;">${lead.date}</td>
+            <td style="padding: 1rem;">
+                <span style="padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; background: ${
+                    lead.status === 'new' ? 'rgba(74, 222, 128, 0.2)' :
+                    lead.status === 'contacted' ? 'rgba(34, 211, 238, 0.2)' : 
+                    'rgba(167, 139, 250, 0.2)'
+                }; color: ${
+                    lead.status === 'new' ? 'var(--green)' :
+                    lead.status === 'contacted' ? 'var(--cyan)' : 
+                    'var(--purple)'
+                };">
+                    ${lead.status === 'new' ? 'Nouveau' : lead.status === 'contacted' ? 'Contacté' : 'Qualifié'}
+                </span>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==================== NAVIGATION ====================
+function setupNavigation() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const view = item.dataset.view;
+            switchView(view);
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+        });
+    });
+}
+
+function switchView(view) {
+    currentView = view;
+    
+    // Hide all views
+    ['dashboard', 'products', 'analytics', 'leads', 'messages', 'profile', 'billing', 'settings'].forEach(v => {
+        const el = document.getElementById(v + 'View');
+        if (el) el.style.display = 'none';
+    });
+    
+    // Show current view
+    const currentEl = document.getElementById(view + 'View');
+    if (currentEl) currentEl.style.display = 'block';
+    
+    // Update title
+    const titles = {
+        dashboard: 'Dashboard',
+        products: 'Mes Produits',
+        analytics: 'Analytics',
+        leads: 'Leads',
+        messages: 'Messages',
+        profile: 'Mon Profil',
+        billing: 'Facturation',
+        settings: 'Paramètres'
+    };
+    document.getElementById('pageTitle').textContent = titles[view] || view;
+}
+
+// ==================== ACTIONS ====================
+function addProduct() {
+    alert('Fonctionnalité d\'ajout de produit à implémenter');
+}
+
+function saveProfile() {
+    alert('Profil sauvegardé !');
+}
+</script>
+</body>
+</html>

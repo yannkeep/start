@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::DOSSIERS — Fiches d'Investigation</title>
+    <script src="kern-core.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 300px 1fr 380px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / 4;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .logo-sub {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+        
+        .header-search {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .header-search input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .header-search input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .header-search::before {
+            content: '🔍';
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .hstat {
+            text-align: center;
+        }
+        
+        .hstat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .hstat-label {
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        .header-agent {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .agent-info {
+            text-align: left;
+        }
+        
+        .agent-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .agent-xp {
+            font-size: 0.6rem;
+            color: var(--amber);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        
+        .btn-new {
+            padding: 0.4rem 0.8rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .btn-new:hover {
+            opacity: 0.9;
+        }
+        
+        .filters {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .dossiers-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .dossier-item {
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 0.25rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .dossier-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .dossier-item.active {
+            background: var(--bg-card);
+            border-left-color: var(--accent);
+        }
+        
+        .dossier-item.status-actif { border-left-color: var(--green); }
+        .dossier-item.status-en_veille { border-left-color: var(--amber); }
+        .dossier-item.status-clos { border-left-color: var(--text-dim); }
+        .dossier-item.status-urgent { border-left-color: var(--red); }
+        
+        .dossier-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .dossier-meta {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        
+        .dossier-tags {
+            display: flex;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            font-size: 0.55rem;
+            padding: 0.1rem 0.35rem;
+            background: var(--bg-surface);
+            border-radius: 3px;
+            color: var(--cyan);
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .editor-toolbar {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-deep);
+        }
+        
+        .toolbar-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .toolbar-btn:hover {
+            background: var(--bg-hover);
+        }
+        
+        .toolbar-btn.danger {
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .editor-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--text-dim);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Right Panel - Links */
+        .links-panel {
+            background: var(--bg-deep);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-section {
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        
+        .panel-body {
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .linked-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .linked-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .linked-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .linked-icon.entity { background: rgba(167, 139, 250, 0.2); }
+        .linked-icon.contact { background: rgba(34, 211, 238, 0.2); }
+        .linked-icon.note { background: rgba(74, 222, 128, 0.2); }
+        .linked-icon.dossier { background: rgba(99, 102, 241, 0.2); }
+        
+        .linked-info {
+            flex: 1;
+        }
+        
+        .linked-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .linked-type {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        .add-link-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .add-link-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 300px;
+            z-index: 1000;
+        }
+        
+        .notif {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notif.success { border-left: 3px solid var(--green); }
+        .notif.xp { border-left: 3px solid var(--amber); }
+        
+        .notif-icon { font-size: 1.2rem; }
+        .notif-text { font-size: 0.8rem; }
+        
+        /* XP Popup */
+        .xp-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            z-index: 1001;
+            animation: popIn 0.3s ease-out;
+        }
+        
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .xp-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+        
+        .xp-reason {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+        
+        /* Link Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.open {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .modal-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .link-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .link-option:hover {
+            background: var(--bg-hover);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="kern-nexus.html" class="logo" style="text-decoration: none; color: inherit;">
+                <div class="logo-icon">📁</div>
+                <div>
+                    <div class="logo-text">KERN::DOSSIERS</div>
+                    <div class="logo-sub">Fiches d'Investigation</div>
+                </div>
+            </a>
+            
+            <div class="header-search">
+                <input type="text" id="searchInput" placeholder="Rechercher un dossier...">
+            </div>
+            
+            <div class="header-stats">
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--accent)" id="statTotal">0</div>
+                    <div class="hstat-label">Dossiers</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--green)" id="statActifs">0</div>
+                    <div class="hstat-label">Actifs</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--purple)" id="statLinks">0</div>
+                    <div class="hstat-label">Liens</div>
+                </div>
+            </div>
+            
+            <div class="header-agent" onclick="window.location.href='kern-nexus.html'">
+                <div class="agent-avatar">🎭</div>
+                <div class="agent-info">
+                    <div class="agent-name" id="agentName">---</div>
+                    <div class="agent-xp">Niv. <span id="agentLevel">1</span></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Mes Dossiers</span>
+                <button class="btn-new" onclick="createDossier()">+ Nouveau</button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="actif">Actifs</button>
+                <button class="filter-btn" data-filter="urgent">Urgents</button>
+                <button class="filter-btn" data-filter="en_veille">En veille</button>
+                <button class="filter-btn" data-filter="clos">Clos</button>
+            </div>
+            
+            <div class="dossiers-list" id="dossiersList"></div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="editor-toolbar" id="editorToolbar" style="display: none;">
+                <button class="toolbar-btn" onclick="saveDossier()">💾 Sauvegarder</button>
+                <button class="toolbar-btn" onclick="exportDossier()">📤 Exporter</button>
+                <button class="toolbar-btn" onclick="duplicateDossier()">📋 Dupliquer</button>
+                <div style="flex: 1;"></div>
+                <button class="toolbar-btn danger" onclick="deleteDossier()">🗑️ Supprimer</button>
+            </div>
+            
+            <div class="editor-body" id="editorBody">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">📁</div>
+                    <div class="empty-title">Aucun dossier sélectionné</div>
+                    <div>Sélectionnez un dossier ou créez-en un nouveau</div>
+                </div>
+                
+                <div id="editorForm" style="display: none;">
+                    <div class="form-section">
+                        <div class="form-section-title">📋 Informations générales</div>
+                        <div class="form-group">
+                            <label>Titre du dossier *</label>
+                            <input type="text" id="inputTitle" placeholder="Ex: Affaire XYZ">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Statut</label>
+                                <select id="inputStatus">
+                                    <option value="actif">🟢 Actif</option>
+                                    <option value="urgent">🔴 Urgent</option>
+                                    <option value="en_veille">🟡 En veille</option>
+                                    <option value="clos">⚫ Clos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Priorité</label>
+                                <select id="inputPriority">
+                                    <option value="1">Basse</option>
+                                    <option value="2">Normale</option>
+                                    <option value="3">Haute</option>
+                                    <option value="4">Critique</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Sujet / Cible</label>
+                            <input type="text" id="inputSubject" placeholder="Personne, organisation, événement...">
+                        </div>
+                        <div class="form-group">
+                            <label>Tags (séparés par des virgules)</label>
+                            <input type="text" id="inputTags" placeholder="politique, finance, environnement...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-section-title">📝 Contenu</div>
+                        <div class="form-group">
+                            <label>Résumé</label>
+                            <textarea id="inputSummary" placeholder="Résumé bref du dossier..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Description détaillée</label>
+                            <textarea id="inputDescription" style="min-height: 200px;" placeholder="Détails, chronologie, faits..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-section-title">🔍 Sources & Preuves</div>
+                        <div class="form-group">
+                            <label>Sources</label>
+                            <textarea id="inputSources" placeholder="Une source par ligne..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes d'investigation</label>
+                            <textarea id="inputNotes" placeholder="Notes personnelles, pistes à explorer..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Right Panel - Links -->
+        <aside class="links-panel">
+            <div class="panel-section">
+                <div class="panel-header">
+                    <span class="panel-title">🔮 Entités liées</span>
+                </div>
+                <div class="panel-body" id="linkedEntities">
+                    <button class="add-link-btn" onclick="openLinkModal('entity')">+ Lier une entité</button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-header">
+                    <span class="panel-title">👤 Contacts liés</span>
+                </div>
+                <div class="panel-body" id="linkedContacts">
+                    <button class="add-link-btn" onclick="openLinkModal('contact')">+ Lier un contact</button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-header">
+                    <span class="panel-title">📝 Notes liées</span>
+                </div>
+                <div class="panel-body" id="linkedNotes">
+                    <button class="add-link-btn" onclick="openLinkModal('note')">+ Lier une note</button>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-header">
+                    <span class="panel-title">📁 Dossiers connexes</span>
+                </div>
+                <div class="panel-body" id="linkedDossiers">
+                    <button class="add-link-btn" onclick="openLinkModal('dossier')">+ Lier un dossier</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Link Modal -->
+    <div class="modal" id="linkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="linkModalTitle">Lier un élément</span>
+                <button class="modal-close" onclick="closeLinkModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="header-search" style="margin-bottom: 1rem;">
+                    <input type="text" id="linkSearchInput" placeholder="Rechercher...">
+                </div>
+                <div id="linkOptions"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notifications" id="notifications"></div>
+
+<script>
+// ==================== STATE ====================
+let currentDossierId = null;
+let currentFilter = 'all';
+let linkType = null;
+
+// ==================== INITIALIZATION ====================
+KERN.ready(() => {
+    renderDossiersList();
+    updateStats();
+    updateAgentInfo();
+    setupEventListeners();
+    
+    // Listen for KERN events
+    KERN.on('xp:gained', (data) => {
+        showXPPopup(data.amount, data.reason);
+        updateAgentInfo();
+    });
+    
+    KERN.on('dossier:created', () => {
+        renderDossiersList();
+        updateStats();
+    });
+    
+    KERN.on('dossier:updated', () => {
+        renderDossiersList();
+        updateStats();
+    });
+});
+
+// ==================== AGENT INFO ====================
+function updateAgentInfo() {
+    const agent = KERN.getAgent();
+    if (agent) {
+        document.getElementById('agentName').textContent = agent.codename;
+        document.getElementById('agentLevel').textContent = agent.level;
+    }
+}
+
+// ==================== DOSSIERS CRUD ====================
+function createDossier() {
+    const dossier = KERN.createDossier({
+        title: 'Nouveau dossier',
+        status: 'actif',
+        priority: 2,
+        subject: '',
+        tags: [],
+        summary: '',
+        description: '',
+        sources: '',
+        notes: '',
+        linkedEntities: [],
+        linkedContacts: [],
+        linkedNotes: [],
+        linkedDossiers: []
+    });
+    
+    selectDossier(dossier.id);
+    showNotification('success', 'Dossier créé ! +25 XP');
+}
+
+function selectDossier(id) {
+    currentDossierId = id;
+    const dossier = KERN.getDossier(id);
+    
+    if (!dossier) return;
+    
+    // Show editor
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('editorForm').style.display = 'block';
+    document.getElementById('editorToolbar').style.display = 'flex';
+    
+    // Fill form
+    document.getElementById('inputTitle').value = dossier.title || '';
+    document.getElementById('inputStatus').value = dossier.status || 'actif';
+    document.getElementById('inputPriority').value = dossier.priority || 2;
+    document.getElementById('inputSubject').value = dossier.subject || '';
+    document.getElementById('inputTags').value = (dossier.tags || []).join(', ');
+    document.getElementById('inputSummary').value = dossier.summary || '';
+    document.getElementById('inputDescription').value = dossier.description || '';
+    document.getElementById('inputSources').value = dossier.sources || '';
+    document.getElementById('inputNotes').value = dossier.notes || '';
+    
+    // Update linked items
+    updateLinkedItems(dossier);
+    
+    // Update list selection
+    document.querySelectorAll('.dossier-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+}
+
+function saveDossier() {
+    if (!currentDossierId) return;
+    
+    const tags = document.getElementById('inputTags').value
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t);
+    
+    KERN.updateDossier(currentDossierId, {
+        title: document.getElementById('inputTitle').value || 'Sans titre',
+        status: document.getElementById('inputStatus').value,
+        priority: parseInt(document.getElementById('inputPriority').value),
+        subject: document.getElementById('inputSubject').value,
+        tags,
+        summary: document.getElementById('inputSummary').value,
+        description: document.getElementById('inputDescription').value,
+        sources: document.getElementById('inputSources').value,
+        notes: document.getElementById('inputNotes').value
+    });
+    
+    showNotification('success', 'Dossier sauvegardé');
+}
+
+function deleteDossier() {
+    if (!currentDossierId) return;
+    if (!confirm('Supprimer ce dossier ?')) return;
+    
+    KERN.deleteDossier(currentDossierId);
+    currentDossierId = null;
+    
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('editorForm').style.display = 'none';
+    document.getElementById('editorToolbar').style.display = 'none';
+    
+    renderDossiersList();
+    updateStats();
+    showNotification('success', 'Dossier supprimé');
+}
+
+function duplicateDossier() {
+    if (!currentDossierId) return;
+    const original = KERN.getDossier(currentDossierId);
+    if (!original) return;
+    
+    const copy = { ...original };
+    delete copy.id;
+    delete copy.created;
+    delete copy.updated;
+    copy.title = original.title + ' (copie)';
+    
+    const newDossier = KERN.createDossier(copy);
+    selectDossier(newDossier.id);
+    showNotification('success', 'Dossier dupliqué');
+}
+
+function exportDossier() {
+    if (!currentDossierId) return;
+    const dossier = KERN.getDossier(currentDossierId);
+    if (!dossier) return;
+    
+    const blob = new Blob([JSON.stringify(dossier, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `dossier_${dossier.title.replace(/\s+/g, '_')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ==================== RENDER LIST ====================
+function renderDossiersList() {
+    const allDossiers = KERN.getAllDossiers();
+    const filtered = currentFilter === 'all' 
+        ? allDossiers 
+        : allDossiers.filter(d => d.status === currentFilter);
+    
+    const container = document.getElementById('dossiersList');
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 2rem; text-align: center; color: var(--text-dim);">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
+                <div>Aucun dossier</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(d => `
+        <div class="dossier-item status-${d.status} ${d.id === currentDossierId ? 'active' : ''}" 
+             data-id="${d.id}" onclick="selectDossier('${d.id}')">
+            <div class="dossier-title">${d.title || 'Sans titre'}</div>
+            <div class="dossier-meta">${d.subject || 'Pas de sujet'} • ${formatDate(d.updated)}</div>
+            <div class="dossier-tags">
+                ${(d.tags || []).slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== LINKED ITEMS ====================
+function updateLinkedItems(dossier) {
+    // Entities
+    const entitiesContainer = document.getElementById('linkedEntities');
+    const entities = (dossier.linkedEntities || []).map(id => KERN.getEntity(id)).filter(e => e);
+    entitiesContainer.innerHTML = entities.map(e => `
+        <div class="linked-item">
+            <div class="linked-icon entity">🔮</div>
+            <div class="linked-info">
+                <div class="linked-name">${e.name}</div>
+                <div class="linked-type">${e.type || 'Entité'}</div>
+            </div>
+        </div>
+    `).join('') + '<button class="add-link-btn" onclick="openLinkModal(\'entity\')">+ Lier une entité</button>';
+    
+    // Contacts
+    const contactsContainer = document.getElementById('linkedContacts');
+    const contacts = (dossier.linkedContacts || []).map(id => KERN.getContact(id)).filter(c => c);
+    contactsContainer.innerHTML = contacts.map(c => `
+        <div class="linked-item">
+            <div class="linked-icon contact">👤</div>
+            <div class="linked-info">
+                <div class="linked-name">${c.firstName} ${c.lastName}</div>
+                <div class="linked-type">${c.role || c.type || 'Contact'}</div>
+            </div>
+        </div>
+    `).join('') + '<button class="add-link-btn" onclick="openLinkModal(\'contact\')">+ Lier un contact</button>';
+    
+    // Notes
+    const notesContainer = document.getElementById('linkedNotes');
+    const notes = (dossier.linkedNotes || []).map(id => KERN.getNote(id)).filter(n => n);
+    notesContainer.innerHTML = notes.map(n => `
+        <div class="linked-item">
+            <div class="linked-icon note">📝</div>
+            <div class="linked-info">
+                <div class="linked-name">${n.title}</div>
+                <div class="linked-type">Note</div>
+            </div>
+        </div>
+    `).join('') + '<button class="add-link-btn" onclick="openLinkModal(\'note\')">+ Lier une note</button>';
+    
+    // Dossiers
+    const dossiersContainer = document.getElementById('linkedDossiers');
+    const dossiers = (dossier.linkedDossiers || []).map(id => KERN.getDossier(id)).filter(d => d && d.id !== currentDossierId);
+    dossiersContainer.innerHTML = dossiers.map(d => `
+        <div class="linked-item" onclick="selectDossier('${d.id}')">
+            <div class="linked-icon dossier">📁</div>
+            <div class="linked-info">
+                <div class="linked-name">${d.title}</div>
+                <div class="linked-type">Dossier</div>
+            </div>
+        </div>
+    `).join('') + '<button class="add-link-btn" onclick="openLinkModal(\'dossier\')">+ Lier un dossier</button>';
+}
+
+// ==================== LINK MODAL ====================
+function openLinkModal(type) {
+    if (!currentDossierId) return;
+    linkType = type;
+    
+    const titles = {
+        entity: 'Lier une entité',
+        contact: 'Lier un contact',
+        note: 'Lier une note',
+        dossier: 'Lier un dossier'
+    };
+    
+    document.getElementById('linkModalTitle').textContent = titles[type];
+    renderLinkOptions();
+    document.getElementById('linkModal').classList.add('open');
+}
+
+function closeLinkModal() {
+    document.getElementById('linkModal').classList.remove('open');
+    linkType = null;
+}
+
+function renderLinkOptions(query = '') {
+    const container = document.getElementById('linkOptions');
+    let items = [];
+    const dossier = KERN.getDossier(currentDossierId);
+    
+    switch (linkType) {
+        case 'entity':
+            items = KERN.getAllEntities().filter(e => 
+                !(dossier.linkedEntities || []).includes(e.id) &&
+                (!query || e.name.toLowerCase().includes(query.toLowerCase()))
+            );
+            break;
+        case 'contact':
+            items = KERN.getAllContacts().filter(c => 
+                !(dossier.linkedContacts || []).includes(c.id) &&
+                (!query || `${c.firstName} ${c.lastName}`.toLowerCase().includes(query.toLowerCase()))
+            );
+            break;
+        case 'note':
+            items = KERN.getAllNotes().filter(n => 
+                !(dossier.linkedNotes || []).includes(n.id) &&
+                (!query || n.title.toLowerCase().includes(query.toLowerCase()))
+            );
+            break;
+        case 'dossier':
+            items = KERN.getAllDossiers().filter(d => 
+                d.id !== currentDossierId &&
+                !(dossier.linkedDossiers || []).includes(d.id) &&
+                (!query || d.title.toLowerCase().includes(query.toLowerCase()))
+            );
+            break;
+    }
+    
+    if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-dim); padding: 2rem;">Aucun élément disponible</div>`;
+        return;
+    }
+    
+    const icons = { entity: '🔮', contact: '👤', note: '📝', dossier: '📁' };
+    
+    container.innerHTML = items.map(item => {
+        const name = item.title || item.name || `${item.firstName || ''} ${item.lastName || ''}`.trim();
+        return `
+            <div class="link-option" onclick="addLink('${item.id}')">
+                <div class="linked-icon ${linkType}">${icons[linkType]}</div>
+                <div class="linked-info">
+                    <div class="linked-name">${name}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function addLink(itemId) {
+    if (!currentDossierId || !linkType) return;
+    
+    const dossier = KERN.getDossier(currentDossierId);
+    const linkArrayKey = `linked${linkType.charAt(0).toUpperCase() + linkType.slice(1)}s`;
+    
+    if (!dossier[linkArrayKey]) dossier[linkArrayKey] = [];
+    if (!dossier[linkArrayKey].includes(itemId)) {
+        dossier[linkArrayKey].push(itemId);
+        KERN.updateDossier(currentDossierId, { [linkArrayKey]: dossier[linkArrayKey] });
+        
+        // Also emit a link event for XP
+        KERN.emit('entity:linked', { dossier: currentDossierId, item: itemId, type: linkType });
+        
+        updateLinkedItems(dossier);
+        showNotification('success', 'Lien ajouté ! +10 XP');
+    }
+    
+    closeLinkModal();
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const dossiers = KERN.getAllDossiers();
+    
+    document.getElementById('statTotal').textContent = dossiers.length;
+    document.getElementById('statActifs').textContent = dossiers.filter(d => d.status === 'actif' || d.status === 'urgent').length;
+    
+    let totalLinks = 0;
+    dossiers.forEach(d => {
+        totalLinks += (d.linkedEntities || []).length;
+        totalLinks += (d.linkedContacts || []).length;
+        totalLinks += (d.linkedNotes || []).length;
+        totalLinks += (d.linkedDossiers || []).length;
+    });
+    document.getElementById('statLinks').textContent = totalLinks;
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderDossiersList();
+        });
+    });
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.dossier-item').forEach(item => {
+            const title = item.querySelector('.dossier-title').textContent.toLowerCase();
+            const meta = item.querySelector('.dossier-meta').textContent.toLowerCase();
+            item.style.display = (title.includes(query) || meta.includes(query)) ? 'block' : 'none';
+        });
+    });
+    
+    // Link search
+    document.getElementById('linkSearchInput').addEventListener('input', (e) => {
+        renderLinkOptions(e.target.value);
+    });
+    
+    // Auto-save on input
+    const formInputs = ['inputTitle', 'inputStatus', 'inputPriority', 'inputSubject', 'inputTags', 'inputSummary', 'inputDescription', 'inputSources', 'inputNotes'];
+    formInputs.forEach(id => {
+        document.getElementById(id)?.addEventListener('change', () => {
+            if (currentDossierId) saveDossier();
+        });
+    });
+}
+
+// ==================== UTILS ====================
+function formatDate(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+}
+
+function showNotification(type, message) {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = `notif ${type}`;
+    notif.innerHTML = `
+        <span class="notif-icon">${type === 'success' ? '✅' : '⭐'}</span>
+        <span class="notif-text">${message}</span>
+    `;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function showXPPopup(amount, reason) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.innerHTML = `
+        <div class="xp-amount">+${amount} XP</div>
+        <div class="xp-reason">${reason.replace(':', ' ')}</div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2000);
+}
+</script>
+</body>
+</html>

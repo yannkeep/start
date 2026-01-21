@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>404 - Page introuvable</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚠</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+        
+        :root {
+            --bg: #0a0a0c;
+            --surface: #111114;
+            --border: #222228;
+            --green: #33ff33;
+            --red: #ff3366;
+            --blue: #00aaff;
+            --yellow: #ffcc00;
+            --amber: #ff9500;
+            --text: #e0e0e0;
+            --muted: #666;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            background: #000; 
+            color: var(--text); 
+            font-family: 'JetBrains Mono', monospace; 
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           CRT EFFECTS - ULTRA REALISTIC
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #crt-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            perspective: 1000px;
+        }
+        
+        #crt-screen {
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            max-height: 900px;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            transform: perspective(1000px) rotateX(0.5deg);
+            box-shadow: 
+                0 0 100px rgba(51, 255, 51, 0.1),
+                inset 0 0 100px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Scanlines */
+        #crt-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.15) 2px,
+                rgba(0, 0, 0, 0.15) 4px
+            );
+            pointer-events: none;
+            z-index: 10000;
+            animation: scanlines 0.1s linear infinite;
+        }
+        
+        @keyframes scanlines {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 4px; }
+        }
+        
+        /* Vignette */
+        #crt-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+            pointer-events: none;
+            z-index: 10001;
+        }
+        
+        /* Phosphor glow */
+        .phosphor {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(51, 255, 51, 0.03) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+            z-index: 10002;
+            mix-blend-mode: screen;
+        }
+        
+        /* Flicker effect */
+        .flicker {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10003;
+            animation: flicker 0.15s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes flicker {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.02; background: rgba(255,255,255,0.5); }
+        }
+        
+        /* RGB shift on glitch */
+        .glitch-active {
+            animation: rgbShift 0.1s ease-out;
+        }
+        
+        @keyframes rgbShift {
+            0% { filter: none; }
+            25% { filter: drop-shadow(-2px 0 #ff0000) drop-shadow(2px 0 #00ffff); }
+            50% { filter: drop-shadow(2px 0 #ff0000) drop-shadow(-2px 0 #00ffff); }
+            75% { filter: drop-shadow(-1px 0 #ff0000) drop-shadow(1px 0 #00ffff); }
+            100% { filter: none; }
+        }
+        
+        /* Noise overlay */
+        .noise {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10004;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+            animation: noiseMove 0.5s steps(10) infinite;
+        }
+        
+        @keyframes noiseMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(5%, 5%); }
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           BOOT SEQUENCE
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #boot-screen {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 2rem;
+            font-size: 14px;
+            line-height: 1.6;
+            z-index: 100;
+            overflow: hidden;
+        }
+        
+        .boot-line {
+            opacity: 0;
+            transform: translateY(5px);
+            white-space: pre;
+        }
+        
+        .boot-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.1s, transform 0.1s;
+        }
+        
+        .boot-line.bios { color: #aaa; }
+        .boot-line.ok { color: var(--green); }
+        .boot-line.warn { color: var(--yellow); }
+        .boot-line.error { color: var(--red); }
+        .boot-line.header { color: var(--blue); font-weight: bold; }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           FAKE 404 PAGE
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #fake-404 {
+            position: absolute;
+            inset: 0;
+            background: #f8f8f8;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #333;
+            z-index: 50;
+        }
+        
+        .fake-404-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .fake-404-title {
+            font-size: 72px;
+            font-weight: 700;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .fake-404-text {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        
+        .fake-404-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .fake-404-link:hover { text-decoration: underline; }
+        
+        .fake-404-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 10px;
+            color: #f8f8f8; /* invisible par défaut */
+            transition: color 0.3s;
+            cursor: default;
+        }
+        
+        .fake-404-hint:hover {
+            color: #ccc;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           MAIN TERMINAL
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #terminal-container {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            z-index: 10;
+        }
+        
+        /* Chrome bar */
+        .chrome {
+            background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.r { background: #ff5f56; }
+        .dot.y { background: #ffbd2e; }
+        .dot.g { background: #27c93f; }
+        
+        .chrome-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        
+        .chrome-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(51,255,51,0.5); }
+            50% { box-shadow: 0 0 0 8px transparent; }
+        }
+        
+        /* Terminal content */
+        #terminal {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.7;
+            background: var(--bg);
+        }
+        
+        .line { margin-bottom: 2px; word-wrap: break-word; }
+        .line.system { color: var(--muted); }
+        .line.error { color: var(--red); }
+        .line.success { color: var(--green); }
+        .line.warning { color: var(--yellow); }
+        .line.data { color: var(--green); }
+        .line.prompt { color: var(--blue); }
+        .line.ascii { 
+            font-size: 10px; 
+            line-height: 1.1; 
+            color: var(--red);
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+        }
+        .line.highlight {
+            background: rgba(51,255,51,0.08);
+            padding: 0.5rem;
+            border-left: 3px solid var(--green);
+            margin: 0.5rem 0;
+        }
+        .line.urgent {
+            background: rgba(255,51,102,0.1);
+            padding: 0.5rem;
+            border-left: 3px solid var(--red);
+            margin: 0.5rem 0;
+        }
+        .line a { color: var(--blue); }
+        
+        /* Input area */
+        .input-area {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5));
+            gap: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .input-area span { color: var(--blue); }
+        
+        #cmd {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            color: var(--green);
+            font: inherit;
+            outline: none;
+        }
+        
+        #cmd:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(51,255,51,0.2);
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           HUD ELEMENTS
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #hud {
+            position: fixed;
+            top: 60px;
+            right: 1rem;
+            z-index: 500;
+            display: none;
+        }
+        
+        .hud-box {
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .hud-num {
+            color: var(--green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        #secrets-hud {
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+        
+        #secrets-hud .found { color: var(--yellow); }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           ACHIEVEMENTS
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #achievement {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
+            border: 2px solid var(--yellow);
+            padding: 2rem 3rem;
+            text-align: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        #achievement.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .ach-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .ach-title { 
+            color: var(--yellow); 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            margin-bottom: 0.5rem;
+        }
+        .ach-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .ach-desc { color: var(--muted); font-size: 0.8rem; }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           DOCUMENT VIEWER
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #docview {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        #docview.show { display: block; }
+        
+        .doc-close {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        .doc-frame {
+            max-width: 750px;
+            margin: 2rem auto;
+            background: #f5f0e1;
+            color: #1a1a1a;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .doc-frame::before {
+            content: 'CONFIDENTIEL';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 2rem;
+            color: rgba(200,0,0,0.06);
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .doc-stamp {
+            background: #cc0000;
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.65rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .doc-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .doc-meta {
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .doc-body {
+            line-height: 1.8;
+            font-size: 0.85rem;
+        }
+        
+        .doc-body p { margin-bottom: 0.75rem; text-align: justify; }
+        .doc-body h3 { margin: 1.25rem 0 0.5rem; color: #990000; font-size: 0.95rem; }
+        .doc-body ul { margin: 0.5rem 0 1rem 1.5rem; }
+        .doc-body li { margin-bottom: 0.3rem; }
+        .redacted { background: #000; color: transparent; padding: 0 0.3rem; user-select: none; }
+        .source { font-size: 0.7rem; color: #888; font-style: italic; }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           AUDIO TOGGLE
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #audio-btn {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+        }
+        
+        #audio-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 20px rgba(51,255,51,0.3);
+        }
+        
+        #audio-btn.muted {
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           GLITCH OVERLAY
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #glitch-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+        
+        #glitch-overlay.active {
+            display: block;
+            animation: glitchFull 0.3s ease-out;
+        }
+        
+        @keyframes glitchFull {
+            0% { 
+                background: transparent;
+                clip-path: inset(0 0 0 0);
+            }
+            10% {
+                background: rgba(255,0,0,0.1);
+                clip-path: inset(10% 0 80% 0);
+            }
+            20% {
+                background: rgba(0,255,255,0.1);
+                clip-path: inset(40% 0 50% 0);
+            }
+            30% {
+                background: transparent;
+                clip-path: inset(70% 0 20% 0);
+            }
+            40% {
+                background: rgba(255,0,255,0.05);
+                clip-path: inset(20% 0 60% 0);
+            }
+            50% {
+                background: transparent;
+            }
+            100% {
+                background: transparent;
+            }
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           TRANSMISSION EFFECT
+           ═══════════════════════════════════════════════════════════════ */
+        
+        #transmission {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--red);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.8rem;
+            color: var(--red);
+            z-index: 5000;
+            display: none;
+            animation: transmissionPulse 1s infinite;
+        }
+        
+        @keyframes transmissionPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════════════════ */
+        
+        @media (max-width: 768px) {
+            #boot-screen { padding: 1rem; font-size: 11px; }
+            .chrome-title { display: none; }
+            #terminal { padding: 1rem; font-size: 12px; }
+            .input-area { padding: 0.5rem 1rem; }
+            .doc-frame { padding: 1rem; margin: 1rem; }
+            #hud { top: 50px; right: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="crt-container">
+    <div id="crt-screen">
+        <div class="phosphor"></div>
+        <div class="flicker"></div>
+        <div class="noise"></div>
+        
+        <!-- Boot Sequence -->
+        <div id="boot-screen"></div>
+        
+        <!-- Fake 404 -->
+        <div id="fake-404">
+            <div class="fake-404-icon">🔍</div>
+            <div class="fake-404-title">404</div>
+            <div class="fake-404-text">La page demandée n'existe pas.</div>
+            <a href="#" class="fake-404-link" onclick="return false;">← Retour à l'accueil</a>
+            <div class="fake-404-hint" id="hint-text">Ctrl+Shift+V</div>
+        </div>
+        
+        <!-- Terminal -->
+        <div id="terminal-container">
+            <div class="chrome">
+                <div class="dot r"></div>
+                <div class="dot y"></div>
+                <div class="dot g"></div>
+                <div class="chrome-title">VÉNUS v4.2.0 — Connexion chiffrée E2E</div>
+                <div class="chrome-status">
+                    <div class="pulse"></div>
+                    <span id="cells-count">47 cellules</span>
+                </div>
+            </div>
+            <div id="terminal"></div>
+            <div class="input-area">
+                <span>λ</span>
+                <input type="text" id="cmd" placeholder="Entrez une commande..." autocomplete="off" spellcheck="false" disabled>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+    <div class="hud-box">
+        <span>NIV.</span>
+        <span class="hud-num" id="level-display">1</span>
+        <span>/5</span>
+    </div>
+    <div id="secrets-hud">
+        SECRETS: <span class="found" id="secrets-count">0</span>/12
+    </div>
+</div>
+
+<!-- Achievement popup -->
+<div id="achievement">
+    <div class="ach-icon" id="ach-icon">🔓</div>
+    <div class="ach-title">ACHIEVEMENT UNLOCKED</div>
+    <div class="ach-name" id="ach-name">—</div>
+    <div class="ach-desc" id="ach-desc">—</div>
+</div>
+
+<!-- Document viewer -->
+<div id="docview">
+    <button class="doc-close" onclick="closeDoc()">✕ FERMER [ESC]</button>
+    <div id="doc-content"></div>
+</div>
+
+<!-- Glitch overlay -->
+<div id="glitch-overlay"></div>
+
+<!-- Transmission indicator -->
+<div id="transmission">◉ TRANSMISSION EN COURS...</div>
+
+<!-- Audio toggle -->
+<button id="audio-btn" title="Toggle Audio">🔇</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// AUDIO ENGINE - Procedural Sound Design
+// ═══════════════════════════════════════════════════════════════════════════
+
+const Audio = {
+    ctx: null,
+    master: null,
+    muted: true,
+    initialized: false,
+    drone: null,
+    
+    init() {
+        if (this.initialized) return;
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            this.master = this.ctx.createGain();
+            this.master.gain.value = 0.3;
+            this.master.connect(this.ctx.destination);
+            this.initialized = true;
+        } catch(e) {
+            console.warn('Audio not available');
+        }
+    },
+    
+    // Basic tone
+    tone(freq, duration, type = 'sine', vol = 0.1, delay = 0) {
+        if (this.muted || !this.ctx) return;
+        setTimeout(() => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.value = vol;
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.master);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        }, delay);
+    },
+    
+    // Boot sound - increasing pitch sequence
+    bootSequence() {
+        if (this.muted) return;
+        this.tone(100, 0.1, 'square', 0.05, 0);
+        this.tone(150, 0.1, 'square', 0.05, 100);
+        this.tone(200, 0.1, 'square', 0.05, 200);
+        this.tone(300, 0.2, 'square', 0.08, 300);
+    },
+    
+    // POST beep
+    postBeep() {
+        if (this.muted) return;
+        this.tone(800, 0.1, 'square', 0.1);
+    },
+    
+    // Success sound
+    success() {
+        if (this.muted) return;
+        this.tone(523, 0.1, 'sine', 0.1);
+        this.tone(659, 0.1, 'sine', 0.1, 100);
+        this.tone(784, 0.15, 'sine', 0.1, 200);
+    },
+    
+    // Error sound
+    error() {
+        if (this.muted) return;
+        this.tone(200, 0.15, 'sawtooth', 0.1);
+        this.tone(150, 0.2, 'sawtooth', 0.08, 100);
+    },
+    
+    // Keystroke
+    key() {
+        if (this.muted) return;
+        this.tone(800 + Math.random() * 400, 0.02, 'square', 0.03);
+    },
+    
+    // Achievement
+    achievement() {
+        if (this.muted) return;
+        this.tone(523, 0.1, 'sine', 0.1);
+        this.tone(659, 0.1, 'sine', 0.1, 100);
+        this.tone(784, 0.1, 'sine', 0.1, 200);
+        this.tone(1047, 0.3, 'sine', 0.15, 300);
+    },
+    
+    // Glitch sound
+    glitch() {
+        if (this.muted) return;
+        for (let i = 0; i < 5; i++) {
+            this.tone(
+                100 + Math.random() * 2000,
+                0.02 + Math.random() * 0.05,
+                'sawtooth',
+                0.05,
+                i * 30
+            );
+        }
+    },
+    
+    // Transmission sound
+    transmission() {
+        if (this.muted) return;
+        // Morse-like beeps
+        const pattern = [0, 100, 200, 400, 500];
+        pattern.forEach(delay => {
+            this.tone(1200, 0.05, 'sine', 0.08, delay);
+        });
+    },
+    
+    // Drone ambiance
+    startDrone() {
+        if (this.muted || !this.ctx || this.drone) return;
+        
+        // Base drone
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        
+        osc1.type = 'sine';
+        osc1.frequency.value = 55;
+        osc2.type = 'sine';
+        osc2.frequency.value = 55.5; // Slight detune for movement
+        
+        filter.type = 'lowpass';
+        filter.frequency.value = 200;
+        
+        gain.gain.value = 0.02;
+        
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.master);
+        
+        osc1.start();
+        osc2.start();
+        
+        this.drone = { osc1, osc2, gain };
+    },
+    
+    stopDrone() {
+        if (this.drone) {
+            this.drone.osc1.stop();
+            this.drone.osc2.stop();
+            this.drone = null;
+        }
+    },
+    
+    toggle() {
+        this.muted = !this.muted;
+        const btn = document.getElementById('audio-btn');
+        btn.textContent = this.muted ? '🔇' : '🔊';
+        btn.classList.toggle('muted', this.muted);
+        
+        if (!this.muted) {
+            this.init();
+            this.startDrone();
+        } else {
+            this.stopDrone();
+        }
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const State = {
+    phase: 'boot', // boot, 404, terminal
+    level: 1,
+    secrets: new Set(),
+    achievements: new Set(),
+    history: [],
+    historyIndex: -1,
+    currentTest: null,
+    konamiIndex: 0,
+    
+    save() {
+        try {
+            localStorage.setItem('venus_state', JSON.stringify({
+                level: this.level,
+                secrets: [...this.secrets],
+                achievements: [...this.achievements]
+            }));
+        } catch(e) {}
+    },
+    
+    load() {
+        try {
+            const data = JSON.parse(localStorage.getItem('venus_state'));
+            if (data) {
+                this.level = data.level || 1;
+                this.secrets = new Set(data.secrets || []);
+                this.achievements = new Set(data.achievements || []);
+                return true;
+            }
+        } catch(e) {}
+        return false;
+    },
+    
+    reset() {
+        this.level = 1;
+        this.secrets = new Set();
+        this.achievements = new Set();
+        this.currentTest = null;
+        localStorage.removeItem('venus_state');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACHIEVEMENTS SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+const Achievements = {
+    list: {
+        awakening: { icon: '👁', name: 'Éveil', desc: 'Découvert l\'entrée cachée' },
+        initiate: { icon: '🔓', name: 'Initiée', desc: 'Accès au terminal' },
+        analyst: { icon: '📊', name: 'Analyste', desc: 'Niveau 2 — Diagnostic' },
+        jurist: { icon: '⚖️', name: 'Juriste', desc: 'Niveau 3 — Arsenal juridique' },
+        investigator: { icon: '🔍', name: 'Investigateur', desc: 'Niveau 4 — OSINT' },
+        operator: { icon: '◈', name: 'Opérateur', desc: 'Niveau 5 — Accès complet' },
+        explorer: { icon: '🗺️', name: 'Explorateur', desc: 'Première page cachée' },
+        decoder: { icon: '🔐', name: 'Cryptanalyste', desc: 'Message décodé' },
+        archivist: { icon: '📚', name: 'Archiviste', desc: '5 documents lus' },
+        ghost: { icon: '👻', name: 'Fantôme', desc: 'Konami code trouvé' },
+        truth: { icon: '💡', name: 'Vérité', desc: 'Message final découvert' },
+        complete: { icon: '🏆', name: 'COMPLETIONIST', desc: 'Tous les secrets trouvés' }
+    },
+    
+    unlock(id) {
+        if (State.achievements.has(id)) return;
+        
+        const ach = this.list[id];
+        if (!ach) return;
+        
+        State.achievements.add(id);
+        State.save();
+        
+        // Show popup
+        Audio.achievement();
+        
+        const popup = document.getElementById('achievement');
+        document.getElementById('ach-icon').textContent = ach.icon;
+        document.getElementById('ach-name').textContent = ach.name;
+        document.getElementById('ach-desc').textContent = ach.desc;
+        
+        popup.classList.add('show');
+        triggerGlitch();
+        
+        setTimeout(() => popup.classList.remove('show'), 3000);
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VISUAL EFFECTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function triggerGlitch() {
+    Audio.glitch();
+    const overlay = document.getElementById('glitch-overlay');
+    const screen = document.getElementById('crt-screen');
+    
+    overlay.classList.add('active');
+    screen.classList.add('glitch-active');
+    
+    setTimeout(() => {
+        overlay.classList.remove('active');
+        screen.classList.remove('glitch-active');
+    }, 300);
+}
+
+function showTransmission(show = true) {
+    const trans = document.getElementById('transmission');
+    trans.style.display = show ? 'block' : 'none';
+    if (show) Audio.transmission();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BOOT SEQUENCE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const bootLines = [
+    { text: 'PHOENIX BIOS v4.2.0 (C) 1985-2024', class: 'bios', delay: 0 },
+    { text: 'CPU: AMD Ryzen 9 5950X @ 3.4GHz', class: 'bios', delay: 100 },
+    { text: 'Memory Test: 32768MB OK', class: 'bios', delay: 200 },
+    { text: '', delay: 400 },
+    { text: 'Detecting IDE drives...', class: 'bios', delay: 500 },
+    { text: '  Primary Master: SAMSUNG 970 EVO 1TB', class: 'bios', delay: 700 },
+    { text: '  Secondary Master: None', class: 'bios', delay: 800 },
+    { text: '', delay: 1000 },
+    { text: 'Initializing network interfaces...', class: 'bios', delay: 1100 },
+    { text: '  eth0: Realtek RTL8111/8168', class: 'ok', delay: 1300 },
+    { text: '  wlan0: Intel AX200 [DISABLED]', class: 'warn', delay: 1400 },
+    { text: '', delay: 1600 },
+    { text: 'Loading GRUB...', class: 'bios', delay: 1700, sound: 'post' },
+    { text: '', delay: 2000 },
+    { text: '  ██████╗ ███████╗██████╗ ██╗ █████╗ ███╗   ██╗', class: 'header', delay: 2100 },
+    { text: '  ██╔══██╗██╔════╝██╔══██╗██║██╔══██╗████╗  ██║', class: 'header', delay: 2150 },
+    { text: '  ██║  ██║█████╗  ██████╔╝██║███████║██╔██╗ ██║', class: 'header', delay: 2200 },
+    { text: '  ██║  ██║██╔══╝  ██╔══██╗██║██╔══██║██║╚██╗██║', class: 'header', delay: 2250 },
+    { text: '  ██████╔╝███████╗██████╔╝██║██║  ██║██║ ╚████║', class: 'header', delay: 2300 },
+    { text: '  ╚═════╝ ╚══════╝╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝', class: 'header', delay: 2350 },
+    { text: '', delay: 2500 },
+    { text: 'Debian GNU/Linux 12 (bookworm)', class: 'bios', delay: 2600 },
+    { text: 'Kernel 6.1.0-18-amd64', class: 'bios', delay: 2700 },
+    { text: '', delay: 2900 },
+    { text: '[  OK  ] Started D-Bus System Message Bus', class: 'ok', delay: 3000 },
+    { text: '[  OK  ] Reached target Network', class: 'ok', delay: 3100 },
+    { text: '[  OK  ] Started OpenSSH server', class: 'ok', delay: 3200 },
+    { text: '[  OK  ] Started Tor daemon', class: 'ok', delay: 3300 },
+    { text: '', delay: 3500 },
+    { text: 'Connecting to VENUS relay network...', class: 'warn', delay: 3600 },
+    { text: '  → Establishing E2E encryption', class: 'bios', delay: 3800 },
+    { text: '  → Verifying node signatures', class: 'bios', delay: 4000 },
+    { text: '  → Syncing cell registry', class: 'bios', delay: 4200 },
+    { text: '', delay: 4400 },
+    { text: '[ERROR] Connection refused: Access denied', class: 'error', delay: 4500, sound: 'error' },
+    { text: '[ERROR] Unauthorized access attempt logged', class: 'error', delay: 4700 },
+    { text: '[ERROR] This incident will be reported', class: 'error', delay: 4900 },
+    { text: '', delay: 5200 },
+    { text: 'Fallback: Loading public interface...', class: 'warn', delay: 5300 },
+    { text: '', delay: 5800 },
+];
+
+async function runBootSequence() {
+    const bootScreen = document.getElementById('boot-screen');
+    bootScreen.innerHTML = '';
+    
+    Audio.bootSequence();
+    
+    for (const line of bootLines) {
+        await new Promise(resolve => setTimeout(resolve, line.delay ? 80 : 50));
+        
+        const el = document.createElement('div');
+        el.className = `boot-line ${line.class || ''}`;
+        el.textContent = line.text;
+        bootScreen.appendChild(el);
+        
+        // Force reflow
+        el.offsetHeight;
+        el.classList.add('visible');
+        
+        // Scroll to bottom
+        bootScreen.scrollTop = bootScreen.scrollHeight;
+        
+        // Play sounds
+        if (line.sound === 'post') Audio.postBeep();
+        if (line.sound === 'error') Audio.error();
+    }
+    
+    // Transition to 404
+    await new Promise(resolve => setTimeout(resolve, 500));
+    triggerGlitch();
+    
+    await new Promise(resolve => setTimeout(resolve, 800));
+    bootScreen.style.display = 'none';
+    document.getElementById('fake-404').style.display = 'flex';
+    State.phase = '404';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TERMINAL ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const terminal = document.getElementById('terminal');
+const cmdInput = document.getElementById('cmd');
+
+function print(html, className = '') {
+    const line = document.createElement('div');
+    line.className = `line ${className}`;
+    line.innerHTML = html;
+    terminal.appendChild(line);
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+function printTyped(text, className = '', speed = 20) {
+    return new Promise(resolve => {
+        const line = document.createElement('div');
+        line.className = `line ${className}`;
+        terminal.appendChild(line);
+        
+        let i = 0;
+        const type = () => {
+            if (i < text.length) {
+                line.textContent += text[i];
+                i++;
+                Audio.key();
+                setTimeout(type, speed);
+            } else {
+                resolve();
+            }
+        };
+        type();
+    });
+}
+
+function updateHUD() {
+    document.getElementById('level-display').textContent = State.level;
+    document.getElementById('secrets-count').textContent = State.secrets.size;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMMANDS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DOSSIERS = {
+    'INIT': { level: 1, name: 'INITIALISATION', desc: 'Briefing et contexte opérationnel' },
+    'DIAG': { level: 2, name: 'DIAGNOSTIC', desc: 'État des lieux institutionnel' },
+    'ARSL': { level: 3, name: 'ARSENAL', desc: 'Outils juridiques contre-pouvoir' },
+    'OSNT': { level: 4, name: 'OSINT', desc: 'Techniques de renseignement ouvert' },
+    'CELL': { level: 5, name: 'CELLULES', desc: 'Structure et coordination' }
+};
+
+const DOCUMENTS = {
+    'INIT': {
+        'briefing': { title: 'Briefing opérationnel', content: 'doc_briefing' },
+        'contexte': { title: 'Contexte politique', content: 'doc_contexte' },
+        'test': { title: 'Test de validation', content: 'test_init' }
+    },
+    'DIAG': {
+        'institutions': { title: 'Dysfonctionnements institutionnels', content: 'doc_institutions' },
+        'medias': { title: 'Concentration médiatique', content: 'doc_medias' },
+        'repression': { title: 'Répression des mouvements', content: 'doc_repression' },
+        'test': { title: 'Test de validation', content: 'test_diag' }
+    },
+    'ARSL': {
+        'qpc': { title: 'Question Prioritaire de Constitutionnalité', content: 'doc_qpc' },
+        'cedh': { title: 'Cour Européenne des Droits de l\'Homme', content: 'doc_cedh' },
+        'necessite': { title: 'État de nécessité', content: 'doc_necessite' },
+        'test': { title: 'Test de validation', content: 'test_arsl' }
+    },
+    'OSNT': {
+        'geoloc': { title: 'Géolocalisation visuelle', content: 'doc_geoloc' },
+        'chrono': { title: 'Chronolocation par ombres', content: 'doc_chrono' },
+        'sources': { title: 'Analyse de sources', content: 'doc_sources' },
+        'test': { title: 'Test de validation', content: 'test_osnt' }
+    },
+    'CELL': {
+        'structure': { title: 'Organisation cellulaire', content: 'doc_structure' },
+        'securite': { title: 'Protocoles de sécurité', content: 'doc_securite' },
+        'mission': { title: 'Mission et éthique', content: 'doc_mission' }
+    }
+};
+
+function processCommand(cmd) {
+    const parts = cmd.trim().toLowerCase().split(/\s+/);
+    const command = parts[0];
+    const args = parts.slice(1);
+    
+    print(`<span style="color:var(--blue)">λ</span> ${cmd}`, 'prompt');
+    
+    switch(command) {
+        case 'aide':
+        case 'help':
+            cmdHelp();
+            break;
+        case 'dossiers':
+            cmdDossiers();
+            break;
+        case 'ouvrir':
+        case 'open':
+            cmdOuvrir(args[0]);
+            break;
+        case 'lire':
+        case 'read':
+            cmdLire(args[0]);
+            break;
+        case 'repondre':
+        case 'answer':
+            cmdRepondre(args.join(' '));
+            break;
+        case 'decoder':
+        case 'decode':
+            cmdDecoder(args.join(' '));
+            break;
+        case 'clear':
+        case 'cls':
+            terminal.innerHTML = '';
+            break;
+        case 'niveau':
+        case 'level':
+            print(`Niveau actuel: ${State.level}/5`, 'success');
+            break;
+        case 'hint':
+        case 'indice':
+            cmdHint();
+            break;
+        case 'stats':
+            cmdStats();
+            break;
+        case 'sources':
+            cmdSources();
+            break;
+        case 'reseau':
+        case 'network':
+            cmdReseau();
+            break;
+        case 'mission':
+            cmdMission();
+            break;
+        case 'secret':
+            cmdSecret();
+            break;
+        case 'reset':
+            cmdReset();
+            break;
+        case 'about':
+            cmdAbout();
+            break;
+        case '':
+            break;
+        default:
+            Audio.error();
+            print(`Commande inconnue: ${command}`, 'error');
+            print('Tapez "aide" pour la liste des commandes.', 'system');
+    }
+}
+
+function cmdHelp() {
+    print('');
+    print('COMMANDES DISPONIBLES', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('  <span style="color:var(--yellow)">dossiers</span>     Liste des archives accessibles');
+    print('  <span style="color:var(--yellow)">ouvrir</span> X     Ouvre le dossier X');
+    print('  <span style="color:var(--yellow)">lire</span> X       Lit le document X');
+    print('  <span style="color:var(--yellow)">repondre</span> X   Répond au test en cours');
+    print('  <span style="color:var(--yellow)">decoder</span> X    Décode un message Base64');
+    print('  <span style="color:var(--yellow)">hint</span>         Obtenir un indice');
+    print('  <span style="color:var(--yellow)">niveau</span>       Affiche le niveau actuel');
+    print('  <span style="color:var(--yellow)">clear</span>        Efface l\'écran');
+    print('');
+    if (State.level >= 5) {
+        print('COMMANDES NIVEAU 5', 'warning');
+        print('─'.repeat(50), 'system');
+        print('  <span style="color:var(--yellow)">stats</span>        Statistiques clés (sourcées)');
+        print('  <span style="color:var(--yellow)">sources</span>      Sources primaires');
+        print('  <span style="color:var(--yellow)">reseau</span>       État du réseau');
+        print('  <span style="color:var(--yellow)">mission</span>      Notre mission');
+        print('  <span style="color:var(--yellow)">secret</span>       Pages cachées');
+        print('');
+    }
+}
+
+function cmdDossiers() {
+    print('');
+    print('ARCHIVES DISPONIBLES', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    for (const [id, d] of Object.entries(DOSSIERS)) {
+        const locked = d.level > State.level;
+        const status = locked ? '🔒' : '✓';
+        const color = locked ? 'var(--muted)' : 'var(--green)';
+        print(`  <span style="color:${color}">${status} ${id}</span> — ${d.name}`);
+        if (!locked) print(`       <span style="color:var(--muted)">${d.desc}</span>`);
+    }
+    print('');
+    print('Utilisez "ouvrir [CODE]" pour accéder à un dossier.', 'system');
+}
+
+function cmdOuvrir(dossier) {
+    if (!dossier) {
+        Audio.error();
+        print('Usage: ouvrir [CODE]', 'error');
+        return;
+    }
+    
+    const d = DOSSIERS[dossier.toUpperCase()];
+    if (!d) {
+        Audio.error();
+        print(`Dossier inconnu: ${dossier}`, 'error');
+        return;
+    }
+    
+    if (d.level > State.level) {
+        Audio.error();
+        print(`⛔ Niveau ${d.level} requis pour accéder à ${dossier.toUpperCase()}`, 'error');
+        return;
+    }
+    
+    Audio.success();
+    print('');
+    print(`DOSSIER: ${d.name}`, 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    
+    const docs = DOCUMENTS[dossier.toUpperCase()];
+    for (const [id, doc] of Object.entries(docs)) {
+        print(`  📄 <span style="color:var(--yellow)">${id}</span> — ${doc.title}`);
+    }
+    print('');
+    print('Utilisez "lire [document]" pour consulter.', 'system');
+}
+
+function cmdLire(doc) {
+    if (!doc) {
+        Audio.error();
+        print('Usage: lire [document]', 'error');
+        return;
+    }
+    
+    // Find document in all accessible dossiers
+    for (const [dossierId, dossier] of Object.entries(DOSSIERS)) {
+        if (dossier.level > State.level) continue;
+        const docs = DOCUMENTS[dossierId];
+        if (docs && docs[doc.toLowerCase()]) {
+            showDocument(docs[doc.toLowerCase()].content);
+            return;
+        }
+    }
+    
+    Audio.error();
+    print(`Document non trouvé: ${doc}`, 'error');
+}
+
+function cmdRepondre(answer) {
+    if (!State.currentTest) {
+        Audio.error();
+        print('Aucun test en cours. Utilisez "lire test" dans un dossier.', 'error');
+        return;
+    }
+    
+    // Verify the test matches current level (anti-cheat)
+    if (State.currentTest.requiredLevel !== State.level) {
+        Audio.error();
+        print('⛔ Ce test ne correspond pas à votre niveau actuel.', 'error');
+        State.currentTest = null;
+        return;
+    }
+    
+    const given = answer.toLowerCase().trim();
+    
+    // Check against accepted answers (strict matching)
+    const isCorrect = State.currentTest.acceptedAnswers.some(accepted => 
+        given === accepted.toLowerCase()
+    );
+    
+    if (isCorrect) {
+        Audio.success();
+        triggerGlitch();
+        print('');
+        print('✓ RÉPONSE CORRECTE', 'success');
+        
+        State.level = State.currentTest.unlocksLevel;
+        State.currentTest = null;
+        State.save();
+        updateHUD();
+        
+        // Unlock achievement
+        const achMap = { 2: 'analyst', 3: 'jurist', 4: 'investigator', 5: 'operator' };
+        if (achMap[State.level]) {
+            Achievements.unlock(achMap[State.level]);
+        }
+        
+        print(`Niveau ${State.level} débloqué!`, 'success');
+        print('');
+        
+        if (State.level < 5) {
+            print('Tapez "dossiers" pour voir les nouvelles archives.', 'system');
+        } else {
+            print('ACCÈS COMPLET DÉBLOQUÉ.', 'warning');
+            print('Nouvelles commandes: stats, sources, reseau, mission, secret', 'system');
+        }
+    } else {
+        Audio.error();
+        print('✗ Réponse incorrecte.', 'error');
+        print('Relisez les documents et réessayez.', 'system');
+    }
+}
+
+function cmdDecoder(text) {
+    if (!text) {
+        Audio.error();
+        print('Usage: decoder [texte_base64]', 'error');
+        return;
+    }
+    
+    try {
+        const decoded = atob(text);
+        Audio.success();
+        print(`Décodé: ${decoded}`, 'success');
+        
+        if (!State.achievements.has('decoder')) {
+            Achievements.unlock('decoder');
+        }
+        
+        // Easter egg for CELLULE VÉNUS
+        if (decoded.includes('CELLULE') || decoded.includes('VENUS')) {
+            print('');
+            print('💡 Vous avez trouvé le mot de passe.', 'warning');
+            print('Tapez "repondre [résultat]" pour valider.', 'system');
+        }
+    } catch(e) {
+        Audio.error();
+        print('Erreur de décodage. Vérifiez le format Base64.', 'error');
+    }
+}
+
+function cmdHint() {
+    const hints = {
+        1: 'Tapez "ouvrir INIT" puis "lire test"',
+        2: '3 lettres: Q_C. Permet de contester une loi.',
+        3: 'Méga-bassines + dissolution annulée. "Soulèvements..."',
+        4: 'decoder Q0VMTFVMRSBWw4lOVVM= puis repondre avec le résultat',
+        5: 'Explorez: reseau, mission, secret, sources, stats'
+    };
+    print(`💡 ${hints[State.level]}`, 'warning');
+}
+
+function cmdStats() {
+    if (State.level < 5) {
+        Audio.error();
+        print('⛔ Niveau 5 requis', 'error');
+        return;
+    }
+    
+    print('');
+    print('STATISTIQUES CLÉS (toutes sourcées)', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('┌─ DÉMOCRATIE ────────────────────────────────────┐', 'data');
+    print('│ 49.3 sous Borne: 23 (record Ve République)      │', 'data');
+    print('│ Opposition retraites 2023: 72%                  │', 'data');
+    print('│ Censure Barnier: 331 voix (4 déc. 2024)         │', 'data');
+    print('│ RIP ADP: 1,09M signatures / 4,87M requises      │', 'data');
+    print('└─────────────────────────────────────────────────┘', 'data');
+    print('');
+    print('┌─ RÉPRESSION GJ ─────────────────────────────────┐', 'data');
+    print('│ Éborgnés: 24-25                                 │', 'data');
+    print('│ Mains arrachées: 5                              │', 'data');
+    print('│ Tirs LBD: 12 900+ (6 mois)                      │', 'data');
+    print('│ Gardes à vue: 10 718                            │', 'data');
+    print('│ Décès: 1 (Zineb Redouane, 80 ans)               │', 'data');
+    print('└─────────────────────────────────────────────────┘', 'data');
+    print('');
+    print('┌─ CONTRE-POUVOIRS ───────────────────────────────┐', 'data');
+    print('│ QPC: ~35% succès depuis 2010                    │', 'data');
+    print('│ CEDH: 736 condamnations France                  │', 'data');
+    print('│ Relaxes climat: 15+/60                          │', 'data');
+    print('│ Loi Immigration: 32/86 articles censurés        │', 'data');
+    print('└─────────────────────────────────────────────────┘', 'data');
+    print('');
+}
+
+function cmdSources() {
+    if (State.level < 5) {
+        Audio.error();
+        print('⛔ Niveau 5 requis', 'error');
+        return;
+    }
+    
+    print('');
+    print('SOURCES PRIMAIRES', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('<span style="color:var(--yellow)">Institutionnelles:</span>');
+    print('  • conseil-constitutionnel.fr (QPC)');
+    print('  • conseil-etat.fr');
+    print('  • hudoc.echr.coe.int (CEDH)');
+    print('  • defenseurdesdroits.fr');
+    print('');
+    print('<span style="color:var(--yellow)">Investigation:</span>');
+    print('  • bellingcat.com');
+    print('  • disclose.ngo');
+    print('  • laquadrature.net');
+    print('');
+    print('<span style="color:var(--yellow)">Données ouvertes:</span>');
+    print('  • nosdeputes.fr');
+    print('  • hatvp.fr');
+    print('  • regardscitoyens.org');
+    print('');
+}
+
+function cmdReseau() {
+    if (State.level < 5) {
+        Audio.error();
+        print('⛔ Niveau 5 requis', 'error');
+        return;
+    }
+    
+    print('');
+    print('ÉTAT DU RÉSEAU', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('  Cellules actives: 47');
+    print('  Opérateurs: ~380');
+    print('  Régions couvertes: 12');
+    print('  Coordinateurs MÉSO: 3');
+    print('');
+    print('  Dernière synchro: ' + new Date().toLocaleString('fr-FR'));
+    print('  Status: <span style="color:var(--green)">OPÉRATIONNEL</span>');
+    print('');
+}
+
+function cmdMission() {
+    if (State.level < 5) {
+        Audio.error();
+        print('⛔ Niveau 5 requis', 'error');
+        return;
+    }
+    
+    print('');
+    print('NOTRE MISSION', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('"La démocratie ne se protège pas par le secret,', 'highlight');
+    print(' mais par la vigilance de ses citoyens."', 'highlight');
+    print('');
+    print('VÉNUS n\'est pas une organisation.', '');
+    print('C\'est une méthode. Un ensemble d\'outils.', '');
+    print('Une façon de regarder le pouvoir.', '');
+    print('');
+    print('Le réseau n\'existe pas. Les cellules n\'existent pas.', '');
+    print('Mais les outils sont réels.', '');
+    print('Les données sont vérifiables.', '');
+    print('Les victoires sont documentées.', '');
+    print('');
+}
+
+function cmdSecret() {
+    if (State.level < 5) {
+        Audio.error();
+        print('⛔ Niveau 5 requis', 'error');
+        return;
+    }
+    
+    if (!State.secrets.has('secret_cmd')) {
+        State.secrets.add('secret_cmd');
+        State.save();
+        updateHUD();
+        Achievements.unlock('explorer');
+    }
+    
+    print('');
+    print('PAGES CACHÉES', 'warning');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('  <a href="journal.html" target="_blank">journal.html</a>         Notes de L., fondateur');
+    print('  <a href="carte.html" target="_blank">carte.html</a>           Carte des cellules');
+    print('  <a href="ressources.html" target="_blank">ressources.html</a>      Liens réels');
+    print('  <a href="exercice.html" target="_blank">exercice.html</a>        Exercice OSINT');
+    print('  <a href="stegano.html" target="_blank">stegano.html</a>         Image cachée');
+    print('  <a href="final.html" target="_blank">final.html</a>           Message final');
+    print('');
+    print('Cliquez pour ouvrir dans un nouvel onglet.', 'system');
+}
+
+function cmdReset() {
+    State.reset();
+    updateHUD();
+    terminal.innerHTML = '';
+    print('État réinitialisé.', 'warning');
+    print('');
+    showWelcome();
+}
+
+function cmdAbout() {
+    print('');
+    print('VÉNUS v4.2.0', 'success');
+    print('─'.repeat(50), 'system');
+    print('');
+    print('Réseau de Veille Citoyenne');
+    print('');
+    print('Ce terminal est une fiction.', 'system');
+    print('Les données sont réelles.', '');
+    print('Les outils sont fonctionnels.', '');
+    print('');
+    print('"La fiction était le cadre.', 'highlight');
+    print(' Le contenu était la vérité."', 'highlight');
+    print('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DOCUMENT CONTENT
+// ═══════════════════════════════════════════════════════════════════════════
+
+const DOC_CONTENT = {
+    doc_briefing: `
+        <div class="doc-stamp">INTERNE — NE PAS DIFFUSER</div>
+        <div class="doc-title">BRIEFING OPÉRATIONNEL</div>
+        <div class="doc-meta">Niveau: INIT | Mise à jour: Novembre 2024</div>
+        <div class="doc-body">
+            <p>Bienvenue, opérateur.</p>
+            <p>Vous accédez au terminal de formation du réseau VÉNUS. Ce système a été conçu pour transmettre les connaissances essentielles à tout citoyen souhaitant participer à la veille démocratique.</p>
+            <h3>Objectifs de la formation</h3>
+            <p>• Comprendre les dysfonctionnements institutionnels actuels<br>
+            • Maîtriser les outils juridiques de contre-pouvoir<br>
+            • Acquérir les bases du renseignement en sources ouvertes (OSINT)<br>
+            • Connaître les protocoles de sécurité opérationnelle</p>
+            <h3>Structure</h3>
+            <p>La formation se déroule en 5 niveaux. Chaque niveau se termine par un test de validation. Seule la réussite du test débloque le niveau suivant.</p>
+            <p class="source">Les informations contenues dans ces dossiers sont toutes sourcées et vérifiables.</p>
+        </div>
+    `,
+    
+    doc_contexte: `
+        <div class="doc-stamp">ANALYSE</div>
+        <div class="doc-title">CONTEXTE POLITIQUE — FRANCE 2024</div>
+        <div class="doc-meta">Sources: INSEE, Conseil constitutionnel, Assemblée nationale</div>
+        <div class="doc-body">
+            <h3>Érosion démocratique</h3>
+            <p>La Ve République traverse une crise de légitimité sans précédent. Entre 2022 et 2024, le gouvernement d'Élisabeth Borne a eu recours <strong>23 fois</strong> à l'article 49.3, un record historique.</p>
+            <p>Le 4 décembre 2024, le gouvernement Barnier est censuré par 331 voix — première censure depuis 1962.</p>
+            <h3>Défiance institutionnelle</h3>
+            <p>Selon le CEVIPOF (2024), 67% des Français estiment que la démocratie fonctionne mal en France. Le taux d'abstention aux législatives de 2024 a atteint <strong>33,3%</strong> au second tour.</p>
+            <p class="source">Sources: CEVIPOF Baromètre confiance 2024, Ministère de l'Intérieur</p>
+        </div>
+    `,
+    
+    test_init: `
+        <div class="doc-stamp">TEST DE VALIDATION</div>
+        <div class="doc-title">NIVEAU 1 → 2</div>
+        <div class="doc-meta">Répondez correctement pour débloquer le niveau 2</div>
+        <div class="doc-body">
+            <p>Pour valider ce niveau, vous devez démontrer votre compréhension du contexte.</p>
+            <h3>Question</h3>
+            <p>Quel outil juridique, créé en 2008, permet à tout citoyen de contester la constitutionnalité d'une loi devant le Conseil constitutionnel ?</p>
+            <p><strong>Indice:</strong> C'est un acronyme de 3 lettres. Q_C.</p>
+            <p>Fermez ce document et tapez: <code>repondre [votre réponse]</code></p>
+        </div>
+    `,
+    
+    doc_institutions: `
+        <div class="doc-stamp">DIAGNOSTIC</div>
+        <div class="doc-title">DYSFONCTIONNEMENTS INSTITUTIONNELS</div>
+        <div class="doc-meta">Sources: Sénat, Conseil constitutionnel, Cour des comptes</div>
+        <div class="doc-body">
+            <h3>Concentration du pouvoir exécutif</h3>
+            <p>Depuis 2017, l'usage du 49.3 s'est banalisé. Le gouvernement peut faire adopter un texte sans vote, à moins qu'une motion de censure ne soit votée.</p>
+            <h3>Affaiblissement du Parlement</h3>
+            <p>Le temps législatif programmé (TLP) limite drastiquement le temps de débat. En 2023, la réforme des retraites a été examinée en <strong>11 jours</strong> à l'Assemblée.</p>
+            <h3>La QPC: un contre-pouvoir</h3>
+            <p>Depuis 2010, la Question Prioritaire de Constitutionnalité permet à tout citoyen de contester une loi. <strong>~35%</strong> des QPC aboutissent à une censure totale ou partielle.</p>
+            <p class="source">Sources: Conseil constitutionnel — Bilan QPC 2010-2024</p>
+        </div>
+    `,
+    
+    doc_medias: `
+        <div class="doc-stamp">DIAGNOSTIC</div>
+        <div class="doc-title">CONCENTRATION MÉDIATIQUE</div>
+        <div class="doc-meta">Sources: Le Monde Diplomatique, Acrimed, ARCOM</div>
+        <div class="doc-body">
+            <h3>Qui possède l'information ?</h3>
+            <p>En France, <strong>9 milliardaires</strong> contrôlent environ 80% des médias nationaux.</p>
+            <ul>
+                <li><strong>Vincent Bolloré:</strong> Canal+, C8, CNews, Europe 1, Prisma</li>
+                <li><strong>Bernard Arnault:</strong> Le Parisien, Les Échos, Radio Classique</li>
+                <li><strong>Patrick Drahi:</strong> BFM, RMC, Libération</li>
+                <li><strong>Xavier Niel:</strong> Le Monde (actionnaire), Télérama</li>
+            </ul>
+            <h3>Conséquences</h3>
+            <p>Cette concentration impacte le pluralisme. CNews a reçu <strong>80 mises en demeure</strong> de l'ARCOM entre 2019 et 2024.</p>
+            <p class="source">Sources: ARCOM rapports annuels, Le Monde Diplomatique "Médias français, qui possède quoi"</p>
+        </div>
+    `,
+    
+    doc_repression: `
+        <div class="doc-stamp">CONFIDENTIEL</div>
+        <div class="doc-title">BILAN RÉPRESSION — GILETS JAUNES</div>
+        <div class="doc-meta">Sources: Défenseur des droits, Amnesty, Médiapart, AFP</div>
+        <div class="doc-body">
+            <h3>Bilan humain (nov. 2018 — mars 2019)</h3>
+            <ul>
+                <li><strong>24-25 personnes éborgnées</strong> (LBD, grenade)</li>
+                <li><strong>5 mains arrachées</strong> (grenades GLI-F4)</li>
+                <li><strong>12 900+ tirs de LBD</strong> en 6 mois</li>
+                <li><strong>10 718 gardes à vue</strong></li>
+                <li><strong>1 décès:</strong> Zineb Redouane, 80 ans, Marseille</li>
+            </ul>
+            <h3>Réponse internationale</h3>
+            <p>L'ONU, le Conseil de l'Europe et Amnesty International ont émis des critiques officielles. La Commissaire aux droits de l'homme du Conseil de l'Europe a demandé la suspension du LBD.</p>
+            <p class="source">Sources: Rapport Défenseur des droits 2019, Amnesty International "Un droit, pas une menace"</p>
+        </div>
+    `,
+    
+    test_diag: `
+        <div class="doc-stamp">TEST DE VALIDATION</div>
+        <div class="doc-title">NIVEAU 2 → 3</div>
+        <div class="doc-meta">Répondez correctement pour débloquer le niveau 3</div>
+        <div class="doc-body">
+            <h3>Question</h3>
+            <p>Quel collectif écologiste français, connu pour ses actions contre les méga-bassines, a vu sa dissolution annulée par le Conseil d'État en novembre 2023 ?</p>
+            <p><strong>Indice:</strong> "Soulèvements de la ____"</p>
+            <p>Tapez: <code>repondre [votre réponse]</code></p>
+        </div>
+    `,
+    
+    doc_qpc: `
+        <div class="doc-stamp">ARSENAL JURIDIQUE</div>
+        <div class="doc-title">LA QUESTION PRIORITAIRE DE CONSTITUTIONNALITÉ</div>
+        <div class="doc-meta">Sources: Conseil constitutionnel, Légifrance</div>
+        <div class="doc-body">
+            <h3>Principe</h3>
+            <p>La QPC permet à tout justiciable de contester la constitutionnalité d'une loi applicable à son litige. Créée en 2008, effective depuis 2010.</p>
+            <h3>Procédure</h3>
+            <p>1. Soulever la QPC devant n'importe quelle juridiction<br>
+            2. Filtrage par la Cour de cassation ou le Conseil d'État<br>
+            3. Examen par le Conseil constitutionnel (3 mois max)<br>
+            4. Décision: conformité, non-conformité, réserves</p>
+            <h3>Statistiques</h3>
+            <p>• <strong>~35%</strong> de décisions favorables (censure totale ou partielle)<br>
+            • Coût: <strong>0€</strong> (pas d'avocat obligatoire au stade initial)<br>
+            • Délai moyen: <strong>6 mois</strong></p>
+            <p class="source">Exemple: QPC du 12 janvier 2024 — 32 articles de la loi Immigration censurés</p>
+        </div>
+    `,
+    
+    doc_cedh: `
+        <div class="doc-stamp">ARSENAL JURIDIQUE</div>
+        <div class="doc-title">COUR EUROPÉENNE DES DROITS DE L'HOMME</div>
+        <div class="doc-meta">Sources: HUDOC, Conseil de l'Europe</div>
+        <div class="doc-body">
+            <h3>Principe</h3>
+            <p>La CEDH protège les droits fondamentaux dans les 46 États du Conseil de l'Europe. Tout individu peut saisir la Cour après épuisement des voies de recours nationales.</p>
+            <h3>France condamnée</h3>
+            <p>La France a été condamnée <strong>736 fois</strong> depuis 1959.</p>
+            <ul>
+                <li>Art. 3 (torture/traitements inhumains): conditions de détention</li>
+                <li>Art. 6 (procès équitable): délais déraisonnables</li>
+                <li>Art. 8 (vie privée): surveillance, expulsions</li>
+            </ul>
+            <h3>Exemples</h3>
+            <p>• <em>Tomasi c. France</em> (1992): torture en garde à vue<br>
+            • <em>Selmouni c. France</em> (1999): torture, 500 000 FF<br>
+            • <em>Big Brother Watch c. UK</em> (2021): surveillance de masse</p>
+        </div>
+    `,
+    
+    doc_necessite: `
+        <div class="doc-stamp">ARSENAL JURIDIQUE</div>
+        <div class="doc-title">L'ÉTAT DE NÉCESSITÉ</div>
+        <div class="doc-meta">Sources: Code pénal, jurisprudence</div>
+        <div class="doc-body">
+            <h3>Article 122-7 du Code pénal</h3>
+            <p><em>"N'est pas pénalement responsable la personne qui, face à un danger actuel ou imminent qui menace elle-même, autrui ou un bien, accomplit un acte nécessaire à la sauvegarde de la personne ou du bien, sauf s'il y a disproportion entre les moyens employés et la gravité de la menace."</em></p>
+            <h3>Application climatique</h3>
+            <p>Depuis 2019, plus de <strong>15 relaxes</strong> ont été prononcées pour des actions de désobéissance civile climatique, sur le fondement de l'état de nécessité.</p>
+            <ul>
+                <li><strong>Décrocheurs de portraits:</strong> 6 relaxes sur ~60 poursuites</li>
+                <li><strong>Faucheurs volontaires:</strong> relaxes OGM</li>
+                <li><strong>XR, ANV-COP21:</strong> plusieurs relaxes</li>
+            </ul>
+            <p class="source">Le succès dépend de la démonstration du lien entre l'action et la protection d'un bien supérieur.</p>
+        </div>
+    `,
+    
+    test_arsl: `
+        <div class="doc-stamp">TEST DE VALIDATION</div>
+        <div class="doc-title">NIVEAU 3 → 4</div>
+        <div class="doc-meta">Ce test requiert une compétence technique</div>
+        <div class="doc-body">
+            <h3>Instruction</h3>
+            <p>Vous avez intercepté un message chiffré en Base64:</p>
+            <p style="font-family:monospace;background:#eee;padding:10px;margin:1rem 0;">Q0VMTFVMRSBWw4lOVVM=</p>
+            <p>Utilisez la commande <code>decoder</code> pour le déchiffrer, puis validez avec <code>repondre [résultat]</code>.</p>
+            <p><strong>Indice:</strong> Base64 est un encodage, pas un chiffrement.</p>
+        </div>
+    `,
+    
+    doc_geoloc: `
+        <div class="doc-stamp">OSINT</div>
+        <div class="doc-title">GÉOLOCALISATION VISUELLE</div>
+        <div class="doc-meta">Sources: Bellingcat, First Draft</div>
+        <div class="doc-body">
+            <h3>Principe</h3>
+            <p>Déterminer le lieu de prise d'une photo/vidéo à partir d'éléments visuels.</p>
+            <h3>Éléments à rechercher</h3>
+            <ul>
+                <li><strong>Architecture:</strong> style, matériaux, couleurs</li>
+                <li><strong>Signalétique:</strong> panneaux, affiches, langues</li>
+                <li><strong>Végétation:</strong> espèces, climat</li>
+                <li><strong>Infrastructure:</strong> routes, poteaux, mobilier urbain</li>
+                <li><strong>Ombres:</strong> orientation, longueur</li>
+            </ul>
+            <h3>Outils</h3>
+            <p>• Google Maps / Street View<br>
+            • Yandex Images (recherche inversée)<br>
+            • OpenStreetMap<br>
+            • SunCalc (calcul d'ombres)</p>
+        </div>
+    `,
+    
+    doc_chrono: `
+        <div class="doc-stamp">OSINT</div>
+        <div class="doc-title">CHRONOLOCATION PAR OMBRES</div>
+        <div class="doc-meta">Sources: Bellingcat, SunCalc</div>
+        <div class="doc-body">
+            <h3>Principe</h3>
+            <p>Les ombres permettent de déterminer l'heure de prise de vue si le lieu est connu (ou inversement).</p>
+            <h3>Méthode</h3>
+            <p>1. Mesurer le ratio hauteur/ombre d'un objet vertical<br>
+            2. Utiliser SunCalc.org avec le lieu présumé<br>
+            3. Trouver l'heure correspondant à ce ratio<br>
+            4. Vérifier la cohérence (saison, azimut)</p>
+            <h3>Formule</h3>
+            <p><code>tan(altitude solaire) = hauteur / longueur_ombre</code></p>
+            <p>L'altitude solaire dépend de: latitude, date, heure.</p>
+            <p class="source">Cette technique a été utilisée par Bellingcat pour vérifier des vidéos du conflit syrien.</p>
+        </div>
+    `,
+    
+    doc_sources: `
+        <div class="doc-stamp">OSINT</div>
+        <div class="doc-title">VÉRIFICATION DE SOURCES</div>
+        <div class="doc-meta">Sources: First Draft, AFP Factuel</div>
+        <div class="doc-body">
+            <h3>Questions à poser</h3>
+            <ul>
+                <li><strong>Qui?</strong> Qui a publié? Quel historique?</li>
+                <li><strong>Quoi?</strong> Le contenu est-il cohérent?</li>
+                <li><strong>Où?</strong> Les éléments visuels correspondent-ils?</li>
+                <li><strong>Quand?</strong> La date est-elle vérifiable?</li>
+                <li><strong>Pourquoi?</strong> Quel intérêt à diffuser cette info?</li>
+            </ul>
+            <h3>Recherche d'images inversée</h3>
+            <p>• Google Images (mondial)<br>
+            • Yandex (excellent pour visages, Russie/Europe de l'Est)<br>
+            • TinEye (historique de diffusion)<br>
+            • Bing Visual Search</p>
+            <p class="source">Toujours vérifier plusieurs sources indépendantes.</p>
+        </div>
+    `,
+    
+    test_osnt: `
+        <div class="doc-stamp">TEST FINAL</div>
+        <div class="doc-title">NIVEAU 4 → 5</div>
+        <div class="doc-meta">Accès complet au réseau</div>
+        <div class="doc-body">
+            <h3>Épreuve de synthèse</h3>
+            <p>Pour accéder au niveau opérateur, vous devez démontrer votre compréhension globale.</p>
+            <h3>Question</h3>
+            <p>Quel site d'investigation open source, fondé par Eliot Higgins en 2014, est devenu la référence mondiale pour la vérification de sources visuelles et l'analyse géospatiale?</p>
+            <p><strong>Indice:</strong> Le nom évoque un chat et une sonnette.</p>
+            <p>Tapez: <code>repondre [votre réponse]</code></p>
+        </div>
+    `,
+    
+    doc_structure: `
+        <div class="doc-stamp">NIVEAU 5 — OPÉRATEUR</div>
+        <div class="doc-title">ORGANISATION CELLULAIRE</div>
+        <div class="doc-meta">Classification: Interne</div>
+        <div class="doc-body">
+            <h3>Structure</h3>
+            <p>Le réseau fonctionne en cellules indépendantes de 5-15 personnes.</p>
+            <ul>
+                <li><strong>MICRO:</strong> Cellules locales (ville/quartier)</li>
+                <li><strong>MÉSO:</strong> Coordination régionale</li>
+                <li><strong>MACRO:</strong> Pas de direction centrale</li>
+            </ul>
+            <h3>Compartimentage</h3>
+            <p>Chaque cellule ne connaît que son coordinateur MÉSO. Aucune cellule n'a accès à la liste complète du réseau.</p>
+            <h3>Principe fondamental</h3>
+            <p>Si une cellule tombe, le réseau continue. Si un coordinateur tombe, un autre émerge. Structure rhizome, pas pyramide.</p>
+        </div>
+    `,
+    
+    doc_securite: `
+        <div class="doc-stamp">NIVEAU 5 — OPÉRATEUR</div>
+        <div class="doc-title">PROTOCOLES DE SÉCURITÉ</div>
+        <div class="doc-meta">À mémoriser puis détruire</div>
+        <div class="doc-body">
+            <h3>Communications</h3>
+            <p>• <strong>Signal uniquement</strong> — Messages éphémères 24h<br>
+            • Jamais WhatsApp, Telegram, SMS<br>
+            • Pas de noms réels dans les discussions</p>
+            <h3>Appareils</h3>
+            <p>• Téléphone dédié si possible<br>
+            • Chiffrement intégral du disque<br>
+            • Tails OS pour recherches sensibles</p>
+            <h3>Garde à vue</h3>
+            <p>• <strong>Droit au silence absolu</strong> (Art. 63-1 CPP)<br>
+            • Avocat dès la première heure<br>
+            • Jamais de code PIN ou mot de passe<br>
+            • "Je n'ai rien à déclarer" — seule phrase autorisée</p>
+            <p class="source">Le silence ne peut pas être retenu contre vous.</p>
+        </div>
+    `,
+    
+    doc_mission: `
+        <div class="doc-stamp">NIVEAU 5 — OPÉRATEUR</div>
+        <div class="doc-title">NOTRE MISSION</div>
+        <div class="doc-meta">Philosophie du réseau</div>
+        <div class="doc-body">
+            <h3>Ce que nous sommes</h3>
+            <p>VÉNUS n'est pas une organisation. C'est une méthode. Un ensemble d'outils de veille démocratique transmis de citoyen à citoyen.</p>
+            <h3>Ce que nous faisons</h3>
+            <p>• Documenter les abus de pouvoir<br>
+            • Former les citoyens aux outils juridiques<br>
+            • Transmettre les techniques OSINT<br>
+            • Archiver les preuves</p>
+            <h3>Ce que nous ne sommes pas</h3>
+            <p>• Pas de violence<br>
+            • Pas d'illégalité gratuite<br>
+            • Pas de leadership centralisé<br>
+            • Pas de dogme politique</p>
+            <p style="margin-top:1.5rem;font-style:italic;text-align:center;">"La fiction était le cadre.<br>Le contenu était la vérité."</p>
+        </div>
+    `
+};
+
+function showDocument(docId) {
+    const content = DOC_CONTENT[docId];
+    if (!content) {
+        print('Document non trouvé.', 'error');
+        return;
+    }
+    
+    Audio.success();
+    
+    const viewer = document.getElementById('docview');
+    const docContent = document.getElementById('doc-content');
+    
+    docContent.innerHTML = `<div class="doc-frame">${content}</div>`;
+    viewer.classList.add('show');
+    
+    // Check for test - each test is bound to a specific level
+    if (docId.startsWith('test_')) {
+        const tests = {
+            'test_init': { answer: 'qpc', requiredLevel: 1, unlocksLevel: 2, acceptedAnswers: ['qpc', 'question prioritaire de constitutionnalité', 'question prioritaire de constitutionnalite'] },
+            'test_diag': { answer: 'terre', requiredLevel: 2, unlocksLevel: 3, acceptedAnswers: ['terre', 'soulevements de la terre', 'soulèvements de la terre', 'les soulevements de la terre', 'les soulèvements de la terre'] },
+            'test_arsl': { answer: 'cellule venus', requiredLevel: 3, unlocksLevel: 4, acceptedAnswers: ['cellule venus', 'cellule vénus', 'venus', 'vénus'] },
+            'test_osnt': { answer: 'bellingcat', requiredLevel: 4, unlocksLevel: 5, acceptedAnswers: ['bellingcat'] }
+        };
+        const test = tests[docId];
+        if (test && State.level === test.requiredLevel) {
+            State.currentTest = test;
+        } else if (test && State.level > test.requiredLevel) {
+            // Already passed this level
+            State.currentTest = null;
+        } else {
+            State.currentTest = null;
+        }
+    }
+}
+
+function closeDoc() {
+    document.getElementById('docview').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WELCOME SCREEN
+// ═══════════════════════════════════════════════════════════════════════════
+
+function showWelcome() {
+    print(`
+<span class="ascii">██╗   ██╗███████╗███╗   ██╗██╗   ██╗███████╗
+██║   ██║██╔════╝████╗  ██║██║   ██║██╔════╝
+██║   ██║█████╗  ██╔██╗ ██║██║   ██║███████╗
+╚██╗ ██╔╝██╔══╝  ██║╚██╗██║██║   ██║╚════██║
+ ╚████╔╝ ███████╗██║ ╚████║╚██████╔╝███████║
+  ╚═══╝  ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝</span>`, '');
+    print('       <span style="color:var(--muted)">RÉSEAU DE VEILLE CITOYENNE</span>', '');
+    print('');
+    print(`Bienvenue, opérateur. Niveau actuel: <span style="color:var(--green)">${State.level}/5</span>`, '');
+    print('');
+    print('Tapez <span style="color:var(--yellow)">aide</span> pour les commandes disponibles.', '');
+    print('Tapez <span style="color:var(--yellow)">dossiers</span> pour voir les archives.', '');
+    print('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TERMINAL ACTIVATION
+// ═══════════════════════════════════════════════════════════════════════════
+
+function activateTerminal() {
+    State.phase = 'terminal';
+    
+    document.getElementById('fake-404').style.display = 'none';
+    document.getElementById('terminal-container').style.display = 'flex';
+    document.getElementById('hud').style.display = 'block';
+    
+    cmdInput.disabled = false;
+    cmdInput.focus();
+    
+    Audio.success();
+    triggerGlitch();
+    
+    Achievements.unlock('awakening');
+    Achievements.unlock('initiate');
+    
+    State.load();
+    updateHUD();
+    showWelcome();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Secret keyboard shortcut: Ctrl+Shift+V
+document.addEventListener('keydown', (e) => {
+    // Konami code
+    const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    if (e.key === konami[State.konamiIndex]) {
+        State.konamiIndex++;
+        if (State.konamiIndex === konami.length) {
+            Achievements.unlock('ghost');
+            State.konamiIndex = 0;
+            triggerGlitch();
+            if (State.phase === 'terminal') {
+                print('');
+                print('👻 KONAMI CODE ACTIVÉ', 'success');
+                print('Easter egg découvert!', 'system');
+            }
+        }
+    } else {
+        State.konamiIndex = 0;
+    }
+    
+    // Ctrl+Shift+V to activate terminal
+    if (State.phase === '404' && e.ctrlKey && e.shiftKey && e.key === 'V') {
+        e.preventDefault();
+        activateTerminal();
+    }
+    
+    // ESC to close document
+    if (e.key === 'Escape') {
+        closeDoc();
+    }
+});
+
+// Command input
+cmdInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const cmd = cmdInput.value;
+        if (cmd.trim()) {
+            State.history.push(cmd);
+            State.historyIndex = State.history.length;
+        }
+        processCommand(cmd);
+        cmdInput.value = '';
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (State.historyIndex > 0) {
+            State.historyIndex--;
+            cmdInput.value = State.history[State.historyIndex];
+        }
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (State.historyIndex < State.history.length - 1) {
+            State.historyIndex++;
+            cmdInput.value = State.history[State.historyIndex];
+        } else {
+            State.historyIndex = State.history.length;
+            cmdInput.value = '';
+        }
+    } else {
+        Audio.key();
+    }
+});
+
+// Focus input on click
+document.body.addEventListener('click', (e) => {
+    if (State.phase === 'terminal' && !e.target.closest('a') && !e.target.closest('button') && !e.target.closest('#docview')) {
+        cmdInput.focus();
+    }
+});
+
+// Audio toggle
+document.getElementById('audio-btn').addEventListener('click', () => Audio.toggle());
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════════════
+
+window.addEventListener('load', () => {
+    // Check if returning player
+    if (State.load() && State.level > 1) {
+        // Skip boot, go directly to terminal
+        document.getElementById('boot-screen').style.display = 'none';
+        activateTerminal();
+    } else {
+        // New player: show boot sequence
+        runBootSequence();
+    }
+});
+
+// Console easter egg
+console.log('%c◈ VÉNUS', 'color: #ff3366; font-size: 32px; font-weight: bold;');
+console.log('%cRéseau de Veille Citoyenne', 'color: #33ff33; font-size: 14px;');
+console.log('%cLe réseau n\'existe pas. Les outils sont réels.', 'color: #888; font-size: 12px;');
+console.log('%cEssayez Ctrl+Shift+V sur la page 404...', 'color: #666; font-size: 11px;');
+
+</script>
+</body>
+</html>

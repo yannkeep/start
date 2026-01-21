@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 KERN::MISSIONS — Quêtes Citoyennes</title>
+    <script src="kern-core.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --orange-dim: rgba(255, 179, 71, 0.15);
+            --rouge: #ff6b6b;
+            --rouge-dim: rgba(255, 107, 107, 0.15);
+            --bleu: #74b9ff;
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100%;
+            line-height: 1.5;
+        }
+        
+        .app-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100%;
+        }
+        
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--vert);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+        
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+        
+        .nav-item.active {
+            background: var(--vert-dim);
+            color: var(--vert);
+        }
+        
+        .nav-item .count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 100px;
+        }
+        
+        .sidebar-stats {
+            margin-top: auto;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: var(--radius);
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .stat-row:last-child { margin-bottom: 0; }
+        
+        .stat-row .value {
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover {
+            background: #7ed87e;
+        }
+        
+        /* Missions Grid */
+        .missions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .mission-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            border-color: var(--vert);
+        }
+        
+        .mission-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .mission-icon {
+            font-size: 2rem;
+        }
+        
+        .mission-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .badge-easy { background: var(--vert-dim); color: var(--vert); }
+        .badge-medium { background: var(--orange-dim); color: var(--orange); }
+        .badge-hard { background: var(--rouge-dim); color: var(--rouge); }
+        .badge-expert { background: var(--lilas-dim); color: var(--lilas); }
+        
+        .badge-active { background: var(--vert-dim); color: var(--vert); }
+        .badge-draft { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+        .badge-completed { background: var(--bleu); color: var(--bg); }
+        
+        .mission-body {
+            padding: 1.25rem;
+        }
+        
+        .mission-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mission-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .mission-requirements {
+            margin-bottom: 1rem;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        
+        .requirement::before {
+            content: '○';
+            color: var(--lilas);
+        }
+        
+        .mission-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .xp-value {
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        .mission-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mission-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.1rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .modal-close:hover { color: var(--text); }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        /* Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .emoji-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .emoji-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: transparent;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .emoji-btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+        }
+        
+        .emoji-btn.active {
+            background: var(--vert);
+            border-color: var(--vert);
+        }
+        
+        .difficulty-picker {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .diff-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .diff-btn:hover { background: rgba(255,255,255,0.05); }
+        
+        .diff-btn.active.easy { background: var(--vert-dim); border-color: var(--vert); color: var(--vert); }
+        .diff-btn.active.medium { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+        .diff-btn.active.hard { background: var(--rouge-dim); border-color: var(--rouge); color: var(--rouge); }
+        .diff-btn.active.expert { background: var(--lilas-dim); border-color: var(--lilas); color: var(--lilas); }
+        
+        /* Requirements builder */
+        .requirements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .req-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .req-item input {
+            flex: 1;
+        }
+        
+        .req-remove {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--rouge-dim);
+            color: var(--rouge);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-add-req {
+            font-size: 0.8rem;
+            color: var(--lilas);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .btn-add-req:hover { text-decoration: underline; }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-tab:hover {
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .filter-tab.active {
+            background: var(--vert);
+            border-color: var(--vert);
+            color: var(--bg);
+        }
+        
+        /* Progress bar in card */
+        .progress-container {
+            margin-top: 0.75rem;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--vert), var(--lilas));
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--vert);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="00-kern-nexus.html" class="logo" style="text-decoration: none; color: inherit;">🎯 KERN::MISSIONS</a>
+            
+            <div class="nav-section">
+                <div class="nav-label">Vue</div>
+                <div class="nav-item active" data-filter="all" onclick="setFilter('all')">
+                    <span>📋</span> Toutes
+                    <span class="count" id="countAll">0</span>
+                </div>
+                <div class="nav-item" data-filter="active" onclick="setFilter('active')">
+                    <span>▶️</span> Actives
+                    <span class="count" id="countActive">0</span>
+                </div>
+                <div class="nav-item" data-filter="draft" onclick="setFilter('draft')">
+                    <span>📝</span> Brouillons
+                    <span class="count" id="countDraft">0</span>
+                </div>
+                <div class="nav-item" data-filter="completed" onclick="setFilter('completed')">
+                    <span>✅</span> Complétées
+                    <span class="count" id="countCompleted">0</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Difficulté</div>
+                <div class="nav-item" data-filter="easy" onclick="setFilter('easy')">
+                    <span>🌱</span> Facile
+                </div>
+                <div class="nav-item" data-filter="medium" onclick="setFilter('medium')">
+                    <span>⚡</span> Moyen
+                </div>
+                <div class="nav-item" data-filter="hard" onclick="setFilter('hard')">
+                    <span>🔥</span> Difficile
+                </div>
+                <div class="nav-item" data-filter="expert" onclick="setFilter('expert')">
+                    <span>💎</span> Expert
+                </div>
+            </div>
+            
+            <div class="sidebar-stats">
+                <div class="stat-row">
+                    <span>Total XP disponible</span>
+                    <span class="value" id="totalXP">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Missions actives</span>
+                    <span class="value" id="activeMissions">0</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Quêtes Citoyennes</h1>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn" onclick="exportMissions()">📤 Exporter</button>
+                    <button class="btn" onclick="importMissions()">📥 Importer</button>
+                    <button class="btn btn-primary" onclick="openCreateModal()">+ Nouvelle mission</button>
+                </div>
+            </div>
+            
+            <div class="missions-grid" id="missionsGrid">
+                <!-- Missions rendered here -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Create/Edit Modal -->
+    <div class="modal-overlay" id="missionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouvelle mission</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Icône</label>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <!-- Generated -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Titre de la mission</label>
+                    <input type="text" class="form-input" id="missionTitle" placeholder="Ex: Fantôme au conseil">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" id="missionDesc" placeholder="Décrivez l'objectif de cette mission..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Difficulté</label>
+                        <div class="difficulty-picker">
+                            <button class="diff-btn easy active" data-diff="easy" onclick="setDifficulty('easy')">Facile</button>
+                            <button class="diff-btn medium" data-diff="medium" onclick="setDifficulty('medium')">Moyen</button>
+                            <button class="diff-btn hard" data-diff="hard" onclick="setDifficulty('hard')">Difficile</button>
+                            <button class="diff-btn expert" data-diff="expert" onclick="setDifficulty('expert')">Expert</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Points XP</label>
+                        <input type="number" class="form-input" id="missionXP" value="100" min="10" step="10">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Étapes à accomplir</label>
+                    <div class="requirements-list" id="requirementsList">
+                        <!-- Dynamic -->
+                    </div>
+                    <button class="btn-add-req" onclick="addRequirement()">+ Ajouter une étape</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select class="form-input" id="missionStatus">
+                            <option value="draft">Brouillon</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Complétée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catégorie (optionnel)</label>
+                        <input type="text" class="form-input" id="missionCategory" placeholder="Ex: Participation locale">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="saveMission()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Importer des missions</h3>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="file" class="form-input" id="importFile" accept=".json">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ou collez le JSON :</label>
+                    <textarea class="form-input" id="importJson" rows="6"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeImportModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="processImport()">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Emojis for missions
+        const missionEmojis = ['🏛️', '🗳️', '📢', '🔍', '📝', '🤝', '🎤', '📊', '🗺️', '📚', '💬', '🎯', '⚡', '🔥', '💎', '🌱', '🏠', '🚶', '📸', '✊'];
+        
+        // State
+        let missions = [];
+        let currentFilter = 'all';
+        let editingId = null;
+        let selectedEmoji = '🎯';
+        let selectedDifficulty = 'easy';
+        let requirements = [''];
+        
+        // XP by difficulty
+        const xpDefaults = { easy: 100, medium: 200, hard: 350, expert: 500 };
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof KERN !== 'undefined') {
+                KERN.ready(() => {
+                    loadData();
+                    renderEmojiPicker();
+                    renderRequirements();
+                });
+            } else {
+                loadData();
+                renderEmojiPicker();
+                renderRequirements();
+            }
+        });
+        
+        // Data persistence
+        function loadData() {
+            const saved = localStorage.getItem('kern_missions');
+            if (saved) missions = JSON.parse(saved);
+            render();
+        }
+        
+        function saveData() {
+            localStorage.setItem('kern_missions', JSON.stringify(missions));
+            render();
+        }
+        
+        // Emoji picker
+        function renderEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.innerHTML = missionEmojis.map(e => 
+                `<button class="emoji-btn ${e === selectedEmoji ? 'active' : ''}" onclick="selectEmoji('${e}')">${e}</button>`
+            ).join('');
+        }
+        
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            renderEmojiPicker();
+        }
+        
+        // Difficulty
+        function setDifficulty(diff) {
+            selectedDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.diff === diff) btn.classList.add('active');
+            });
+            document.getElementById('missionXP').value = xpDefaults[diff];
+        }
+        
+        // Requirements
+        function renderRequirements() {
+            const list = document.getElementById('requirementsList');
+            list.innerHTML = requirements.map((req, i) => `
+                <div class="req-item">
+                    <input type="text" class="form-input" value="${escapeHtml(req)}" 
+                           onchange="updateRequirement(${i}, this.value)"
+                           placeholder="Étape ${i + 1}...">
+                    ${requirements.length > 1 ? `<button class="req-remove" onclick="removeRequirement(${i})">×</button>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function addRequirement() {
+            requirements.push('');
+            renderRequirements();
+        }
+        
+        function updateRequirement(index, value) {
+            requirements[index] = value;
+        }
+        
+        function removeRequirement(index) {
+            requirements.splice(index, 1);
+            renderRequirements();
+        }
+        
+        // Filter
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.filter === filter) item.classList.add('active');
+            });
+            render();
+        }
+        
+        // Modal
+        function openCreateModal() {
+            editingId = null;
+            selectedEmoji = '🎯';
+            selectedDifficulty = 'easy';
+            requirements = [''];
+            
+            document.getElementById('modalTitle').textContent = 'Nouvelle mission';
+            document.getElementById('missionTitle').value = '';
+            document.getElementById('missionDesc').value = '';
+            document.getElementById('missionXP').value = 100;
+            document.getElementById('missionStatus').value = 'draft';
+            document.getElementById('missionCategory').value = '';
+            
+            renderEmojiPicker();
+            setDifficulty('easy');
+            renderRequirements();
+            
+            document.getElementById('missionModal').classList.add('show');
+        }
+        
+        function editMission(id) {
+            const mission = missions.find(m => m.id === id);
+            if (!mission) return;
+            
+            editingId = id;
+            selectedEmoji = mission.icon;
+            selectedDifficulty = mission.difficulty;
+            requirements = mission.requirements.length ? [...mission.requirements] : [''];
+            
+            document.getElementById('modalTitle').textContent = 'Modifier la mission';
+            document.getElementById('missionTitle').value = mission.title;
+            document.getElementById('missionDesc').value = mission.description;
+            document.getElementById('missionXP').value = mission.xp;
+            document.getElementById('missionStatus').value = mission.status;
+            document.getElementById('missionCategory').value = mission.category || '';
+            
+            renderEmojiPicker();
+            setDifficulty(mission.difficulty);
+            renderRequirements();
+            
+            document.getElementById('missionModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('missionModal').classList.remove('show');
+        }
+        
+        // Save mission
+        function saveMission() {
+            const title = document.getElementById('missionTitle').value.trim();
+            const desc = document.getElementById('missionDesc').value.trim();
+            const xp = parseInt(document.getElementById('missionXP').value) || 100;
+            const status = document.getElementById('missionStatus').value;
+            const category = document.getElementById('missionCategory').value.trim();
+            
+            if (!title) {
+                showToast('Le titre est requis');
+                return;
+            }
+            
+            const reqs = requirements.filter(r => r.trim());
+            
+            const mission = {
+                id: editingId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                icon: selectedEmoji,
+                title,
+                description: desc,
+                difficulty: selectedDifficulty,
+                xp,
+                status,
+                category,
+                requirements: reqs,
+                completedReqs: editingId ? (missions.find(m => m.id === editingId)?.completedReqs || []) : [],
+                createdAt: editingId ? (missions.find(m => m.id === editingId)?.createdAt) : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            if (editingId) {
+                const index = missions.findIndex(m => m.id === editingId);
+                missions[index] = mission;
+            } else {
+                missions.unshift(mission);
+            }
+            
+            saveData();
+            closeModal();
+            showToast(editingId ? 'Mission mise à jour' : 'Mission créée');
+        }
+        
+        // Delete mission
+        function deleteMission(id) {
+            if (!confirm('Supprimer cette mission ?')) return;
+            missions = missions.filter(m => m.id !== id);
+            saveData();
+            showToast('Mission supprimée');
+        }
+        
+        // Toggle requirement completion
+        function toggleReq(missionId, reqIndex) {
+            const mission = missions.find(m => m.id === missionId);
+            if (!mission) return;
+            
+            if (!mission.completedReqs) mission.completedReqs = [];
+            
+            const idx = mission.completedReqs.indexOf(reqIndex);
+            if (idx === -1) {
+                mission.completedReqs.push(reqIndex);
+            } else {
+                mission.completedReqs.splice(idx, 1);
+            }
+            
+            // Auto-complete if all reqs done
+            if (mission.requirements.length > 0 && mission.completedReqs.length === mission.requirements.length) {
+                if (mission.status !== 'completed') {
+                    mission.status = 'completed';
+                    
+                    // Award XP via KERN-CORE
+                    if (typeof KERN !== 'undefined') {
+                        const xpReward = mission.xpReward || 50;
+                        KERN.emit('mission:completed', { mission, xp: xpReward });
+                        showToast(`🎉 Mission complétée ! +${xpReward} XP`);
+                    } else {
+                        showToast('🎉 Mission complétée !');
+                    }
+                }
+            }
+            
+            saveData();
+        }
+        
+        // Render
+        function render() {
+            renderMissions();
+            renderStats();
+        }
+        
+        function renderMissions() {
+            const grid = document.getElementById('missionsGrid');
+            
+            let filtered = missions;
+            if (currentFilter === 'active') filtered = missions.filter(m => m.status === 'active');
+            else if (currentFilter === 'draft') filtered = missions.filter(m => m.status === 'draft');
+            else if (currentFilter === 'completed') filtered = missions.filter(m => m.status === 'completed');
+            else if (['easy', 'medium', 'hard', 'expert'].includes(currentFilter)) {
+                filtered = missions.filter(m => m.difficulty === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🎯</div>
+                        <h3>Aucune mission</h3>
+                        <p>Créez votre première quête citoyenne</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(m => {
+                const progress = m.requirements.length > 0 
+                    ? Math.round((m.completedReqs?.length || 0) / m.requirements.length * 100)
+                    : 0;
+                
+                return `
+                    <div class="mission-card">
+                        <div class="mission-header">
+                            <span class="mission-icon">${m.icon}</span>
+                            <div class="mission-badges">
+                                <span class="badge badge-${m.difficulty}">${m.difficulty}</span>
+                                <span class="badge badge-${m.status}">${m.status}</span>
+                            </div>
+                        </div>
+                        <div class="mission-body">
+                            <h3 class="mission-title">${escapeHtml(m.title)}</h3>
+                            <p class="mission-desc">${escapeHtml(m.description) || 'Pas de description'}</p>
+                            
+                            ${m.requirements.length > 0 ? `
+                                <div class="mission-requirements">
+                                    ${m.requirements.slice(0, 3).map((r, i) => `
+                                        <div class="requirement" style="cursor: pointer; ${m.completedReqs?.includes(i) ? 'text-decoration: line-through; opacity: 0.5;' : ''}"
+                                             onclick="toggleReq('${m.id}', ${i})">
+                                            ${escapeHtml(r)}
+                                        </div>
+                                    `).join('')}
+                                    ${m.requirements.length > 3 ? `<div class="requirement" style="opacity: 0.5;">+${m.requirements.length - 3} autres...</div>` : ''}
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${progress}%"></div>
+                                    </div>
+                                    <div class="progress-label">
+                                        <span>${m.completedReqs?.length || 0}/${m.requirements.length} étapes</span>
+                                        <span>${progress}%</span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="mission-meta">
+                                <div class="meta-item">
+                                    <span>⭐</span>
+                                    <span class="xp-value">${m.xp} XP</span>
+                                </div>
+                                ${m.category ? `<div class="meta-item">📁 ${escapeHtml(m.category)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="mission-footer">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">
+                                ${new Date(m.createdAt).toLocaleDateString('fr-FR')}
+                            </span>
+                            <div class="mission-actions">
+                                <button class="btn btn-sm" onclick="editMission('${m.id}')">✏️ Modifier</button>
+                                <button class="btn btn-sm" onclick="deleteMission('${m.id}')" style="color: var(--rouge);">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderStats() {
+            const active = missions.filter(m => m.status === 'active').length;
+            const draft = missions.filter(m => m.status === 'draft').length;
+            const completed = missions.filter(m => m.status === 'completed').length;
+            const totalXP = missions.filter(m => m.status === 'active').reduce((s, m) => s + m.xp, 0);
+            
+            document.getElementById('countAll').textContent = missions.length;
+            document.getElementById('countActive').textContent = active;
+            document.getElementById('countDraft').textContent = draft;
+            document.getElementById('countCompleted').textContent = completed;
+            document.getElementById('totalXP').textContent = totalXP;
+            document.getElementById('activeMissions').textContent = active;
+        }
+        
+        // Export/Import
+        function exportMissions() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                missions
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `missions_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Missions exportées');
+        }
+        
+        function importMissions() {
+            document.getElementById('importModal').classList.add('show');
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+        }
+        
+        function processImport() {
+            const fileInput = document.getElementById('importFile');
+            const jsonInput = document.getElementById('importJson').value.trim();
+            
+            const process = (data) => {
+                if (data.missions) {
+                    missions = [...missions, ...data.missions];
+                    saveData();
+                    closeImportModal();
+                    showToast(`${data.missions.length} missions importées`);
+                }
+            };
+            
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try { process(JSON.parse(e.target.result)); }
+                    catch { showToast('Fichier invalide'); }
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else if (jsonInput) {
+                try { process(JSON.parse(jsonInput)); }
+                catch { showToast('JSON invalide'); }
+            }
+        }
+        
+        // Utilities
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

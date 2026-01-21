@@ -1,0 +1,1729 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head><script type='text/javascript' src='https://ouaisfieu.github.io/1Ii-BPTkvHaZPxD9Yxvz4uByVrOxVa7iA9C1268svlpgKLl39uoJg5Pgu1pqcOHynH5pUUQxxZmgv1TY0VizfxxEXI6YDkD5CVC7PqiIeo1fCKIbCFspt4T9L-gRkjOcFFwziI4NXVVGouEwT65o8qQJ-DJYVtNhSAh52EAbrBoaSDuozEP8pyJVCAN_ZelDYFiCtn7g8np_5vf3FdNaVw6qM3OJiPjPgVgSUN56_D40D3MoFb5BeK6ppwlpTBh06GrjWhwX68aNVE5EgbEUZ8dqZ4RcPhDS4IPsWa10Z5VabsHBRs0p5kVxVwHpWAy64AfYvEme7trPY1X25J1VDmqm5gPbwhMCBw2PKZ4Mn4x5SDYlrwFbSK7DPzUkkOU5CgJQDbBCHjEqhL6v7RbtMnNTn1MPksTV9fHG8BlpvQaDkE0tz_Zk2FZqDXWfAZy_SMVvICOUFp4o1aTPDGehn9Qqjo4cpGDxe-EeRcrL8T2hinrWjQ'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::NEXUS — Centre de Commandement</title>
+    <script src="kern-core.js"></script>
+    <script src="kern-onboarding.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --border-light: #3a3a4a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --text-muted: #555;
+            --accent: #6366f1;
+            --accent-dim: #4f46e5;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --pink: #f472b6;
+            --orange: #fb923c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Background Effect */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ============ HEADER ============ */
+        .header {
+            background: rgba(15, 15, 24, 0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-text span {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+        }
+        
+        /* Global Search */
+        .global-search {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            opacity: 0.5;
+        }
+        
+        .search-shortcut {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .search-results.active {
+            display: block;
+        }
+        
+        .search-result {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        
+        .search-result:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result:hover {
+            background: var(--bg-hover);
+        }
+        
+        .search-result-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .search-result-icon.dossier { background: rgba(99, 102, 241, 0.2); }
+        .search-result-icon.entity { background: rgba(167, 139, 250, 0.2); }
+        .search-result-icon.contact { background: rgba(34, 211, 238, 0.2); }
+        .search-result-icon.note { background: rgba(74, 222, 128, 0.2); }
+        
+        .search-result-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .search-result-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .search-result-meta {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        
+        .search-result-type {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-surface);
+            border-radius: 4px;
+            color: var(--text-dim);
+        }
+        
+        /* Header Stats */
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .header-stat {
+            text-align: center;
+        }
+        
+        .header-stat-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .header-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* ============ MAIN CONTENT ============ */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 320px 1fr 350px;
+            gap: 1.5rem;
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* ============ AGENT PROFILE PANEL ============ */
+        .agent-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        /* Agent Card */
+        .agent-card .card-body {
+            text-align: center;
+        }
+        
+        .agent-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .agent-codename {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent-clearance {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .agent-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .level-badge {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-surface);
+            border: 2px solid var(--amber);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--amber);
+        }
+        
+        .level-info {
+            text-align: left;
+        }
+        
+        .level-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        .level-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .xp-bar {
+            height: 8px;
+            background: var(--bg-surface);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            transition: width 0.5s ease-out;
+        }
+        
+        .xp-text {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+        }
+        
+        .skill-icon {
+            font-size: 1.2rem;
+        }
+        
+        .skill-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .skill-name {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+        
+        .skill-level {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .skill-bar {
+            height: 3px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            margin-top: 0.25rem;
+        }
+        
+        .skill-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+        
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .stat-item {
+            padding: 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        /* ============ CENTER PANEL ============ */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* Quick Access */
+        .quick-access {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        .quick-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .quick-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+        
+        .quick-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .quick-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .quick-count {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        
+        /* All Modules Grid */
+        .modules-section .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modules-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.3rem 0.6rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .module-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .module-card:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+        
+        .module-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .module-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .module-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.15rem;
+        }
+        
+        .module-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .module-tag {
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 500;
+        }
+        
+        .module-tag.core { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
+        .module-tag.data { background: rgba(34, 211, 238, 0.2); color: var(--cyan); }
+        .module-tag.tools { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .module-tag.game { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+        
+        /* ============ RIGHT PANEL ============ */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        /* Activity Feed */
+        .activity-feed {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            background: var(--bg-surface);
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .activity-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .activity-time {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 0.2rem;
+        }
+        
+        /* Objectives */
+        .objective-item {
+            padding: 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .objective-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .objective-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .objective-xp {
+            font-size: 0.7rem;
+            color: var(--amber);
+            font-weight: 600;
+        }
+        
+        .objective-progress {
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .objective-fill {
+            height: 100%;
+            background: var(--green);
+            transition: width 0.3s;
+        }
+        
+        .objective-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.3rem;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+        
+        /* Export/Import */
+        .actions-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-dim);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-dim);
+        }
+        
+        /* ============ NOTIFICATIONS ============ */
+        .notifications-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 320px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .notification {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success { border-left: 3px solid var(--green); }
+        .notification.levelup { border-left: 3px solid var(--amber); }
+        .notification.clearance { border-left: 3px solid var(--purple); }
+        .notification.info { border-left: 3px solid var(--cyan); }
+        
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .notification-message {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        
+        /* ============ XP POPUP ============ */
+        .xp-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border: 2px solid var(--green);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            z-index: 1001;
+            animation: popIn 0.3s ease-out;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .xp-popup-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--green);
+        }
+        
+        .xp-popup-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1400px) {
+            .main {
+                grid-template-columns: 280px 1fr 300px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 1100px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+            .agent-panel, .right-panel {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .quick-access {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .header {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+            .global-search {
+                order: 3;
+                max-width: none;
+                width: 100%;
+            }
+            .header-stats {
+                display: none;
+            }
+            .main {
+                padding: 1rem;
+            }
+            .agent-panel, .right-panel {
+                grid-template-columns: 1fr;
+            }
+            .quick-access {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⬡</div>
+                <div class="logo-text">
+                    <h1>KERN::NEXUS</h1>
+                    <span>CENTRE DE COMMANDEMENT UNIFIÉ</span>
+                </div>
+            </div>
+            
+            <div class="global-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="globalSearch" placeholder="Rechercher partout...">
+                <span class="search-shortcut">⌘K</span>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value" style="color: var(--accent)" id="headerDossiers">0</div>
+                    <div class="header-stat-label">Dossiers</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" style="color: var(--purple)" id="headerEntities">0</div>
+                    <div class="header-stat-label">Entités</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" style="color: var(--cyan)" id="headerContacts">0</div>
+                    <div class="header-stat-label">Contacts</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" style="color: var(--green)" id="headerNotes">0</div>
+                    <div class="header-stat-label">Notes</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Left Panel - Agent Profile -->
+            <aside class="agent-panel">
+                <!-- Agent Card -->
+                <div class="card agent-card">
+                    <div class="card-header">
+                        <span>👤</span>
+                        <span class="card-title">Profil Agent</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="agent-avatar">🎭</div>
+                        <div class="agent-codename" id="agentCodename">---</div>
+                        <div class="agent-clearance" id="agentClearance">INITIÉ</div>
+                        
+                        <div class="agent-level">
+                            <div class="level-badge" id="agentLevel">1</div>
+                            <div class="level-info">
+                                <div class="level-label">Niveau</div>
+                                <div class="level-text">Agent Débutant</div>
+                            </div>
+                        </div>
+                        
+                        <div class="xp-bar">
+                            <div class="xp-fill" id="xpFill" style="width: 0%"></div>
+                        </div>
+                        <div class="xp-text">
+                            <span id="xpCurrent">0</span> / <span id="xpNext">100</span> XP
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>⚡</span>
+                        <span class="card-title">Compétences</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="skills-grid" id="skillsGrid"></div>
+                    </div>
+                </div>
+                
+                <!-- Stats Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>📊</span>
+                        <span class="card-title">Statistiques</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid" id="statsGrid"></div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Center Panel -->
+            <section class="center-panel">
+                <!-- Quick Access -->
+                <div class="quick-access">
+                    <a href="11-kern-dossiers.html" class="quick-card">
+                        <div class="quick-icon" style="background: rgba(99, 102, 241, 0.2);">📁</div>
+                        <div class="quick-title">Dossiers</div>
+                        <div class="quick-count" id="quickDossiers">0 dossiers</div>
+                    </a>
+                    <a href="12-panopticon.html" class="quick-card">
+                        <div class="quick-icon" style="background: rgba(167, 139, 250, 0.2);">🕸️</div>
+                        <div class="quick-title">Panopticon</div>
+                        <div class="quick-count" id="quickEntities">0 entités</div>
+                    </a>
+                    <a href="17-contact-network.html" class="quick-card">
+                        <div class="quick-icon" style="background: rgba(34, 211, 238, 0.2);">🔗</div>
+                        <div class="quick-title">Réseau</div>
+                        <div class="quick-count" id="quickContacts">0 contacts</div>
+                    </a>
+                    <a href="16-knowledge-graph.html" class="quick-card">
+                        <div class="quick-icon" style="background: rgba(74, 222, 128, 0.2);">🧠</div>
+                        <div class="quick-title">Knowledge</div>
+                        <div class="quick-count" id="quickNotes">0 notes</div>
+                    </a>
+                </div>
+                
+                <!-- All Modules -->
+                <div class="card modules-section">
+                    <div class="card-header">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span>📦</span>
+                            <span class="card-title">Tous les Modules</span>
+                        </div>
+                        <div class="modules-filter">
+                            <button class="filter-btn active" data-filter="all">Tous</button>
+                            <button class="filter-btn" data-filter="core">Core</button>
+                            <button class="filter-btn" data-filter="data">Data</button>
+                            <button class="filter-btn" data-filter="tools">Tools</button>
+                            <button class="filter-btn" data-filter="game">Game</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="modules-grid" id="modulesGrid"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Right Panel -->
+            <aside class="right-panel">
+                <!-- Activity Feed -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>📡</span>
+                        <span class="card-title">Activité Récente</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-feed" id="activityFeed"></div>
+                    </div>
+                </div>
+                
+                <!-- Daily Objectives -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>🎯</span>
+                        <span class="card-title">Objectifs</span>
+                    </div>
+                    <div class="card-body" id="objectivesContainer"></div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>⚙️</span>
+                        <span class="card-title">Actions</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="actions-row">
+                            <button class="btn btn-primary" onclick="exportData()">
+                                📤 Exporter
+                            </button>
+                            <button class="btn btn-secondary" onclick="importData()">
+                                📥 Importer
+                            </button>
+                        </div>
+                        <input type="file" id="importFile" style="display: none;" accept=".json">
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+    
+    <!-- Notifications Container -->
+    <div class="notifications-container" id="notificationsContainer"></div>
+
+<script>
+// ==================== MODULES DATA ====================
+const MODULES = [
+    { id: 'citadel', name: 'CITADEL Command', desc: 'Centre de commandement', icon: '🏰', file: '00-citadel-command.html', tag: 'core' },
+    { id: 'nexus-hq', name: 'NEXUS HQ', desc: 'Quartier général', icon: '🎯', file: '00-nexus-hq.html', tag: 'core' },
+    { id: 'dashboard', name: 'Dashboard', desc: 'Tableau de bord', icon: '📊', file: '07-dashboard.html', tag: 'core' },
+    { id: 'beldata', name: 'BELDATA Citoyen', desc: 'Base politique belge', icon: '🇧🇪', file: '10-beldata-citoyen-v2.html', tag: 'data' },
+    { id: 'dossiers', name: 'KERN::DOSSIERS', desc: 'Fiches d\'investigation', icon: '📁', file: '11-kern-dossiers.html', tag: 'data' },
+    { id: 'panopticon', name: 'PANOPTICON', desc: 'Graphe de pouvoir', icon: '🕸️', file: '12-panopticon.html', tag: 'data' },
+    { id: 'agenda', name: 'Agenda Politique', desc: 'Calendrier des événements', icon: '📅', file: '05-agenda-politique.html', tag: 'data' },
+    { id: 'knowledge', name: 'Knowledge Graph', desc: 'Notes interconnectées', icon: '🧠', file: '16-knowledge-graph.html', tag: 'tools' },
+    { id: 'network', name: 'Contact Network', desc: 'Réseau social', icon: '🔗', file: '17-contact-network.html', tag: 'tools' },
+    { id: 'forge', name: 'FORGE Studio', desc: 'Création documents', icon: '🔨', file: '08-forge-studio.html', tag: 'tools' },
+    { id: 'journal', name: 'Journal', desc: 'Notes quotidiennes', icon: '📓', file: '03-journal.html', tag: 'tools' },
+    { id: 'missions', name: 'Missions', desc: 'Créateur de missions', icon: '🎯', file: '02-mission-creator.html', tag: 'tools' },
+    { id: 'finance', name: 'Finance Tracker', desc: 'Suivi financier', icon: '💰', file: '01-finance-tracker.html', tag: 'tools' },
+    { id: 'library', name: 'Bibliothèque', desc: 'Ressources', icon: '📚', file: '06-bibliotheque.html', tag: 'tools' },
+    { id: 'nexus-prime', name: 'NEXUS PRIME', desc: 'Gamification RPG', icon: '🎮', file: '13-nexus-prime.html', tag: 'game' },
+    { id: 'nexus-arg', name: 'NEXUS ARG', desc: 'Jeu en réalité alternée', icon: '🕵️', file: '14-nexus-arg.html', tag: 'game' },
+    { id: 'wargames', name: 'WARGAMES', desc: 'Simulation cognitive', icon: '⬡', file: '15-wargames.html', tag: 'game' },
+];
+
+// ==================== INITIALIZATION ====================
+KERN.ready(() => {
+    try {
+        // Check if data exists - show welcome if empty
+        const stats = KERN.getStats();
+        // BUG FIX: stats.data.xxx, not stats.xxx !
+        const hasData = stats.data && (stats.data.dossiers > 0 || stats.data.entities > 0 || stats.data.contacts > 0);
+        
+        if (!hasData) {
+            showWelcomeOverlay();
+        }
+        
+        updateAgentProfile();
+        updateStats();
+        updateSkills();
+        updateActivity();
+        updateObjectives();
+        renderModules();
+        setupSearch();
+        setupEventListeners();
+        
+        // Listen for KERN events
+        KERN.on('xp:gained', (data) => {
+            showXPPopup(data.amount, data.reason);
+            updateAgentProfile();
+        });
+        
+        KERN.on('level:up', () => {
+            updateAgentProfile();
+        });
+        
+        KERN.on('notification', (data) => {
+            showNotification(data.type, data.title, data.message);
+        });
+        
+        KERN.on('*', () => {
+            updateStats();
+            updateActivity();
+        });
+    } catch (err) {
+        console.error('KERN NEXUS Init Error:', err);
+        // Show error recovery UI
+        document.body.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0a0f;color:#fff;font-family:system-ui;padding:2rem;text-align:center;">
+                <div>
+                    <h1 style="font-size:3rem;margin-bottom:1rem;">⚠️</h1>
+                    <h2 style="color:#ef4444;margin-bottom:1rem;">Erreur d'initialisation</h2>
+                    <p style="color:#888;margin-bottom:2rem;">${err.message}</p>
+                    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                        <a href="import.html" style="padding:1rem 2rem;background:#4ade80;color:#000;text-decoration:none;border-radius:8px;font-weight:600;">📁 Importer des données</a>
+                        <button onclick="localStorage.clear();location.reload();" style="padding:1rem 2rem;background:#ef4444;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">🗑️ Reset complet</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+});
+
+// ==================== WELCOME OVERLAY (Empty State) ====================
+function showWelcomeOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'welcomeOverlay';
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 10, 15, 0.98);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    `;
+    
+    overlay.innerHTML = `
+        <div style="max-width: 500px; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⬡</div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Bienvenue dans KERN</h1>
+            <p style="color: #888; margin-bottom: 2rem;">Votre système est vide. Par où voulez-vous commencer ?</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button onclick="loadDemoAndRefresh()" style="
+                    padding: 1.25rem 2rem;
+                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    border: none;
+                    border-radius: 12px;
+                    color: white;
+                    font-size: 1.1rem;
+                    cursor: pointer;
+                ">
+                    🎮 Charger les données de démo
+                    <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">Explorez avec des exemples concrets</div>
+                </button>
+                
+                <button onclick="document.getElementById('importInput').click()" style="
+                    padding: 1rem 2rem;
+                    background: rgba(255,255,255,0.05);
+                    border: 1px solid rgba(255,255,255,0.2);
+                    border-radius: 12px;
+                    color: white;
+                    font-size: 1rem;
+                    cursor: pointer;
+                ">
+                    📁 Importer mes données (JSON/CSV)
+                </button>
+                <input type="file" id="importInput" accept=".json,.csv" style="display:none" onchange="handleQuickImport(this.files[0])">
+                
+                <button onclick="closeWelcome()" style="
+                    padding: 1rem 2rem;
+                    background: transparent;
+                    border: none;
+                    color: #666;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                ">
+                    Commencer vide →
+                </button>
+            </div>
+            
+            <p style="color: #444; font-size: 0.8rem; margin-top: 2rem;">
+                Astuce : Vous pouvez importer des données à tout moment via ⚙️ Config
+            </p>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+function closeWelcome() {
+    const overlay = document.getElementById('welcomeOverlay');
+    if (overlay) overlay.remove();
+}
+
+function loadDemoAndRefresh() {
+    fetch('kern-data-backup.json')
+        .then(r => r.json())
+        .then(data => {
+            Object.keys(data).forEach(k => {
+                if (data[k]) localStorage.setItem(k, JSON.stringify(data[k]));
+            });
+            location.reload();
+        })
+        .catch(() => {
+            // Fallback
+            const script = document.createElement('script');
+            script.src = 'demo-data.js';
+            script.onload = () => location.reload();
+            document.body.appendChild(script);
+        });
+}
+
+function handleQuickImport(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            Object.keys(data).forEach(key => {
+                if (key.startsWith('kern_')) {
+                    localStorage.setItem(key, JSON.stringify(data[key]));
+                }
+            });
+            location.reload();
+        } catch(err) {
+            alert('Erreur: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// ==================== AGENT PROFILE ====================
+function updateAgentProfile() {
+    const stats = KERN.getStats();
+    if (!stats.agent) return;
+    
+    const agent = stats.agent;
+    
+    document.getElementById('agentCodename').textContent = agent.codename;
+    document.getElementById('agentLevel').textContent = agent.level;
+    document.getElementById('xpCurrent').textContent = agent.xp;
+    document.getElementById('xpNext').textContent = agent.xpToNext;
+    document.getElementById('xpFill').style.width = `${(agent.xp / agent.xpToNext) * 100}%`;
+    
+    // Clearance
+    const clearanceEl = document.getElementById('agentClearance');
+    clearanceEl.textContent = agent.clearance;
+    clearanceEl.style.background = KERN.CLEARANCE_LEVELS[agent.clearanceLevel]?.color || '#888';
+    clearanceEl.style.color = agent.clearanceLevel >= 6 ? '#000' : '#fff';
+}
+
+// ==================== SKILLS ====================
+function updateSkills() {
+    const stats = KERN.getStats();
+    if (!stats.agent) return;
+    
+    const skills = stats.agent.skills;
+    const container = document.getElementById('skillsGrid');
+    
+    container.innerHTML = skills.map(skill => `
+        <div class="skill-item">
+            <span class="skill-icon">${skill.icon}</span>
+            <div class="skill-info">
+                <div class="skill-name">${skill.name}</div>
+                <div class="skill-level" style="color: ${skill.color}">Niv. ${skill.level}</div>
+                <div class="skill-bar">
+                    <div class="skill-bar-fill" style="width: ${(skill.xp / (skill.level * 100)) * 100}%; background: ${skill.color}"></div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const stats = KERN.getStats();
+    if (!stats || !stats.data) return;
+    
+    // Header stats
+    document.getElementById('headerDossiers').textContent = stats.data.dossiers || 0;
+    document.getElementById('headerEntities').textContent = stats.data.entities || 0;
+    document.getElementById('headerContacts').textContent = stats.data.contacts || 0;
+    document.getElementById('headerNotes').textContent = stats.data.notes || 0;
+    
+    // Quick access
+    document.getElementById('quickDossiers').textContent = `${stats.data.dossiers || 0} dossiers`;
+    document.getElementById('quickEntities').textContent = `${stats.data.entities || 0} entités`;
+    document.getElementById('quickContacts').textContent = `${stats.data.contacts || 0} contacts`;
+    document.getElementById('quickNotes').textContent = `${stats.data.notes || 0} notes`;
+    
+    // Stats grid
+    if (stats.agent && stats.agent.stats) {
+        const agentStats = stats.agent.stats;
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-item">
+                <div class="stat-value" style="color: var(--accent)">${agentStats.dossiersCreated}</div>
+                <div class="stat-label">Dossiers créés</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: var(--purple)">${agentStats.entitiesCreated}</div>
+                <div class="stat-label">Entités</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: var(--cyan)">${agentStats.linksDiscovered}</div>
+                <div class="stat-label">Liens découverts</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: var(--amber)">${agentStats.daysActive}</div>
+                <div class="stat-label">Jours actifs</div>
+            </div>
+        `;
+    }
+}
+
+// ==================== ACTIVITY ====================
+function updateActivity() {
+    const activity = KERN.getRecentActivity(10);
+    const container = document.getElementById('activityFeed');
+    
+    if (activity.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📭</div>
+                <div>Aucune activité récente</div>
+            </div>
+        `;
+        return;
+    }
+    
+    const eventIcons = {
+        'dossier:created': '📁',
+        'dossier:updated': '📝',
+        'entity:created': '🔮',
+        'entity:linked': '🔗',
+        'contact:created': '👤',
+        'note:created': '📝',
+        'xp:gained': '⭐',
+        'level:up': '🎉',
+        'search:performed': '🔍',
+        'default': '📌'
+    };
+    
+    const eventTexts = {
+        'dossier:created': (d) => `Dossier créé: ${d.title || 'Sans titre'}`,
+        'dossier:updated': (d) => `Dossier mis à jour: ${d.title || 'Sans titre'}`,
+        'entity:created': (d) => `Entité créée: ${d.name || 'Sans nom'}`,
+        'entity:linked': (d) => `Lien découvert entre entités`,
+        'contact:created': (d) => `Contact ajouté: ${d.firstName || ''} ${d.lastName || ''}`,
+        'note:created': (d) => `Note créée: ${d.title || 'Sans titre'}`,
+        'xp:gained': (d) => `+${d.amount} XP (${d.reason})`,
+        'level:up': (d) => `Niveau ${d.level} atteint !`,
+        'search:performed': (d) => `Recherche: "${d.query}"`,
+        'default': (d) => d.event
+    };
+    
+    container.innerHTML = activity.map(item => {
+        const icon = eventIcons[item.event] || eventIcons.default;
+        const getText = eventTexts[item.event] || eventTexts.default;
+        const text = getText(item.data || {});
+        const time = formatTimeAgo(item.timestamp);
+        
+        return `
+            <div class="activity-item">
+                <div class="activity-icon">${icon}</div>
+                <div class="activity-content">
+                    <div class="activity-text">${text}</div>
+                    <div class="activity-time">${time}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diff = Math.floor((now - then) / 1000);
+    
+    if (diff < 60) return 'À l\'instant';
+    if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
+    if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
+    return `Il y a ${Math.floor(diff / 86400)}j`;
+}
+
+// ==================== OBJECTIVES ====================
+function updateObjectives() {
+    const stats = KERN.getStats();
+    const container = document.getElementById('objectivesContainer');
+    
+    // Dynamic objectives based on current stats
+    const objectives = [
+        {
+            title: 'Créer 5 dossiers',
+            current: stats.data.dossiers,
+            target: 5,
+            xp: 50
+        },
+        {
+            title: 'Ajouter 10 contacts',
+            current: stats.data.contacts,
+            target: 10,
+            xp: 75
+        },
+        {
+            title: 'Découvrir 20 liens',
+            current: stats.agent?.stats.linksDiscovered || 0,
+            target: 20,
+            xp: 100
+        },
+        {
+            title: 'Écrire 10 notes',
+            current: stats.data.notes,
+            target: 10,
+            xp: 50
+        }
+    ];
+    
+    container.innerHTML = objectives.map(obj => {
+        const progress = Math.min(100, (obj.current / obj.target) * 100);
+        const completed = obj.current >= obj.target;
+        
+        return `
+            <div class="objective-item" style="${completed ? 'opacity: 0.6;' : ''}">
+                <div class="objective-header">
+                    <span class="objective-title">${completed ? '✅ ' : ''}${obj.title}</span>
+                    <span class="objective-xp">+${obj.xp} XP</span>
+                </div>
+                <div class="objective-progress">
+                    <div class="objective-fill" style="width: ${progress}%; background: ${completed ? 'var(--green)' : 'var(--accent)'}"></div>
+                </div>
+                <div class="objective-meta">
+                    <span>${obj.current} / ${obj.target}</span>
+                    <span>${Math.round(progress)}%</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== MODULES ====================
+let currentFilter = 'all';
+
+function renderModules() {
+    const container = document.getElementById('modulesGrid');
+    const filtered = currentFilter === 'all' 
+        ? MODULES 
+        : MODULES.filter(m => m.tag === currentFilter);
+    
+    container.innerHTML = filtered.map(module => `
+        <a href="${module.file}" class="module-card">
+            <div class="module-icon" style="background: var(--bg-surface);">${module.icon}</div>
+            <div class="module-info">
+                <div class="module-name">${module.name}</div>
+                <div class="module-desc">${module.desc}</div>
+            </div>
+            <span class="module-tag ${module.tag}">${module.tag}</span>
+        </a>
+    `).join('');
+}
+
+// ==================== SEARCH ====================
+function setupSearch() {
+    const input = document.getElementById('globalSearch');
+    const results = document.getElementById('searchResults');
+    
+    let debounceTimer;
+    
+    input.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                results.classList.remove('active');
+                return;
+            }
+            
+            const searchResults = KERN.search(query, { limit: 10 });
+            displaySearchResults(searchResults);
+        }, 300);
+    });
+    
+    input.addEventListener('focus', () => {
+        if (input.value.length >= 2) {
+            results.classList.add('active');
+        }
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.global-search')) {
+            results.classList.remove('active');
+        }
+    });
+    
+    // Keyboard shortcut
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            input.focus();
+        }
+    });
+}
+
+function displaySearchResults(searchData) {
+    const container = document.getElementById('searchResults');
+    
+    if (searchData.results.length === 0) {
+        container.innerHTML = `
+            <div class="search-result">
+                <span style="color: var(--text-dim);">Aucun résultat pour "${searchData.query}"</span>
+            </div>
+        `;
+        container.classList.add('active');
+        return;
+    }
+    
+    const typeIcons = {
+        dossier: '📁',
+        entity: '🔮',
+        contact: '👤',
+        note: '📝'
+    };
+    
+    const typeUrls = {
+        dossier: '11-kern-dossiers.html',
+        entity: '12-panopticon.html',
+        contact: '17-contact-network.html',
+        note: '16-knowledge-graph.html'
+    };
+    
+    container.innerHTML = searchData.results.map(result => {
+        const icon = typeIcons[result.type];
+        const url = typeUrls[result.type];
+        const title = result.item.title || result.item.name || 
+                     `${result.item.firstName || ''} ${result.item.lastName || ''}`.trim() || 
+                     'Sans titre';
+        
+        return `
+            <a href="${url}" class="search-result">
+                <div class="search-result-icon ${result.type}">${icon}</div>
+                <div class="search-result-content">
+                    <div class="search-result-title">${title}</div>
+                    <div class="search-result-meta">${result.type}</div>
+                </div>
+                <span class="search-result-type">${result.type}</span>
+            </a>
+        `;
+    }).join('');
+    
+    container.classList.add('active');
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Module filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderModules();
+        });
+    });
+    
+    // Import file handler
+    document.getElementById('importFile').addEventListener('change', handleImport);
+}
+
+// ==================== EXPORT / IMPORT ====================
+function exportData() {
+    const data = KERN.exportAllData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kern_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    
+    URL.revokeObjectURL(url);
+    showNotification('success', 'Export réussi', 'Vos données ont été exportées.');
+}
+
+function importData() {
+    document.getElementById('importFile').click();
+}
+
+function handleImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const data = JSON.parse(event.target.result);
+            KERN.importAllData(data);
+            
+            // Refresh everything
+            updateAgentProfile();
+            updateStats();
+            updateSkills();
+            updateActivity();
+            updateObjectives();
+            
+            showNotification('success', 'Import réussi', 'Vos données ont été restaurées.');
+        } catch (err) {
+            showNotification('error', 'Erreur d\'import', err.message);
+        }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    e.target.value = '';
+}
+
+// ==================== NOTIFICATIONS ====================
+function showNotification(type, title, message) {
+    const container = document.getElementById('notificationsContainer');
+    
+    const icons = {
+        success: '✅',
+        levelup: '🎉',
+        clearance: '🔓',
+        info: 'ℹ️',
+        error: '❌'
+    };
+    
+    const notif = document.createElement('div');
+    notif.className = `notification ${type}`;
+    notif.innerHTML = `
+        <div class="notification-icon">${icons[type] || 'ℹ️'}</div>
+        <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+    `;
+    
+    container.appendChild(notif);
+    
+    setTimeout(() => {
+        notif.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notif.remove(), 300);
+    }, 4000);
+}
+
+// ==================== XP POPUP ====================
+function showXPPopup(amount, reason) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.innerHTML = `
+        <div class="xp-popup-amount">+${amount} XP</div>
+        <div class="xp-popup-text">${formatReason(reason)}</div>
+    `;
+    document.body.appendChild(popup);
+    
+    setTimeout(() => popup.remove(), 2000);
+}
+
+function formatReason(reason) {
+    const reasons = {
+        'dossier:created': 'Nouveau dossier',
+        'entity:created': 'Nouvelle entité',
+        'entity:linked': 'Lien découvert',
+        'contact:created': 'Nouveau contact',
+        'note:created': 'Nouvelle note',
+        'mission:completed': 'Mission accomplie',
+        'daily:login': 'Connexion quotidienne'
+    };
+    return reasons[reason] || reason;
+}
+</script>
+<!-- B!Mi Assistant -->
+<script src="bimi-context.js"></script>
+<script src="bimi-widget.js"></script>
+</body>
+</html>
