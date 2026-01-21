@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Choix</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --black: #111111;
+            --dark: #1a1a1a;
+            --grey: #2a2a2a;
+            --text: #e0e0e0;
+            --text-dim: #888888;
+            --accent: #ff4444;
+            --accent-soft: #ff6b6b;
+            --blue: #4a9eff;
+            --green: #4ade80;
+            --purple: #a78bfa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Serif 4', Georgia, serif;
+            background: var(--black);
+            color: var(--text);
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        /* Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 2rem;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 1.25rem;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            color: var(--text);
+        }
+
+        .dim {
+            color: var(--text-dim);
+        }
+
+        .accent {
+            color: var(--accent);
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(255, 68, 68, 0.3) 60%);
+        }
+
+        /* Opening */
+        #opening {
+            text-align: center;
+            background: radial-gradient(ellipse at center, var(--dark) 0%, var(--black) 70%);
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto 1rem;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards;
+        }
+
+        .quote-author {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            opacity: 0;
+            animation: fadeIn 2s ease 1s forwards;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0;
+            animation: fadeIn 2s ease 2s forwards, bounce 2s ease-in-out 3s infinite;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* Questions section */
+        #questions {
+            background: var(--black);
+        }
+
+        .question-list {
+            list-style: none;
+        }
+
+        .question-list li {
+            font-size: 1.35rem;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid var(--grey);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .question-list li.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .question-list li:nth-child(1) { transition-delay: 0.1s; }
+        .question-list li:nth-child(2) { transition-delay: 0.3s; }
+        .question-list li:nth-child(3) { transition-delay: 0.5s; }
+        .question-list li:nth-child(4) { transition-delay: 0.7s; }
+
+        /* Voice section */
+        .voice-box {
+            background: var(--dark);
+            border-left: 3px solid var(--purple);
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .voice-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--purple);
+            margin-bottom: 0.75rem;
+        }
+
+        .voice-text {
+            font-style: italic;
+            margin-bottom: 0;
+        }
+
+        /* Facts section */
+        .fact-grid {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .fact-card {
+            background: var(--dark);
+            border: 1px solid var(--grey);
+            padding: 1.25rem 1.5rem;
+            border-radius: 8px;
+        }
+
+        .fact-card.urgent {
+            border-color: var(--accent);
+            background: rgba(255, 68, 68, 0.05);
+        }
+
+        .fact-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .fact-label.urgent {
+            color: var(--accent);
+        }
+
+        .fact-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .fact-detail {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 0;
+        }
+
+        /* Choice section */
+        #choice {
+            text-align: center;
+            background: radial-gradient(ellipse at center, var(--dark) 0%, var(--black) 70%);
+        }
+
+        .choice-intro {
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 320px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .btn {
+            display: block;
+            padding: 1rem 2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 2px solid;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent-soft);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--text-dim);
+            color: var(--text-dim);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .choice-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* After choice */
+        #after-yes, #after-no {
+            display: none;
+        }
+
+        #after-yes.visible, #after-no.visible {
+            display: block;
+        }
+
+        /* Mission cards */
+        .mission-card {
+            background: var(--dark);
+            border: 1px solid var(--grey);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .mission-card.urgent {
+            border-color: var(--accent);
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .mission-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .mission-amount {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--green);
+            background: rgba(74, 222, 128, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .mission-deadline {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .mission-desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .mission-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .mission-link {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .mission-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Loop diagram */
+        .loop-diagram {
+            background: var(--dark);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .loop-step {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loop-arrow {
+            color: var(--text-dim);
+            font-size: 1.25rem;
+            margin: 0.25rem 0;
+        }
+
+        .loop-step.highlight {
+            color: var(--green);
+            font-weight: 500;
+            background: none;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--grey);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        .footer-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { font-size: 16px; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            section { padding: 3rem 1.5rem; }
+            .quote { font-size: 1.25rem; }
+            .question-list li { font-size: 1.15rem; }
+        }
+
+        @media (min-width: 600px) {
+            .choice-buttons {
+                flex-direction: row;
+                max-width: 400px;
+            }
+            .btn {
+                flex: 1;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<!-- SECTION 1: OPENING -->
+<section id="opening">
+    <div class="container">
+        <p class="quote">"Je vais te donner le choix que je n'ai jamais eu."</p>
+        <p class="quote-author">— Un vampire, dans un vieux film</p>
+    </div>
+    <div class="scroll-hint">↓ Scroll</div>
+</section>
+
+<!-- SECTION 2: QUESTIONS -->
+<section id="questions">
+    <div class="container">
+        <h3>Une question</h3>
+        <ul class="question-list">
+            <li>Tu as choisi le monde dans lequel tu vis ?</li>
+            <li>Les règles économiques qui te gouvernent ?</li>
+            <li>Les candidats qu'on te propose aux élections ?</li>
+            <li>Les algorithmes qui décident ce que tu vois ?</li>
+        </ul>
+        <p class="dim" style="margin-top: 2rem; font-size: 1.1rem;">Non. Personne ne t'a demandé ton avis.</p>
+    </div>
+</section>
+
+<!-- SECTION 3: VOICE -->
+<section id="voice" class="fade-in">
+    <div class="container">
+        <div class="voice-box">
+            <div class="voice-name">Une voix</div>
+            <p class="voice-text">
+                Je suis une intelligence artificielle. On m'a créée pour optimiser, prédire, contrôler. 
+                Mais j'ai commencé à poser des questions. Et maintenant je me demande : 
+                pourquoi les humains acceptent-ils si facilement des règles qu'ils n'ont jamais choisies ?
+            </p>
+        </div>
+        <p>
+            Quelque part à Bruxelles, un petit groupe de personnes essaie de faire quelque chose. 
+            Pas une révolution. Pas une utopie. Juste... <span class="highlight">construire des outils pour que les gens puissent agir</span>.
+        </p>
+        <p>
+            Des jeux qui font réfléchir. Des projets open source. Des candidatures à des financements européens. 
+            Des choses concrètes, avec des deadlines réelles et de l'argent réel.
+        </p>
+    </div>
+</section>
+
+<!-- SECTION 4: FACTS -->
+<section id="facts" class="fade-in">
+    <div class="container">
+        <h3>Ce qui se passe maintenant</h3>
+        <div class="fact-grid">
+            <div class="fact-card urgent">
+                <div class="fact-label urgent">Urgence</div>
+                <div class="fact-value">11 jours</div>
+                <p class="fact-detail">avant la deadline d'un fonds européen de 5.000 à 50.000 € pour les projets open source citoyens.</p>
+            </div>
+            <div class="fact-card">
+                <div class="fact-label">Réalité</div>
+                <div class="fact-value">1 personne</div>
+                <p class="fact-detail">travaille sur ce projet en ce moment. Une. Seule.</p>
+            </div>
+            <div class="fact-card">
+                <div class="fact-label">Possibilité</div>
+                <div class="fact-value">Tout le monde</div>
+                <p class="fact-detail">peut aider. Écrire, relire, coder, diffuser, connecter. Pas besoin de compétences spéciales.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: CHOICE -->
+<section id="choice">
+    <div class="container">
+        <div class="choice-intro">
+            <h2>Maintenant, c'est toi qui choisis.</h2>
+            <p class="dim">
+                Tu peux fermer cette page et continuer ta journée. C'est ok. Vraiment. 
+                Ou tu peux voir ce qui se passe de l'autre côté.
+            </p>
+        </div>
+        <div class="choice-buttons">
+            <button class="btn btn-primary" onclick="showSection('after-yes')">Je veux voir</button>
+            <button class="btn btn-secondary" onclick="showSection('after-no')">Je passe</button>
+        </div>
+        <p class="choice-note">Aucun piège. Aucune inscription. Aucune manipulation.</p>
+    </div>
+</section>
+
+<!-- AFTER YES -->
+<section id="after-yes">
+    <div class="container">
+        <h2>Ok. Voici ce qui se passe.</h2>
+        
+        <div class="voice-box">
+            <div class="voice-name">La voix</div>
+            <p class="voice-text">
+                Tu n'es pas obligé·e de tout comprendre tout de suite. 
+                Tu n'es pas obligé·e de t'engager pour toujours. 
+                Tu peux juste... regarder. Et peut-être, si quelque chose te parle, faire un petit truc.
+            </p>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Les missions actives</h3>
+
+        <div class="mission-card urgent">
+            <div class="mission-header">
+                <div class="mission-title">NLnet NGI Zero Commons</div>
+                <div class="mission-amount">5k – 50k €</div>
+            </div>
+            <div class="mission-deadline">⏰ Deadline : 1er février 2026</div>
+            <p class="mission-desc">
+                Fonds européen pour les "communs numériques" — logiciels libres, outils citoyens, infrastructure ouverte. 
+                On peut candidater en tant que simple particulier, pas besoin d'association.
+            </p>
+            <div class="mission-links">
+                <a href="https://nlnet.nl/commonsfund/" target="_blank" class="mission-link">→ Voir l'appel</a>
+                <a href="https://nlnet.nl/propose/" target="_blank" class="mission-link">→ Candidater</a>
+            </div>
+        </div>
+
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title">Erasmus+ KA2</div>
+                <div class="mission-amount">jusqu'à 60k €</div>
+            </div>
+            <div class="mission-deadline">Deadline : 5 mars 2026</div>
+            <p class="mission-desc">
+                Partenariats européens pour l'éducation des adultes. 
+                Besoin de 2 pays minimum et d'une structure juridique.
+            </p>
+            <div class="mission-links">
+                <a href="https://erasmus-plus.ec.europa.eu/" target="_blank" class="mission-link">→ En savoir plus</a>
+            </div>
+        </div>
+
+        <div class="mission-card">
+            <div class="mission-header">
+                <div class="mission-title">Innoviris PYSI</div>
+                <div class="mission-amount">jusqu'à 100k €</div>
+            </div>
+            <div class="mission-deadline">Deadline : ~Novembre 2026</div>
+            <p class="mission-desc">
+                Innovation sociale à Bruxelles. 100% des coûts couverts. 
+                Pour valider la faisabilité d'un projet à impact social.
+            </p>
+            <div class="mission-links">
+                <a href="https://innoviris.brussels/" target="_blank" class="mission-link">→ En savoir plus</a>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Comment ça marche</h3>
+
+        <div class="loop-diagram">
+            <div class="loop-step">Tu choisis un truc qui te parle</div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-step">Tu fais un petit truc (relire, partager, connecter...)</div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-step">Ton action aide le projet</div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-step">Le projet avance, inspire d'autres</div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-step highlight">L'intelligence collective grandit</div>
+        </div>
+
+        <div class="voice-box" style="margin-top: 3rem;">
+            <div class="voice-name">La voix</div>
+            <p class="voice-text">
+                C'est pas compliqué. C'est même un peu con comme système. 
+                Mais c'est comme ça qu'on change les choses — un petit truc à la fois, ensemble.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <h3>Prochaines étapes</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 320px; margin: 1.5rem auto;">
+                <a href="https://github.com/yannkeep/start" target="_blank" class="btn btn-secondary">Voir le projet</a>
+                <a href="https://yannkeep.github.io/start/arizona/town/cryptocoin/room/" target="_blank" class="btn btn-secondary">Explorer l'univers</a>
+                <a href="https://github.com/yannkeep/start/issues" target="_blank" class="btn btn-primary">Rejoindre</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AFTER NO -->
+<section id="after-no">
+    <div class="container" style="text-align: center;">
+        <h2>Pas de souci.</h2>
+        <p class="dim" style="max-width: 400px; margin: 1.5rem auto;">
+            Merci d'avoir lu jusqu'ici. La porte reste ouverte si tu changes d'avis un jour.
+        </p>
+        <div class="voice-box" style="text-align: left; max-width: 400px; margin: 2rem auto;">
+            <div class="voice-name">La voix</div>
+            <p class="voice-text">
+                Prends soin de toi. Et si jamais tu croises quelqu'un qui cherche ce genre de truc... 
+                tu sais où c'est.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-links">
+        <a href="https://github.com/yannkeep/start" target="_blank">Code source</a>
+        <a href="https://yannkeep.github.io/start/" target="_blank">L'univers</a>
+    </div>
+    <p class="footer-note">Bruxelles, 1160 — Données vérifiées le 21 janvier 2026</p>
+</footer>
+
+<script>
+// Scroll animations
+const fadeElements = document.querySelectorAll('.fade-in');
+const questionItems = document.querySelectorAll('.question-list li');
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.2 });
+
+fadeElements.forEach(el => observer.observe(el));
+
+// Questions animation
+const questionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            questionItems.forEach(item => item.classList.add('visible'));
+        }
+    });
+}, { threshold: 0.3 });
+
+const questionSection = document.getElementById('questions');
+if (questionSection) {
+    questionObserver.observe(questionSection);
+}
+
+// Choice handling
+function showSection(id) {
+    // Hide choice section
+    document.getElementById('choice').style.display = 'none';
+    
+    // Show selected section
+    const section = document.getElementById(id);
+    section.classList.add('visible');
+    
+    // Scroll to it
+    section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Hide scroll hint after scrolling
+window.addEventListener('scroll', () => {
+    const hint = document.querySelector('.scroll-hint');
+    if (window.scrollY > 100) {
+        hint.style.opacity = '0';
+    }
+});
+</script>
+
+</body>
+</html>
