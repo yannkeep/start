@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" data-accent="rouge">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLiT!KA — Crée ton parti, gagne les élections</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --accent: var(--accent-color, #ef4444);
+            --accent-dark: var(--accent-dark-color, #dc2626);
+            --accent-glow: 0 0 20px var(--accent-glow-color, rgba(239,68,68,0.4));
+            --bg: #0a0a0f;
+            --bg-gradient: linear-gradient(135deg, #0a0a0f 0%, #111118 100%);
+            --panel: #111118;
+            --card: #1a1a24;
+            --elevated: #252532;
+            --text: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --muted: #94a3b8;
+            --border: rgba(255,255,255,0.08);
+            --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --red: #ef4444; --blue: #3b82f6; --green: #22c55e; --yellow: #fbbf24;
+            --purple: #a855f7; --cyan: #06b6d4; --orange: #f97316; --pink: #ec4899;
+            --radius: 16px; --radius-sm: 8px;
+        }
+        
+        /* === THEMES === */
+        [data-theme="light"] { --bg: #f8fafc; --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); --panel: #ffffff; --card: #f1f5f9; --elevated: #e2e8f0; --text: #0f172a; --text-secondary: #334155; --muted: #64748b; --border: rgba(0,0,0,0.08); --shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        [data-theme="midnight"] { --bg: #020617; --bg-gradient: linear-gradient(135deg, #020617 0%, #0f172a 100%); --panel: #0f172a; --card: #1e293b; --elevated: #334155; --text: #f8fafc; --muted: #94a3b8; --border: rgba(255,255,255,0.06); }
+        [data-theme="nature"] { --bg: #052e16; --bg-gradient: linear-gradient(135deg, #052e16 0%, #14532d 100%); --panel: #14532d; --card: #166534; --elevated: #15803d; --text: #ecfdf5; --muted: #86efac; --border: rgba(236,253,245,0.1); }
+        [data-theme="ocean"] { --bg: #0c1929; --bg-gradient: linear-gradient(135deg, #0c1929 0%, #172554 100%); --panel: #172554; --card: #1e3a5f; --elevated: #1e40af; --text: #eff6ff; --muted: #93c5fd; --border: rgba(239,246,255,0.1); }
+        [data-theme="sunset"] { --bg: #1f1315; --bg-gradient: linear-gradient(135deg, #1f1315 0%, #3b1c20 100%); --panel: #3b1c20; --card: #5c2a2e; --elevated: #7f3d40; --text: #fff1f2; --muted: #fda4af; --border: rgba(255,241,242,0.1); }
+        [data-theme="sepia"] { --bg: #1c1917; --bg-gradient: linear-gradient(135deg, #1c1917 0%, #292524 100%); --panel: #292524; --card: #44403c; --elevated: #57534e; --text: #fef3c7; --muted: #a8a29e; --border: rgba(254,243,199,0.1); }
+        
+        /* === ACCENTS === */
+        [data-accent="rouge"] { --accent: #ef4444; --accent-dark: #dc2626; --accent-glow-color: rgba(239,68,68,0.4); }
+        [data-accent="bleu"] { --accent: #3b82f6; --accent-dark: #2563eb; --accent-glow-color: rgba(59,130,246,0.4); }
+        [data-accent="vert"] { --accent: #22c55e; --accent-dark: #16a34a; --accent-glow-color: rgba(34,197,94,0.4); }
+        [data-accent="violet"] { --accent: #a855f7; --accent-dark: #9333ea; --accent-glow-color: rgba(168,85,247,0.4); }
+        [data-accent="orange"] { --accent: #f97316; --accent-dark: #ea580c; --accent-glow-color: rgba(249,115,22,0.4); }
+        [data-accent="rose"] { --accent: #ec4899; --accent-dark: #db2777; --accent-glow-color: rgba(236,72,153,0.4); }
+        [data-accent="cyan"] { --accent: #06b6d4; --accent-dark: #0891b2; --accent-glow-color: rgba(6,182,212,0.4); }
+        [data-accent="jaune"] { --accent: #eab308; --accent-dark: #ca8a04; --accent-glow-color: rgba(234,179,8,0.4); }
+        [data-accent="indigo"] { --accent: #6366f1; --accent-dark: #4f46e5; --accent-glow-color: rgba(99,102,241,0.4); }
+        
+        /* === PARTY PRESETS === */
+        [data-preset="ps"] { --accent: #e30613; --accent-dark: #b8050f; --accent-glow-color: rgba(227,6,19,0.4); }
+        [data-preset="mr"] { --accent: #0047ab; --accent-dark: #003580; --accent-glow-color: rgba(0,71,171,0.4); }
+        [data-preset="ecolo"] { --accent: #00a651; --accent-dark: #008040; --accent-glow-color: rgba(0,166,81,0.4); }
+        [data-preset="ptb"] { --accent: #d40000; --accent-dark: #a00000; --accent-glow-color: rgba(212,0,0,0.4); }
+        [data-preset="engages"] { --accent: #ff6600; --accent-dark: #cc5200; --accent-glow-color: rgba(255,102,0,0.4); }
+        [data-preset="defi"] { --accent: #dc007a; --accent-dark: #a8005e; --accent-glow-color: rgba(220,0,122,0.4); }
+        [data-preset="nva"] { --accent: #ffcc00; --accent-dark: #cca300; --accent-glow-color: rgba(255,204,0,0.4); }
+        [data-preset="vooruit"] { --accent: #ff0000; --accent-dark: #cc0000; --accent-glow-color: rgba(255,0,0,0.4); }
+        [data-preset="groen"] { --accent: #83b81a; --accent-dark: #6a9515; --accent-glow-color: rgba(131,184,26,0.4); }
+        [data-preset="ovld"] { --accent: #003d6d; --accent-dark: #002d52; --accent-glow-color: rgba(0,61,109,0.4); }
+        [data-preset="cdv"] { --accent: #ff6600; --accent-dark: #cc5200; --accent-glow-color: rgba(255,102,0,0.4); }
+        [data-preset="vb"] { --accent: #ffe500; --accent-dark: #ccb700; --accent-glow-color: rgba(255,229,0,0.4); }
+        
+        /* === FONT SIZES === */
+        [data-fontsize="small"] { font-size: 14px; }
+        [data-fontsize="normal"] { font-size: 16px; }
+        [data-fontsize="large"] { font-size: 18px; }
+        [data-fontsize="xlarge"] { font-size: 20px; }
+        
+        /* === LAYOUT === */
+        [data-layout="compact"] .section { padding: 1rem 0; }
+        [data-layout="compact"] .module-card { padding: 1rem; }
+        [data-layout="compact"] .hero { padding: 2rem 0; }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        /* === HEADER === */
+        .header {
+            background: color-mix(in srgb, var(--panel) 95%, transparent);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0.75rem 0;
+        }
+        
+        .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        
+        .logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text); }
+        .logo-icon { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; display: flex; align-items: center; }
+        .logo-polit { color: var(--text); }
+        .logo-exclaim { color: var(--accent); }
+        .logo-k { color: var(--text); }
+        .logo-a { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 3px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 1.2rem; margin-left: -2px; }
+        
+        .header-nav { display: flex; gap: 0.25rem; }
+        .nav-link { padding: 0.5rem 0.9rem; color: var(--muted); font-size: 0.85rem; font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; border: none; background: none; }
+        .nav-link:hover { color: var(--text); background: var(--card); }
+        .nav-link.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, transparent); }
+        
+        .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+        
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .btn-ghost { background: transparent; color: var(--muted); }
+        .btn-ghost:hover { color: var(--text); background: var(--card); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--accent-glow); }
+        .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--elevated); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+        .btn-lg { padding: 0.75rem 1.5rem; font-size: 1rem; }
+        
+        /* === HERO === */
+        .hero { padding: 3rem 0; text-align: center; position: relative; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 800px 400px at 30% 20%, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 60%), radial-gradient(ellipse 600px 300px at 70% 60%, color-mix(in srgb, var(--blue) 10%, transparent) 0%, transparent 60%); pointer-events: none; }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 50px; font-size: 0.85rem; color: var(--accent); margin-bottom: 1.5rem; }
+        .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); letter-spacing: 3px; line-height: 1.1; margin-bottom: 1rem; }
+        .hero-title .highlight { background: linear-gradient(135deg, var(--accent), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin: 0 auto 2rem; }
+        .hero-stats { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+        .hero-stat { text-align: center; }
+        .hero-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--accent); }
+        .hero-stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* === SECTIONS === */
+        .section { padding: 2rem 0; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 1px; display: flex; align-items: center; gap: 0.5rem; }
+        
+        /* === COUNTDOWN === */
+        .countdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .countdown-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; position: relative; overflow: hidden; transition: transform 0.2s; }
+        .countdown-card:hover { transform: translateY(-2px); }
+        .countdown-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .countdown-card.communal::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+        .countdown-card.regional::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+        .countdown-card.federal::before { background: linear-gradient(90deg, var(--red), var(--pink)); }
+        .countdown-card.european::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+        .countdown-level { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 0.25rem; }
+        .countdown-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .countdown-date { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+        .countdown-timer { display: flex; gap: 0.5rem; }
+        .countdown-unit { background: var(--card); border-radius: var(--radius-sm); padding: 0.5rem; text-align: center; min-width: 50px; }
+        .countdown-number { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--text); }
+        .countdown-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; }
+        
+        /* === MODULES === */
+        .modules-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .module-tab { padding: 0.5rem 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 20px; font-size: 0.85rem; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+        .module-tab:hover { color: var(--text); border-color: var(--text); }
+        .module-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .module-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden; }
+        .module-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .module-card-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+        .module-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .module-info { flex: 1; }
+        .module-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .module-category { font-size: 0.75rem; color: var(--muted); }
+        .module-badge { position: absolute; top: 1rem; right: 1rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        .module-badge.essential { background: var(--accent); color: white; }
+        .module-badge.new { background: var(--green); color: white; }
+        .module-badge.fun { background: var(--purple); color: white; }
+        .module-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
+        .module-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+        .module-tag { padding: 0.2rem 0.5rem; background: var(--card); border-radius: 4px; font-size: 0.7rem; color: var(--muted); }
+        .module-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .module-xp { font-size: 0.8rem; color: var(--yellow); font-weight: 600; }
+        
+        /* === QUICK ACTIONS === */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .quick-action { background: var(--panel); border: 2px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .quick-action:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .quick-action-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .quick-action-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .quick-action-desc { font-size: 0.8rem; color: var(--muted); }
+        
+        /* === THEME PANEL === */
+        .theme-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 56px; height: 56px; background: var(--accent); border: none; border-radius: 50%; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow), var(--accent-glow); z-index: 500; transition: transform 0.2s; }
+        .theme-toggle:hover { transform: scale(1.1); }
+        
+        .theme-panel { position: fixed; top: 0; right: -420px; width: 400px; max-width: 100vw; height: 100vh; background: var(--panel); border-left: 1px solid var(--border); z-index: 1000; transition: right 0.3s ease; overflow-y: auto; }
+        .theme-panel.open { right: 0; }
+        .theme-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; display: none; }
+        .theme-panel-overlay.open { display: block; }
+        
+        .theme-panel-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--panel); z-index: 10; }
+        .theme-panel-title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .theme-panel-close { width: 36px; height: 36px; background: var(--card); border: none; border-radius: var(--radius-sm); color: var(--text); font-size: 1.2rem; cursor: pointer; }
+        .theme-panel-body { padding: 1.5rem; }
+        
+        .theme-section { margin-bottom: 2rem; }
+        .theme-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        
+        /* Theme grid */
+        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+        .theme-option { aspect-ratio: 1.2; border-radius: var(--radius-sm); cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .theme-option:hover { transform: scale(1.03); }
+        .theme-option.selected { border-color: var(--accent); }
+        .theme-option-preview { flex: 1; display: flex; flex-direction: column; }
+        .theme-option-bar { height: 8px; }
+        .theme-option-body { flex: 1; padding: 4px; display: flex; gap: 2px; }
+        .theme-option-sidebar { width: 25%; border-radius: 2px; }
+        .theme-option-content { flex: 1; border-radius: 2px; }
+        .theme-option-label { padding: 0.3rem; font-size: 0.65rem; text-align: center; font-weight: 600; }
+        
+        /* Accent colors */
+        .accent-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .accent-option { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative; }
+        .accent-option:hover { transform: scale(1.15); }
+        .accent-option.selected { border-color: white; box-shadow: 0 0 0 2px var(--bg), var(--accent-glow); }
+        .accent-option::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; opacity: 0; transition: opacity 0.2s; }
+        .accent-option.selected::after { opacity: 1; }
+        
+        /* Party presets */
+        .preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .preset-option { padding: 0.75rem; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; }
+        .preset-option:hover { border-color: var(--muted); }
+        .preset-option.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--card)); }
+        .preset-color { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; }
+        .preset-info { flex: 1; min-width: 0; }
+        .preset-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .preset-region { font-size: 0.65rem; color: var(--muted); }
+        
+        /* Font size */
+        .fontsize-options { display: flex; gap: 0.5rem; }
+        .fontsize-option { flex: 1; padding: 0.75rem; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; text-align: center; transition: all 0.2s; }
+        .fontsize-option:hover { border-color: var(--muted); }
+        .fontsize-option.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--card)); }
+        .fontsize-preview { margin-bottom: 0.25rem; }
+        .fontsize-label { font-size: 0.7rem; color: var(--muted); }
+        
+        /* Layout */
+        .layout-options { display: flex; gap: 0.75rem; }
+        .layout-option { flex: 1; padding: 1rem; background: var(--card); border: 2px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; text-align: center; transition: all 0.2s; }
+        .layout-option:hover { border-color: var(--muted); }
+        .layout-option.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--card)); }
+        .layout-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .layout-label { font-size: 0.8rem; font-weight: 600; }
+        
+        /* === DATA PANEL === */
+        .data-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; }
+        .data-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+        .data-panel-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .data-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
+        .data-stat { background: var(--card); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+        .data-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); }
+        .data-stat-label { font-size: 0.7rem; color: var(--muted); }
+        
+        /* === TOAST === */
+        .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 1rem 1.5rem; display: none; align-items: center; gap: 0.5rem; z-index: 2000; box-shadow: var(--shadow); }
+        .toast.show { display: flex; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } }
+        
+        /* === FOOTER === */
+        .footer { border-top: 1px solid var(--border); padding: 2rem 0; margin-top: 3rem; }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+        .footer-brand { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.85rem; }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .header-nav { display: none; }
+            .hero-stats { gap: 1.5rem; }
+            .hero-stat-value { font-size: 2rem; }
+            .theme-panel { width: 100%; right: -100%; }
+            .preset-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="#" class="logo" onclick="goHome()">
+                <span class="logo-icon">
+                    <span class="logo-polit">POLiT</span><span class="logo-exclaim">!</span><span class="logo-k">K</span><span class="logo-a">A</span>
+                </span>
+            </a>
+            <nav class="header-nav">
+                <button class="nav-link active" onclick="scrollTo('hero')">🏠 Accueil</button>
+                <button class="nav-link" onclick="scrollTo('countdown')">⏱️ Élections</button>
+                <button class="nav-link" onclick="scrollTo('modules')">📦 Modules</button>
+                <button class="nav-link" onclick="scrollTo('data')">💾 Données</button>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-ghost" onclick="openThemePanel()">🎨 Thèmes</button>
+                <button class="btn btn-primary" onclick="openModule('beldata')">🗳️ Commencer</button>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero" id="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">🗳️ Plateforme citoyenne d'action politique</div>
+            <h1 class="hero-title">CRÉE TON <span class="highlight">PARTI</span><br>GAGNE LES <span class="highlight">ÉLECTIONS</span></h1>
+            <p class="hero-subtitle">De simple citoyen à candidat victorieux. Forme-toi, organise-toi, mobilise et conquiers le pouvoir démocratiquement.</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="hero-stat-value" id="statModules">12</div><div class="hero-stat-label">Modules</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statXP">0</div><div class="hero-stat-label">Points XP</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statLevel">1</div><div class="hero-stat-label">Niveau</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="statDays">—</div><div class="hero-stat-label">Jours avant élections</div></div>
+            </div>
+        </div>
+    </section>
+    
+    <main class="container">
+        <section class="section" id="countdown">
+            <div class="section-header"><h2 class="section-title">⏱️ COMPTE À REBOURS ÉLECTORAL</h2></div>
+            <div class="countdown-grid" id="countdownGrid"></div>
+        </section>
+        
+        <section class="section">
+            <div class="section-header"><h2 class="section-title">⚡ ACTIONS RAPIDES</h2></div>
+            <div class="quick-actions">
+                <div class="quick-action" onclick="openModule('beldata')"><div class="quick-action-icon">🗳️</div><div class="quick-action-title">Qui me représente ?</div><div class="quick-action-desc">Découvre tes élus</div></div>
+                <div class="quick-action" onclick="openModule('flashcards')"><div class="quick-action-icon">🧠</div><div class="quick-action-title">Apprendre</div><div class="quick-action-desc">Quiz politique</div></div>
+                <div class="quick-action" onclick="openModule('intro')"><div class="quick-action-icon">👥</div><div class="quick-action-title">Mon réseau</div><div class="quick-action-desc">Profils solidaires</div></div>
+                <div class="quick-action" onclick="openModule('ascension')"><div class="quick-action-icon">🎮</div><div class="quick-action-title">Jouer</div><div class="quick-action-desc">L'ASCENSION</div></div>
+            </div>
+        </section>
+        
+        <section class="section" id="modules">
+            <div class="section-header"><h2 class="section-title">📦 ARSENAL CITOYEN</h2></div>
+            <div class="modules-tabs">
+                <button class="module-tab active" onclick="filterModules('all', this)">Tous</button>
+                <button class="module-tab" onclick="filterModules('essential', this)">⭐ Essentiels</button>
+                <button class="module-tab" onclick="filterModules('learn', this)">📚 Apprendre</button>
+                <button class="module-tab" onclick="filterModules('organize', this)">📋 Organiser</button>
+                <button class="module-tab" onclick="filterModules('network', this)">🤝 Réseauter</button>
+                <button class="module-tab" onclick="filterModules('fun', this)">🎮 S'amuser</button>
+            </div>
+            <div class="modules-grid" id="modulesGrid"></div>
+        </section>
+        
+        <section class="data-panel" id="data">
+            <div class="data-panel-header">
+                <div class="data-panel-title">💾 Tes données</div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="exportAllData()">📤 Exporter</button>
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📥 Importer</button>
+                </div>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAllData(event)">
+            <div class="data-stats">
+                <div class="data-stat"><div class="data-stat-value" id="dataProfiles">0</div><div class="data-stat-label">Profils</div></div>
+                <div class="data-stat"><div class="data-stat-value" id="dataProjects">0</div><div class="data-stat-label">Projets</div></div>
+                <div class="data-stat"><div class="data-stat-value" id="dataCards">0</div><div class="data-stat-label">Flashcards</div></div>
+                <div class="data-stat"><div class="data-stat-value" id="dataTasks">0</div><div class="data-stat-label">Tâches</div></div>
+                <div class="data-stat"><div class="data-stat-value" id="dataEntities">0</div><div class="data-stat-label">Entités</div></div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <span style="font-family:'Bebas Neue';font-size:1.2rem;">POLiT!K<span style="display:inline-flex;width:16px;height:16px;border:2px solid var(--accent);border-radius:50%;align-items:center;justify-content:center;color:var(--accent);font-size:0.8rem;">A</span></span>
+                <span>— Éducation populaire & empowerment citoyen</span>
+            </div>
+        </div>
+    </footer>
+    
+    <button class="theme-toggle" onclick="openThemePanel()">🎨</button>
+    
+    <div class="theme-panel-overlay" id="themePanelOverlay" onclick="closeThemePanel()"></div>
+    <aside class="theme-panel" id="themePanel">
+        <div class="theme-panel-header">
+            <div class="theme-panel-title">🎨 Personnalisation</div>
+            <button class="theme-panel-close" onclick="closeThemePanel()">×</button>
+        </div>
+        <div class="theme-panel-body">
+            <div class="theme-section">
+                <div class="theme-section-title">🌓 Thème d'interface</div>
+                <div class="theme-grid" id="themeGrid"></div>
+            </div>
+            
+            <div class="theme-section">
+                <div class="theme-section-title">🎯 Couleur d'accent</div>
+                <div class="accent-grid" id="accentGrid"></div>
+            </div>
+            
+            <div class="theme-section">
+                <div class="theme-section-title">🏛️ Thèmes partis politiques (Belgique)</div>
+                <div class="preset-grid" id="presetGrid"></div>
+            </div>
+            
+            <div class="theme-section">
+                <div class="theme-section-title">🔤 Taille du texte</div>
+                <div class="fontsize-options" id="fontsizeOptions"></div>
+            </div>
+            
+            <div class="theme-section">
+                <div class="theme-section-title">📐 Disposition</div>
+                <div class="layout-options">
+                    <div class="layout-option selected" data-layout="default" onclick="setLayout('default', this)">
+                        <div class="layout-icon">📖</div>
+                        <div class="layout-label">Confortable</div>
+                    </div>
+                    <div class="layout-option" data-layout="compact" onclick="setLayout('compact', this)">
+                        <div class="layout-icon">📱</div>
+                        <div class="layout-label">Compact</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="theme-section">
+                <button class="btn btn-secondary" style="width:100%;" onclick="resetTheme()">🔄 Réinitialiser tout</button>
+            </div>
+        </div>
+    </aside>
+    
+    <div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const STORAGE_KEY = 'politika_data';
+const THEME_KEY = 'politika_theme';
+
+// === THEMES ===
+const THEMES = [
+    { id: 'dark', name: 'Sombre', bg: '#0a0a0f', panel: '#1a1a24', bar: '#ef4444', text: '#f1f5f9' },
+    { id: 'light', name: 'Clair', bg: '#f8fafc', panel: '#ffffff', bar: '#3b82f6', text: '#0f172a' },
+    { id: 'midnight', name: 'Minuit', bg: '#020617', panel: '#1e293b', bar: '#6366f1', text: '#f8fafc' },
+    { id: 'ocean', name: 'Océan', bg: '#0c1929', panel: '#1e3a5f', bar: '#06b6d4', text: '#eff6ff' },
+    { id: 'nature', name: 'Nature', bg: '#052e16', panel: '#166534', bar: '#22c55e', text: '#ecfdf5' },
+    { id: 'sunset', name: 'Sunset', bg: '#1f1315', panel: '#5c2a2e', bar: '#f97316', text: '#fff1f2' },
+    { id: 'sepia', name: 'Sépia', bg: '#1c1917', panel: '#44403c', bar: '#eab308', text: '#fef3c7' }
+];
+
+const ACCENTS = [
+    { id: 'rouge', name: 'Rouge', color: '#ef4444' },
+    { id: 'bleu', name: 'Bleu', color: '#3b82f6' },
+    { id: 'vert', name: 'Vert', color: '#22c55e' },
+    { id: 'violet', name: 'Violet', color: '#a855f7' },
+    { id: 'orange', name: 'Orange', color: '#f97316' },
+    { id: 'rose', name: 'Rose', color: '#ec4899' },
+    { id: 'cyan', name: 'Cyan', color: '#06b6d4' },
+    { id: 'jaune', name: 'Jaune', color: '#eab308' },
+    { id: 'indigo', name: 'Indigo', color: '#6366f1' }
+];
+
+const PRESETS = [
+    { id: 'ps', name: 'PS', color: '#e30613', region: 'Francophone' },
+    { id: 'mr', name: 'MR', color: '#0047ab', region: 'Francophone' },
+    { id: 'ecolo', name: 'Ecolo', color: '#00a651', region: 'Francophone' },
+    { id: 'ptb', name: 'PTB-PVDA', color: '#d40000', region: 'National' },
+    { id: 'engages', name: 'Les Engagés', color: '#ff6600', region: 'Francophone' },
+    { id: 'defi', name: 'DéFI', color: '#dc007a', region: 'Francophone' },
+    { id: 'nva', name: 'N-VA', color: '#ffcc00', region: 'Flamand' },
+    { id: 'vooruit', name: 'Vooruit', color: '#ff0000', region: 'Flamand' },
+    { id: 'groen', name: 'Groen', color: '#83b81a', region: 'Flamand' },
+    { id: 'ovld', name: 'Open VLD', color: '#003d6d', region: 'Flamand' },
+    { id: 'cdv', name: 'CD&V', color: '#ff6600', region: 'Flamand' },
+    { id: 'vb', name: 'Vlaams Belang', color: '#ffe500', region: 'Flamand' }
+];
+
+const FONTSIZES = [
+    { id: 'small', label: 'Petit', preview: 'A' },
+    { id: 'normal', label: 'Normal', preview: 'A' },
+    { id: 'large', label: 'Grand', preview: 'A' },
+    { id: 'xlarge', label: 'Très grand', preview: 'A' }
+];
+
+const ELECTIONS = [
+    { id: 'europeennes_2029', level: 'european', title: 'Européennes', date: new Date('2029-06-10') },
+    { id: 'federales_2029', level: 'federal', title: 'Fédérales', date: new Date('2029-06-10') },
+    { id: 'regionales_2029', level: 'regional', title: 'Régionales', date: new Date('2029-06-10') },
+    { id: 'communales_2030', level: 'communal', title: 'Communales', date: new Date('2030-10-11') }
+];
+
+const MODULES = [
+    { id: 'beldata', name: 'BELDATA', category: 'learn', icon: '🇧🇪', color: '#3b82f6', desc: 'Tous tes élus à tous les niveaux.', tags: ['politique', 'élus'], file: 'modules/beldata.html', xp: 50, badge: 'essential' },
+    { id: 'flashcards', name: 'Flashcards', category: 'learn', icon: '🧠', color: '#a855f7', desc: 'Quiz sur les institutions.', tags: ['quiz'], file: 'modules/flashcards.html', xp: 30, badge: 'essential' },
+    { id: 'intro', name: "L'iNTRO!", category: 'network', icon: '👥', color: '#ec4899', desc: 'Profils et projets solidaires.', tags: ['réseau'], file: 'modules/intro.html', xp: 40, badge: 'new' },
+    { id: 'istore', name: "L'iSTORE!", category: 'organize', icon: '🏪', color: '#22c55e', desc: 'Catalogue de ressources.', tags: ['catalogue'], file: 'modules/istore.html', xp: 20, badge: 'new' },
+    { id: 'kanban', name: 'Kanban', category: 'organize', icon: '📋', color: '#06b6d4', desc: 'Gestion de projets.', tags: ['projets'], file: 'modules/kanban.html', xp: 30, badge: 'essential' },
+    { id: 'panopticon', name: 'Panopticon', category: 'network', icon: '🔍', color: '#f97316', desc: 'Réseaux de pouvoir.', tags: ['graphe'], file: 'modules/panopticon.html', xp: 50 },
+    { id: 'repertoire', name: 'Répertoire EP', category: 'network', icon: '📇', color: '#fbbf24', desc: 'Associations par pilier.', tags: ['assos'], file: 'modules/repertoire-ep.html', xp: 40 },
+    { id: 'ascension', name: "L'ASCENSION", category: 'fun', icon: '🎮', color: '#a855f7', desc: 'Jeu narratif stratégique.', tags: ['jeu'], file: 'modules/ascension.html', xp: 100, badge: 'fun' },
+    { id: 'etoile', name: "L'ÉTOILE NOIRE", category: 'fun', icon: '⭐', color: '#ef4444', desc: 'ARG épique Matrix/Star Wars.', tags: ['arg'], file: 'modules/etoile-noire.html', xp: 150, badge: 'fun' },
+    { id: 'forge', name: 'Forge Studio', category: 'organize', icon: '🔨', color: '#64748b', desc: 'Création de documents.', tags: ['docs'], file: 'modules/forge-studio.html', xp: 30 },
+    { id: 'wargames', name: 'WarGames', category: 'fun', icon: '🎯', color: '#dc2626', desc: 'Simulation stratégique.', tags: ['stratégie'], file: 'modules/wargames.html', xp: 80 },
+    { id: 'synergy', name: 'SYNERGY', category: 'fun', icon: '🤝', color: '#22c55e', desc: 'Jeu coopératif.', tags: ['coop'], file: 'modules/synergy.html', xp: 60 }
+];
+
+let data = { xp: 0 };
+let themeSettings = { theme: 'dark', accent: 'rouge', preset: null, fontsize: 'normal', layout: 'default' };
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    loadTheme();
+    applyTheme();
+    renderThemeOptions();
+    renderCountdowns();
+    renderModules();
+    updateStats();
+});
+
+function loadData() { try { const s = localStorage.getItem(STORAGE_KEY); if (s) data = { ...data, ...JSON.parse(s) }; } catch(e) {} }
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function loadTheme() { try { const s = localStorage.getItem(THEME_KEY); if (s) themeSettings = { ...themeSettings, ...JSON.parse(s) }; } catch(e) {} }
+function saveTheme() { localStorage.setItem(THEME_KEY, JSON.stringify(themeSettings)); }
+
+function applyTheme() {
+    document.documentElement.setAttribute('data-theme', themeSettings.theme);
+    document.documentElement.setAttribute('data-accent', themeSettings.accent);
+    document.documentElement.setAttribute('data-fontsize', themeSettings.fontsize);
+    document.documentElement.setAttribute('data-layout', themeSettings.layout);
+    if (themeSettings.preset) {
+        document.documentElement.setAttribute('data-preset', themeSettings.preset);
+    } else {
+        document.documentElement.removeAttribute('data-preset');
+    }
+}
+
+// === THEME PANEL ===
+function openThemePanel() {
+    document.getElementById('themePanel').classList.add('open');
+    document.getElementById('themePanelOverlay').classList.add('open');
+}
+
+function closeThemePanel() {
+    document.getElementById('themePanel').classList.remove('open');
+    document.getElementById('themePanelOverlay').classList.remove('open');
+}
+
+function renderThemeOptions() {
+    // Themes
+    document.getElementById('themeGrid').innerHTML = THEMES.map(t => `
+        <div class="theme-option ${themeSettings.theme === t.id ? 'selected' : ''}" onclick="setTheme('${t.id}')">
+            <div class="theme-option-preview">
+                <div class="theme-option-bar" style="background:${t.bar}"></div>
+                <div class="theme-option-body" style="background:${t.bg}">
+                    <div class="theme-option-sidebar" style="background:${t.panel}"></div>
+                    <div class="theme-option-content" style="background:${t.panel}; opacity:0.7;"></div>
+                </div>
+            </div>
+            <div class="theme-option-label" style="background:${t.panel};color:${t.text}">${t.name}</div>
+        </div>
+    `).join('');
+    
+    // Accents
+    document.getElementById('accentGrid').innerHTML = ACCENTS.map(a => `
+        <div class="accent-option ${themeSettings.accent === a.id && !themeSettings.preset ? 'selected' : ''}" 
+             style="background:${a.color}" title="${a.name}" onclick="setAccent('${a.id}')"></div>
+    `).join('');
+    
+    // Presets
+    document.getElementById('presetGrid').innerHTML = PRESETS.map(p => `
+        <div class="preset-option ${themeSettings.preset === p.id ? 'selected' : ''}" onclick="setPreset('${p.id}')">
+            <div class="preset-color" style="background:${p.color}"></div>
+            <div class="preset-info">
+                <div class="preset-name">${p.name}</div>
+                <div class="preset-region">${p.region}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Font sizes
+    document.getElementById('fontsizeOptions').innerHTML = FONTSIZES.map(f => `
+        <div class="fontsize-option ${themeSettings.fontsize === f.id ? 'selected' : ''}" onclick="setFontsize('${f.id}')">
+            <div class="fontsize-preview" style="font-size:${f.id === 'small' ? '14px' : f.id === 'normal' ? '18px' : f.id === 'large' ? '22px' : '26px'}">${f.preview}</div>
+            <div class="fontsize-label">${f.label}</div>
+        </div>
+    `).join('');
+    
+    // Layout
+    document.querySelectorAll('.layout-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.layout === themeSettings.layout);
+    });
+}
+
+function setTheme(id) {
+    themeSettings.theme = id;
+    saveTheme();
+    applyTheme();
+    renderThemeOptions();
+    toast(`🎨 Thème "${THEMES.find(t => t.id === id).name}" appliqué`);
+}
+
+function setAccent(id) {
+    themeSettings.accent = id;
+    themeSettings.preset = null;
+    saveTheme();
+    applyTheme();
+    renderThemeOptions();
+    toast(`🎯 Couleur "${ACCENTS.find(a => a.id === id).name}" appliquée`);
+}
+
+function setPreset(id) {
+    themeSettings.preset = id;
+    saveTheme();
+    applyTheme();
+    renderThemeOptions();
+    const preset = PRESETS.find(p => p.id === id);
+    toast(`🏛️ Thème "${preset.name}" appliqué`);
+}
+
+function setFontsize(id) {
+    themeSettings.fontsize = id;
+    saveTheme();
+    applyTheme();
+    renderThemeOptions();
+}
+
+function setLayout(id, el) {
+    themeSettings.layout = id;
+    saveTheme();
+    applyTheme();
+    document.querySelectorAll('.layout-option').forEach(o => o.classList.remove('selected'));
+    if (el) el.classList.add('selected');
+}
+
+function resetTheme() {
+    themeSettings = { theme: 'dark', accent: 'rouge', preset: null, fontsize: 'normal', layout: 'default' };
+    saveTheme();
+    applyTheme();
+    renderThemeOptions();
+    toast('🔄 Préférences réinitialisées');
+}
+
+// === COUNTDOWNS ===
+function renderCountdowns() {
+    const grid = document.getElementById('countdownGrid');
+    const now = new Date();
+    const levels = { communal: '🏘️ Communal', regional: '🗺️ Régional', federal: '🇧🇪 Fédéral', european: '🇪🇺 Européen' };
+    
+    grid.innerHTML = ELECTIONS.map(e => {
+        const diff = e.date - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const years = Math.floor(days / 365);
+        const months = Math.floor((days % 365) / 30);
+        const d = days % 30;
+        
+        return `
+            <div class="countdown-card ${e.level}">
+                <div class="countdown-level">${levels[e.level]}</div>
+                <div class="countdown-title">${e.title}</div>
+                <div class="countdown-date">📅 ${e.date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                <div class="countdown-timer">
+                    <div class="countdown-unit"><div class="countdown-number">${years}</div><div class="countdown-label">ans</div></div>
+                    <div class="countdown-unit"><div class="countdown-number">${months}</div><div class="countdown-label">mois</div></div>
+                    <div class="countdown-unit"><div class="countdown-number">${d}</div><div class="countdown-label">jours</div></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Update stat
+    const next = ELECTIONS.reduce((a, b) => a.date < b.date ? a : b);
+    document.getElementById('statDays').textContent = Math.floor((next.date - now) / (1000 * 60 * 60 * 24));
+}
+
+// === MODULES ===
+function renderModules(filter = 'all') {
+    const grid = document.getElementById('modulesGrid');
+    let filtered = MODULES;
+    if (filter === 'essential') filtered = MODULES.filter(m => m.badge === 'essential');
+    else if (filter !== 'all') filtered = MODULES.filter(m => m.category === filter);
+    
+    const cats = { learn: '📚 Apprendre', organize: '📋 Organiser', network: '🤝 Réseauter', fun: '🎮 S\'amuser' };
+    
+    grid.innerHTML = filtered.map(m => `
+        <div class="module-card" onclick="openModule('${m.id}')">
+            ${m.badge ? `<span class="module-badge ${m.badge}">${m.badge === 'essential' ? '⭐' : m.badge === 'new' ? '✨' : '🎮'}</span>` : ''}
+            <div class="module-card-header">
+                <div class="module-icon" style="background:${m.color}20;color:${m.color}">${m.icon}</div>
+                <div class="module-info"><div class="module-name">${m.name}</div><div class="module-category">${cats[m.category]}</div></div>
+            </div>
+            <div class="module-desc">${m.desc}</div>
+            <div class="module-tags">${m.tags.map(t => `<span class="module-tag">#${t}</span>`).join('')}</div>
+            <div class="module-card-footer"><span class="module-xp">+${m.xp} XP</span><button class="btn btn-sm btn-secondary">Ouvrir →</button></div>
+        </div>
+    `).join('');
+}
+
+function filterModules(filter, btn) {
+    document.querySelectorAll('.module-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderModules(filter);
+}
+
+function openModule(id) {
+    const m = MODULES.find(x => x.id === id);
+    if (m && m.file) {
+        data.xp += Math.floor(m.xp / 5);
+        saveData();
+        updateStats();
+        window.open(m.file, '_blank');
+    }
+}
+
+// === STATS ===
+function updateStats() {
+    document.getElementById('statModules').textContent = MODULES.length;
+    document.getElementById('statXP').textContent = data.xp;
+    document.getElementById('statLevel').textContent = Math.floor(data.xp / 100) + 1;
+    
+    try {
+        const intro = JSON.parse(localStorage.getItem('intro_data') || '{}');
+        document.getElementById('dataProfiles').textContent = (intro.profiles || []).length;
+        document.getElementById('dataProjects').textContent = (intro.projects || []).length;
+    } catch(e) {}
+    try {
+        const flash = JSON.parse(localStorage.getItem('flashcards_data') || '{}');
+        document.getElementById('dataCards').textContent = (flash.decks || []).reduce((a, d) => a + (d.cards || []).length, 0);
+    } catch(e) {}
+    try {
+        const kanban = JSON.parse(localStorage.getItem('kanban_data') || '{}');
+        document.getElementById('dataTasks').textContent = (kanban.boards || []).reduce((a, b) => a + (b.columns || []).reduce((x, c) => x + (c.tasks || []).length, 0), 0);
+    } catch(e) {}
+    try {
+        const pano = JSON.parse(localStorage.getItem('panopticon_data') || '{}');
+        document.getElementById('dataEntities').textContent = (pano.entities || []).length;
+    } catch(e) {}
+}
+
+// === IMPORT/EXPORT ===
+function exportAllData() {
+    const all = { version: 2, updated: new Date().toISOString().split('T')[0], politika: data, themeSettings, modules: {} };
+    ['intro_data', 'istore_data', 'flashcards_data', 'kanban_data', 'panopticon_data', 'ascension_data'].forEach(k => {
+        try { const d = localStorage.getItem(k); if (d) all.modules[k.replace('_data', '')] = JSON.parse(d); } catch(e) {}
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' }));
+    a.download = 'politika-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    toast('📤 Données exportées !');
+}
+
+function importAllData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try {
+            const imp = JSON.parse(ev.target.result);
+            if (imp.politika) { data = { ...data, ...imp.politika }; saveData(); }
+            if (imp.themeSettings) { themeSettings = { ...themeSettings, ...imp.themeSettings }; saveTheme(); applyTheme(); renderThemeOptions(); }
+            if (imp.modules) Object.entries(imp.modules).forEach(([n, d]) => localStorage.setItem(n + '_data', JSON.stringify(d)));
+            updateStats();
+            toast('📥 Données importées !');
+        } catch(err) { toast('❌ Erreur import'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+// === UI ===
+function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
+function goHome() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function toast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeThemePanel(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://kern.education/schema/v2",
+  "title": "KERN Platform Data Schema",
+  "description": "Schéma de données unifié pour la plateforme d'éducation populaire KERN / L'iSTORE!",
+  "version": "2.0.0",
+  "type": "object",
+  "required": ["version", "updated"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version du format de données"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Date de dernière mise à jour (YYYY-MM-DD)"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Métadonnées de l'export",
+      "properties": {
+        "platform": { "type": "string", "default": "KERN" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string", "default": "MIT" },
+        "source": { "type": "string", "description": "Module source de l'export" }
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "Ressources/fichiers (L'iSTORE!, Bibliothèque)",
+      "items": { "$ref": "#/definitions/Item" }
+    },
+    "profiles": {
+      "type": "array",
+      "description": "Profils utilisateurs (L'iNTRO!)",
+      "items": { "$ref": "#/definitions/Profile" }
+    },
+    "projects": {
+      "type": "array",
+      "description": "Projets collaboratifs (L'iNTRO!, Kanban)",
+      "items": { "$ref": "#/definitions/Project" }
+    },
+    "entities": {
+      "type": "array",
+      "description": "Entités/organisations (Panopticon, Répertoire EP)",
+      "items": { "$ref": "#/definitions/Entity" }
+    },
+    "relations": {
+      "type": "array",
+      "description": "Relations entre entités (Panopticon)",
+      "items": { "$ref": "#/definitions/Relation" }
+    },
+    "decks": {
+      "type": "array",
+      "description": "Paquets de cartes (Flashcards)",
+      "items": { "$ref": "#/definitions/Deck" }
+    },
+    "boards": {
+      "type": "array",
+      "description": "Tableaux Kanban",
+      "items": { "$ref": "#/definitions/Board" }
+    },
+    "stories": {
+      "type": "array",
+      "description": "Histoires narratives (L'ASCENSION, ÉTOILE NOIRE)",
+      "items": { "$ref": "#/definitions/Story" }
+    },
+    "journal": {
+      "type": "array",
+      "description": "Entrées de journal/log",
+      "items": { "$ref": "#/definitions/JournalEntry" }
+    }
+  },
+  "definitions": {
+    "BaseItem": {
+      "type": "object",
+      "description": "Propriétés communes à tous les objets",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$",
+          "description": "Identifiant unique (snake_case)"
+        },
+        "created": {
+          "type": "string",
+          "format": "date",
+          "description": "Date de création"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date de modification"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tags pour filtrage et recherche"
+        }
+      }
+    },
+    "Item": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["title", "url", "type"],
+          "properties": {
+            "title": { "type": "string", "description": "Titre de la ressource" },
+            "description": { "type": "string", "description": "Description longue" },
+            "note": { "type": "string", "description": "Note courte/citation" },
+            "url": { "type": "string", "description": "URL du fichier" },
+            "type": {
+              "type": "string",
+              "enum": ["pdf", "image", "video", "audio", "md", "zip", "script", "module", "other"],
+              "description": "Type de ressource"
+            },
+            "size": { "type": "integer", "description": "Taille en octets" },
+            "thumb": { "type": "string", "description": "URL de la vignette" },
+            "badges": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Badges (new, featured, popular...)"
+            },
+            "icon": { "type": "string", "description": "Emoji/icône" },
+            "category": { "type": "string", "description": "Catégorie" },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "icon": { "type": "string" },
+                  "title": { "type": "string" },
+                  "desc": { "type": "string" }
+                }
+              },
+              "description": "Liste des fonctionnalités (pour modules)"
+            },
+            "specs": {
+              "type": "object",
+              "description": "Spécifications techniques"
+            },
+            "downloads": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "file": { "type": "string" },
+                  "size": { "type": "string" }
+                }
+              },
+              "description": "Fichiers téléchargeables additionnels"
+            },
+            "previewUrl": { "type": "string", "description": "URL de prévisualisation" }
+          }
+        }
+      ]
+    },
+    "Profile": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["firstname", "lastname"],
+          "properties": {
+            "firstname": { "type": "string" },
+            "lastname": { "type": "string" },
+            "title": { "type": "string", "description": "Titre/métier" },
+            "location": { "type": "string" },
+            "bio": { "type": "string" },
+            "avatar": { "type": "string", "description": "URL ou emoji" },
+            "cover": { "type": "string", "description": "URL image de couverture" },
+            "status": {
+              "type": "string",
+              "enum": ["disponible", "benevole", "occupe", "inactif"]
+            },
+            "type": {
+              "type": "string",
+              "enum": ["particulier", "benevole", "independant", "association", "collectif"]
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "level": { "type": "string", "enum": ["debutant", "confirme", "expert"] }
+                }
+              }
+            },
+            "experiences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string", "enum": ["salarie", "benevole", "independant", "formation", "projet"] },
+                  "title": { "type": "string" },
+                  "org": { "type": "string" },
+                  "period": { "type": "string" },
+                  "desc": { "type": "string" }
+                }
+              }
+            },
+            "portfolio": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "image": { "type": "string" },
+                  "link": { "type": "string" }
+                }
+              }
+            },
+            "contact": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string", "format": "email" },
+                "phone": { "type": "string" },
+                "website": { "type": "string", "format": "uri" },
+                "social": { "type": "object" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Project": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["title"],
+          "properties": {
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "type": {
+              "type": "string",
+              "enum": ["event", "festival", "community", "service", "voyage", "atelier", "other"]
+            },
+            "status": {
+              "type": "string",
+              "enum": ["draft", "open", "soon", "active", "closed", "archived"]
+            },
+            "org": { "type": "string", "description": "Organisation porteuse" },
+            "location": { "type": "string" },
+            "dateStart": { "type": "string", "format": "date" },
+            "dateEnd": { "type": "string", "format": "date" },
+            "needs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Besoins/recherches"
+            },
+            "pay": {
+              "type": "string",
+              "enum": ["benevole", "defraye", "echange", "remunere", "negociable"]
+            },
+            "authorId": { "type": "string", "description": "ID du profil porteur" },
+            "budget": { "type": "number" },
+            "participants": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "IDs des profils participants"
+            }
+          }
+        }
+      ]
+    },
+    "Entity": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "acronyme": { "type": "string" },
+            "description": { "type": "string" },
+            "type": {
+              "type": "string",
+              "enum": ["person", "organization", "institution", "company", "collective", "other"]
+            },
+            "subtype": { "type": "string" },
+            "sector": { "type": "string" },
+            "pilier": {
+              "type": "string",
+              "enum": ["socialiste", "liberal", "chretien", "communiste", "ecologiste", "neutre", "etatique", "autre"],
+              "description": "Pilier politique belge"
+            },
+            "forme_juridique": {
+              "type": "string",
+              "enum": ["asbl", "fondation", "sa", "srl", "scrl", "organisme_public", "autre"]
+            },
+            "website": { "type": "string", "format": "uri" },
+            "logo": { "type": "string" },
+            "address": { "type": "string" },
+            "coordinates": {
+              "type": "object",
+              "properties": {
+                "lat": { "type": "number" },
+                "lng": { "type": "number" }
+              }
+            },
+            "contact": { "type": "object" },
+            "metadata": { "type": "object" }
+          }
+        }
+      ]
+    },
+    "Relation": {
+      "type": "object",
+      "required": ["id", "sourceId", "targetId", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "sourceId": { "type": "string", "description": "ID de l'entité source" },
+        "targetId": { "type": "string", "description": "ID de l'entité cible" },
+        "type": {
+          "type": "string",
+          "enum": ["hierarchie", "partenariat", "financement", "opposition", "membre", "influence", "autre"]
+        },
+        "label": { "type": "string" },
+        "strength": { "type": "number", "minimum": 0, "maximum": 100 },
+        "bidirectional": { "type": "boolean", "default": false },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "source": { "type": "string", "description": "Source de l'information" }
+      }
+    },
+    "Deck": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["name", "cards"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "icon": { "type": "string" },
+            "color": { "type": "string" },
+            "cards": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Card" }
+            },
+            "stats": {
+              "type": "object",
+              "properties": {
+                "totalReviews": { "type": "integer" },
+                "correctRate": { "type": "number" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Card": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["front", "back"],
+          "properties": {
+            "front": { "type": "string", "description": "Recto de la carte" },
+            "back": { "type": "string", "description": "Verso de la carte" },
+            "hint": { "type": "string" },
+            "difficulty": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "sm2": {
+              "type": "object",
+              "description": "Données algorithme SM-2",
+              "properties": {
+                "easeFactor": { "type": "number" },
+                "interval": { "type": "integer" },
+                "repetitions": { "type": "integer" },
+                "nextReview": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Board": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["name", "columns"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "icon": { "type": "string" },
+            "color": { "type": "string" },
+            "projectId": { "type": "string", "description": "ID du projet lié" },
+            "columns": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Column" }
+            }
+          }
+        }
+      ]
+    },
+    "Column": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "color": { "type": "string" },
+        "limit": { "type": "integer", "description": "Limite WIP" },
+        "tasks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Task" }
+        }
+      }
+    },
+    "Task": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["title"],
+          "properties": {
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
+            "dueDate": { "type": "string", "format": "date" },
+            "assigneeIds": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "IDs des profils assignés"
+            },
+            "checklist": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": { "type": "string" },
+                  "done": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Story": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseItem" },
+        {
+          "type": "object",
+          "required": ["title", "chapters"],
+          "properties": {
+            "title": { "type": "string" },
+            "subtitle": { "type": "string" },
+            "description": { "type": "string" },
+            "author": { "type": "string" },
+            "genre": { "type": "string" },
+            "chapters": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/definitions/Chapter" }
+            },
+            "characters": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/definitions/Character" }
+            },
+            "factions": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/definitions/Faction" }
+            },
+            "player": {
+              "type": "object",
+              "description": "État du joueur"
+            }
+          }
+        }
+      ]
+    },
+    "Chapter": {
+      "type": "object",
+      "required": ["id", "title", "text"],
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "integer" },
+        "title": { "type": "string" },
+        "location": { "type": "string" },
+        "mood": { "type": "string" },
+        "text": { "type": "string", "description": "Narration (HTML autorisé)" },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string" },
+              "hint": { "type": "string" },
+              "type": { "type": "string" },
+              "next": { "type": "string", "description": "ID du chapitre suivant" },
+              "effects": { "type": "object" },
+              "conditions": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "Character": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "emoji": { "type": "string" },
+        "role": { "type": "string" },
+        "description": { "type": "string" },
+        "relation": { "type": "string", "enum": ["unknown", "contact", "ally", "rival", "enemy"] }
+      }
+    },
+    "Faction": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" },
+        "description": { "type": "string" },
+        "power": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "status": { "type": "string", "enum": ["ally", "neutral", "enemy"] }
+      }
+    },
+    "JournalEntry": {
+      "type": "object",
+      "required": ["type", "text", "time"],
+      "properties": {
+        "type": { "type": "string", "enum": ["info", "success", "warning", "error", "event", "combat", "discovery"] },
+        "text": { "type": "string" },
+        "time": { "type": "integer", "description": "Timestamp Unix" },
+        "module": { "type": "string", "description": "Module source" }
+      }
+    }
+  }
+}
