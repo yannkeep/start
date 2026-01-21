@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missions Actives — !AAARG</title>
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --blood: #8b0000;
+            --blood-light: #a52a2a;
+            --gold: #c9a227;
+            --bone: #e8e4dc;
+            --grey: #3a3a3a;
+            --green: #00ff41;
+            --green-dark: #003b00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Times New Roman', Georgia, serif;
+            background: var(--black);
+            color: var(--bone);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--grey);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            color: var(--blood);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link {
+            font-size: 0.875rem;
+            color: var(--bone);
+            opacity: 0.6;
+            text-decoration: none;
+        }
+
+        .back-link:hover { opacity: 1; }
+
+        /* Hero */
+        .hero {
+            padding: 3rem 0 2rem;
+            border-bottom: 1px solid var(--grey);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: normal;
+            margin-bottom: 1rem;
+        }
+
+        h1 span { color: var(--blood); }
+
+        .hero-lead {
+            font-size: 1.05rem;
+            opacity: 0.85;
+        }
+
+        /* Urgency levels */
+        .urgency-critical {
+            background: var(--blood);
+            color: white;
+        }
+
+        .urgency-high {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .urgency-medium {
+            background: var(--grey);
+            color: var(--bone);
+        }
+
+        /* Mission cards */
+        .missions-section {
+            padding: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--grey);
+        }
+
+        .mission-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--grey);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--blood);
+        }
+
+        .mission-card.urgent::before {
+            background: var(--blood);
+            animation: pulse-bar 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .mission-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .mission-name {
+            font-size: 1.1rem;
+            font-weight: normal;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .mission-amount {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--green);
+            background: var(--green-dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 2px;
+        }
+
+        .mission-body {
+            padding: 0 1.25rem 1.25rem;
+        }
+
+        .mission-body p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .mission-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .meta-label {
+            opacity: 0.5;
+        }
+
+        .meta-value {
+            color: var(--bone);
+        }
+
+        .meta-value.deadline {
+            color: var(--blood);
+            font-weight: bold;
+        }
+
+        .mission-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid var(--grey);
+            opacity: 0.7;
+        }
+
+        .mission-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--blood);
+            color: white;
+            border-color: var(--blood);
+        }
+
+        .btn-primary:hover {
+            background: var(--blood-light);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--bone);
+            border-color: var(--grey);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--bone);
+        }
+
+        /* How it works */
+        .how-section {
+            padding: 2rem 0;
+            border-top: 1px solid var(--grey);
+        }
+
+        .how-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+        }
+
+        .how-steps {
+            counter-reset: step;
+        }
+
+        .how-step {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .how-step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: var(--blood);
+            color: white;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .how-step h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .how-step p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 2.5rem 0;
+            text-align: center;
+            border-top: 1px solid var(--grey);
+        }
+
+        .cta-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem 0;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.4;
+            border-top: 1px solid var(--grey);
+        }
+
+        /* Countdown */
+        .countdown {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--blood);
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            html { font-size: 17px; }
+            h1 { font-size: 2.25rem; }
+            .mission-header { flex-wrap: nowrap; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-inner">
+            <a href="landing-vampire.html" class="logo">!AAARG</a>
+            <a href="landing-vampire.html" class="back-link">← Retour</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <h1>Missions <span>Actives</span></h1>
+            <p class="hero-lead">
+                Des projets réels. Des deadlines réelles. Des financements réels.<br>
+                Choisis ta mission. Porte-la. Propage-la.
+            </p>
+        </div>
+    </section>
+
+    <section class="missions-section">
+        <div class="container">
+            <div class="section-title">🔥 Urgence maximale</div>
+
+            <article class="mission-card urgent">
+                <div class="mission-header">
+                    <h2 class="mission-name">NLnet NGI Zero Commons Fund</h2>
+                    <span class="mission-amount">5.000 – 50.000 €</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Fonds européen pour les communs numériques. Open source, standards ouverts, 
+                        hardware libre. Candidature en tant que particulier possible.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value deadline">1er février 2026</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Individu ou organisation</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Open Source</span>
+                        <span class="tag">Communs</span>
+                        <span class="tag">Europe</span>
+                        <span class="tag">R&D</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://nlnet.nl/commonsfund/" target="_blank" class="btn btn-primary">Voir l'appel</a>
+                        <a href="https://nlnet.nl/propose/" target="_blank" class="btn btn-ghost">Candidater</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="missions-section">
+        <div class="container">
+            <div class="section-title">⏰ Deadlines Q1 2026</div>
+
+            <article class="mission-card">
+                <div class="mission-header">
+                    <h2 class="mission-name">Erasmus+ KA2 Small-Scale</h2>
+                    <span class="mission-amount">jusqu'à 60.000 €</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Partenariats européens pour l'éducation des adultes. 
+                        Minimum 2 pays. Idéal pour formation, méthodologie, échanges de pratiques.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value deadline">5 mars 2026</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Organisation (ASBL requise)</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Éducation</span>
+                        <span class="tag">Partenariat</span>
+                        <span class="tag">Europe</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://erasmus-plus.ec.europa.eu/" target="_blank" class="btn btn-ghost">Voir l'appel</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mission-card">
+                <div class="mission-header">
+                    <h2 class="mission-name">NGI Fediversity</h2>
+                    <span class="mission-amount">5.000 – 50.000 €</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Fonds dédié au Fédivers et à l'auto-hébergement. 
+                        ActivityPub, Matrix, XMPP. Rendre le décentralisé accessible.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value">Rolling (tous les 2 mois)</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Individu ou organisation</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Fédivers</span>
+                        <span class="tag">Décentralisation</span>
+                        <span class="tag">Self-hosting</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://nlnet.nl/fediversity/" target="_blank" class="btn btn-ghost">Voir l'appel</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="missions-section">
+        <div class="container">
+            <div class="section-title">📋 À préparer (deadlines 2026)</div>
+
+            <article class="mission-card">
+                <div class="mission-header">
+                    <h2 class="mission-name">Innoviris PYSI</h2>
+                    <span class="mission-amount">jusqu'à 100.000 €</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Innovation sociale à Bruxelles. 100% des coûts couverts. 
+                        Pour valider la faisabilité d'un produit/service à impact social.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value">~Novembre 2026</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Organisation (siège à Bruxelles)</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Bruxelles</span>
+                        <span class="tag">Innovation sociale</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://innoviris.brussels/" target="_blank" class="btn btn-ghost">Voir le site</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mission-card">
+                <div class="mission-header">
+                    <h2 class="mission-name">Sovereign Tech Fund</h2>
+                    <span class="mission-amount">Variable</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Fonds allemand pour la maintenance d'infrastructure critique open source. 
+                        Pas de l'innovation — de la maintenance. Réduire la dette technique.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value">Rolling</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Mainteneurs de projets critiques</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Maintenance</span>
+                        <span class="tag">Infrastructure</span>
+                        <span class="tag">Sécurité</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://sovereigntechfund.de/" target="_blank" class="btn btn-ghost">Voir le site</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="mission-card">
+                <div class="mission-header">
+                    <h2 class="mission-name">FLOSS/fund</h2>
+                    <span class="mission-amount">1M $/an total</span>
+                </div>
+                <div class="mission-body">
+                    <p>
+                        Candidature ultra-simple via fichier JSON dans ton repo. 
+                        Financé par Zerodha. Pour les projets open source avec communauté.
+                    </p>
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Deadline:</span>
+                            <span class="meta-value">Rolling</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Porteur:</span>
+                            <span class="meta-value">Projet open source actif</span>
+                        </div>
+                    </div>
+                    <div class="mission-tags">
+                        <span class="tag">Simple</span>
+                        <span class="tag">Open Source</span>
+                        <span class="tag">JSON</span>
+                    </div>
+                    <div class="mission-actions">
+                        <a href="https://floss.fund/" target="_blank" class="btn btn-ghost">Voir le site</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="how-section">
+        <div class="container">
+            <h2>Comment ça marche</h2>
+
+            <div class="how-steps">
+                <div class="how-step">
+                    <h3>Tu choisis une mission</h3>
+                    <p>Celle qui te parle. Celle qui correspond à tes compétences ou à ce que tu veux apprendre.</p>
+                </div>
+
+                <div class="how-step">
+                    <h3>Tu portes ou tu soutiens</h3>
+                    <p>Tu peux porter le projet toi-même, ou rejoindre quelqu'un qui le porte. Écrire, coder, relire, diffuser.</p>
+                </div>
+
+                <div class="how-step">
+                    <h3>Tu propages</h3>
+                    <p>Tu recrutes d'autres mordus. Tu documentes. Tu partages ce que tu apprends.</p>
+                </div>
+
+                <div class="how-step">
+                    <h3>L'ARG s'enrichit</h3>
+                    <p>Ton action réelle nourrit l'univers fictif. Ta mission devient récit. Le récit inspire d'autres missions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Tu veux porter une mission ?</h2>
+            <p>
+                On est seuls pour l'instant. Mais on n'est pas obligés de le rester.
+            </p>
+            <a href="https://github.com/yannkeep/start/issues" target="_blank" class="btn btn-primary">
+                Ouvrir une issue sur GitHub
+            </a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>
+            Données vérifiées le 21 janvier 2026 — Les deadlines changent, vérifie toujours à la source
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
