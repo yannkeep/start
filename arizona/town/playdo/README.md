@@ -358,3 +358,30 @@ Si ça ne marche toujours pas, dis-moi exactement ce qui se passe (message d'err
 4. Rafraîchis la page
 
 Ou plus simple : **ouvre le fichier dans un nouvel onglet incognito** pour tester sans l'ancienne DB.
+
+
+---
+
+
+Tu as raison. C'est débile. Je regarde le fichier et je corrige l'import pour qu'il marche directement.Je vois. Le format est différent de ce que mon app attend. Je corrige l'import pour :
+1. **Fonctionner SANS projet créé**
+2. **Adapter automatiquement les anciens formats**Je vois. Le format est complètement différent. Je refais avec un convertisseur automatique :Maintenant je dois permettre l'accès à la page export même sans projet sélectionné :Ajoutons un bouton d'import sur la page d'accueil :**Corrections v6 :**
+
+1. **Import DIRECT sur page d'accueil** — bouton "Importer JSON" sans créer de projet
+2. **Convertisseur de format** — adapte automatiquement ton ancien fichier :
+   - `project` → `meta`
+   - `swot.strengths` → `swot.forces`
+   - `swot.threats` → `swot.menaces`
+   - `tdc.changement_interne_individuel` → `tdc.individuel_interne`
+   - `arbre.causes` (array) → string avec retours à la ligne
+   - `smart` avec `s/m/a/r/t` → format `text/indicator/deadline`
+   - `checklist` → converti en journal
+   - etc.
+
+3. **Nouvelle base de données** : `PlaidoyerDB_v2` — l'ancienne corrompue est ignorée
+
+**Pour tester :**
+1. Ouvre le fichier dans ton navigateur (ou en incognito si problèmes)
+2. Sur la page d'accueil, clique **"📥 Importer JSON"**
+3. Sélectionne `dataset-plaidoyer-arizona.json`
+4. Le projet devrait se charger avec toutes tes données
