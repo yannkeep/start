@@ -245,8 +245,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
       <div class="empty-state">
         <div class="icon">📂</div>
         <h3>Bienvenue</h3>
-        <p>Créez un projet pour commencer votre plaidoyer citoyen</p>
-        <button class="btn btn-primary" id="btn-new-empty">+ Créer un projet</button>
+        <p>Créez un projet ou importez-en un existant</p>
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btn-new-empty">+ Créer un projet</button>
+          <label class="btn btn-secondary" style="cursor:pointer">
+            📥 Importer JSON
+            <input type="file" accept=".json" id="import-home" style="display:none">
+          </label>
+        </div>
       </div>
     </section>
     
@@ -1333,20 +1339,165 @@ function importJSON(e) {
   const reader = new FileReader();
   reader.onload = async (ev) => {
     try {
-      const data = JSON.parse(ev.target.result);
+      const raw = JSON.parse(ev.target.result);
+      
+      // Convertir l'ancien format vers le nouveau
+      const data = convertImportFormat(raw);
+      
       data.id = Date.now().toString();
       data.modified = new Date().toISOString();
+      
       await dbPut(data);
       await renderProjectsList();
       await selectProject(data.id);
-      toast('Projet importé', 'success');
+      toast('Projet importé !', 'success');
     } catch (err) {
       console.error('Import error:', err);
-      toast('Fichier invalide', 'error');
+      toast('Erreur import: ' + err.message, 'error');
     }
   };
   reader.readAsText(file);
   e.target.value = '';
+}
+
+// Convertir les différents formats d'import vers le format interne
+function convertImportFormat(raw) {
+  const p = createEmptyProject('Import', '');
+  
+  // Meta / Project
+  if (raw.project) {
+    p.meta.name = raw.project.name || 'Import';
+    p.meta.description = raw.project.description || '';
+    p.meta.organization = raw.project.organization || '';
+  } else if (raw.meta) {
+    p.meta = { ...p.meta, ...raw.meta };
+  }
+  
+  // Domino
+  if (raw.domino) {
+    p.domino.vision = raw.domino.vision || '';
+    p.domino.obstacles = raw.domino.obstacles || '';
+    p.domino.ressources = raw.domino.ressources || raw.domino.resources || '';
+  }
+  
+  // Profil
+  if (raw.profil) {
+    p.profil = { ...p.profil, ...raw.profil };
+  }
+  
+  // Fleur
+  if (raw.fleur) {
+    p.fleur = { ...p.fleur, ...raw.fleur };
+  }
+  
+  // Acteurs
+  if (raw.acteurs && Array.isArray(raw.acteurs)) {
+    p.acteurs = raw.acteurs.map((a, i) => ({
+      id: Date.now() + i,
+      name: a.name || a.nom || '',
+      role: a.role || a.fonction || '',
+      position: a.position === 'target' ? 'neutral' : (a.position || 'neutral'),
+      power: parseInt(a.power || a.pouvoir || 3)
+    }));
+  }
+  
+  // Arbre
+  if (raw.arbre) {
+    p.arbre.probleme = raw.arbre.probleme_central || raw.arbre.probleme || '';
+    // Causes: peut être string ou array
+    if (Array.isArray(raw.arbre.causes)) {
+      p.arbre.causes = raw.arbre.causes.join('\n');
+    } else {
+      p.arbre.causes = raw.arbre.causes || '';
+    }
+    // Effets: peut être string ou array
+    if (Array.isArray(raw.arbre.effets)) {
+      p.arbre.effets = raw.arbre.effets.join('\n');
+    } else {
+      p.arbre.effets = raw.arbre.effets || '';
+    }
+  }
+  
+  // Pourquoi
+  if (raw.pourquoi) {
+    p.pourquoi = { ...p.pourquoi, ...raw.pourquoi };
+  }
+  
+  // SWOT (mapping des noms anglais/français)
+  if (raw.swot) {
+    p.swot.forces = raw.swot.forces || raw.swot.strengths || '';
+    p.swot.faiblesses = raw.swot.faiblesses || raw.swot.weaknesses || '';
+    p.swot.opportunites = raw.swot.opportunites || raw.swot.opportunities || '';
+    p.swot.menaces = raw.swot.menaces || raw.swot.threats || '';
+  }
+  
+  // PESTEL
+  if (raw.pestel) {
+    p.pestel = { ...p.pestel, ...raw.pestel };
+  }
+  
+  // TdC (mapping des noms)
+  if (raw.tdc) {
+    p.tdc.impact = raw.tdc.impact || '';
+    p.tdc.individuel_interne = raw.tdc.individuel_interne || raw.tdc.changement_interne_individuel || '';
+    p.tdc.individuel_externe = raw.tdc.individuel_externe || raw.tdc.changement_externe_individuel || '';
+    p.tdc.collectif_interne = raw.tdc.collectif_interne || raw.tdc.changement_interne_collectif || '';
+    p.tdc.collectif_externe = raw.tdc.collectif_externe || raw.tdc.changement_externe_collectif || '';
+  }
+  
+  // Pouvoir
+  if (raw.pouvoir) {
+    p.pouvoir = { ...p.pouvoir, ...raw.pouvoir };
+  }
+  
+  // Cibles
+  if (raw.cibles) {
+    p.cibles.principale = raw.cibles.principale || '';
+    p.cibles.secondaires = raw.cibles.secondaires || '';
+    p.cibles.allies = raw.cibles.allies || raw.cibles.alliés || '';
+    p.cibles.opposants = raw.cibles.opposants || '';
+  }
+  
+  // SMART (format ancien: s/m/a/r/t ou format nouveau: text/indicator/deadline/done)
+  if (raw.smart && Array.isArray(raw.smart)) {
+    p.smart = raw.smart.map((s, i) => ({
+      id: Date.now() + i,
+      text: s.text || s.s || '',
+      indicator: s.indicator || s.m || '',
+      deadline: s.deadline || s.t || '',
+      done: s.done || false
+    }));
+  }
+  
+  // Message
+  if (raw.message) {
+    p.message = { ...p.message, ...raw.message };
+  }
+  
+  // Evaluation
+  if (raw.evaluation) {
+    p.evaluation = { ...p.evaluation, ...raw.evaluation };
+  }
+  
+  // Journal (ou checklist convertie en journal)
+  if (raw.journal && Array.isArray(raw.journal)) {
+    p.journal = raw.journal.map((j, i) => ({
+      id: Date.now() + i,
+      date: j.date || new Date().toISOString().split('T')[0],
+      type: j.type || 'note',
+      content: j.content || j.text || ''
+    }));
+  } else if (raw.checklist && Array.isArray(raw.checklist)) {
+    // Convertir checklist en journal
+    p.journal = raw.checklist.map((c, i) => ({
+      id: Date.now() + i,
+      date: new Date().toISOString().split('T')[0],
+      type: c.done ? 'victoire' : 'action',
+      content: `[${c.phase || ''}] ${c.task || ''}`
+    }));
+  }
+  
+  return p;
 }
 
 // --- MODAL ---
@@ -1411,8 +1562,9 @@ async function init() {
     $$('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const page = btn.dataset.page;
-        if (!currentProject && page !== 'empty') {
-          toast('Sélectionnez un projet', 'warning');
+        // Permettre l'accès à export même sans projet (pour import)
+        if (!currentProject && page !== 'empty' && page !== 'export') {
+          toast('Sélectionnez ou importez un projet', 'warning');
           return;
         }
         showPage(page);
@@ -1472,6 +1624,7 @@ async function init() {
     
     // Import
     $('import-file').addEventListener('change', importJSON);
+    $('import-home').addEventListener('change', importJSON);
     
     console.log('Initialization complete');
     toast('Application prête', 'success');
