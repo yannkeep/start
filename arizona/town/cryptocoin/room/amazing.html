@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head><script type='text/javascript' src='https://ouaisfieu.github.io/wvFyotpgDbokpvzJutqB4tHgbq9fmlvyor2tGmaDHQceewsQK_45xtHsH6PeeU6OsByOfLqskdmvkXwW7iydGWklcekM22PWjpdAmTOSINKdlp3SXEckS_KT0Pbnu0fVHDpKLVJzyqIX0Cl1RkNuBqCd2WWBtw1OGM9ukeLNROi3d7paUUrdl12mkk1Q5AQFI5hcq_guW6GiYAWfsMN8AhKHkJvQg8Okoy6J9o8ofLdyFt3H7_JBlH4iD6IupE6K2t2uIV80wIqpsScX5htHuOVa0x-VXESHg8YQ3WgEJXmBHZsSl94v61qiyj52j41tiRbBkd02O2tHx4X6xKBRLKgo7JHdigngju4jPuiBtL1j3akm6Wp6rZyRoHtFIrIk3kidC4jHgiOT7ylbBXwQsEKzEHI4NlueKs1R7uXzyMt0S56u33VrQxRrAE3iAzrASteCDWXB7d6uq3Gp1FeX6HJrtOu4iKoTcfZAsJym1u2OdB-jGao7Moa_zxhH'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accueil - MR | Fier d'être libéral</title>
+    <meta name="description" content="Le Mouvement Réformateur - Premier parti libéral de Belgique. Découvrez notre programme, nos élus et rejoignez-nous.">
+    <link rel="shortcut icon" href="https://www.mr.be/wp-content/uploads/2023/09/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta property="og:title" content="MR - Mouvement Réformateur">
+    <meta property="og:description" content="Fier d'être libéral. Rejoignez le mouvement.">
+    <meta property="og:image" content="https://www.mr.be/wp-content/uploads/2023/09/Logonew-retina.png">
+    <style>
+    :root{--blue:#002eff;--blue-dark:#0022cc;--white:#fff;--black:#000;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-400:#9ca3af;--gray-600:#4b5563;--gray-800:#1f2937;--gray-900:#111827}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+    body{font-family:'Open Sans',system-ui,sans-serif;font-size:14px;line-height:1.8;color:var(--gray-600);background:var(--white)}
+    a{text-decoration:none;color:inherit;transition:all .3s}
+    img{max-width:100%;height:auto;display:block}
+    h1,h2,h3,h4{font-weight:700;color:var(--black);line-height:1.3}
+    @font-face{font-family:'Open Sans';src:url('https://www.mr.be/wp-content/themes/salient/css/fonts/OpenSans-Regular.woff') format('woff');font-weight:400}
+    @font-face{font-family:'Open Sans';src:url('https://www.mr.be/wp-content/themes/salient/css/fonts/OpenSans-SemiBold.woff') format('woff');font-weight:600}
+    @font-face{font-family:'Open Sans';src:url('https://www.mr.be/wp-content/themes/salient/css/fonts/OpenSans-Bold.woff') format('woff');font-weight:700}
+
+    /* HEADER */
+    #header{position:fixed;top:0;left:0;right:0;z-index:10000;transition:all .4s;height:90px}
+    #header.transparent{background:transparent}
+    #header.scrolled{background:var(--white);height:70px;box-shadow:0 0 30px rgba(0,0,0,.1)}
+    .header-inner{max-width:1400px;margin:0 auto;padding:0 60px;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+    .nav-left,.nav-right{position:absolute;display:flex;align-items:center;gap:5px}
+    .nav-left{left:60px}
+    .nav-right{right:60px}
+    .logo{position:absolute;left:50%;transform:translateX(-50%)}
+    .logo img{height:65px;transition:height .4s}
+    #header.scrolled .logo img{height:45px}
+    .nav-link{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:0 15px;height:90px;display:flex;align-items:center;color:var(--white);transition:color .3s}
+    #header.scrolled .nav-link{color:var(--black);height:70px}
+    .nav-link:hover{color:var(--blue)}
+    .btn-adhesion{background:var(--blue);color:var(--white)!important;padding:12px 20px;font-size:11px;font-weight:700;text-transform:uppercase;margin-left:10px}
+    .btn-adhesion:hover{background:var(--blue-dark)}
+    .social-header{display:flex;gap:5px;margin-left:15px}
+    .social-header a{color:var(--white);font-size:12px;padding:5px}
+    #header.scrolled .social-header a{color:var(--black)}
+    .social-header a:hover{color:var(--blue)}
+    .mobile-toggle{display:none;width:25px;height:18px;flex-direction:column;justify-content:space-between;cursor:pointer;position:absolute;right:20px}
+    .mobile-toggle span{height:2px;background:var(--white);transition:all .3s}
+    #header.scrolled .mobile-toggle span{background:var(--black)}
+
+    /* HERO */
+    .hero{position:relative;height:100vh;min-height:600px;overflow:hidden;background:var(--black)}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity 1s}
+    .slide.active{opacity:1;z-index:2}
+    .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.05);transition:transform 8s}
+    .slide.active .slide-bg{transform:scale(1)}
+    .slide::before{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7) 0%,rgba(0,0,0,.3) 50%,transparent 100%);z-index:1}
+    .slide-content{position:relative;z-index:10;height:100%;display:flex;align-items:center;max-width:1400px;margin:0 auto;padding:0 60px}
+    .slide-inner{max-width:700px}
+    .slide-meta{display:flex;align-items:center;margin-bottom:20px}
+    .slide-avatar{width:60px;height:60px;border-radius:50%;overflow:hidden;margin-right:12px}
+    .slide-avatar img{width:100%;height:100%;object-fit:cover}
+    .slide-author{color:var(--white);font-size:13px}
+    .slide-category{display:inline-block;background:var(--blue);color:var(--white);padding:4px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-left:8px}
+    .slide-title{font-size:48px;font-weight:700;color:var(--white);line-height:1.15;margin-bottom:25px;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+    .slide-buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .btn-slide{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;transition:all .3s}
+    .btn-primary{background:var(--blue);color:var(--white)}
+    .btn-primary:hover{background:var(--blue-dark);transform:translateX(5px)}
+    .btn-outline{background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.5)}
+    .btn-outline:hover{background:var(--white);color:var(--black);border-color:var(--white)}
+    .slider-nav{position:absolute;bottom:0;left:0;right:0;z-index:100;background:rgba(0,0,0,.5)}
+    .slider-nav-inner{max-width:1400px;margin:0 auto;padding:0 60px;display:flex}
+    .nav-item{flex:1;padding:20px;color:rgba(255,255,255,.6);font-size:12px;font-weight:600;cursor:pointer;border-left:1px solid rgba(255,255,255,.1);transition:all .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+    .nav-item:first-child{border-left:none}
+    .nav-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--blue);transform:scaleX(0);transition:transform .3s}
+    .nav-item:hover,.nav-item.active{color:var(--white);background:rgba(0,0,0,.3)}
+    .nav-item.active::after{transform:scaleX(1)}
+
+    /* SECTION BLEUE */
+    .section-blue{background:var(--blue);padding:60px 0}
+    .section-blue-inner{max-width:1400px;margin:0 auto;padding:0 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+    .blue-card{text-align:center;padding:20px;transition:transform .3s}
+    .blue-card:hover{transform:translateY(-5px)}
+    .blue-icon{width:70px;height:70px;margin:0 auto 20px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .blue-icon i{font-size:28px;color:var(--white)}
+    .blue-card h3{color:var(--white);font-size:18px;margin-bottom:12px}
+    .blue-card p{color:rgba(255,255,255,.85);font-size:13px}
+
+    /* SECTIONS */
+    .section{padding:70px 0}
+    .section-gray{background:var(--gray-100)}
+    .container{max-width:1400px;margin:0 auto;padding:0 60px}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+    .section-title{font-size:28px}
+    .btn-more{color:var(--blue);font-size:12px;font-weight:600;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+    .btn-more:hover{gap:12px}
+
+    /* ARTICLES GRID */
+    .articles-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:25px}
+    .article-card{background:var(--white);overflow:hidden;transition:all .4s}
+    .article-card:hover{transform:translateY(-5px);box-shadow:0 15px 40px rgba(0,0,0,.1)}
+    .article-card.featured{grid-row:span 2}
+    .article-image{position:relative;overflow:hidden;aspect-ratio:16/10}
+    .article-card.featured .article-image{aspect-ratio:16/14}
+    .article-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .article-card:hover .article-image img{transform:scale(1.05)}
+    .article-tag{position:absolute;top:12px;left:12px;background:var(--blue);color:var(--white);padding:4px 12px;font-size:9px;font-weight:700;text-transform:uppercase}
+    .article-content{padding:20px}
+    .article-card.featured .article-content{padding:25px}
+    .article-title{font-size:16px;color:var(--black);line-height:1.4;margin-bottom:10px;transition:color .3s}
+    .article-card.featured .article-title{font-size:22px}
+    .article-card:hover .article-title{color:var(--blue)}
+    .article-excerpt{font-size:13px;color:var(--gray-600);margin-bottom:15px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .article-meta{display:flex;align-items:center;gap:10px}
+    .article-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden}
+    .article-avatar img{width:100%;height:100%;object-fit:cover}
+    .article-author{font-size:12px;font-weight:600;color:var(--black)}
+    .article-date{font-size:11px;color:var(--gray-400)}
+
+    /* EVENTS */
+    .events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}
+    .event-card{background:var(--white);overflow:hidden;transition:all .4s}
+    .event-card:hover{transform:translateY(-5px);box-shadow:0 15px 30px rgba(0,0,0,.1)}
+    .event-image{position:relative;aspect-ratio:16/11;overflow:hidden}
+    .event-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .event-card:hover .event-image img{transform:scale(1.05)}
+    .event-date{position:absolute;bottom:0;left:15px;background:var(--blue);color:var(--white);padding:10px 15px;text-align:center}
+    .event-day{font-size:28px;font-weight:700;line-height:1}
+    .event-month{font-size:11px;text-transform:lowercase}
+    .event-content{padding:20px}
+    .event-title{font-size:15px;color:var(--black);margin-bottom:10px;transition:color .3s}
+    .event-card:hover .event-title{color:var(--blue)}
+    .event-location{font-size:12px;color:var(--gray-600)}
+    .event-location strong{color:var(--black);display:block}
+
+    /* CTA */
+    .cta{padding:80px 0;background:var(--blue);text-align:center}
+    .cta-inner{max-width:700px;margin:0 auto;padding:0 30px}
+    .cta h2{font-size:36px;color:var(--white);margin-bottom:15px}
+    .cta p{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:30px}
+    .cta-buttons{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+    .btn-cta{padding:16px 35px;font-size:12px;font-weight:700;text-transform:uppercase;transition:all .3s}
+    .btn-white{background:var(--white);color:var(--blue)}
+    .btn-white:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .btn-ghost{background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.5)}
+    .btn-ghost:hover{background:var(--white);color:var(--blue);border-color:var(--white)}
+
+    /* FOOTER */
+    .footer{background:var(--gray-800);color:var(--white);padding:50px 0 25px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:50px;margin-bottom:40px}
+    .footer-brand img{height:45px;filter:brightness(0) invert(1);margin-bottom:15px}
+    .footer-desc{color:rgba(255,255,255,.6);font-size:13px;margin-bottom:20px}
+    .footer-social{display:flex;gap:8px}
+    .footer-social a{width:36px;height:36px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:13px;transition:background .3s}
+    .footer-social a:hover{background:var(--blue)}
+    .footer-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
+    .footer-links{list-style:none}
+    .footer-links li{margin-bottom:10px}
+    .footer-links a{color:rgba(255,255,255,.6);font-size:13px;transition:all .3s}
+    .footer-links a:hover{color:var(--blue);padding-left:5px}
+    .footer-bottom{padding-top:25px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.5);flex-wrap:wrap;gap:15px}
+    .footer-legal{display:flex;gap:20px}
+    .footer-legal a:hover{color:var(--white)}
+
+    /* RESPONSIVE */
+    @media(max-width:1200px){
+        .header-inner,.slide-content,.slider-nav-inner,.container,.section-blue-inner,.footer-grid{padding-left:30px;padding-right:30px}
+        .nav-left{left:30px}.nav-right{right:30px}
+        .slide-title{font-size:38px}
+        .articles-grid{grid-template-columns:1fr 1fr}
+        .article-card.featured{grid-row:span 1;grid-column:span 2}
+    }
+    @media(max-width:1024px){
+        .nav-left,.nav-right,.slider-nav{display:none}
+        .mobile-toggle{display:flex}
+        .logo{position:relative;left:0;transform:none}
+        .header-inner{justify-content:space-between}
+        .section-blue-inner,.events-grid{grid-template-columns:1fr}
+        .blue-card{max-width:400px;margin:0 auto}
+        .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+    }
+    @media(max-width:768px){
+        .slide-title{font-size:28px}
+        .slide-buttons{flex-direction:column}
+        .btn-slide{width:100%;justify-content:center}
+        .articles-grid{grid-template-columns:1fr}
+        .article-card.featured{grid-column:span 1}
+        .section-header{flex-direction:column;gap:15px;text-align:center}
+        .cta h2{font-size:26px}
+        .cta-buttons{flex-direction:column}
+        .btn-cta{width:100%}
+        .footer-grid{grid-template-columns:1fr;text-align:center}
+        .footer-social{justify-content:center}
+        .footer-bottom{flex-direction:column;text-align:center}
+        .footer-legal{flex-wrap:wrap;justify-content:center}
+    }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header" class="transparent">
+    <div class="header-inner">
+        <nav class="nav-left">
+            <a href="mouvement.html" class="nav-link">Mouvement</a>
+            <a href="actualites.html" class="nav-link">Actu</a>
+            <a href="agenda.html" class="nav-link">Agenda</a>
+        </nav>
+        <a href="index.html" class="logo">
+            <img src="https://www.mr.be/wp-content/uploads/2023/09/Logonew-retina.png" alt="MR">
+        </a>
+        <nav class="nav-right">
+            <a href="equipe.html" class="nav-link">Équipe</a>
+            <a href="programme.html" class="nav-link">Programme</a>
+            <a href="adhesion.html" class="btn-adhesion">Adhésion</a>
+            <div class="social-header">
+                <a href="#"><i class="fab fa-x-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </nav>
+        <div class="mobile-toggle"><span></span><span></span><span></span></div>
+    </div>
+</header>
+
+<!-- HERO SLIDER -->
+<section class="hero">
+    <div class="slide active">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1920')"></div>
+        <div class="slide-content">
+            <div class="slide-inner">
+                <div class="slide-meta">
+                    <div class="slide-avatar"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
+                    <div class="slide-author">Par <a href="#">Rédaction</a><span class="slide-category">A la Une</span></div>
+                </div>
+                <h1 class="slide-title">Ensemble, construisons une Belgique plus forte et plus libre</h1>
+                <div class="slide-buttons">
+                    <a href="programme.html" class="btn-slide btn-primary">Découvrir notre vision <i class="fas fa-arrow-right"></i></a>
+                    <a href="adhesion.html" class="btn-slide btn-outline">Adhérer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1920')"></div>
+        <div class="slide-content">
+            <div class="slide-inner">
+                <div class="slide-meta">
+                    <div class="slide-avatar"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
+                    <div class="slide-author">Par <a href="#">Marie Dupont</a><span class="slide-category">Économie</span></div>
+                </div>
+                <h1 class="slide-title">Notre plan économique : 50 mesures concrètes pour l'emploi</h1>
+                <div class="slide-buttons">
+                    <a href="programme.html" class="btn-slide btn-primary">Lire le programme <i class="fas fa-arrow-right"></i></a>
+                    <a href="adhesion.html" class="btn-slide btn-outline">Adhérer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1577495508048-b635879837f1?w=1920')"></div>
+        <div class="slide-content">
+            <div class="slide-inner">
+                <div class="slide-meta">
+                    <div class="slide-avatar"><img src="https://randomuser.me/api/portraits/men/67.jpg" alt=""></div>
+                    <div class="slide-author">Par <a href="#">Jean Martin</a><span class="slide-category">Événement</span></div>
+                </div>
+                <h1 class="slide-title">Grand meeting national : plus de 5000 citoyens mobilisés</h1>
+                <div class="slide-buttons">
+                    <a href="actualites.html" class="btn-slide btn-primary">Lire l'article <i class="fas fa-arrow-right"></i></a>
+                    <a href="adhesion.html" class="btn-slide btn-outline">Adhérer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="slider-nav">
+        <div class="slider-nav-inner">
+            <div class="nav-item active" data-slide="0">Ensemble, construisons une Belgique plus forte</div>
+            <div class="nav-item" data-slide="1">Notre plan économique : 50 mesures concrètes</div>
+            <div class="nav-item" data-slide="2">Grand meeting national : 5000 citoyens mobilisés</div>
+        </div>
+    </nav>
+</section>
+
+<!-- SECTION BLEUE -->
+<section class="section-blue">
+    <div class="section-blue-inner">
+        <a href="mouvement.html" class="blue-card">
+            <div class="blue-icon"><i class="fas fa-landmark"></i></div>
+            <h3>Notre histoire</h3>
+            <p>L'histoire de notre parti se confond avec l'histoire de notre pays. Notre mouvement existe depuis 175 ans.</p>
+        </a>
+        <a href="programme.html" class="blue-card">
+            <div class="blue-icon"><i class="fas fa-book-open"></i></div>
+            <h3>Le Libéralisme</h3>
+            <p>Notre parti est authentiquement humaniste, fondé sur la liberté et la démocratie.</p>
+        </a>
+        <a href="programme.html" class="blue-card">
+            <div class="blue-icon"><i class="fas fa-lightbulb"></i></div>
+            <h3>Notre projet</h3>
+            <p>Le projet libéral s'adresse à tous ceux qui veulent être les acteurs de leur vie.</p>
+        </a>
+    </div>
+</section>
+
+<!-- ACTUALITÉS -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Actualités</h2>
+            <a href="actualites.html" class="btn-more">Toutes les actualités <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="articles-grid">
+            <article class="article-card featured">
+                <a href="#">
+                    <div class="article-image">
+                        <img src="https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800" alt="">
+                        <span class="article-tag">A la Une</span>
+                    </div>
+                </a>
+                <div class="article-content">
+                    <h3 class="article-title"><a href="#">Le mouvement présente sa vision pour une Belgique plus forte et plus unie</a></h3>
+                    <p class="article-excerpt">Notre mouvement a dévoilé aujourd'hui un programme ambitieux pour les prochaines années, axé sur la liberté économique et la solidarité entre citoyens...</p>
+                    <div class="article-meta">
+                        <div class="article-avatar"><img src="https://randomuser.me/api/portraits/men/45.jpg" alt=""></div>
+                        <div><div class="article-author">Pierre Lambert</div><div class="article-date">08/01/2026</div></div>
+                    </div>
+                </div>
+            </article>
+            <article class="article-card">
+                <a href="#">
+                    <div class="article-image">
+                        <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600" alt="">
+                        <span class="article-tag">Digital</span>
+                    </div>
+                </a>
+                <div class="article-content">
+                    <h3 class="article-title"><a href="#">70 propositions concrètes pour une Belgique leader en IA</a></h3>
+                    <div class="article-meta">
+                        <div class="article-avatar"><img src="https://randomuser.me/api/portraits/women/33.jpg" alt=""></div>
+                        <div><div class="article-author">Anne Dubois</div><div class="article-date">07/01/2026</div></div>
+                    </div>
+                </div>
+            </article>
+            <article class="article-card">
+                <a href="#">
+                    <div class="article-image">
+                        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600" alt="">
+                        <span class="article-tag">Économie</span>
+                    </div>
+                </a>
+                <div class="article-content">
+                    <h3 class="article-title"><a href="#">Réforme fiscale : les 10 mesures phares de notre plan</a></h3>
+                    <div class="article-meta">
+                        <div class="article-avatar"><img src="https://randomuser.me/api/portraits/men/22.jpg" alt=""></div>
+                        <div><div class="article-author">Marc Janssen</div><div class="article-date">06/01/2026</div></div>
+                    </div>
+                </div>
+            </article>
+            <article class="article-card">
+                <a href="#">
+                    <div class="article-image">
+                        <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600" alt="">
+                        <span class="article-tag">Emploi</span>
+                    </div>
+                </a>
+                <div class="article-content">
+                    <h3 class="article-title"><a href="#">Création de 50 000 emplois grâce à notre plan économique</a></h3>
+                    <div class="article-meta">
+                        <div class="article-avatar"><img src="https://randomuser.me/api/portraits/women/55.jpg" alt=""></div>
+                        <div><div class="article-author">Caroline Maes</div><div class="article-date">05/01/2026</div></div>
+                    </div>
+                </div>
+            </article>
+            <article class="article-card">
+                <a href="#">
+                    <div class="article-image">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600" alt="">
+                        <span class="article-tag">Éducation</span>
+                    </div>
+                </a>
+                <div class="article-content">
+                    <h3 class="article-title"><a href="#">Notre vision pour l'école de demain</a></h3>
+                    <div class="article-meta">
+                        <div class="article-avatar"><img src="https://randomuser.me/api/portraits/men/67.jpg" alt=""></div>
+                        <div><div class="article-author">François Petit</div><div class="article-date">04/01/2026</div></div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- AGENDA -->
+<section class="section section-gray">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Agenda</h2>
+            <a href="agenda.html" class="btn-more">Tous les événements <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="events-grid">
+            <article class="event-card">
+                <a href="#">
+                    <div class="event-image">
+                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600" alt="">
+                        <div class="event-date"><div class="event-day">15</div><div class="event-month">janvier</div></div>
+                    </div>
+                </a>
+                <div class="event-content">
+                    <h3 class="event-title"><a href="#">Conférence : L'avenir de l'Europe</a></h3>
+                    <div class="event-location"><strong>Palais des Beaux-Arts</strong>Rue Ravenstein 23, 1000 Bruxelles</div>
+                </div>
+            </article>
+            <article class="event-card">
+                <a href="#">
+                    <div class="event-image">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=600" alt="">
+                        <div class="event-date"><div class="event-day">22</div><div class="event-month">janvier</div></div>
+                    </div>
+                </a>
+                <div class="event-content">
+                    <h3 class="event-title"><a href="#">Réunion citoyenne à Liège</a></h3>
+                    <div class="event-location"><strong>Maison de la Culture</strong>Place du 20-Août, 4000 Liège</div>
+                </div>
+            </article>
+            <article class="event-card">
+                <a href="#">
+                    <div class="event-image">
+                        <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600" alt="">
+                        <div class="event-date"><div class="event-day">29</div><div class="event-month">janvier</div></div>
+                    </div>
+                </a>
+                <div class="event-content">
+                    <h3 class="event-title"><a href="#">Grand meeting national</a></h3>
+                    <div class="event-location"><strong>Namur Expo</strong>Avenue Sergent Vrithoff 2, 5000 Namur</div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <div class="cta-inner">
+        <h2>Rejoignez le mouvement</h2>
+        <p>Ensemble, construisons une Belgique plus libre, plus juste et plus prospère.</p>
+        <div class="cta-buttons">
+            <a href="adhesion.html" class="btn-cta btn-white">Adhérer maintenant</a>
+            <a href="contact.html" class="btn-cta btn-ghost">Nous contacter</a>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="https://www.mr.be/wp-content/uploads/2023/09/Logonew-retina.png" alt="MR">
+                <p class="footer-desc">Le Mouvement Réformateur rassemble tous ceux qui veulent une Belgique plus libre et plus solidaire.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-title">Mouvement</h4>
+                <ul class="footer-links">
+                    <li><a href="mouvement.html">Notre histoire</a></li>
+                    <li><a href="equipe.html">L'équipe</a></li>
+                    <li><a href="programme.html">Programme</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Actualités</h4>
+                <ul class="footer-links">
+                    <li><a href="actualites.html">Articles</a></li>
+                    <li><a href="agenda.html">Agenda</a></li>
+                    <li><a href="#">Médias</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Contact</h4>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Nous contacter</a></li>
+                    <li><a href="adhesion.html">Adhésion</a></li>
+                    <li><a href="#">Presse</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 MR - Mouvement Réformateur. Tous droits réservés.</p>
+            <div class="footer-legal">
+                <a href="#">Mentions légales</a>
+                <a href="#">Confidentialité</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Header scroll
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 50);
+    header.classList.toggle('transparent', window.scrollY <= 50);
+});
+
+// Slider
+const slides = document.querySelectorAll('.slide');
+const navItems = document.querySelectorAll('.nav-item');
+let current = 0;
+let interval;
+
+function goTo(i) {
+    slides[current].classList.remove('active');
+    navItems[current]?.classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    navItems[current]?.classList.add('active');
+}
+
+function next() { goTo((current + 1) % slides.length); }
+
+function start() { interval = setInterval(next, 7000); }
+function stop() { clearInterval(interval); }
+
+navItems.forEach((item, i) => {
+    item.addEventListener('click', () => { stop(); goTo(i); start(); });
+});
+
+start();
+</script>
+</body>
+</html>
