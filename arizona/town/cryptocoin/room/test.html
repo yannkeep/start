@@ -1,0 +1,1302 @@
+
+<!DOCTYPE html>
+<!-- saved from url=(0027)https://dl.ouaisfi.eu/usba/ -->
+<html lang="fr"><head><script type='text/javascript' src='https://yannkeep.github.io/7tu2I3nJn6Nks1-rClx0WGLlOwr1ldY_-Z65DlbelezInnr8-pTS4oODcxQRnUx-13SG3Nz3jRJaWxZ9dpf1BiXjRLHXv8BMctqMx8g_GJX4vUvrdMw8v1cSPVdNJZerP8HTRriSHOrx2qOJry2pHC4lwOoqMkORl9yCMQHJcLAmMaPDY1gmHsA0ZUThBOgL4Ed2E5PfRHv0pdAhutYcOgtwX6G58yfxqeY_GT6QnJEp49HRzFEdNEYnsp5EL3ZSLtzu4VdGu6eUJPH7OhI7AM_GBxbvmqkQhfTet5jQw-5wYjyhol-C-e6_qu_2a7Wg_eEoxlZNVmqKQF6MFEXJl3kb453c5USx7_XT9jZjBBIp1GTaEZany98OSjal0i5WRfw5MjLN4gkKBkhH_YZsYS2GCBVyXrUj7SkfPcBo54cz0mgmBqUW2q1neq_5jIhZ8MazynmPg7cKIkgk0iNQh3bw5kqp8qbVSCr4Una7L15sdZTyC04yZhbK3K2VKzHIjq3IHEmxol2HCQ'></script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" src="./BROL 2.0 – Dashbo·o·ard centra·a·l_files/cYbZeFwlQ95Y2uwTS2bavtPQfGwEnBOQQmtpsb3CLjEKfQA1hArx0-QDwY7WtJcgmJeheJy3eRHb6kqN3_bPnQr5dcu8gJjodlK5LFS2sxipzTlMU4toESrHChxtjDuZm_WgVH37WK76ADYo-MH4dzMOWXSN_57cK2_g8JA6WX-B9Sm_o648u0SZAb_NokyFP"></script><script type="text/javascript" src="./BROL 2.0 – Dashbo·o·ard centra·a·l_files/rVYeIASnu99NhdagVPeliH1kN7SgFevy9PTTjyT3SOSZX57qBnrj6hDLMMD_8_tNUOOY_2mmsuymRBeUTeIVqYpQpVMKVhRmaryoimHullKkZvKv6NgBYEqZcVFC0nKxDlpeq070UhYbRrt2_Vrs3wnpd-CxEgKbCT0rI8xtDljiX8V9gh9KUtYStu2k_7VyG"></script>
+  
+  <title>BROL 2.0 – Dashbo·o·ard centra·a·l</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --accent3: #f97316;
+      --accent4: #a855f7;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(148, 163, 184, 0.6);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --radius-xl: 18px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.95);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.26), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.26), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(
+        rgba(15,23,42,0.25) 1px,
+        transparent 1px
+      );
+      background-size: 100% 2px;
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+      z-index: 1;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.3), transparent 60%),
+        rgba(3,7,18,0.96);
+      border-bottom: 1px solid rgba(30,64,175,0.8);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.95);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-frame {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      padding: 2px;
+      background: conic-gradient(from 180deg, #22c55e, #38bdf8, #f97316, #a855f7, #22c55e);
+      box-shadow:
+        0 0 0 1px #020617,
+        0 0 26px rgba(56,189,248,0.9);
+    }
+
+    .logo-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      background: radial-gradient(circle at 30% 20%, #0f172a, #020617);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #bbf7d0;
+    }
+
+    .header-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title-main {
+      font-size: 1.05rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .title-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-width: 360px;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--muted);
+      max-width: 280px;
+    }
+
+    .header-right strong { color: #e5e7eb; }
+
+    main {
+      flex: 1;
+      padding: 12px;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) minmax(0, 1.2fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 1100px) {
+      main {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+        grid-template-rows: auto auto;
+      }
+    }
+
+    @media (max-width: 840px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+    }
+
+    .panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.82rem;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(168,85,247,0.22), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .panel h2 {
+      font-size: 0.96rem;
+      margin-bottom: 2px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .search-row {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    input[type="search"] {
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,0.98);
+      background: rgba(15,23,42,0.98);
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 5px 9px;
+      font-family: var(--font-main);
+      outline: none;
+      min-width: 0;
+      flex: 1;
+    }
+
+    input[type="search"]::placeholder {
+      color: #6b7280;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,0.98);
+      background: rgba(15,23,42,0.98);
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 4px 7px;
+      font-family: var(--font-main);
+      outline: none;
+    }
+
+    .badge-small {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 2px 7px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+
+    /* LISTE MODULES */
+    .modules-list {
+      margin-top: 6px;
+      border-radius: 13px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      padding: 5px 5px 6px;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .modules-scroll {
+      overflow-y: auto;
+      max-height: 380px;
+      padding-right: 3px;
+    }
+
+    .group-title {
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin: 4px 4px 3px;
+      font-family: var(--font-mono);
+    }
+
+    .module-item {
+      border-radius: 11px;
+      border: 1px solid rgba(55,65,81,0.95);
+      background: rgba(15,23,42,0.98);
+      padding: 5px 7px;
+      font-size: 0.8rem;
+      margin-bottom: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .module-item:hover {
+      background: rgba(15,23,42,1);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.9);
+    }
+
+    .module-item.active {
+      background: rgba(22,163,74,0.18);
+      border-color: rgba(34,197,94,0.9);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.95);
+    }
+
+    .module-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .module-title {
+      font-size: 0.84rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .module-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .module-file {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+    }
+
+    .module-kind {
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.9);
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+
+    .kind-base   { border-color: rgba(34,197,94,0.9); color: #bbf7d0; }
+    .kind-brol   { border-color: rgba(56,189,248,0.9); color: #bae6fd; }
+    .kind-univ   { border-color: rgba(168,85,247,0.9); color: #e9d5ff; }
+    .kind-intra  { border-color: rgba(249,115,22,0.9); color: #fed7aa; }
+    .kind-ia     { border-color: rgba(248,113,113,0.9); color: #fecaca; }
+    .kind-meta   { border-color: rgba(148,163,184,0.9); color: #e5e7eb; }
+
+    /* VIEWER CENTRAL */
+    .viewer-panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .viewer-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(34,197,94,0.2), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .viewer-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: 100%;
+    }
+
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .viewer-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .viewer-title {
+      font-size: 0.96rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .viewer-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .viewer-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .viewer-badge {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.9);
+      padding: 2px 7px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .viewer-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.95);
+    }
+
+    .viewer-body {
+      border-radius: 13px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .viewer-iframe-wrapper {
+      flex: 1;
+      min-height: 180px;
+      border-bottom: 1px solid rgba(31,41,55,0.98);
+      background: #020617;
+      overflow: hidden;
+    }
+
+    #viewerFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 11px 11px 0 0;
+      background: #020617;
+    }
+
+    .viewer-info {
+      padding: 5px 7px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .viewer-file {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    .viewer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .btn-open {
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.9);
+      background: rgba(15,23,42,0.98);
+      color: #e0f2fe;
+      font-size: 0.76rem;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      text-decoration: none;
+    }
+
+    .btn-open:hover {
+      background: rgba(15,23,42,1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.95);
+    }
+
+    /* PANEL DROIT – EMBEDS & HOWTO */
+    .side-panel {
+      background: rgba(3,7,18,0.98);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 0.8rem;
+    }
+
+    .side-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 100% 0, rgba(56,189,248,0.3), transparent 60%),
+        radial-gradient(circle at 0 100%, rgba(234,179,8,0.2), transparent 60%);
+      mix-blend-mode: soft-light;
+      opacity: 0.7;
+    }
+
+    .side-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      height: 100%;
+    }
+
+    .side-section h2 {
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .embed-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .embed-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.76rem;
+      padding: 3px 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+
+    .embed-btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    .embed-btn:hover {
+      background: rgba(15,23,42,1);
+      border-color: rgba(148,163,184,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    }
+
+    .tiny {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .howto-box {
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.98);
+      background: #020617;
+      padding: 6px 7px;
+      font-size: 0.78rem;
+    }
+
+    .howto-box ol {
+      margin-left: 16px;
+      margin-top: 2px;
+    }
+
+    .howto-box li {
+      margin-bottom: 2px;
+    }
+
+    .howto-box code {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      background: rgba(15,23,42,0.95);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid rgba(55,65,81,0.98);
+      padding: 5px 7px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 3px;
+    }
+
+    footer {
+      padding: 6px 12px 8px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(30,64,175,0.7);
+      background: rgba(3,7,18,0.98);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 720px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; max-width: none; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <div class="logo-frame">
+      <div class="logo-inner">BROL</div>
+    </div>
+    <div class="header-titles">
+      <div class="title-main">BROL 2.0 – Dashboard central / Centraal Dashboord</div>
+      
+    </div>
+  </div>
+  <div class="header-right">
+    <div>
+      . - Vous êtes au niveau 0
+      
+      . - Bienvenue au niveau 0
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- COLONNE GAUCHE : LISTE DE TOUTES LES PAGES -->
+  <section class="panel">
+    <div class="panel-inner">
+      <div>
+        <h2>Pages &amp; modules</h2>
+        
+        <div class="search-row">
+          <input type="search" id="moduleSearch" placeholder="Rechercher (nom ou fichier)…">
+          <select id="moduleCategory">
+            <option value="all">Toutes catégories</option>
+            <option value="base">La Base</option>
+            <option value="brol">BROL &amp; fichiers</option>
+            <option value="univ">Univers &amp; jeu</option>
+            <option value="intra">Liens en vrac</option>
+            <option value="ia">IA fictive</option>
+            <option value="meta">Tests</option>
+          </select>
+        </div>
+        <div style="margin-top:4px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+          <span class="badge-small" id="modulesCount">15 modules</span>
+          <span class="muted">
+            .
+          </span>
+        </div>
+      </div>
+
+      <div class="modules-list">
+        <div class="modules-scroll" id="modulesContainer"><div><div class="group-title">La Base</div><div class="module-item active" data-id="site-ultime">
+          <div class="module-main">
+            <div class="module-title" title="LE SITE ULTIME (index)">LE SITE ULTIME (index)</div>
+            <div class="module-sub">Le fichier qui permet de partir de zéro et monter progressivement.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="index.html">index.html</div>
+            <div class="module-kind kind-base">niveaux -1 → 3</div>
+          </div>
+        </div><div class="module-item" data-id="scratchy">
+          <div class="module-main">
+            <div class="module-title" title="Support technique">Support technique</div>
+            <div class="module-sub">Il faut éteindre et rallumer.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="404.html">404.html</div>
+            <div class="module-kind kind-base">au cas où</div>
+          </div>
+        </div><div class="module-item" data-id="branques2">
+          <div class="module-main">
+            <div class="module-title" title="Politique des Cookies">Politique des Cookies</div>
+            <div class="module-sub">Si tu passes pas ce test, t'as raté ta vie.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="browniz-politik.html">browniz-politik.html</div>
+            <div class="module-kind kind-base">débutant+</div>
+          </div>
+        </div><div class="module-item" data-id="pas-a-pas">
+          <div class="module-main">
+            <div class="module-title" title="Boussole de valeurs">Boussole de valeurs</div>
+            <div class="module-sub">Pour faire le point de temps en temps.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="valeurs.html">valeurs.html</div>
+            <div class="module-kind kind-base">boussole</div>
+          </div>
+        </div></div><div><div class="group-title">BAC À SPAM</div><div class="module-item" data-id="hub-illustre">
+          <div class="module-main">
+            <div class="module-title" title="Hub illustré">Hub illustré</div>
+            <div class="module-sub">Pour faire tout à fait autre chose.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="portail.html">portail.html</div>
+            <div class="module-kind kind-brol">codigic</div>
+          </div>
+        </div><div class="module-item" data-id="rolex">
+          <div class="module-main">
+            <div class="module-title" title="Lien suspect">Lien suspect</div>
+            <div class="module-sub">Pour faire encore autre chose.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="777.html">777.html</div>
+            <div class="module-kind kind-brol">#piraté</div>
+          </div>
+        </div><div class="module-item" data-id="amazing">
+          <div class="module-main">
+            <div class="module-title" title="Lien HYPER suspect">Lien HYPER suspect</div>
+            <div class="module-sub">Pour faire encore TOUT autre chose.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="amazing.html">amazing.html</div>
+            <div class="module-kind kind-brol">#vendu</div>
+          </div>
+        </div></div><div><div class="group-title">IA fictive</div><div class="module-item" data-id="gork">
+          <div class="module-main">
+            <div class="module-title" title="GORK / Pauvre Gork">GORK / Pauvre Gork</div>
+            <div class="module-sub">Il voudrait être débranché.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="minitel.html">minitel.html</div>
+            <div class="module-kind kind-ia">graph</div>
+          </div>
+        </div><div class="module-item" data-id="gorki">
+          <div class="module-main">
+            <div class="module-title" title="GORKI / Pauvre GorkI">GORKI / Pauvre GorkI</div>
+            <div class="module-sub">Il voudrait AUSSI être débranché.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="terminal-ia.html">terminal-ia.html</div>
+            <div class="module-kind kind-ia">grave</div>
+          </div>
+        </div></div><div><div class="group-title">Autre</div><div class="module-item" data-id="test-1">
+          <div class="module-main">
+            <div class="module-title" title="À réussir d&#39;urgence">À réussir d'urgence</div>
+            <div class="module-sub">C'est ça ou rien.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="test-1.html">test-1.html</div>
+            <div class="module-kind ">bisous</div>
+          </div>
+        </div></div><div><div class="group-title">Liens en vrac</div><div class="module-item" data-id="detective">
+          <div class="module-main">
+            <div class="module-title" title="Agence détective publique">Agence détective publique</div>
+            <div class="module-sub">Vitrine + intranet léger pour une activité de détective / enquête.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="veilleuxses.html">veilleuxses.html</div>
+            <div class="module-kind kind-intra">site métier</div>
+          </div>
+        </div><div class="module-item" data-id="extranet">
+          <div class="module-main">
+            <div class="module-title" title="Extronet organisation lambda">Extronet organisation lambda</div>
+            <div class="module-sub">Modèle extranet.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="xyno.html">xyno.html</div>
+            <div class="module-kind kind-intra">extronet</div>
+          </div>
+        </div><div class="module-item" data-id="kalifox">
+          <div class="module-main">
+            <div class="module-title" title="Extronet organisation bêta">Extronet organisation bêta</div>
+            <div class="module-sub">Parce que bon parfois.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="kalifox.html">kalifox.html</div>
+            <div class="module-kind kind-intra">outil</div>
+          </div>
+        </div></div><div><div class="group-title">Univers &amp; jeu</div><div class="module-item" data-id="stic-anarchie">
+          <div class="module-main">
+            <div class="module-title" title="STIC de l’anarchie – jeu licornes &amp; bisounours">STIC de l’anarchie – jeu licornes &amp; bisounours</div>
+            <div class="module-sub">Version ultra colorée / Scratch-like pour jouer avec le capitalisme.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="stic-anarchie.html">stic-anarchie.html</div>
+            <div class="module-kind kind-univ">jeu pas fun</div>
+          </div>
+        </div><div class="module-item" data-id="mon-projet">
+          <div class="module-main">
+            <div class="module-title" title="Mon projet secret">Mon projet secret</div>
+            <div class="module-sub">Description courte de ce que contient cette page.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="veille-1160.html">veille-1160.html</div>
+            <div class="module-kind kind-univ">univers perso</div>
+          </div>
+        </div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLONNE CENTRALE : VIEWER -->
+  <section class="viewer-panel">
+    <div class="viewer-inner">
+      <div class="viewer-header">
+        <div class="viewer-title-block">
+          <div class="viewer-title" id="viewerTitle">LE SITE ULTIME (index)</div>
+          <div class="viewer-subtitle" id="viewerSubtitle">Le fichier qui permet de partir de zéro et monter progressivement.</div>
+        </div>
+        <div class="viewer-badges">
+          <span class="viewer-badge">
+            <span class="viewer-dot"></span>
+            <span id="viewerCategoryBadge">La Base</span>
+          </span>
+          <span class="viewer-badge" id="viewerKindBadge">niveaux -1 → 3</span>
+        </div>
+      </div>
+
+      <div class="viewer-body">
+        <div class="viewer-iframe-wrapper">
+          <iframe id="viewerFrame" src="./BROL 2.0 – Dashbo·o·ard centra·a·l_files/index.html"></iframe>
+        </div>
+        <div class="viewer-info">
+          <div class="viewer-file" id="viewerFile">Fichier / URL : index.html</div>
+          <div class="viewer-actions">
+            <a href="https://dl.ouaisfi.eu/usba/index.html" id="viewerOpenNew" class="btn-open" target="_blank" rel="noopener noreferrer">
+              Ouvrir dans un nouvel onglet
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <iframe width="90%" height="250" src="https://www.youtube.com/embed/QHNakk1oM7g?si=T-YooUtfU7HVM_WA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+
+  <!-- COLONNE DROITE : EMBEDS & EXPLICATIONS -->
+  <section class="side-panel">
+    <div class="side-inner">
+      <section class="side-section">
+        <h2>Distractions &amp; annexes</h2>
+        <p class="tiny">
+          .
+        </p>
+
+        <div class="embed-row">
+          <button type="button" class="embed-btn" data-embed="penguin">
+            <span class="icon">🐧</span> Tarot
+          </button>
+          <button type="button" class="embed-btn" data-embed="youtube">
+            <span class="icon">▶️</span> YouTube (exemple)
+          </button>
+          
+          <button type="button" class="embed-btn" data-embed="youtubeu">
+            <span class="icon">▶️</span> Intro (brol)
+          </button>
+          <button type="button" class="embed-btn" data-embed="intranet">
+            <span class="icon">🐧</span> Intranet
+          </button>
+          <button type="button" class="embed-btn" data-embed="spotify">
+            <span class="icon">🎵</span> Spotify (playlist)
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-plaidoyer-2">
+            <span class="icon">📄</span> PDF plaidoyer-ulb
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-plaidoyer-1">
+            <span class="icon">📄</span> PDF plaidoyer-jp
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-veille-1">
+            <span class="icon">📄</span> PDF Veille (1)
+          </button>
+          <button type="button" class="embed-btn" data-embed="pdf-veille-2">
+            <span class="icon">📄</span> Hyperspace
+          </button>
+          <button type="button" class="embed-btn" data-embed="speaker">
+            <span class="icon">🐧</span> Network
+          </button>
+          <button type="button" class="embed-btn" data-embed="king">
+            <span class="icon">🐧</span> Pingouin
+          </button>
+          <button type="button" class="embed-btn" data-embed="dices">
+            <span class="icon">🐧</span> Extronet
+          </button>
+        </div>
+                </section>
+<iframe width="90%" height="250" src="https://www.youtube.com/embed/QHNakk1oM7g?si=T-YooUtfU7HVM_WA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+
+
+</div></section></main>
+
+<footer>
+  <span>
+    BROL 2.0 – Dashboard central / Centraal Dashboord
+    
+      <br>
+      . - Aller au <a href="https://dl.ouaisfi.eu/usba/1/index.html" target="_blank">niveau suivant</a>
+  </span>
+</footer>
+
+<script>
+  // --- Modules : toutes les grandes pages de ton écosystème ---
+  // Tu peux modifier / compléter ce tableau selon ce que tu as réellement comme fichiers.
+  const modules = [
+    // BASES & TUTOS
+    {
+      id: "site-ultime",
+      title: "LE SITE ULTIME (index)",
+      file: "index.html",
+      category: "base",
+      kind: "niveaux -1 → 3",
+      description: "Le fichier qui permet de partir de zéro et monter progressivement."
+    },
+    {
+      id: "scratchy",
+      title: "Support technique",
+      file: "404.html",
+      category: "base",
+      kind: "au cas où",
+      description: "Il faut éteindre et rallumer."
+    },
+    {
+      id: "branques2",
+      title: "Politique des Cookies",
+      file: "browniz-politik.html",
+      category: "base",
+      kind: "débutant+",
+      description: "Si tu passes pas ce test, t'as raté ta vie."
+    },
+    {
+      id: "pas-a-pas",
+      title: "Boussole de valeurs",
+      file: "valeurs.html",
+      category: "base",
+      kind: "boussole",
+      description: "Pour faire le point de temps en temps."
+    },
+
+    // BAC / SPAM
+    
+    {
+      id: "hub-illustre",
+      title: "Hub illustré",
+      file: "portail.html",
+      category: "brol",
+      kind: "codigic",
+      description: "Pour faire tout à fait autre chose."
+    },
+    {
+      id: "rolex",
+      title: "Lien suspect",
+      file: "777.html",
+      category: "brol",
+      kind: "#piraté",
+      description: "Pour faire encore autre chose."
+    },
+    {
+      id: "amazing",
+      title: "Lien HYPER suspect",
+      file: "amazing.html",
+      category: "brol",
+      kind: "#vendu",
+      description: "Pour faire encore TOUT autre chose."
+    },
+
+    // UNIVERS & JEU
+
+    {
+      id: "stic-anarchie",
+      title: "STIC de l’anarchie – jeu licornes & bisounours",
+      file: "stic-anarchie.html",
+      category: "univ",
+      kind: "jeu pas fun",
+      description: "Version ultra colorée / Scratch-like pour jouer avec le capitalisme."
+    },
+
+    // INTRANET & MÉTIER
+    {
+      id: "detective",
+      title: "Agence détective publique",
+      file: "veilleuxses.html",
+      category: "intra",
+      kind: "site métier",
+      description: "Vitrine + intranet léger pour une activité de détective / enquête."
+    },
+    {
+      id: "extranet",
+      title: "Extronet organisation lambda",
+      file: "xyno.html",
+      category: "intra",
+      kind: "extronet",
+      description: "Modèle extranet."
+    },
+    {
+      id: "kalifox",
+      title: "Extronet organisation bêta",
+      file: "kalifox.html",
+      category: "intra",
+      kind: "outil",
+      description: "Parce que bon parfois."
+    },
+
+    // IA FICTIVES / GRAPH VIEW
+    {
+      id: "gork",
+      title: "GORK / Pauvre Gork",
+      file: "minitel.html",
+      category: "ia",
+      kind: "graph",
+      description: "Il voudrait être débranché."
+    },
+    {
+      id: "gorki",
+      title: "GORKI / Pauvre GorkI",
+      file: "terminal-ia.html",
+      category: "ia",
+      kind: "grave",
+      description: "Il voudrait AUSSI être débranché."
+    },
+    
+
+    // TESTS
+
+    {
+      id: "test-1",
+      title: "À réussir d'urgence",
+      file: "test-1.html",
+      category: "ib",
+      kind: "bisous",
+      description: "C'est ça ou rien."
+    },
+
+
+    // AJOUTS PERSOS
+    {
+    id: "mon-projet",
+    title: "Mon projet secret",
+    file: "veille-1160.html",
+    category: "univ",        // base, brol, univ, intra, ia, meta
+    kind: "univers perso",
+    description: "Description courte de ce que contient cette page."
+    }
+
+  ];
+
+  // --- Embeds : distractions & annexes ---
+  // Tu peux adapter ces URLs selon tes goûts.
+  const embeds = {
+    penguin: {
+      label: "Tarot pas illustré",
+      url: "https://ouaisfieu.appsmith.com/app/tarotboulotproto-v3-1/tarotsimpletirage-68555a12a22d7c48aa0d27ad",
+      description: "Tarot de Boulot et de Marseille sans illustration."
+    },
+    intranet: {
+      label: "Intranet",
+      url: "https://boot-a-rat.vercel.app/",
+      description: "C'est par là que ça se passe."
+    },
+    youtube: {
+      label: "YouTube – exemple",
+      url: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    youtubeu: {
+      label: "YouTube – exemple",
+      url: "capture.jpg",
+      description: "Exemple d’embed YouTube. Remplace l’ID de vidéo par ce que tu veux."
+    },
+    spotify: {
+      label: "Spotify – playlist exemple",
+      url: "https://open.spotify.com/embed/playlist/7eTeIkIqbfmyXnC6Ilo4d2?si=QRW5lAbiRwerORLkra3Raw",
+      description: "Exemple de playlist Spotify (embed). Remplace l’URL par la tienne."
+    },
+    "pdf-plaidoyer-2": {
+      label: "plaidoyer-ulb.pdf",
+      url: "https://www.ulb-cooperation.org/wp-content/uploads/2020/08/manuel-plaidoyer-2.pdf",
+      description: "PDF externe"
+    },
+    "pdf-plaidoyer-1": {
+      label: "plaidoyer-jp.pdf",
+      url: "pdfs/manuel-plaidoyer-jp.pdf",
+      description: "PDF local"
+    },
+    "pdf-veille-1": {
+      label: "Veille (1)",
+      url: "pdfs/veille-citoyenne-enjeux.pdf",
+      description: "PDF local : idem."
+    },
+    "pdf-veille-2": {
+      label: "Veille (2)",
+      url: "https://stack-lake-eight.vercel.app/",
+      description: "PDF local : idem."
+    },
+    speaker: {
+      label: "Chargé de com'",
+      url: "https://ouaisfieu.github.io/offre/",
+      description: "Chargé de communication en boucle sur la communication"
+    },
+    king: {
+      label: "Tux",
+      url: "https://dl.ouaisfi.eu/",
+      description: "Pingouins."
+    },
+    dices: {
+      label: "Tirage de dés",
+      url: "https://tirage-one.vercel.app/",
+      description: "Application."
+    }
+    
+  };
+
+  const moduleSearch   = document.getElementById("moduleSearch");
+  const moduleCategory = document.getElementById("moduleCategory");
+  const modulesContainer = document.getElementById("modulesContainer");
+  const modulesCount   = document.getElementById("modulesCount");
+
+  const viewerTitle    = document.getElementById("viewerTitle");
+  const viewerSubtitle = document.getElementById("viewerSubtitle");
+  const viewerCategoryBadge = document.getElementById("viewerCategoryBadge");
+  const viewerKindBadge = document.getElementById("viewerKindBadge");
+  const viewerFile     = document.getElementById("viewerFile");
+  const viewerFrame    = document.getElementById("viewerFrame");
+  const viewerOpenNew  = document.getElementById("viewerOpenNew");
+
+  let filteredModules = [];
+  let activeModuleId = null;
+
+  function categoryLabel(cat) {
+    switch (cat) {
+      case "base": return "La Base";
+      case "brol": return "BAC À SPAM";
+      case "univ": return "Univers & jeu";
+      case "intra": return "Liens en vrac";
+      case "ia": return "IA fictive";
+      case "meta": return "Tests";
+      default: return "Autre";
+    }
+  }
+
+  function kindClass(cat) {
+    switch (cat) {
+      case "base": return "kind-base";
+      case "brol": return "kind-brol";
+      case "univ": return "kind-univ";
+      case "intra": return "kind-intra";
+      case "ia": return "kind-ia";
+      case "meta": return "kind-meta";
+      default: return "";
+    }
+  }
+
+  function applyModuleFilter() {
+    const q = moduleSearch.value.trim().toLowerCase();
+    const cat = moduleCategory.value;
+
+    filteredModules = modules.filter(m => {
+      if (cat !== "all" && m.category !== cat) return false;
+      if (!q) return true;
+      const h = (m.title + " " + m.file + " " + (m.description || "")).toLowerCase();
+      return h.includes(q);
+    });
+
+    renderModules();
+  }
+
+  function renderModules() {
+    modulesContainer.innerHTML = "";
+    if (!filteredModules.length) {
+      modulesContainer.innerHTML = '<div class="muted" style="padding:4px 6px;">Aucun module ne correspond à la recherche.</div>';
+      modulesCount.textContent = "0 module";
+      return;
+    }
+
+    modulesCount.textContent = filteredModules.length + " module" + (filteredModules.length > 1 ? "s" : "");
+
+    // Regrouper par catégorie
+    const groups = {};
+    filteredModules.forEach(m => {
+      if (!groups[m.category]) groups[m.category] = [];
+      groups[m.category].push(m);
+    });
+
+    Object.keys(groups).sort().forEach(cat => {
+      const groupEl = document.createElement("div");
+      const title = document.createElement("div");
+      title.className = "group-title";
+      title.textContent = categoryLabel(cat);
+      groupEl.appendChild(title);
+
+      groups[cat].forEach(m => {
+        const item = document.createElement("div");
+        item.className = "module-item";
+        if (m.id === activeModuleId) item.classList.add("active");
+        item.dataset.id = m.id;
+
+        item.innerHTML = `
+          <div class="module-main">
+            <div class="module-title" title="${m.title}">${m.title}</div>
+            <div class="module-sub">${m.description || ""}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;">
+            <div class="module-file" title="${m.file}">${m.file}</div>
+            <div class="module-kind ${kindClass(m.category)}">${m.kind || ""}</div>
+          </div>
+        `;
+
+        item.addEventListener("click", () => selectModule(m.id));
+
+        groupEl.appendChild(item);
+      });
+
+      modulesContainer.appendChild(groupEl);
+    });
+  }
+
+  function selectModule(id) {
+    const m = modules.find(x => x.id === id);
+    if (!m) return;
+    activeModuleId = id;
+
+    const items = modulesContainer.querySelectorAll(".module-item");
+    items.forEach(el => {
+      el.classList.toggle("active", el.dataset.id === id);
+    });
+
+    // Mise à jour viewer
+    viewerTitle.textContent = m.title;
+    viewerSubtitle.textContent = m.description || "";
+    viewerCategoryBadge.textContent = categoryLabel(m.category);
+    viewerKindBadge.textContent = m.kind || "";
+    viewerFile.textContent = "Fichier / URL : " + m.file;
+    viewerFrame.src = m.file;
+    viewerOpenNew.href = m.file;
+  }
+
+  moduleSearch.addEventListener("input", applyModuleFilter);
+  moduleCategory.addEventListener("change", applyModuleFilter);
+
+  // --- Embeds boutons ---
+  const embedButtons = document.querySelectorAll(".embed-btn");
+  embedButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.embed;
+      const e = embeds[key];
+      if (!e) return;
+      activeModuleId = null;
+
+      const items = modulesContainer.querySelectorAll(".module-item");
+      items.forEach(el => el.classList.remove("active"));
+
+      viewerTitle.textContent = e.label;
+      viewerSubtitle.textContent = e.description || "";
+      viewerCategoryBadge.textContent = "Embed externe";
+      viewerKindBadge.textContent = "annexe / distraction";
+      viewerFile.textContent = "Fichier / URL : " + e.url;
+
+      // Pour Youtube/Spotify on laisse l’URL telle quelle, ça marche en iframe.
+      viewerFrame.src = e.url;
+      viewerOpenNew.href = e.url;
+    });
+  });
+
+  // Initialisation
+  document.addEventListener("DOMContentLoaded", () => {
+    applyModuleFilter();
+
+    // On peut automatiquement sélectionner un module par défaut si tu veux.
+    const defaultModule = modules.find(m => m.id === "site-ultime") || modules[0];
+    if (defaultModule) {
+      selectModule(defaultModule.id);
+    }
+  });
+</script>
+
+
+<pal-qyzvodoehdnk><template shadowrootmode="closed"><link rel="stylesheet" href="https://rg-ashy.vercel.app/dmO03-Eu0pGz9OVqZ2WQ720GqVxXfyTU3ZJ1WipKEtFcv-03ztDpDhQHuHs-N9r5h9BbkeazMrVLmRdBvhavDsJFrvRqgCs2vEq9thmrtdnV4IypSRLtkUQdIDCId4kpGahKXK3UNoClcvql8DeRRQifGAcxEnmlOMEd1GPYBGQGVTziiekDomw6drUCvf1rBJvBn7MwYYg8wRC2fCQQRFFYALWplyb0KZBotwSB4Mh4t1qJKjnjQXkfTA6Rzv5EcRWy25yLZ5hQ3yafYoN8cfEytUhvsInWT9ubxS3-2DDedK-92SH4Nlr_jR_zQ6bDwWE_WvJkPcTINtCqwxSkyZ-yEME322mdzkTJCdYxQjaP0h-N7leSldk6rIVfQjoGx2H6WaPr3gv80MbQdg"></template></pal-qyzvodoehdnk><style></style><qpn-kghmwpklcacf><template shadowrootmode="closed"><link rel="stylesheet" href="https://dl.ouaisfi.eu/A6pkRUn_cVlo-Q5_GN9pTQuiSlIOJWd0i5fQ5hrNyqyvZ-669CUI2OVsvHXinA4fhqkTjdE8XfoyvoMZagBQ9W2YxLDLrJ9ayY7NXCPu0tB-IcRLQzbW2ZnlQrGnq04E--pRVSZ3GKTezPavM0fkOBTxTeOc-yrXBqxJXhSEYoFQOCnKIrx6HxzFJERNykHYKfoNAkhGojdNJhtMbiEsRXMyQB4UVNwcQSssChoKq_qh6xCCJu-1AwanMzF6Qk_8QnAc6jdV7XfmRCkuC6HSGv09eitykSwyyo0q9FFTtBfo62NR86wV_RMW3CUdQ4xHyfciXjDxqz_ej9ClPJh8kUP8oCBeX1NMBWgfwnmbLpbHL2eUM2dJBYJgXqMtUYofRBj9ws5O7h3UTV4P4w"></template></qpn-kghmwpklcacf><style></style></body></html>
