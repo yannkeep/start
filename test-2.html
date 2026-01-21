@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ RÉSISTANCE — Plaidoyer Citoyen + Solid + FHIR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Solid Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@inrupt/solid-client-authn-browser@1.17.0/dist/solid-client-authn-browser.bundle.js"></script>
+    
+    <style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   RÉSISTANCE — PLAIDOYER CITOYEN + SOLID POD + FHIR
+   Version 3.0 - Architecture Données Souveraines
+   
+   PHILOSOPHIE:
+   "Vos données vous appartiennent. Votre combat aussi."
+   
+   MODULES:
+   ✓ Solid POD - Stockage décentralisé (WebID, ACL, Sync)
+   ✓ FHIR R4 - Interopérabilité santé (Patient, Coverage, Condition)
+   ✓ Plaidoyer - 15 outils méthodologiques
+   ✓ Flashcards - 80 cartes Arizona + Quiz
+   ✓ Glossaire - Termes techniques
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mint: #7fffd4;
+    --mint-dim: rgba(127,255,212,0.12);
+    --mint-glow: rgba(127,255,212,0.35);
+    --mint-solid: #0d2922;
+    --lilac: #c8a2ff;
+    --lilac-dim: rgba(200,162,255,0.12);
+    --lilac-solid: #1f1530;
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.12);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.12);
+    
+    --bg-0: #030306;
+    --bg-1: #080810;
+    --bg-2: #0c0c16;
+    --bg-3: #12121e;
+    --bg-4: #181826;
+    --bg-5: #1e1e2e;
+    
+    --text-1: #f0f0ff;
+    --text-2: #a0a0c0;
+    --text-3: #606080;
+    
+    --danger: #ff4757;
+    --success: #2ed573;
+    --warning: #ffa502;
+    --info: #00d9ff;
+    
+    --border: rgba(127,255,212,0.12);
+    --border-hover: rgba(127,255,212,0.25);
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+    --radius: 6px;
+    --radius-lg: 10px;
+    --transition: 0.2s ease;
+    
+    --font-display: 'Orbitron', monospace;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    --header-h: 42px;
+    --nav-h: 32px;
+    --sidebar-w: 185px;
+    --sidebar-r-w: 200px;
+}
+
+[data-theme="console"] {
+    --mint: #00ff00; --lilac: #00ff00; --blue: #00ff00; --orange: #00ff00;
+    --mint-dim: rgba(0,255,0,0.12); --mint-glow: rgba(0,255,0,0.4);
+    --mint-solid: #001a00; --lilac-solid: #001a00;
+    --bg-0: #000; --bg-1: #000a00; --bg-2: #001200; --bg-3: #001a00; --bg-4: #002200; --bg-5: #002a00;
+    --text-1: #00ff00; --text-2: #00cc00; --text-3: #008800;
+    --border: rgba(0,255,0,0.15);
+}
+
+[data-theme="neon"] {
+    --mint: #00ffff; --lilac: #ff00ff; --blue: #00ffff; --orange: #ff00ff;
+    --mint-dim: rgba(0,255,255,0.12); --lilac-dim: rgba(255,0,255,0.12);
+    --mint-glow: rgba(0,255,255,0.4);
+    --mint-solid: #002a2a; --lilac-solid: #2a002a;
+    --bg-0: #05000a; --bg-1: #0a0015; --bg-2: #100020; --bg-3: #18002d; --bg-4: #200038; --bg-5: #280045;
+    --text-1: #fff; --text-2: #ff88ff; --text-3: #8844aa;
+    --border: rgba(255,0,255,0.15);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 12.5px; scroll-behavior: smooth; }
+@media (min-width: 1400px) { html { font-size: 13px; } }
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--text-1);
+    min-height: 100vh;
+    line-height: 1.45;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+::selection { background: var(--mint); color: var(--bg-0); }
+
+.app {
+    display: grid;
+    grid-template-rows: var(--header-h) var(--nav-h) 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* === HEADER === */
+.header {
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border-bottom: 1px solid var(--border);
+    padding: 0 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+}
+
+.logo-icon {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--mint), var(--lilac));
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 0 0 10px var(--mint-glow);
+}
+
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    background: linear-gradient(90deg, var(--mint), var(--lilac));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.logo-sub { font-size: 0.45rem; color: var(--text-3); font-family: var(--font-mono); }
+
+/* Solid Connection Status */
+.solid-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-3);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 0.55rem;
+}
+.solid-status .indicator {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--danger);
+}
+.solid-status.connected .indicator { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.solid-status .webid {
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-2);
+}
+
+.header-actions { display: flex; gap: 0.25rem; align-items: center; }
+.theme-switcher { display: flex; gap: 1px; background: var(--bg-3); padding: 2px; border-radius: 5px; }
+.theme-btn {
+    width: 20px; height: 20px;
+    border: none; border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.6rem;
+    transition: var(--transition);
+}
+.theme-btn:hover { background: var(--bg-4); }
+.theme-btn.active { background: var(--mint-dim); }
+
+/* === NAV === */
+.nav {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: 0 0.4rem;
+    display: flex;
+    gap: 1px;
+    overflow-x: auto;
+}
+
+.nav-tab {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 0.4rem 0.55rem;
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+.nav-tab:hover { color: var(--text-1); background: var(--bg-2); }
+.nav-tab.active { color: var(--mint); border-bottom-color: var(--mint); background: var(--bg-2); }
+.nav-tab.solid { color: var(--blue); }
+.nav-tab.solid.active { border-bottom-color: var(--blue); }
+.nav-tab.fhir { color: var(--orange); }
+.nav-tab.fhir.active { border-bottom-color: var(--orange); }
+.nav-badge { font-size: 0.4rem; padding: 1px 3px; background: var(--lilac); color: var(--bg-0); border-radius: 4px; }
+
+/* === MAIN === */
+.main {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr var(--sidebar-r-w);
+    overflow: hidden;
+}
+
+@media (max-width: 950px) {
+    .main { grid-template-columns: var(--sidebar-w) 1fr; }
+    .sidebar-right { display: none; }
+}
+@media (max-width: 600px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar-left { display: none; }
+}
+
+/* === SIDEBARS === */
+.sidebar-left, .sidebar-right {
+    background: var(--bg-1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.sidebar-left { border-right: 1px solid var(--border); }
+.sidebar-right { border-left: 1px solid var(--border); overflow-y: auto; }
+
+.sidebar-section { border-bottom: 1px solid var(--border); }
+.sidebar-header {
+    padding: 0.35rem 0.45rem;
+    font-size: 0.45rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-2);
+}
+.sidebar-content { max-height: 130px; overflow-y: auto; }
+.sidebar-content.expanded { max-height: none; flex: 1; }
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.45rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.6rem;
+    border-left: 2px solid transparent;
+}
+.item:hover { background: var(--bg-3); }
+.item.active { background: var(--mint-dim); border-left-color: var(--mint); color: var(--mint); }
+.item.completed::after { content: '✓'; color: var(--success); margin-left: auto; font-size: 0.5rem; }
+.item-icon { font-size: 0.65rem; opacity: 0.7; width: 14px; text-align: center; }
+.item-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.phase-tag { font-size: 0.4rem; padding: 1px 3px; border-radius: 3px; font-weight: 600; }
+.phase-tag.voir { background: rgba(46,213,115,0.2); color: #2ed573; }
+.phase-tag.juger { background: rgba(255,165,2,0.2); color: #ffa502; }
+.phase-tag.agir { background: rgba(255,71,87,0.2); color: #ff4757; }
+
+/* === CONTENT === */
+.content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-2);
+}
+
+.content-header {
+    padding: 0.3rem 0.5rem;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    min-height: 34px;
+}
+.content-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.content-toolbar { display: flex; gap: 0.2rem; flex-wrap: wrap; align-items: center; }
+.content-body { flex: 1; overflow: auto; padding: 0.5rem; }
+
+/* === PANELS === */
+.panel { border-bottom: 1px solid var(--border); }
+.panel-header {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.55rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bg-2);
+}
+.panel-body { padding: 0.35rem 0.45rem; }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; }
+.stat-card {
+    background: var(--bg-3);
+    border-radius: var(--radius);
+    padding: 0.3rem;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+.stat-value { font-family: var(--font-display); font-size: 0.85rem; color: var(--mint); }
+.stat-label { font-size: 0.4rem; color: var(--text-3); text-transform: uppercase; }
+
+/* === COMPONENTS === */
+.btn {
+    font-family: var(--font-body);
+    font-size: 0.55rem;
+    font-weight: 500;
+    padding: 0.2rem 0.45rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    background: var(--bg-3);
+    color: var(--text-1);
+    white-space: nowrap;
+}
+.btn:hover { background: var(--bg-4); border-color: var(--border-hover); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--mint); color: var(--bg-0); border-color: var(--mint); font-weight: 600; }
+.btn-primary:hover { box-shadow: 0 0 8px var(--mint-glow); }
+.btn-solid { background: var(--blue); color: var(--bg-0); border-color: var(--blue); }
+.btn-fhir { background: var(--orange); color: var(--bg-0); border-color: var(--orange); }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-success { background: var(--success); color: var(--bg-0); border-color: var(--success); }
+.btn-sm { padding: 0.15rem 0.3rem; font-size: 0.5rem; }
+.btn-lg { padding: 0.35rem 0.7rem; font-size: 0.65rem; }
+
+.input, .textarea, .select {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    padding: 0.3rem 0.45rem;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-1);
+    width: 100%;
+    transition: var(--transition);
+}
+.input:focus, .textarea:focus, .select:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 0 2px var(--mint-dim);
+}
+.textarea { min-height: 50px; resize: vertical; font-family: var(--font-mono); line-height: 1.4; }
+.form-group { margin-bottom: 0.5rem; }
+.form-label { display: block; font-size: 0.6rem; font-weight: 500; margin-bottom: 0.15rem; }
+.form-hint { font-size: 0.5rem; color: var(--text-3); margin-top: 0.1rem; }
+
+.card {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.card:hover { border-color: var(--border-hover); }
+.card-title { font-size: 0.7rem; font-weight: 600; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.3rem; }
+
+.grid { display: grid; gap: 0.5rem; }
+.grid-2 { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+
+/* === FLASHCARDS === */
+.fc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 0.5rem;
+}
+
+.fc-card {
+    width: 100%;
+    max-width: 400px;
+    height: 135px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.fc-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.fc-card.flipped .fc-inner { transform: rotateY(180deg); }
+
+.fc-front, .fc-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    overflow: auto;
+}
+
+.fc-front { background: var(--bg-3); }
+.fc-back {
+    background: linear-gradient(135deg, var(--mint-solid) 0%, var(--lilac-solid) 100%);
+    transform: rotateY(180deg);
+    border-color: var(--mint);
+}
+
+.fc-question { font-size: 0.75rem; line-height: 1.4; }
+.fc-answer { font-size: 0.7rem; color: var(--mint); font-weight: 500; line-height: 1.4; }
+.fc-controls { display: flex; gap: 0.35rem; margin-top: 0.5rem; }
+.fc-counter { margin-top: 0.35rem; color: var(--text-3); font-size: 0.55rem; font-family: var(--font-mono); }
+.fc-progress { width: 100%; max-width: 400px; height: 3px; background: var(--bg-1); border-radius: 2px; margin-top: 0.25rem; overflow: hidden; }
+.fc-progress-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--lilac)); transition: width 0.3s; }
+
+/* === SOLID POD SPECIFIC === */
+.pod-explorer {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0.5rem;
+    height: 100%;
+}
+
+.pod-tree {
+    background: var(--bg-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 0.4rem;
+}
+
+.pod-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.35rem;
+    cursor: pointer;
+    font-size: 0.6rem;
+    border-radius: 3px;
+    margin-bottom: 2px;
+}
+.pod-item:hover { background: var(--bg-4); }
+.pod-item.folder { color: var(--blue); }
+.pod-item.file { color: var(--text-2); }
+.pod-item.selected { background: var(--blue-dim); color: var(--blue); }
+
+.pod-content {
+    background: var(--bg-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 0.5rem;
+    overflow: auto;
+}
+
+.pod-permissions {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+.permission-badge {
+    font-size: 0.5rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: var(--bg-4);
+    border: 1px solid var(--border);
+}
+.permission-badge.read { border-color: var(--success); color: var(--success); }
+.permission-badge.write { border-color: var(--warning); color: var(--warning); }
+.permission-badge.control { border-color: var(--danger); color: var(--danger); }
+
+/* === FHIR SPECIFIC === */
+.fhir-resource {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.fhir-resource-type {
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 0.25rem;
+}
+
+.fhir-resource-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.fhir-field {
+    display: flex;
+    gap: 0.3rem;
+    font-size: 0.6rem;
+    margin-bottom: 0.15rem;
+}
+.fhir-field-label { color: var(--text-3); min-width: 80px; }
+.fhir-field-value { color: var(--text-1); }
+
+.fhir-timeline {
+    position: relative;
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+}
+
+.fhir-timeline::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+}
+
+.fhir-event {
+    position: relative;
+    padding: 0.3rem 0;
+    padding-left: 0.5rem;
+}
+
+.fhir-event::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem;
+    top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+}
+
+/* === EMPTY STATE === */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--text-3);
+    padding: 1rem;
+}
+.empty-icon { font-size: 2rem; margin-bottom: 0.35rem; opacity: 0.3; }
+.empty-title { font-size: 0.8rem; font-weight: 600; color: var(--text-2); margin-bottom: 0.15rem; }
+.empty-text { font-size: 0.6rem; margin-bottom: 0.5rem; }
+
+/* === TOAST === */
+.toast-container { position: fixed; bottom: 0.5rem; right: 0.5rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.2rem; }
+.toast {
+    background: var(--bg-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.35rem 0.5rem;
+    font-size: 0.6rem;
+    animation: toastIn 0.3s ease;
+    box-shadow: var(--shadow);
+    max-width: 240px;
+}
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--danger); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } }
+
+/* === MODAL === */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(4px);
+    z-index: 9500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 360px;
+    max-height: 85vh;
+    overflow: hidden;
+}
+.modal-header {
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-3);
+}
+.modal-title { font-weight: 600; font-size: 0.75rem; }
+.modal-close { background: none; border: none; font-size: 0.9rem; cursor: pointer; color: var(--text-2); }
+.modal-body { padding: 0.5rem; max-height: 50vh; overflow-y: auto; }
+.modal-footer { padding: 0.45rem 0.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.3rem; background: var(--bg-3); }
+
+/* === HELP/TOOL TIP === */
+.tool-help {
+    background: var(--bg-4);
+    border: 1px solid var(--lilac-dim);
+    border-left: 3px solid var(--lilac);
+    border-radius: var(--radius);
+    padding: 0.4rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.6rem;
+    color: var(--text-2);
+    line-height: 1.4;
+}
+
+/* === GLOSSARY === */
+.glossary-item {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.4rem;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+}
+.glossary-item:hover { border-color: var(--mint); }
+.glossary-term { font-weight: 600; font-size: 0.7rem; color: var(--mint); }
+.glossary-def { font-size: 0.6rem; color: var(--text-2); margin-top: 0.2rem; line-height: 1.4; display: none; }
+.glossary-item.expanded .glossary-def { display: block; }
+
+.hidden { display: none !important; }
+
+/* === ANIMATIONS === */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.syncing { animation: pulse 1.5s infinite; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="header">
+        <div class="logo" onclick="switchView('dashboard')">
+            <div class="logo-icon">⚔️</div>
+            <div>
+                <div class="logo-text">RÉSISTANCE</div>
+                <div class="logo-sub">Solid + FHIR</div>
+            </div>
+        </div>
+        
+        <div class="solid-status" id="solidStatus" onclick="switchView('solid')">
+            <span class="indicator"></span>
+            <span>Solid POD</span>
+            <span class="webid" id="solidWebId">Non connecté</span>
+        </div>
+        
+        <div class="header-actions">
+            <div class="theme-switcher">
+                <button class="theme-btn active" data-theme="dark" title="Sombre">🌑</button>
+                <button class="theme-btn" data-theme="console" title="Terminal">💻</button>
+                <button class="theme-btn" data-theme="neon" title="Néon">🌈</button>
+            </div>
+            <button class="btn btn-sm" onclick="exportProject()">💾</button>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <button class="nav-tab active" data-view="dashboard">🏠 QG</button>
+        <button class="nav-tab" data-view="tools">🛠️ Outils <span class="nav-badge">15</span></button>
+        <button class="nav-tab" data-view="flashcards">📚 Flashcards</button>
+        <button class="nav-tab" data-view="glossary">📖 Glossaire</button>
+        <button class="nav-tab solid" data-view="solid">🔐 Solid POD</button>
+        <button class="nav-tab fhir" data-view="fhir">🏥 FHIR Santé</button>
+        <button class="nav-tab" data-view="achievements">🏆 Trophées</button>
+    </nav>
+
+    <div class="main">
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-header">📁 Données</div>
+                <div class="sidebar-content" id="dataList"></div>
+            </div>
+            <div class="sidebar-section" style="flex:1;display:flex;flex-direction:column;">
+                <div class="sidebar-header">🛠️ Outils</div>
+                <div class="sidebar-content expanded" id="toolList"></div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="content-header">
+                <div class="content-title" id="contentTitle"><span>🏠</span> Quartier Général</div>
+                <div class="content-toolbar" id="contentToolbar"></div>
+            </div>
+            <div class="content-body" id="contentBody"></div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="panel">
+                <div class="panel-header">📊 État</div>
+                <div class="panel-body">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTools">0/15</div>
+                            <div class="stat-label">Outils</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statSync">—</div>
+                            <div class="stat-label">Sync POD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">🔐 Solid POD</div>
+                <div class="panel-body" id="solidPanel">
+                    <div style="font-size:0.55rem;color:var(--text-3);">Non connecté</div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">🏥 FHIR</div>
+                <div class="panel-body" id="fhirPanel">
+                    <div style="font-size:0.55rem;color:var(--text-3);">Aucune ressource</div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">📅 Échéances</div>
+                <div class="panel-body">
+                    <div style="font-size:0.55rem;color:var(--danger);margin-bottom:0.2rem;">⚠️ 1 Mars 2026</div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">Vague 2 exclusions</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Modal</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal()">Annuler</button>
+            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIGURATION & DATA MODELS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const VERSION = '3.0.0';
+
+// Solid POD Configuration
+const SOLID_CONFIG = {
+    providers: [
+        { name: 'Inrupt', url: 'https://login.inrupt.com' },
+        { name: 'Solid Community', url: 'https://solidcommunity.net' },
+        { name: 'solidweb.org', url: 'https://solidweb.org' }
+    ],
+    containers: {
+        plaidoyer: '/plaidoyer/',
+        flashcards: '/plaidoyer/flashcards/',
+        tools: '/plaidoyer/outils/',
+        fhir: '/plaidoyer/fhir/',
+        documents: '/documents/'
+    }
+};
+
+// FHIR R4 Resource Templates
+const FHIR_TEMPLATES = {
+    Patient: {
+        resourceType: 'Patient',
+        id: null,
+        meta: { profile: ['http://hl7.org/fhir/StructureDefinition/Patient'] },
+        identifier: [],
+        name: [{ use: 'official', family: '', given: [] }],
+        birthDate: null,
+        address: [],
+        contact: []
+    },
+    Coverage: {
+        resourceType: 'Coverage',
+        id: null,
+        status: 'active',
+        type: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode', code: 'PUBLICPOL' }] },
+        beneficiary: { reference: '' },
+        payor: [{ display: '' }],
+        class: []
+    },
+    Condition: {
+        resourceType: 'Condition',
+        id: null,
+        clinicalStatus: { coding: [{ code: 'active' }] },
+        code: { coding: [], text: '' },
+        subject: { reference: '' },
+        onsetDateTime: null,
+        note: []
+    },
+    DocumentReference: {
+        resourceType: 'DocumentReference',
+        id: null,
+        status: 'current',
+        type: { coding: [] },
+        subject: { reference: '' },
+        date: null,
+        description: '',
+        content: []
+    }
+};
+
+// Belgian specific codes
+const BELGIAN_CODES = {
+    mutualites: [
+        { code: 'CM', name: 'Mutualité Chrétienne' },
+        { code: 'SOL', name: 'Solidaris' },
+        { code: 'ML', name: 'Mutualités Libres' },
+        { code: 'MN', name: 'Mutualités Neutres' },
+        { code: 'CAAMI', name: 'CAAMI' }
+    ],
+    statuts: [
+        { code: 'BIM', name: 'Bénéficiaire Intervention Majorée', system: 'http://belgium.be/fhir/coverage-type' },
+        { code: 'OMNIO', name: 'Statut OMNIO', system: 'http://belgium.be/fhir/coverage-type' }
+    ],
+    documents: [
+        { code: 'CERT-MED', name: 'Certificat médical' },
+        { code: 'ATT-CPAS', name: 'Attestation CPAS' },
+        { code: 'ATT-BIM', name: 'Attestation BIM' },
+        { code: 'DEC-REV', name: 'Déclaration de revenus' }
+    ]
+};
+
+const TOOLS = [
+    { id: 1, name: 'Domino du Changement', icon: '🎯', phase: 'voir', key: 'domino', fields: ['vision', 'obstacles', 'ressources'] },
+    { id: 2, name: 'Profil d\'Engagement', icon: '👤', phase: 'voir', key: 'profil', fields: ['motivations', 'competences', 'temps', 'limites'] },
+    { id: 3, name: 'Fleur de Pouvoir', icon: '🌸', phase: 'voir', key: 'fleur', fields: ['identites', 'privileges', 'oppressions'] },
+    { id: 4, name: 'Cartographie Acteurs', icon: '🗺️', phase: 'voir', key: 'acteurs', fields: ['allies', 'opposants', 'neutres', 'cibles'] },
+    { id: 5, name: 'Analyse SWOT', icon: '📊', phase: 'juger', key: 'swot', fields: ['forces', 'faiblesses', 'opportunites', 'menaces'] },
+    { id: 6, name: 'Analyse PESTEL', icon: '🌍', phase: 'juger', key: 'pestel', fields: ['politique', 'economique', 'social', 'technologique', 'environnemental', 'legal'] },
+    { id: 7, name: 'Arbre à Problèmes', icon: '🌳', phase: 'juger', key: 'arbre', fields: ['probleme_central', 'causes', 'effets'] },
+    { id: 8, name: 'Les 5 Pourquoi', icon: '❓', phase: 'juger', key: 'pourquoi', fields: ['probleme', 'why1', 'why2', 'why3', 'why4', 'why5'] },
+    { id: 9, name: 'Théorie du Changement', icon: '📐', phase: 'juger', key: 'theorie', fields: ['situation', 'objectif', 'moyens', 'resultats'] },
+    { id: 10, name: 'Avec / Sans / Contre', icon: '⚔️', phase: 'agir', key: 'alliance', fields: ['avec', 'sans', 'contre'] },
+    { id: 11, name: 'Objectifs SMART', icon: '🎯', phase: 'agir', key: 'smart', fields: ['specifique', 'mesurable', 'atteignable', 'relevant', 'temporel'] },
+    { id: 12, name: 'Cibles & Alliances', icon: '🎪', phase: 'agir', key: 'cibles', fields: ['cible_primaire', 'cible_secondaire', 'allies', 'strategie'] },
+    { id: 13, name: 'Construction Message', icon: '📣', phase: 'agir', key: 'message', fields: ['accroche', 'probleme', 'importance', 'cible', 'action'] },
+    { id: 14, name: 'Check-list Rencontre', icon: '📋', phase: 'agir', key: 'checklist', fields: ['objectif', 'arguments', 'documents', 'questions', 'suivi'] },
+    { id: 15, name: 'Suivi & Évaluation', icon: '📈', phase: 'agir', key: 'suivi', fields: ['indicateurs', 'methodes', 'calendrier', 'lecons'] }
+];
+
+const GLOSSARY = [
+    { term: 'Arizona', def: 'Coalition gouvernementale fédérale belge (2025): N-VA, MR, Engagés, CD&V, Vooruit.' },
+    { term: 'Article 23', def: 'Constitution belge: droit à la sécurité sociale et à une vie conforme à la dignité humaine.' },
+    { term: 'BIM', def: 'Bénéficiaire de l\'Intervention Majorée - réductions sur les soins de santé.' },
+    { term: 'CPAS', def: 'Centre Public d\'Action Sociale - aide sociale communale.' },
+    { term: 'FHIR', def: 'Fast Healthcare Interoperability Resources - standard HL7 d\'échange de données santé.' },
+    { term: 'ONEM', def: 'Office National de l\'Emploi - assurance chômage belge.' },
+    { term: 'RIS', def: 'Revenu d\'Intégration Sociale - aide de dernier recours via CPAS.' },
+    { term: 'Solid POD', def: 'Personal Online Datastore - stockage décentralisé où l\'utilisateur contrôle ses données.' },
+    { term: 'Standstill', def: 'Principe juridique interdisant de réduire le niveau de protection sociale existant.' },
+    { term: 'WebID', def: 'Identifiant décentralisé utilisé par Solid pour l\'authentification.' }
+];
+
+const FLASHCARDS_ARIZONA = [
+    { q: "Comment appelle-t-on la coalition gouvernementale fédérale formée en 2025 ?", a: "La coalition Arizona." },
+    { q: "Qui est le Premier ministre de la coalition Arizona ?", a: "Bart De Wever (N-VA)." },
+    { q: "Quels sont les 5 partis de la coalition Arizona ?", a: "N-VA, MR, Les Engagés, CD&V et Vooruit." },
+    { q: "À combien s'élève l'effort budgétaire projeté par Arizona d'ici 2029 ?", a: "23 milliards d'euros." },
+    { q: "La réforme Arizona limite les allocations chômage à combien de mois ?", a: "24 mois." },
+    { q: "Combien de personnes risquent de perdre leurs allocations ?", a: "90.000 personnes." },
+    { q: "Que signifie l'acronyme RIS ?", a: "Revenu d'Intégration Sociale." },
+    { q: "Que signifie l'acronyme BIM ?", a: "Bénéficiaire de l'Intervention Majorée." },
+    { q: "Quel article de la Constitution garantit le droit à une vie digne ?", a: "L'article 23." },
+    { q: "Quel principe juridique interdit de réduire la protection sociale ?", a: "Le principe de standstill (effet cliquet)." },
+    { q: "Combien de personnes basculeront immédiatement vers le RIS ?", a: "30.122 individus." },
+    { q: "Quelle sanction financière pour un malade jugé non coopérant ?", a: "2,5% de l'indemnité." },
+    { q: "Quel pourcentage d'étudiants belges en insécurité alimentaire ?", a: "58%." },
+    { q: "À quelle date s'applique la Vague 2 d'exclusion du chômage ?", a: "Le 1er mars 2026." },
+    { q: "Quel organisme a introduit un recours constitutionnel en oct. 2025 ?", a: "Le front commun syndical et associatif." }
+];
+
+const ACHIEVEMENTS = [
+    { id: 'first_tool', name: 'Premier Pas', icon: '🛠️', xp: 50 },
+    { id: 'solid_connect', name: 'Souverain', icon: '🔐', xp: 75 },
+    { id: 'fhir_import', name: 'E-Santé', icon: '🏥', xp: 75 },
+    { id: 'all_tools', name: 'Arsenal Complet', icon: '🏆', xp: 500 },
+    { id: 'pod_sync', name: 'Synchronisé', icon: '☁️', xp: 50 }
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPLICATION STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const APP = {
+    xp: 0,
+    achievements: [],
+    theme: 'dark',
+    currentView: 'dashboard',
+    currentTool: null,
+    completedTools: [],
+    project: {},
+    
+    // Solid State
+    solid: {
+        connected: false,
+        session: null,
+        webId: null,
+        podUrl: null,
+        lastSync: null
+    },
+    
+    // FHIR State
+    fhir: {
+        patient: null,
+        coverages: [],
+        conditions: [],
+        documents: []
+    }
+};
+
+let fcState = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id.replace('#', ''));
+const $$ = sel => document.querySelectorAll(sel);
+const esc = s => typeof s !== 'string' ? (s || '') : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function toast(msg, type = 'info') {
+    const c = $('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+function openModal(title, content, onConfirm) {
+    $('modalTitle').textContent = title;
+    $('modalBody').innerHTML = content;
+    $('modalOverlay').classList.add('active');
+    $('modalConfirm').onclick = onConfirm;
+}
+
+function closeModal() { $('modalOverlay').classList.remove('active'); }
+
+function generateId() { return 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SOLID POD MODULE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const SolidModule = {
+    // Initialize Solid client
+    async init() {
+        // Check if we're returning from authentication
+        try {
+            if (typeof solidClientAuthentication !== 'undefined') {
+                await solidClientAuthentication.handleIncomingRedirect({ restorePreviousSession: true });
+                const session = solidClientAuthentication.getDefaultSession();
+                if (session.info.isLoggedIn) {
+                    this.onLogin(session);
+                }
+            }
+        } catch (e) {
+            console.log('Solid client not available:', e.message);
+        }
+    },
+
+    // Login to Solid POD
+    async login(provider) {
+        try {
+            if (typeof solidClientAuthentication === 'undefined') {
+                // Fallback: simulate connection for demo
+                this.simulateLogin(provider);
+                return;
+            }
+            
+            await solidClientAuthentication.login({
+                oidcIssuer: provider,
+                redirectUrl: window.location.href,
+                clientName: 'Plaidoyer Citoyen'
+            });
+        } catch (e) {
+            console.error('Login error:', e);
+            toast('Erreur de connexion Solid', 'error');
+        }
+    },
+
+    // Simulate login for demo/offline mode
+    simulateLogin(provider) {
+        APP.solid.connected = true;
+        APP.solid.webId = `https://demo.solidcommunity.net/profile/card#me`;
+        APP.solid.podUrl = `https://demo.solidcommunity.net/`;
+        APP.solid.lastSync = new Date().toISOString();
+        
+        this.updateUI();
+        unlock('solid_connect');
+        toast('🔐 Connecté à Solid (mode démo)', 'success');
+        saveState();
+    },
+
+    onLogin(session) {
+        APP.solid.connected = true;
+        APP.solid.session = session;
+        APP.solid.webId = session.info.webId;
+        APP.solid.podUrl = session.info.webId.replace('/profile/card#me', '/');
+        APP.solid.lastSync = new Date().toISOString();
+        
+        this.updateUI();
+        unlock('solid_connect');
+        toast('🔐 Connecté à Solid!', 'success');
+        saveState();
+    },
+
+    // Logout
+    async logout() {
+        try {
+            if (typeof solidClientAuthentication !== 'undefined' && APP.solid.session) {
+                await solidClientAuthentication.logout();
+            }
+        } catch (e) {
+            console.log('Logout error:', e);
+        }
+        
+        APP.solid.connected = false;
+        APP.solid.session = null;
+        APP.solid.webId = null;
+        APP.solid.podUrl = null;
+        
+        this.updateUI();
+        toast('Déconnecté de Solid');
+        saveState();
+    },
+
+    // Update UI elements
+    updateUI() {
+        const status = $('solidStatus');
+        const webIdEl = $('solidWebId');
+        
+        if (APP.solid.connected) {
+            status.classList.add('connected');
+            webIdEl.textContent = APP.solid.webId?.split('/').slice(-2, -1)[0] || 'Connecté';
+        } else {
+            status.classList.remove('connected');
+            webIdEl.textContent = 'Non connecté';
+        }
+        
+        this.updatePanels();
+    },
+
+    updatePanels() {
+        const panel = $('solidPanel');
+        if (APP.solid.connected) {
+            panel.innerHTML = `
+                <div style="font-size:0.5rem;color:var(--success);margin-bottom:0.2rem;">✓ Connecté</div>
+                <div style="font-size:0.45rem;color:var(--text-3);word-break:break-all;">${APP.solid.webId || ''}</div>
+                <div style="font-size:0.45rem;color:var(--text-3);margin-top:0.15rem;">Sync: ${APP.solid.lastSync ? new Date(APP.solid.lastSync).toLocaleTimeString() : '—'}</div>
+            `;
+        } else {
+            panel.innerHTML = `<div style="font-size:0.5rem;color:var(--text-3);">Non connecté</div>`;
+        }
+        
+        $('statSync').textContent = APP.solid.connected ? '✓' : '—';
+    },
+
+    // Save data to POD (simulated)
+    async saveToContainer(container, filename, data) {
+        if (!APP.solid.connected) {
+            toast('Non connecté à Solid', 'error');
+            return false;
+        }
+        
+        // In real implementation, would use @inrupt/solid-client
+        console.log(`Saving to ${container}${filename}:`, data);
+        APP.solid.lastSync = new Date().toISOString();
+        this.updatePanels();
+        toast('💾 Synchronisé avec POD', 'success');
+        return true;
+    },
+
+    // Load data from POD (simulated)
+    async loadFromContainer(container, filename) {
+        if (!APP.solid.connected) return null;
+        
+        // In real implementation, would use @inrupt/solid-client
+        console.log(`Loading from ${container}${filename}`);
+        return null;
+    },
+
+    // Sync all project data to POD
+    async syncProject() {
+        if (!APP.solid.connected) {
+            toast('Connectez-vous d\'abord à Solid', 'error');
+            return;
+        }
+        
+        const projectData = {
+            version: VERSION,
+            synced: new Date().toISOString(),
+            tools: APP.project,
+            completedTools: APP.completedTools,
+            fhir: APP.fhir
+        };
+        
+        await this.saveToContainer(SOLID_CONFIG.containers.plaidoyer, 'project.json', projectData);
+        unlock('pod_sync');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FHIR MODULE
+// ═══════════════════════════════════════════════════════════════════════════
+
+const FHIRModule = {
+    // Create a new Patient resource
+    createPatient(data) {
+        const patient = JSON.parse(JSON.stringify(FHIR_TEMPLATES.Patient));
+        patient.id = generateId();
+        patient.name[0].family = data.family || '';
+        patient.name[0].given = data.given ? [data.given] : [];
+        patient.birthDate = data.birthDate || null;
+        
+        if (data.niss) {
+            patient.identifier.push({
+                system: 'http://belgium.be/niss',
+                value: data.niss
+            });
+        }
+        
+        return patient;
+    },
+
+    // Create a Coverage resource (BIM status, mutuelle)
+    createCoverage(data) {
+        const coverage = JSON.parse(JSON.stringify(FHIR_TEMPLATES.Coverage));
+        coverage.id = generateId();
+        coverage.beneficiary.reference = `Patient/${APP.fhir.patient?.id || 'unknown'}`;
+        coverage.payor[0].display = data.mutuelle || '';
+        
+        if (data.type) {
+            coverage.class.push({
+                type: { coding: [{ code: 'group' }] },
+                value: data.type,
+                name: BELGIAN_CODES.statuts.find(s => s.code === data.type)?.name || data.type
+            });
+        }
+        
+        coverage.period = {
+            start: data.startDate || new Date().toISOString().split('T')[0],
+            end: data.endDate || null
+        };
+        
+        return coverage;
+    },
+
+    // Create a Condition resource (medical certificate)
+    createCondition(data) {
+        const condition = JSON.parse(JSON.stringify(FHIR_TEMPLATES.Condition));
+        condition.id = generateId();
+        condition.subject.reference = `Patient/${APP.fhir.patient?.id || 'unknown'}`;
+        condition.code.text = data.description || '';
+        condition.onsetDateTime = data.onsetDate || new Date().toISOString();
+        
+        if (data.note) {
+            condition.note.push({ text: data.note });
+        }
+        
+        return condition;
+    },
+
+    // Create a DocumentReference
+    createDocument(data) {
+        const doc = JSON.parse(JSON.stringify(FHIR_TEMPLATES.DocumentReference));
+        doc.id = generateId();
+        doc.subject.reference = `Patient/${APP.fhir.patient?.id || 'unknown'}`;
+        doc.description = data.description || '';
+        doc.date = data.date || new Date().toISOString();
+        
+        const docType = BELGIAN_CODES.documents.find(d => d.code === data.type);
+        if (docType) {
+            doc.type.coding.push({
+                system: 'http://belgium.be/fhir/document-type',
+                code: docType.code,
+                display: docType.name
+            });
+        }
+        
+        return doc;
+    },
+
+    // Import sample data for demo
+    importDemoData() {
+        // Create patient
+        APP.fhir.patient = this.createPatient({
+            given: 'Jean',
+            family: 'Dupont',
+            birthDate: '1975-03-15',
+            niss: '75031512345'
+        });
+        
+        // Create BIM coverage
+        APP.fhir.coverages.push(this.createCoverage({
+            mutuelle: 'Solidaris',
+            type: 'BIM',
+            startDate: '2024-01-01'
+        }));
+        
+        // Create medical condition
+        APP.fhir.conditions.push(this.createCondition({
+            description: 'Incapacité de travail - Burnout',
+            onsetDate: '2025-06-15',
+            note: 'Suivi psychiatrique en cours'
+        }));
+        
+        // Create document reference
+        APP.fhir.documents.push(this.createDocument({
+            type: 'ATT-BIM',
+            description: 'Attestation BIM 2025',
+            date: '2025-01-15'
+        }));
+        
+        unlock('fhir_import');
+        toast('🏥 Données FHIR importées', 'success');
+        saveState();
+        render();
+    },
+
+    // Export as FHIR Bundle
+    exportBundle() {
+        const bundle = {
+            resourceType: 'Bundle',
+            id: generateId(),
+            type: 'collection',
+            timestamp: new Date().toISOString(),
+            entry: []
+        };
+        
+        if (APP.fhir.patient) {
+            bundle.entry.push({ resource: APP.fhir.patient });
+        }
+        
+        APP.fhir.coverages.forEach(c => bundle.entry.push({ resource: c }));
+        APP.fhir.conditions.forEach(c => bundle.entry.push({ resource: c }));
+        APP.fhir.documents.forEach(d => bundle.entry.push({ resource: d }));
+        
+        return bundle;
+    },
+
+    // Update UI panels
+    updatePanels() {
+        const panel = $('fhirPanel');
+        const total = (APP.fhir.patient ? 1 : 0) + APP.fhir.coverages.length + APP.fhir.conditions.length + APP.fhir.documents.length;
+        
+        if (total === 0) {
+            panel.innerHTML = `<div style="font-size:0.5rem;color:var(--text-3);">Aucune ressource</div>`;
+        } else {
+            panel.innerHTML = `
+                <div style="font-size:0.5rem;">
+                    ${APP.fhir.patient ? `<div style="color:var(--orange);">👤 Patient</div>` : ''}
+                    ${APP.fhir.coverages.length ? `<div style="color:var(--success);">🛡️ ${APP.fhir.coverages.length} Coverage</div>` : ''}
+                    ${APP.fhir.conditions.length ? `<div style="color:var(--warning);">🏥 ${APP.fhir.conditions.length} Condition</div>` : ''}
+                    ${APP.fhir.documents.length ? `<div style="color:var(--info);">📄 ${APP.fhir.documents.length} Document</div>` : ''}
+                </div>
+            `;
+        }
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    SolidModule.init();
+    setupEvents();
+    render();
+});
+
+function setupEvents() {
+    $$('.theme-btn').forEach(btn => btn.onclick = () => setTheme(btn.dataset.theme));
+    $$('.nav-tab').forEach(tab => tab.onclick = () => switchView(tab.dataset.view));
+    document.onkeydown = handleKeyboard;
+}
+
+function handleKeyboard(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (APP.currentView === 'flashcards' && fcState) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); fcFlip(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); fcNext(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); fcPrev(); }
+    }
+}
+
+function setTheme(theme) {
+    APP.theme = theme;
+    document.documentElement.dataset.theme = theme;
+    $$('.theme-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === theme));
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIEW MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════
+
+function switchView(view) {
+    APP.currentView = view;
+    APP.currentTool = null;
+    $$('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+    render();
+}
+
+function render() {
+    renderSidebars();
+    renderContent();
+    updateStats();
+    SolidModule.updatePanels();
+    FHIRModule.updatePanels();
+}
+
+function renderSidebars() {
+    // Data list
+    const dataItems = [];
+    if (APP.fhir.patient) dataItems.push({ icon: '👤', name: 'Patient', type: 'fhir' });
+    APP.fhir.coverages.forEach((c, i) => dataItems.push({ icon: '🛡️', name: `Coverage ${i + 1}`, type: 'fhir' }));
+    APP.fhir.conditions.forEach((c, i) => dataItems.push({ icon: '🏥', name: `Condition ${i + 1}`, type: 'fhir' }));
+    
+    $('dataList').innerHTML = dataItems.length === 0 
+        ? '<div style="padding:0.25rem 0.45rem;color:var(--text-3);font-size:0.5rem;">Aucune donnée</div>'
+        : dataItems.map(d => `<div class="item"><span class="item-icon">${d.icon}</span><span class="item-name">${d.name}</span></div>`).join('');
+    
+    // Tool list
+    $('toolList').innerHTML = TOOLS.map(t => `
+        <div class="item ${APP.currentTool === t.id ? 'active' : ''} ${APP.completedTools.includes(t.id) ? 'completed' : ''}" onclick="openTool(${t.id})">
+            <span class="item-icon">${t.icon}</span>
+            <span class="item-name">${t.name}</span>
+            <span class="phase-tag ${t.phase}">${t.phase}</span>
+        </div>
+    `).join('');
+}
+
+function renderContent() {
+    const body = $('contentBody'), title = $('contentTitle'), toolbar = $('contentToolbar');
+    
+    if (APP.currentTool) return renderToolEditor(body, title, toolbar);
+    
+    const views = {
+        dashboard: renderDashboard,
+        tools: renderTools,
+        flashcards: renderFlashcards,
+        glossary: renderGlossary,
+        solid: renderSolid,
+        fhir: renderFHIR,
+        achievements: renderAchievements
+    };
+    
+    (views[APP.currentView] || renderDashboard)(body, title, toolbar);
+}
+
+function updateStats() {
+    $('statTools').textContent = `${APP.completedTools.length}/15`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VIEW RENDERERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderDashboard(body, title, toolbar) {
+    title.innerHTML = '<span>🏠</span> Quartier Général';
+    toolbar.innerHTML = '';
+    
+    body.innerHTML = `
+        <div style="max-width:600px;">
+            <div class="card">
+                <div class="card-title">⚔️ Plaidoyer Citoyen + Données Souveraines</div>
+                <p style="font-size:0.6rem;color:var(--text-2);line-height:1.5;">
+                    Arsenal méthodologique avec <strong>Solid POD</strong> (stockage décentralisé) 
+                    et <strong>FHIR</strong> (interopérabilité santé). Vos données vous appartiennent.
+                </p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="switchView('solid')">
+                    <div style="font-size:1.2rem;color:var(--blue);">🔐</div>
+                    <div style="font-size:0.6rem;font-weight:600;">Solid POD</div>
+                    <div style="font-size:0.5rem;color:${APP.solid.connected ? 'var(--success)' : 'var(--text-3)'};">${APP.solid.connected ? 'Connecté' : 'Non connecté'}</div>
+                </div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="switchView('fhir')">
+                    <div style="font-size:1.2rem;color:var(--orange);">🏥</div>
+                    <div style="font-size:0.6rem;font-weight:600;">FHIR Santé</div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">${(APP.fhir.coverages.length + APP.fhir.conditions.length)} ressources</div>
+                </div>
+                <div class="card" style="text-align:center;cursor:pointer;" onclick="switchView('tools')">
+                    <div style="font-size:1.2rem;color:var(--mint);">🛠️</div>
+                    <div style="font-size:0.6rem;font-weight:600;">Outils</div>
+                    <div style="font-size:0.5rem;color:var(--text-3);">${APP.completedTools.length}/15</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">⚡ Actions</div>
+                <div style="display:flex;gap:0.25rem;flex-wrap:wrap;">
+                    <button class="btn btn-solid" onclick="switchView('solid')">🔐 Connecter Solid</button>
+                    <button class="btn btn-fhir" onclick="FHIRModule.importDemoData()">🏥 Importer démo FHIR</button>
+                    <button class="btn" onclick="loadDemoTools()">🎯 Outils Arizona</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSolid(body, title, toolbar) {
+    title.innerHTML = '<span>🔐</span> Solid POD';
+    toolbar.innerHTML = APP.solid.connected 
+        ? `<button class="btn btn-sm" onclick="SolidModule.syncProject()">☁️ Sync</button><button class="btn btn-sm btn-danger" onclick="SolidModule.logout()">Déconnexion</button>`
+        : '';
+    
+    if (!APP.solid.connected) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🔐</div>
+                <div class="empty-title">Connectez votre Solid POD</div>
+                <div class="empty-text">Stockage décentralisé — Vos données vous appartiennent</div>
+                <div class="tool-help" style="max-width:350px;text-align:left;">
+                    <strong>Qu'est-ce que Solid?</strong><br>
+                    Un standard du W3C (Tim Berners-Lee) permettant de stocker vos données 
+                    dans un espace que <em>vous</em> contrôlez, avec partage sélectif.
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.5rem;">
+                    ${SOLID_CONFIG.providers.map(p => `
+                        <button class="btn btn-solid" onclick="SolidModule.login('${p.url}')">${p.name}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    } else {
+        body.innerHTML = `
+            <div style="max-width:600px;">
+                <div class="card" style="border-color:var(--success);">
+                    <div class="card-title" style="color:var(--success);">✓ Connecté</div>
+                    <div style="font-size:0.6rem;color:var(--text-2);word-break:break-all;margin-bottom:0.3rem;">
+                        <strong>WebID:</strong> ${APP.solid.webId}
+                    </div>
+                    <div style="font-size:0.55rem;color:var(--text-3);">
+                        <strong>POD URL:</strong> ${APP.solid.podUrl}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📁 Structure POD</div>
+                    <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-2);line-height:1.6;">
+                        ${APP.solid.podUrl}<br>
+                        ├── /plaidoyer/<br>
+                        │   ├── project.json<br>
+                        │   ├── flashcards/<br>
+                        │   ├── outils/<br>
+                        │   └── fhir/<br>
+                        └── /documents/
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🔄 Synchronisation</div>
+                    <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                        <button class="btn btn-solid" onclick="SolidModule.syncProject()">☁️ Synchroniser tout</button>
+                        <button class="btn" onclick="toast('Export POD → Local')">📥 Import depuis POD</button>
+                    </div>
+                    <div style="font-size:0.5rem;color:var(--text-3);margin-top:0.3rem;">
+                        Dernière sync: ${APP.solid.lastSync ? new Date(APP.solid.lastSync).toLocaleString() : 'Jamais'}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function renderFHIR(body, title, toolbar) {
+    title.innerHTML = '<span>🏥</span> FHIR Santé';
+    toolbar.innerHTML = `
+        <button class="btn btn-sm btn-fhir" onclick="FHIRModule.importDemoData()">📥 Démo</button>
+        <button class="btn btn-sm" onclick="exportFHIRBundle()">📤 Export Bundle</button>
+    `;
+    
+    const total = (APP.fhir.patient ? 1 : 0) + APP.fhir.coverages.length + APP.fhir.conditions.length + APP.fhir.documents.length;
+    
+    if (total === 0) {
+        body.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🏥</div>
+                <div class="empty-title">Aucune ressource FHIR</div>
+                <div class="empty-text">Standard d'interopérabilité santé (HL7)</div>
+                <div class="tool-help" style="max-width:350px;text-align:left;">
+                    <strong>Ressources supportées:</strong><br>
+                    • <strong>Patient</strong> — Identité<br>
+                    • <strong>Coverage</strong> — Statut BIM, mutuelle<br>
+                    • <strong>Condition</strong> — Certificats médicaux<br>
+                    • <strong>DocumentReference</strong> — Attestations
+                </div>
+                <div style="display:flex;gap:0.3rem;margin-top:0.5rem;">
+                    <button class="btn btn-fhir" onclick="FHIRModule.importDemoData()">🏥 Charger données démo</button>
+                    <button class="btn" onclick="openNewPatientModal()">➕ Créer Patient</button>
+                </div>
+            </div>
+        `;
+    } else {
+        body.innerHTML = `
+            <div style="max-width:600px;">
+                ${APP.fhir.patient ? `
+                    <div class="fhir-resource">
+                        <div class="fhir-resource-type">Patient</div>
+                        <div class="fhir-resource-title">👤 ${APP.fhir.patient.name[0].given.join(' ')} ${APP.fhir.patient.name[0].family}</div>
+                        <div class="fhir-field"><span class="fhir-field-label">Naissance:</span><span class="fhir-field-value">${APP.fhir.patient.birthDate || '—'}</span></div>
+                        <div class="fhir-field"><span class="fhir-field-label">NISS:</span><span class="fhir-field-value">${APP.fhir.patient.identifier[0]?.value || '—'}</span></div>
+                    </div>
+                ` : ''}
+                
+                ${APP.fhir.coverages.map(c => `
+                    <div class="fhir-resource">
+                        <div class="fhir-resource-type">Coverage</div>
+                        <div class="fhir-resource-title">🛡️ ${c.payor[0].display}</div>
+                        <div class="fhir-field"><span class="fhir-field-label">Statut:</span><span class="fhir-field-value" style="color:var(--success);">${c.class[0]?.name || c.status}</span></div>
+                        <div class="fhir-field"><span class="fhir-field-label">Depuis:</span><span class="fhir-field-value">${c.period?.start || '—'}</span></div>
+                    </div>
+                `).join('')}
+                
+                ${APP.fhir.conditions.map(c => `
+                    <div class="fhir-resource">
+                        <div class="fhir-resource-type">Condition</div>
+                        <div class="fhir-resource-title">🏥 ${c.code.text}</div>
+                        <div class="fhir-field"><span class="fhir-field-label">Début:</span><span class="fhir-field-value">${c.onsetDateTime?.split('T')[0] || '—'}</span></div>
+                        ${c.note[0] ? `<div class="fhir-field"><span class="fhir-field-label">Note:</span><span class="fhir-field-value">${c.note[0].text}</span></div>` : ''}
+                    </div>
+                `).join('')}
+                
+                ${APP.fhir.documents.map(d => `
+                    <div class="fhir-resource">
+                        <div class="fhir-resource-type">DocumentReference</div>
+                        <div class="fhir-resource-title">📄 ${d.type.coding[0]?.display || 'Document'}</div>
+                        <div class="fhir-field"><span class="fhir-field-label">Description:</span><span class="fhir-field-value">${d.description}</span></div>
+                        <div class="fhir-field"><span class="fhir-field-label">Date:</span><span class="fhir-field-value">${d.date?.split('T')[0] || '—'}</span></div>
+                    </div>
+                `).join('')}
+                
+                <div class="card">
+                    <div class="card-title">➕ Ajouter</div>
+                    <div style="display:flex;gap:0.25rem;flex-wrap:wrap;">
+                        <button class="btn btn-sm" onclick="openNewCoverageModal()">🛡️ Coverage</button>
+                        <button class="btn btn-sm" onclick="openNewConditionModal()">🏥 Condition</button>
+                        <button class="btn btn-sm" onclick="openNewDocumentModal()">📄 Document</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function renderTools(body, title, toolbar) {
+    title.innerHTML = '<span>🛠️</span> Outils Méthodologiques';
+    toolbar.innerHTML = '';
+    
+    body.innerHTML = `
+        <div class="tool-help">
+            <strong>VOIR</strong> → Comprendre | <strong>JUGER</strong> → Analyser | <strong>AGIR</strong> → Planifier
+        </div>
+        <div class="grid grid-2">
+            ${TOOLS.map(t => `
+                <div class="card" style="cursor:pointer;${APP.completedTools.includes(t.id) ? 'border-color:var(--success);' : ''}" onclick="openTool(${t.id})">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                        <span style="font-size:0.9rem;">${t.icon}</span>
+                        <span class="phase-tag ${t.phase}">${t.phase.toUpperCase()}</span>
+                    </div>
+                    <div style="font-weight:600;font-size:0.65rem;margin-top:0.2rem;">${t.name}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderFlashcards(body, title, toolbar) {
+    title.innerHTML = '<span>📚</span> Flashcards Arizona';
+    toolbar.innerHTML = `<span style="font-size:0.5rem;color:var(--text-3);">${FLASHCARDS_ARIZONA.length} cartes</span>`;
+    
+    if (!fcState) fcState = { cards: shuffle([...FLASHCARDS_ARIZONA]), index: 0, flipped: false };
+    
+    const card = fcState.cards[fcState.index];
+    const progress = ((fcState.index + 1) / fcState.cards.length) * 100;
+    
+    body.innerHTML = `
+        <div class="fc-container">
+            <div class="fc-card ${fcState.flipped ? 'flipped' : ''}" onclick="fcFlip()">
+                <div class="fc-inner">
+                    <div class="fc-front"><div class="fc-question">${esc(card.q)}</div></div>
+                    <div class="fc-back"><div class="fc-answer">${esc(card.a)}</div></div>
+                </div>
+            </div>
+            <div class="fc-controls">
+                <button class="btn" onclick="fcPrev()" ${fcState.index === 0 ? 'disabled' : ''}>⬅️</button>
+                <button class="btn btn-primary" onclick="fcFlip()">🔄</button>
+                <button class="btn" onclick="fcNext()" ${fcState.index >= fcState.cards.length - 1 ? 'disabled' : ''}>➡️</button>
+            </div>
+            <div class="fc-counter">${fcState.index + 1} / ${fcState.cards.length}</div>
+            <div class="fc-progress"><div class="fc-progress-fill" style="width:${progress}%"></div></div>
+            <button class="btn btn-sm" style="margin-top:0.5rem;" onclick="fcShuffle()">🔀 Mélanger</button>
+        </div>
+    `;
+}
+
+function fcFlip() { if (fcState) { fcState.flipped = !fcState.flipped; render(); } }
+function fcNext() { if (fcState && fcState.index < fcState.cards.length - 1) { fcState.index++; fcState.flipped = false; render(); } }
+function fcPrev() { if (fcState && fcState.index > 0) { fcState.index--; fcState.flipped = false; render(); } }
+function fcShuffle() { if (fcState) { fcState.cards = shuffle([...FLASHCARDS_ARIZONA]); fcState.index = 0; fcState.flipped = false; toast('🔀 Mélangé'); render(); } }
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+function renderGlossary(body, title, toolbar) {
+    title.innerHTML = '<span>📖</span> Glossaire';
+    toolbar.innerHTML = '';
+    
+    body.innerHTML = `
+        <div style="max-width:500px;">
+            ${GLOSSARY.map(g => `
+                <div class="glossary-item" onclick="this.classList.toggle('expanded')">
+                    <div class="glossary-term">${g.term}</div>
+                    <div class="glossary-def">${g.def}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderAchievements(body, title, toolbar) {
+    title.innerHTML = '<span>🏆</span> Trophées';
+    toolbar.innerHTML = `<span style="font-size:0.5rem;color:var(--text-3);">${APP.achievements.length}/${ACHIEVEMENTS.length}</span>`;
+    
+    body.innerHTML = `
+        <div class="grid grid-2">
+            ${ACHIEVEMENTS.map(a => {
+                const unlocked = APP.achievements.includes(a.id);
+                return `
+                    <div class="card" style="${unlocked ? 'border-color:var(--success);' : 'opacity:0.5;'}">
+                        <span style="font-size:1.1rem;">${a.icon}</span>
+                        <div style="font-weight:600;font-size:0.65rem;">${a.name}</div>
+                        <div style="font-size:0.5rem;color:var(--mint);">+${a.xp} XP</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TOOL EDITOR
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openTool(id) { APP.currentTool = id; render(); }
+
+function renderToolEditor(body, title, toolbar) {
+    const tool = TOOLS.find(t => t.id === APP.currentTool);
+    if (!tool) return;
+    
+    title.innerHTML = `<span>${tool.icon}</span> ${tool.name}`;
+    toolbar.innerHTML = `
+        <span class="phase-tag ${tool.phase}">${tool.phase.toUpperCase()}</span>
+        <button class="btn btn-sm" onclick="saveTool(false)">💾</button>
+        <button class="btn btn-sm btn-primary" onclick="saveTool(true)">✓ Compléter</button>
+    `;
+    
+    const data = APP.project[tool.key] || {};
+    body.innerHTML = `
+        <div style="max-width:550px;">
+            ${tool.fields.map(field => {
+                const value = data[field] || '';
+                const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' ');
+                return `
+                    <div class="form-group">
+                        <label class="form-label">${label}</label>
+                        <textarea class="textarea" id="field_${field}">${esc(value)}</textarea>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function saveTool(complete) {
+    const tool = TOOLS.find(t => t.id === APP.currentTool);
+    if (!tool) return;
+    
+    if (!APP.project[tool.key]) APP.project[tool.key] = {};
+    tool.fields.forEach(field => {
+        const el = $(`field_${field}`);
+        if (el) APP.project[tool.key][field] = el.value;
+    });
+    
+    if (complete && !APP.completedTools.includes(tool.id)) {
+        APP.completedTools.push(tool.id);
+        APP.xp += 50;
+        unlock('first_tool');
+        if (APP.completedTools.length >= 15) unlock('all_tools');
+        toast(`✓ ${tool.name} complété!`, 'success');
+    } else {
+        toast('💾 Sauvegardé');
+    }
+    
+    render();
+    saveState();
+    
+    // Auto-sync to POD if connected
+    if (APP.solid.connected) {
+        SolidModule.syncProject();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openNewPatientModal() {
+    openModal('Créer Patient', `
+        <div class="form-group"><label class="form-label">Prénom</label><input class="input" id="patientGiven"></div>
+        <div class="form-group"><label class="form-label">Nom</label><input class="input" id="patientFamily"></div>
+        <div class="form-group"><label class="form-label">Date naissance</label><input class="input" type="date" id="patientBirth"></div>
+        <div class="form-group"><label class="form-label">NISS</label><input class="input" id="patientNiss" placeholder="00000000000"></div>
+    `, () => {
+        APP.fhir.patient = FHIRModule.createPatient({
+            given: $('patientGiven').value,
+            family: $('patientFamily').value,
+            birthDate: $('patientBirth').value,
+            niss: $('patientNiss').value
+        });
+        closeModal();
+        render();
+        saveState();
+        toast('👤 Patient créé', 'success');
+    });
+}
+
+function openNewCoverageModal() {
+    openModal('Ajouter Coverage', `
+        <div class="form-group">
+            <label class="form-label">Mutuelle</label>
+            <select class="select" id="coverageMut">
+                ${BELGIAN_CODES.mutualites.map(m => `<option value="${m.name}">${m.name}</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Statut</label>
+            <select class="select" id="coverageType">
+                <option value="">Standard</option>
+                ${BELGIAN_CODES.statuts.map(s => `<option value="${s.code}">${s.name}</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group"><label class="form-label">Date début</label><input class="input" type="date" id="coverageStart"></div>
+    `, () => {
+        APP.fhir.coverages.push(FHIRModule.createCoverage({
+            mutuelle: $('coverageMut').value,
+            type: $('coverageType').value,
+            startDate: $('coverageStart').value
+        }));
+        closeModal();
+        render();
+        saveState();
+        toast('🛡️ Coverage ajouté', 'success');
+    });
+}
+
+function openNewConditionModal() {
+    openModal('Ajouter Condition', `
+        <div class="form-group"><label class="form-label">Description</label><input class="input" id="condDesc" placeholder="Ex: Incapacité de travail"></div>
+        <div class="form-group"><label class="form-label">Date début</label><input class="input" type="date" id="condDate"></div>
+        <div class="form-group"><label class="form-label">Note</label><textarea class="textarea" id="condNote"></textarea></div>
+    `, () => {
+        APP.fhir.conditions.push(FHIRModule.createCondition({
+            description: $('condDesc').value,
+            onsetDate: $('condDate').value,
+            note: $('condNote').value
+        }));
+        closeModal();
+        render();
+        saveState();
+        toast('🏥 Condition ajoutée', 'success');
+    });
+}
+
+function openNewDocumentModal() {
+    openModal('Ajouter Document', `
+        <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="select" id="docType">
+                ${BELGIAN_CODES.documents.map(d => `<option value="${d.code}">${d.name}</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><input class="input" id="docDesc"></div>
+        <div class="form-group"><label class="form-label">Date</label><input class="input" type="date" id="docDate"></div>
+    `, () => {
+        APP.fhir.documents.push(FHIRModule.createDocument({
+            type: $('docType').value,
+            description: $('docDesc').value,
+            date: $('docDate').value
+        }));
+        closeModal();
+        render();
+        saveState();
+        toast('📄 Document ajouté', 'success');
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════════════
+
+function exportProject() {
+    const data = {
+        version: VERSION,
+        exported: new Date().toISOString(),
+        completedTools: APP.completedTools,
+        project: APP.project,
+        fhir: APP.fhir
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `plaidoyer-solid-fhir-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    toast('📦 Exporté', 'success');
+}
+
+function exportFHIRBundle() {
+    const bundle = FHIRModule.exportBundle();
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/fhir+json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `fhir-bundle-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    toast('📤 Bundle FHIR exporté', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════════════════════════════════
+
+function loadDemoTools() {
+    APP.project.domino = {
+        vision: "Obtenir l'ANNULATION de la limitation des allocations chômage à 24 mois et une COMPENSATION INTÉGRALE des CPAS.",
+        obstacles: "• Majorité parlementaire Arizona solide\n• Contrainte budgétaire de 23 milliards €\n• Discours sur les \"profiteurs du système\"",
+        ressources: "• Front commun syndical (1,5 million de membres)\n• Recours constitutionnel (article 23 standstill)\n• Réseau associatif (BAPN, RWLP, LDH)"
+    };
+    
+    APP.project.alliance = {
+        avec: "FGTB, CSC, CGSLB, PTB, Écolo, PS, associations (ATD Quart Monde, LDH), Solidaris",
+        sans: "Classe moyenne supérieure, indépendants (neutralité pragmatique)",
+        contre: "Patronat (FEB, VOKA), partis Arizona, think tanks libéraux (Itinera)"
+    };
+    
+    APP.project.message = {
+        accroche: "90.000 Belges vont perdre leur allocation chômage d'ici 2027.",
+        probleme: "Rupture du contrat social belge construit depuis 1944.",
+        importance: "2,1 millions de Belges en risque de pauvreté (18,3% AROPE).",
+        cible: "Cour Constitutionnelle, députés Vooruit/Engagés, CPAS",
+        action: "Moratoire immédiat, compensation intégrale CPAS, abandon bonus-malus."
+    };
+    
+    toast('🎯 Outils Arizona chargés', 'success');
+    render();
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function unlock(id) {
+    if (APP.achievements.includes(id)) return;
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (!a) return;
+    APP.achievements.push(id);
+    APP.xp += a.xp;
+    toast(`🏆 ${a.name}!`, 'success');
+    saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function saveState() {
+    try {
+        localStorage.setItem('plaidoyerSolidFHIR', JSON.stringify({
+            xp: APP.xp,
+            achievements: APP.achievements,
+            theme: APP.theme,
+            completedTools: APP.completedTools,
+            project: APP.project,
+            solid: { connected: APP.solid.connected, webId: APP.solid.webId, podUrl: APP.solid.podUrl, lastSync: APP.solid.lastSync },
+            fhir: APP.fhir
+        }));
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const s = localStorage.getItem('plaidoyerSolidFHIR');
+        if (s) {
+            const d = JSON.parse(s);
+            APP.xp = d.xp || 0;
+            APP.achievements = d.achievements || [];
+            APP.theme = d.theme || 'dark';
+            APP.completedTools = d.completedTools || [];
+            APP.project = d.project || {};
+            if (d.solid) {
+                APP.solid.connected = d.solid.connected || false;
+                APP.solid.webId = d.solid.webId;
+                APP.solid.podUrl = d.solid.podUrl;
+                APP.solid.lastSync = d.solid.lastSync;
+            }
+            APP.fhir = d.fhir || { patient: null, coverages: [], conditions: [], documents: [] };
+            setTheme(APP.theme);
+            SolidModule.updateUI();
+        }
+    } catch (e) { console.error('Load error:', e); }
+}
+</script>
+</body>
+</html>
