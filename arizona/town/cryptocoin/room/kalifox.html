@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plaidoyer Citoyen 3.0 — DÉMO: STOP ARIZONA</title>
+    <meta name="description" content="Outil de référence pour la participation citoyenne et l'éducation populaire. 15 outils méthodologiques VOIR-JUGER-AGIR.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+:root {
+    --bg-deep: #0a0d12;
+    --bg-base: #0f1419;
+    --bg-elevated: #161d26;
+    --bg-surface: #1c2732;
+    --bg-overlay: #232f3e;
+    --civic-gold: #d4a853;
+    --civic-gold-light: #e8c77b;
+    --civic-gold-muted: rgba(212, 168, 83, 0.15);
+    --civic-emerald: #10b981;
+    --civic-emerald-light: #34d399;
+    --civic-emerald-muted: rgba(16, 185, 129, 0.15);
+    --civic-azure: #3b82f6;
+    --civic-azure-light: #60a5fa;
+    --civic-azure-muted: rgba(59, 130, 246, 0.15);
+    --civic-rose: #f43f5e;
+    --civic-rose-muted: rgba(244, 63, 94, 0.15);
+    --civic-violet: #8b5cf6;
+    --civic-violet-muted: rgba(139, 92, 246, 0.15);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverse: #0f172a;
+    --border-subtle: rgba(148, 163, 184, 0.08);
+    --border-default: rgba(148, 163, 184, 0.15);
+    --border-strong: rgba(148, 163, 184, 0.25);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --shadow-gold: 0 0 30px rgba(212, 168, 83, 0.15);
+    --sidebar-width: 280px;
+    --header-height: 64px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 150ms var(--ease-out);
+    --transition-base: 250ms var(--ease-out);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg-deep); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+::selection { background: var(--civic-gold); color: var(--text-inverse); }
+h1, h2, h3, h4 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; line-height: 1.2; }
+.app-container { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh; background: var(--bg-base); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; z-index: 100; }
+.sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+.logo { display: flex; align-items: center; gap: 0.75rem; }
+.logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--civic-gold), var(--civic-gold-light)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: var(--shadow-gold); }
+.logo-text { display: flex; flex-direction: column; }
+.logo-title { font-family: 'Instrument Serif', serif; font-size: 1.1rem; color: var(--text-primary); }
+.logo-subtitle { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 1rem 0; }
+.nav-section { margin-bottom: 1.5rem; }
+.nav-section-title { padding: 0.5rem 1.5rem; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); }
+.nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 1.5rem; color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; cursor: pointer; transition: all var(--transition-fast); border: none; background: none; width: 100%; text-align: left; position: relative; }
+.nav-item:hover { color: var(--text-primary); background: var(--border-subtle); }
+.nav-item.active { color: var(--civic-gold); background: var(--civic-gold-muted); }
+.nav-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 60%; background: var(--civic-gold); border-radius: 0 2px 2px 0; }
+.nav-icon { font-size: 1rem; width: 1.5rem; text-align: center; }
+.sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-subtle); }
+.storage-indicator { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+.storage-bar { height: 4px; background: var(--bg-overlay); border-radius: 2px; overflow: hidden; }
+.storage-fill { height: 100%; background: var(--civic-emerald); border-radius: 2px; transition: width var(--transition-base); }
+
+/* Main */
+.main-content { flex: 1; margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
+.main-header { position: sticky; top: 0; height: var(--header-height); background: rgba(15, 20, 25, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; z-index: 50; }
+.header-left { display: flex; align-items: center; gap: 1rem; }
+.breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+.breadcrumb-item { color: var(--text-muted); }
+.breadcrumb-separator { color: var(--text-muted); opacity: 0.5; }
+.breadcrumb-current { color: var(--text-primary); font-weight: 500; }
+.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+.page-container { flex: 1; padding: 2rem; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.625rem 1.25rem; font-family: inherit; font-size: 0.875rem; font-weight: 500; border-radius: var(--radius-md); border: none; cursor: pointer; transition: all var(--transition-fast); text-decoration: none; white-space: nowrap; }
+.btn-primary { background: linear-gradient(135deg, var(--civic-gold), var(--civic-gold-light)); color: var(--text-inverse); box-shadow: var(--shadow-sm), var(--shadow-gold); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md), 0 0 40px rgba(212, 168, 83, 0.25); }
+.btn-secondary { background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-default); }
+.btn-secondary:hover { background: var(--bg-overlay); border-color: var(--border-strong); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--border-subtle); color: var(--text-primary); }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8rem; }
+
+/* Cards */
+.card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; transition: all var(--transition-base); }
+.card:hover { border-color: var(--border-default); }
+.card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-family: 'Instrument Serif', serif; font-size: 1.125rem; }
+.card-body { padding: 1.5rem; }
+
+/* Forms */
+.form-group { margin-bottom: 1.25rem; }
+.form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.5rem; }
+.form-input, .form-textarea, .form-select { width: 100%; padding: 0.75rem 1rem; font-family: inherit; font-size: 0.9rem; color: var(--text-primary); background: var(--bg-base); border: 1px solid var(--border-default); border-radius: var(--radius-md); transition: all var(--transition-fast); }
+.form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--civic-gold); box-shadow: 0 0 0 3px var(--civic-gold-muted); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+.form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.375rem; }
+
+/* Phase badges */
+.phase-badge { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 4px; }
+.phase-voir { background: var(--civic-azure-muted); color: var(--civic-azure-light); }
+.phase-juger { background: var(--civic-violet-muted); color: var(--civic-violet); }
+.phase-agir { background: var(--civic-emerald-muted); color: var(--civic-emerald-light); }
+
+/* Progress */
+.progress-ring { position: relative; width: 120px; height: 120px; }
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring-bg { fill: none; stroke: var(--bg-overlay); stroke-width: 8; }
+.progress-ring-fill { fill: none; stroke: var(--civic-gold); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease; }
+.progress-ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.progress-value { font-family: 'Instrument Serif', serif; font-size: 2rem; color: var(--text-primary); line-height: 1; }
+.progress-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* Toast */
+.toast-container { position: fixed; bottom: 2rem; right: 2rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 1000; pointer-events: none; }
+.toast { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); pointer-events: auto; animation: toast-in 0.3s ease; }
+.toast.success { border-left: 3px solid var(--civic-emerald); }
+.toast.error { border-left: 3px solid var(--civic-rose); }
+.toast.info { border-left: 3px solid var(--civic-azure); }
+@keyframes toast-in { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; visibility: hidden; transition: all var(--transition-base); }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal { width: 90%; max-width: 600px; max-height: 85vh; background: var(--bg-elevated); border: 1px solid var(--border-default); border-radius: 16px; overflow: hidden; transform: scale(0.95); transition: transform var(--transition-base); }
+.modal-overlay.active .modal { transform: scale(1); }
+.modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Instrument Serif', serif; font-size: 1.25rem; }
+.modal-close { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-sm); }
+.modal-close:hover { background: var(--border-subtle); color: var(--text-primary); }
+.modal-body { padding: 1.5rem; overflow-y: auto; max-height: calc(85vh - 140px); }
+
+/* Dashboard */
+.dashboard-hero { margin-bottom: 2rem; }
+.hero-content { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.hero-text h1 { font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--text-primary), var(--civic-gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-text p { color: var(--text-secondary); font-size: 1.1rem; max-width: 500px; }
+.dashboard-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem; transition: all var(--transition-base); }
+.stat-card:hover { border-color: var(--border-default); transform: translateY(-2px); }
+.stat-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; border-radius: var(--radius-md); margin-bottom: 0.75rem; }
+.stat-card.voir .stat-icon { background: var(--civic-azure-muted); }
+.stat-card.juger .stat-icon { background: var(--civic-violet-muted); }
+.stat-card.agir .stat-icon { background: var(--civic-emerald-muted); }
+.stat-card.total .stat-icon { background: var(--civic-gold-muted); }
+.stat-value { font-family: 'Instrument Serif', serif; font-size: 1.75rem; color: var(--text-primary); line-height: 1; margin-bottom: 0.25rem; }
+.stat-label { font-size: 0.8rem; color: var(--text-muted); }
+
+/* Tools */
+.tools-section { margin-bottom: 2rem; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.section-title { font-size: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.tool-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem; cursor: pointer; transition: all var(--transition-base); position: relative; overflow: hidden; }
+.tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--tool-color, var(--civic-gold)); opacity: 0; transition: opacity var(--transition-fast); }
+.tool-card:hover { border-color: var(--border-default); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.tool-card:hover::before { opacity: 1; }
+.tool-card.voir { --tool-color: var(--civic-azure); }
+.tool-card.juger { --tool-color: var(--civic-violet); }
+.tool-card.agir { --tool-color: var(--civic-emerald); }
+.tool-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; }
+.tool-icon { font-size: 1.5rem; }
+.tool-status { width: 8px; height: 8px; border-radius: 50%; background: var(--bg-overlay); }
+.tool-status.complete { background: var(--civic-emerald); box-shadow: 0 0 8px var(--civic-emerald); }
+.tool-name { font-family: 'Instrument Serif', serif; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; }
+.tool-description { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+/* Tool Page */
+.tool-page { max-width: 900px; }
+.tool-page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+.tool-page-title { font-size: 2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; }
+.tool-page-description { color: var(--text-secondary); font-size: 1rem; max-width: 700px; }
+
+/* SWOT */
+.swot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.swot-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+.swot-header { padding: 0.875rem 1rem; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+.swot-card.strengths .swot-header { background: var(--civic-emerald-muted); color: var(--civic-emerald-light); }
+.swot-card.weaknesses .swot-header { background: var(--civic-rose-muted); color: var(--civic-rose); }
+.swot-card.opportunities .swot-header { background: var(--civic-azure-muted); color: var(--civic-azure-light); }
+.swot-card.threats .swot-header { background: var(--civic-gold-muted); color: var(--civic-gold-light); }
+.swot-body { padding: 1rem; }
+.swot-body textarea { min-height: 150px; }
+
+/* PESTEL */
+.pestel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.pestel-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1rem; }
+.pestel-card h4 { font-size: 0.9rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+
+/* Actors */
+.actors-table { width: 100%; border-collapse: collapse; }
+.actors-table th, .actors-table td { padding: 0.875rem 1rem; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+.actors-table th { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); background: var(--bg-base); }
+.actors-table td { font-size: 0.875rem; }
+.actor-position-badge { display: inline-flex; padding: 0.25rem 0.5rem; font-size: 0.7rem; font-weight: 600; border-radius: 4px; }
+.actor-position-badge.ally { background: var(--civic-emerald-muted); color: var(--civic-emerald-light); }
+.actor-position-badge.neutral { background: var(--bg-overlay); color: var(--text-muted); }
+.actor-position-badge.opponent { background: var(--civic-rose-muted); color: var(--civic-rose); }
+.actor-position-badge.target { background: var(--civic-gold-muted); color: var(--civic-gold-light); }
+.power-dots { display: flex; gap: 4px; }
+.power-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg-overlay); }
+.power-dot.filled { background: var(--civic-gold); }
+
+/* Export */
+.export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.export-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; text-align: center; cursor: pointer; transition: all var(--transition-base); }
+.export-card:hover { border-color: var(--civic-gold); transform: translateY(-2px); }
+.export-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.export-name { font-family: 'Instrument Serif', serif; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; }
+.export-desc { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Utilities */
+.hidden { display: none !important; }
+.text-gold { color: var(--civic-gold); }
+.text-emerald { color: var(--civic-emerald); }
+.text-rose { color: var(--civic-rose); }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-stats { grid-template-columns: repeat(2, 1fr); }
+    .swot-grid, .pestel-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    :root { --sidebar-width: 0px; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); width: 280px; }
+    .main-content { margin-left: 0; }
+    .page-container { padding: 1rem; }
+    .dashboard-stats { grid-template-columns: 1fr; }
+    .hero-content { flex-direction: column; text-align: center; }
+    .hero-text h1 { font-size: 1.75rem; }
+}
+
+/* Animations */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fade-in 0.3s ease; }
+.animate-slide-up { animation: slide-up 0.4s ease; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">⚖️</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Plaidoyer Citoyen</span>
+                        <span class="logo-subtitle">Poste de Travail 3.0</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <button class="nav-item active" data-page="dashboard">
+                        <span class="nav-icon">🏠</span><span>Tableau de bord</span>
+                    </button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title"><span class="phase-badge phase-voir">VOIR</span> Analyse</div>
+                    <button class="nav-item" data-page="tool-domino"><span class="nav-icon">🎯</span><span>Domino du changement</span></button>
+                    <button class="nav-item" data-page="tool-profil"><span class="nav-icon">👤</span><span>Profil d'engagement</span></button>
+                    <button class="nav-item" data-page="tool-fleur"><span class="nav-icon">🌸</span><span>Fleur de pouvoir</span></button>
+                    <button class="nav-item" data-page="tool-acteurs"><span class="nav-icon">👥</span><span>Cartographie acteurs</span></button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title"><span class="phase-badge phase-juger">JUGER</span> Stratégie</div>
+                    <button class="nav-item" data-page="tool-tdc"><span class="nav-icon">🔄</span><span>Théorie du changement</span></button>
+                    <button class="nav-item" data-page="tool-swot"><span class="nav-icon">📊</span><span>Analyse SWOT</span></button>
+                    <button class="nav-item" data-page="tool-pestel"><span class="nav-icon">🌍</span><span>Analyse PESTEL</span></button>
+                    <button class="nav-item" data-page="tool-arbre"><span class="nav-icon">🌳</span><span>Arbre à problème</span></button>
+                    <button class="nav-item" data-page="tool-pourquoi"><span class="nav-icon">❓</span><span>Les 5 Pourquoi</span></button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title"><span class="phase-badge phase-agir">AGIR</span> Action</div>
+                    <button class="nav-item" data-page="tool-pouvoir"><span class="nav-icon">⚡</span><span>Avec/sans/contre pouvoir</span></button>
+                    <button class="nav-item" data-page="tool-smart"><span class="nav-icon">🎯</span><span>Objectifs SMART</span></button>
+                    <button class="nav-item" data-page="tool-cibles"><span class="nav-icon">🤝</span><span>Cibles et alliances</span></button>
+                    <button class="nav-item" data-page="tool-message"><span class="nav-icon">💬</span><span>Construction message</span></button>
+                    <button class="nav-item" data-page="tool-checklist"><span class="nav-icon">✅</span><span>Check-list rencontre</span></button>
+                    <button class="nav-item" data-page="tool-evaluation"><span class="nav-icon">📈</span><span>Suivi-évaluation</span></button>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Outils</div>
+                    <button class="nav-item" data-page="export"><span class="nav-icon">📤</span><span>Exporter</span></button>
+                    <button class="nav-item" data-page="import"><span class="nav-icon">📥</span><span>Importer</span></button>
+                    <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span>Paramètres</span></button>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="storage-indicator">
+                    <span>Stockage local</span>
+                    <span id="storage-usage">0 Ko</span>
+                </div>
+                <div class="storage-bar">
+                    <div class="storage-fill" id="storage-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="btn btn-ghost" id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none;">☰</button>
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">Plaidoyer Citoyen</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current" id="breadcrumb-current">Tableau de bord</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="App.quickSave()"><span>💾</span> Sauvegarder</button>
+                    <button class="btn btn-primary btn-sm" onclick="App.showExportModal()"><span>📤</span> Exporter</button>
+                </div>
+            </header>
+            <div class="page-container" id="page-container"></div>
+        </main>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- EXPORT MODAL -->
+    <div class="modal-overlay" id="export-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📤 Exporter le projet</h2>
+                <button class="modal-close" onclick="App.closeModal('export-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-grid">
+                    <div class="export-card" onclick="App.exportJSON()">
+                        <div class="export-icon">📋</div>
+                        <div class="export-name">JSON</div>
+                        <div class="export-desc">Données brutes, réimportables</div>
+                    </div>
+                    <div class="export-card" onclick="App.exportMarkdown()">
+                        <div class="export-icon">📝</div>
+                        <div class="export-name">Markdown</div>
+                        <div class="export-desc">Document formaté</div>
+                    </div>
+                    <div class="export-card" onclick="App.exportHTML()">
+                        <div class="export-icon">🌐</div>
+                        <div class="export-name">HTML</div>
+                        <div class="export-desc">Page web autonome</div>
+                    </div>
+                    <div class="export-card" onclick="App.exportPDF()">
+                        <div class="export-icon">📄</div>
+                        <div class="export-name">PDF</div>
+                        <div class="export-desc">Document imprimable</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+// ============================================
+// DATASET DE DÉMONSTRATION - RÉFORMES ARIZONA
+// Cas réel de plaidoyer citoyen 2025-2026
+// ============================================
+const DEMO_DATASET = {
+    "currentPage": "dashboard",
+    "project": {
+        "name": "STOP Arizona — Défense du Modèle Social Belge",
+        "created": "2026-01-15T09:00:00.000Z",
+        "modified": "2026-01-20T18:30:00.000Z"
+    },
+    "domino": {
+        "vision": "D'ici fin 2027, obtenir par voie judiciaire et/ou politique :\n\n1. L'ANNULATION de la limitation des allocations de chômage à 24 mois (article 23 Constitution)\n2. Une COMPENSATION INTÉGRALE des CPAS par le fédéral (100% du surcoût réel)\n3. L'ABANDON du système bonus-malus pénalisant les communes pauvres\n4. La SUPPRESSION des sanctions financières (-2,5%) pour les malades de longue durée\n5. Le MAINTIEN de la gratuité des médicaments d'importance vitale\n\nObjectif ultime : Préserver le modèle social belge fondé sur une logique assurantielle et de solidarité fédérale, contre le glissement vers l'assistance conditionnelle.",
+        "obstacles": "OBSTACLES POLITIQUES :\n• Majorité parlementaire Arizona solide (N-VA + MR + Engagés + CD&V + Vooruit)\n• Premier ministre Bart De Wever (N-VA) : architecte idéologique inflexible\n• Contrainte budgétaire de 23 milliards € imposée par l'UE d'ici 2029\n• Fragmentation régionale : Flandre proche du plein emploi soutient les réformes\n\nOBSTACLES ADMINISTRATIFS :\n• Calendrier serré : Vague 2 d'exclusions dès le 1er mars 2026\n• 90.000 personnes concernées → chaos administratif ONEM/CPAS\n• Fracture numérique : eBox inaccessible aux publics fragiles\n\nOBSTACLES CULTURELS :\n• Discours dominant sur les \"profiteurs du système\"\n• Stigmatisation médiatique des chômeurs de longue durée\n• Faible littératie administrative des publics touchés",
+        "ressources": "FORCE DE FRAPPE SYNDICALE :\n• Front commun FGTB + CSC + CGSLB (1,5 million de membres)\n• Capacité de mobilisation nationale (manifestation 28 avril 2025)\n• Services d'études pour alternatives budgétaires chiffrées\n\nLEVIER JURIDIQUE :\n• Recours constitutionnel introduit le 29 octobre 2025\n• Article 23 : principe de standstill (effet cliquet)\n• Arrêt attendu fin 2026/début 2027\n\nRÉSEAU ASSOCIATIF :\n• BAPN, RWLP, Ligue des Droits Humains, Vie Féminine\n• Solidaris et mutualités (expertise santé)\n• FEF (précarité étudiante)\n\nEXPERTISE ACADÉMIQUE :\n• DULBEA (ULB) : études d'impact chiffrées\n• IWEPS : données non-recours aux droits\n• Vivalis : projections bruxelloises\n\nALLIÉS INSTITUTIONNELS :\n• Fédérations CPAS : UVCW, VVSG, Brulocalis\n• Opposition parlementaire : PS, Écolo, PTB, DéFI"
+    },
+    "profil": {
+        "motivations": "VÉCU PERSONNEL :\nNous sommes des citoyen·ne·s directement concerné·e·s par ces réformes : chômeurs de longue durée, malades chroniques, travailleurs sociaux épuisés, étudiants précarisés. Le passage de l'assurance chômage illimitée à une allocation limitée à 24 mois n'est pas qu'une réforme technique — c'est une rupture du contrat social.\n\nCONVICTION POLITIQUE :\nLa protection sociale belge, construite depuis 1944, ne peut être démantelée en une législature au nom de contraintes budgétaires. L'alternative existe : taxe des millionnaires (17 milliards € potentiels), lutte contre la fraude fiscale, révision des subsides aux entreprises.\n\nURGENCE SOCIALE :\n• 2,1 millions de Belges en risque de pauvreté (18,3% AROPE)\n• 90.000 personnes menacées d'exclusion du chômage\n• 30.122 basculements immédiats vers le RIS\n• 58% d'étudiants en insécurité alimentaire",
+        "competences": "COMPÉTENCES COLLECTIVES :\n\n📊 Analyse et recherche :\n• Décryptage des textes législatifs et circulaires ONEM/INAMI\n• Veille documentaire sur les réformes sociales européennes\n• Traitement de données statistiques (études d'impact)\n\n📢 Communication :\n• Vulgarisation des mécanismes techniques complexes\n• Rédaction de communiqués et dossiers de presse\n• Animation de réseaux sociaux et campagnes virales\n\n⚖️ Juridique :\n• Connaissance du droit constitutionnel belge (article 23)\n• Suivi des recours devant la Cour Constitutionnelle\n• Accompagnement de recours individuels\n\n🤝 Mobilisation :\n• Organisation de manifestations et actions symboliques\n• Animation de séances d'information (syndicats, CPAS)\n• Coordination inter-associative (front commun)",
+        "temps": "DISPONIBILITÉ :\n• Noyau dur : 5-10 personnes à temps partiel (15-20h/semaine)\n• Réseau élargi : 50-100 bénévoles mobilisables ponctuellement\n• Appui syndical : permanents FGTB/CSC selon calendrier social\n\nPICS D'ACTIVITÉ :\n• Janvier 2026 : Envoi des lettres ONEM → séances d'information d'urgence\n• 1er mars 2026 : Vague 2 d'exclusions → actions médiatiques\n• Automne 2026 : Négociation budget 2027 → lobbying parlementaire\n• Fin 2026/2027 : Arrêt Cour Constitutionnelle → mobilisation selon résultat\n\nHORIZON D'ENGAGEMENT :\nToute la législature Arizona (2025-2029), avec révision stratégique annuelle",
+        "limites": "CONTRAINTES FINANCIÈRES :\n• Pas de budget de campagne dédié\n• Dépendance aux ressources syndicales et associatives\n• Impossibilité de rivaliser avec la communication gouvernementale\n\nCONTRAINTES STRUCTURELLES :\n• Pas d'accès direct aux cabinets ministériels\n• Barrière linguistique : mobilisation francophone > néerlandophone\n• Publics cibles difficiles à mobiliser (précarité = isolement)\n\nRISQUES :\n• Épuisement militant face à l'ampleur des réformes\n• Fragmentation du mouvement sur les priorités\n• Récupération politique par l'extrême-droite (Vlaams Belang)"
+    },
+    "fleur": {
+        "identites": "PROFILS DES PERSONNES CONCERNÉES :\n\n👥 Chômeurs de longue durée (Vague 2) :\n• Majoritairement 50-55 ans\n• Ex-travailleurs industriels (restructurations)\n• Souvent problèmes de santé non reconnus\n\n🏥 Malades de longue durée :\n• 500.000+ personnes (plus que les chômeurs)\n• Burnout, dépression, TMS, maladies chroniques\n• Souvent femmes (carrières interrompues)\n\n👨‍👩‍👧 Familles monoparentales :\n• 80% de femmes\n• Cumul emploi précaire + charge familiale\n• Premières victimes des effets de seuil\n\n🎓 Étudiants précarisés :\n• 15.000 \"non-finançables\" exclus de l'enseignement\n• 58% en insécurité alimentaire\n• Piège travail étudiant 650h vs réussite académique\n\n🏠 Locataires précaires :\n• Loyer kot moyen : 590€ (695€ Bruxelles)\n• Énergie : dépendance aux tarifs sociaux BIM",
+        "privileges": "PRIVILÈGES RELATIFS DU MOUVEMENT :\n\n✅ Accès à l'information :\n• Capacité à décrypter les textes législatifs\n• Réseau d'experts académiques (DULBEA, IWEPS)\n• Veille documentaire structurée\n\n✅ Capital social :\n• Appartenance à des organisations (syndicats, associations)\n• Accès aux médias progressistes\n• Réseau de solidarité active\n\n✅ Légitimité de parole :\n• Personnes directement concernées\n• Soutien d'organisations historiques (FGTB depuis 1898)\n• Caution académique et juridique\n\n✅ Ressources institutionnelles :\n• Permanences syndicales gratuites\n• Services juridiques associatifs\n• Relais parlementaires (opposition)",
+        "oppressions": "DISCRIMINATIONS ET VIOLENCES SUBIES :\n\n🎯 Violence symbolique :\n• Discours culpabilisant : \"profiteurs\", \"assistés\", \"inactifs\"\n• Rhétorique d'activation : \"le travail doit payer plus que l'inactivité\"\n• Stigmatisation du passage au CPAS (déchéance sociale perçue)\n\n🎯 Violence administrative :\n• Complexité volontaire des démarches (eBox, MyBenefits)\n• Délais CPAS de 30 jours intenables → familles sans ressources\n• Sanctions automatiques (-2,5%) sans recours effectif\n\n🎯 Violence économique :\n• Effet falaise : perte BIM → perte tarifs sociaux → spirale\n• Ticket modérateur médicaments : renoncement aux soins\n• Déremboursements IPP/statines : transfert de coût vers patients\n\n🎯 Discrimination indirecte :\n• Femmes : carrières incomplètes → exclusion protection 55 ans\n• Âgés : inadéquation profil/marché du travail\n• Bruxellois : 1/3 des exclus pour 1/10 de la population"
+    },
+    "acteurs": [
+        {
+            "name": "Bart De Wever",
+            "role": "Premier Ministre (N-VA) — Architecte idéologique des réformes",
+            "position": "opponent",
+            "power": 5
+        },
+        {
+            "name": "Frank Vandenbroucke",
+            "role": "Ministre Affaires sociales (Vooruit) — Pilote volet santé",
+            "position": "neutral",
+            "power": 5
+        },
+        {
+            "name": "Georges-Louis Bouchez",
+            "role": "Président MR — Orthodoxie budgétaire",
+            "position": "opponent",
+            "power": 4
+        },
+        {
+            "name": "Maxime Prévot",
+            "role": "Président Les Engagés — Sensibilité sociale relative",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "Sammy Mahdi",
+            "role": "Président CD&V — Conservateur modéré",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "Thierry Bodson",
+            "role": "Président FGTB — Leader front commun syndical",
+            "position": "ally",
+            "power": 4
+        },
+        {
+            "name": "Marc Leemans",
+            "role": "Président CSC — Syndicat chrétien",
+            "position": "ally",
+            "power": 4
+        },
+        {
+            "name": "CGSLB",
+            "role": "Syndicat libéral — Membre front commun",
+            "position": "ally",
+            "power": 3
+        },
+        {
+            "name": "Cour Constitutionnelle",
+            "role": "Juridiction suprême — Recours article 23 pendants",
+            "position": "target",
+            "power": 5
+        },
+        {
+            "name": "Commission Européenne",
+            "role": "Surveillance déficit — Pression 23 milliards",
+            "position": "opponent",
+            "power": 4
+        },
+        {
+            "name": "UVCW",
+            "role": "Union Villes Communes Wallonnes — CPAS wallons",
+            "position": "ally",
+            "power": 3
+        },
+        {
+            "name": "Brulocalis",
+            "role": "Association CPAS bruxellois — 80M€ surcoût estimé",
+            "position": "ally",
+            "power": 3
+        },
+        {
+            "name": "VVSG",
+            "role": "Association communes flamandes — Position mitigée",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "BAPN",
+            "role": "Réseau Belge Lutte contre la Pauvreté",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "RWLP",
+            "role": "Réseau Wallon Lutte contre la Pauvreté",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "Solidaris",
+            "role": "Mutualité socialiste — Expertise santé, dénonce \"taxe santé\"",
+            "position": "ally",
+            "power": 3
+        },
+        {
+            "name": "Ligue Droits Humains",
+            "role": "ONG droits fondamentaux — Co-requérant recours",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "Vie Féminine",
+            "role": "Mouvement féministe — Discrimination indirecte femmes",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "FEF",
+            "role": "Fédération Étudiants Francophones — Précarité étudiante",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "DULBEA (ULB)",
+            "role": "Centre recherche économique — Études d'impact",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "IWEPS",
+            "role": "Institut wallon statistique — Données non-recours",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "ONEM",
+            "role": "Office National Emploi — Exécutant vagues exclusions",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "INAMI",
+            "role": "Institut assurance maladie — Gestion statut BIM",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "Forem/Actiris/VDAB",
+            "role": "Services régionaux emploi — Absorption choc formations",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "Paul Magnette",
+            "role": "Président PS — Opposition principale",
+            "position": "ally",
+            "power": 3
+        },
+        {
+            "name": "PTB",
+            "role": "Parti gauche radicale — Alternatives budgétaires chiffrées",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "Écolo/Groen",
+            "role": "Partis verts — Opposition écologique-sociale",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "IFDH",
+            "role": "Institut Fédéral Droits Humains — Avis critiques sanctions malades",
+            "position": "ally",
+            "power": 2
+        },
+        {
+            "name": "CNT",
+            "role": "Conseil National Travail — Concertation sociale",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "RTBF/VRT",
+            "role": "Médias publics — Neutralité relative",
+            "position": "neutral",
+            "power": 4
+        },
+        {
+            "name": "Le Soir/De Standaard",
+            "role": "Presse de référence",
+            "position": "neutral",
+            "power": 3
+        },
+        {
+            "name": "Vlaams Belang",
+            "role": "Extrême-droite — Risque récupération populiste",
+            "position": "opponent",
+            "power": 3
+        }
+    ],
+    "tdc": {
+        "changement_interne_individuel": "🧠 CHANGEMENTS DE CONSCIENCE INDIVIDUELS :\n\n• Les personnes précarisées passent de la HONTE à la FIERTÉ de se mobiliser\n  → \"Je ne suis pas un profiteur, je suis victime d'un choix politique\"\n\n• Déconstruction du discours culpabilisant de l'activation\n  → Comprendre que les freins à l'emploi (santé, âge, mobilité) ne se résolvent pas par la suppression d'une allocation\n\n• Prise de conscience des alternatives budgétaires existantes\n  → 17 milliards € possibles via taxe millionnaires et lutte contre fraude fiscale\n\n• Renforcement de la capacité d'agir (empowerment)\n  → Savoir naviguer les démarches CPAS, connaître ses droits résiduels\n\n• Transformation de la colère en énergie militante\n  → Du désenchantement individuel à l'action collective",
+        "changement_interne_collectif": "💭 CHANGEMENTS DE CULTURE COLLECTIVE :\n\n• Émergence d'un RÉCIT ALTERNATIF dominant :\n  → \"La protection sociale est un investissement, pas un coût\"\n  → \"L'austérité est un choix politique, pas une fatalité économique\"\n\n• Délégitimation du discours d'activation coercitive\n  → Exposer la contradiction : \"activer\" des gens sans résoudre leurs freins réels\n\n• Revalorisation symbolique des travailleurs sociaux des CPAS\n  → Reconnaissance publique de leur mission impossible\n\n• Création d'une IDENTITÉ COLLECTIVE inclusive :\n  → \"Nous sommes les 2,1 millions\" (population AROPE)\n  → Alliance chômeurs + malades + étudiants + working poor\n\n• Reconstruction du consensus social d'après-guerre (1944)\n  → Rappeler que la sécurité sociale fut créée dans un contexte de pénurie",
+        "changement_externe_individuel": "🏃 CHANGEMENTS DE COMPORTEMENT INDIVIDUELS :\n\n• INSCRIPTION MASSIVE AU CPAS dès la fin des droits chômage\n  → Lutter contre le non-recours (non-take-up)\n  → Kits d'information distribués via syndicats et associations\n\n• PARTICIPATION aux manifestations et actions symboliques\n  → Objectif : 50.000 personnes à la prochaine marche nationale\n\n• TÉMOIGNAGES PUBLICS pour humaniser les statistiques\n  → 1000 témoignages documentés d'ici fin 2026\n  → Visages et histoires dans les médias\n\n• RECOURS INDIVIDUELS devant les juridictions sociales\n  → Contester systématiquement les décisions d'exclusion\n  → Saturer les tribunaux pour révéler l'injustice systémique\n\n• ENTRAIDE LOCALE et caisses de solidarité\n  → Pallier la période sans revenus entre chômage et RIS",
+        "changement_externe_collectif": "⚖️ CHANGEMENTS DE POLITIQUES COLLECTIVES :\n\n• ANNULATION par la Cour Constitutionnelle (article 23 standstill)\n  → Arrêt attendu fin 2026/début 2027\n  → Si positif : indemnisation rétroactive des exclus\n\n• RÉVISION du mécanisme de compensation fédérale → CPAS\n  → Passer de 518€/an/personne à 100% du coût réel\n  → Inclure les frais de personnel supplémentaires (240 ETP Bruxelles)\n\n• ABANDON du système bonus-malus pour les CPAS\n  → Supprimer la pénalisation des communes pauvres\n  → Reconnaître les disparités territoriales structurelles\n\n• MORATOIRE sur les sanctions pour malades de longue durée\n  → Suspendre la réduction de 2,5% des indemnités\n  → Revoir le \"Trajet Retour au Travail\" coercitif\n\n• RÉTABLISSEMENT de la gratuité des médicaments vitaux\n  → Annuler l'économie de 26,2M€ sur le dos des patients",
+        "hypotheses": "HYPOTHÈSES SOUS-JACENTES À NOTRE THÉORIE DU CHANGEMENT :\n\n1️⃣ La mobilisation sociale massive peut créer une CRISE POLITIQUE\n   → Obligeant le gouvernement à négocier (précédent : grèves 1960-61)\n\n2️⃣ L'accumulation de TÉMOIGNAGES MÉDIATIQUES peut retourner l'opinion\n   → La personnalisation des statistiques crée l'empathie\n\n3️⃣ La COUR CONSTITUTIONNELLE peut censurer les mesures\n   → Le principe de standstill a déjà été appliqué (arrêt 2018)\n\n4️⃣ Les CPAS SATURÉS démontreront l'impraticabilité du transfert\n   → Effondrement du service = preuve tangible de l'échec\n\n5️⃣ Les partis CENTRISTES de la coalition sont sensibles à la pression\n   → Vooruit (social) et Les Engagés (éthique) peuvent flancher\n\n6️⃣ La COMPARAISON INTERNATIONALE défavorable pèsera\n   → La France a annulé une réforme similaire sous pression\n\n⚠️ HYPOTHÈSE RISQUÉE :\nLa fatigue militante ne l'emportera pas avant l'arrêt de la Cour"
+    },
+    "swot": {
+        "strengths": "💪 FORCES DU MOUVEMENT :\n\n• FRONT COMMUN SYNDICAL historique et unitaire\n  → FGTB + CSC + CGSLB = 1,5 million de membres\n  → Capacité de grève interprofessionnelle\n\n• RECOURS CONSTITUTIONNEL déjà introduit\n  → Légitimité juridique, argumentaire article 23 solide\n  → Arrêt attendu = épée de Damoclès sur le gouvernement\n\n• DONNÉES CHIFFRÉES crédibles et incontestables\n  → Études DULBEA (ULB), IWEPS, Vivalis\n  → 30.122 basculements vers RIS documentés\n\n• SOUTIEN UNANIME des CPAS wallons et bruxellois\n  → UVCW, Brulocalis = légitimité institutionnelle\n  → Chiffrage du surcoût : 80M€ Bruxelles seule\n\n• RÉSEAU ASSOCIATIF dense couvrant tout le territoire\n  → BAPN, RWLP, Vie Féminine, FEF, Solidaris\n\n• PRÉCÉDENTS HISTORIQUES de victoires sociales\n  → Grèves 1960-61, mobilisations anti-austérité",
+        "weaknesses": "⚠️ FAIBLESSES DU MOUVEMENT :\n\n• FRAGMENTATION LINGUISTIQUE\n  → Mobilisation forte en Wallonie/Bruxelles, faible en Flandre\n  → Flandre proche du plein emploi = moins concernée\n\n• RESSOURCES FINANCIÈRES limitées\n  → Pas de budget de campagne de communication\n  → Impossibilité de rivaliser avec le storytelling gouvernemental\n\n• PUBLICS CIBLES difficiles à mobiliser\n  → Précarité = isolement social, honte, épuisement\n  → Fracture numérique pour les plus fragiles\n\n• COMPLEXITÉ TECHNIQUE des réformes\n  → Difficulté de vulgarisation (périodes d'indemnisation, BIM revenus...)\n  → Risque de perdre l'opinion dans les détails\n\n• FATIGUE MILITANTE après crises successives\n  → COVID, crise énergétique, inondations 2021\n\n• ABSENCE DE RELAIS au sein de la majorité fédérale\n  → Vooruit coincé par la loyauté coalitionnelle",
+        "opportunities": "🌟 OPPORTUNITÉS EXTERNES :\n\n• TENSIONS INTERNES à la coalition Arizona\n  → Aile droite (N-VA/MR) vs aile sociale (Vooruit)\n  → Compromis laborieux = fragilité potentielle\n\n• CALENDRIER JURIDIQUE favorable\n  → Arrêt Cour Constitutionnelle attendu fin 2026/2027\n  → Peut créer un séisme politique\n\n• SATURATION PRÉVISIBLE des CPAS\n  → Preuve tangible de l'échec du transfert\n  → Délai 30 jours intenable = familles sans ressources\n\n• INTÉRÊT MÉDIATIQUE pour les \"victimes des réformes\"\n  → Humaniser les statistiques = empathie du public\n\n• COMPARAISON INTERNATIONALE\n  → France : réforme chômage annulée sous pression\n  → Modèle belge historiquement admiré en Europe\n\n• MOBILISATIONS PARALLÈLES actives\n  → Climat, féminisme = terreau militant existant\n  → Convergence des luttes possible",
+        "threats": "🔥 MENACES EXTERNES :\n\n• MAJORITÉ PARLEMENTAIRE solide et disciplinée\n  → 239 jours de négociation = engagement fort\n  → Peu de défections prévisibles\n\n• PRESSION BUDGÉTAIRE EUROPÉENNE\n  → Procédure déficit excessif pendante\n  → Marge de manœuvre réduite pour le gouvernement\n\n• DISCOURS MÉDIATIQUE DOMINANT\n  → \"Nécessité des réformes\" relayée sans critique\n  → Stigmatisation des \"inactifs\" = sens commun\n\n• RÉCUPÉRATION par l'EXTRÊME-DROITE\n  → Vlaams Belang peut instrumentaliser la colère\n  → Risque de division identitaire du mouvement\n\n• ÉPUISEMENT RAPIDE si premières actions échouent\n  → Effet démobilisateur d'un rejet de suspension par la Cour\n\n• RÉPRESSION POLICIÈRE potentielle\n  → Tensions sociales = risque de dérapages\n\n• DIVISIONS INTERNES sur les priorités\n  → Chômeurs vs malades vs étudiants = fragmentations"
+    },
+    "pestel": {
+        "politique": "🏛️ CONTEXTE POLITIQUE BELGE 2025-2026 :\n\n• Coalition Arizona = MR + N-VA + Engagés + CD&V + Vooruit\n  → Formée après 239 jours de négociation (février 2025)\n  → Rupture avec la Vivaldi (PS, Écolo inclus avant)\n\n• Premier ministre Bart De Wever (N-VA)\n  → Agenda confédéraliste et néolibéral\n  → Vision \"activation\" = fin de l'exception belge\n\n• Opposition fragmentée et faible\n  → PS, Écolo, PTB, DéFI sans majorité alternative\n  → Pas d'alliance crédible de remplacement\n\n• Tensions Flandre / Wallonie-Bruxelles\n  → Flandre : 3% chômage → soutient les réformes\n  → Bruxelles : 12% chômage → subit les réformes\n\n• Pression Vlaams Belang sur la N-VA\n  → Pousse le gouvernement vers la droite\n  → Empêche tout \"ramollissement\" social\n\n• Horizon électoral : législatives 2029\n  → 4 ans pour démontrer l'échec ou le succès",
+        "economique": "💰 CONTEXTE ÉCONOMIQUE :\n\n• EFFORT BUDGÉTAIRE de 23 milliards € d'ici 2029\n  → Contrainte européenne (déficit excessif)\n  → Justification principale des réformes\n\n• COÛT DU VIEILLISSEMENT : +1,7% du PIB 2024-2070\n  → Pression structurelle sur la sécurité sociale\n  → Argument pour \"activer\" les réserves de main-d'œuvre\n\n• TAUX DE CHÔMAGE disparate :\n  → Belgique : 5,5% national\n  → Flandre : 3% (quasi plein emploi)\n  → Bruxelles : 12% (chômage structurel)\n\n• INFLATION cumulée 2022-2024 : érosion pouvoir d'achat\n  → Prix énergie, alimentation, logement\n  → Working poor en augmentation\n\n• CRISE DU LOGEMENT :\n  → Loyer kot moyen : 590€/mois (695€ Bruxelles)\n  → Studios > 800€ en zone universitaire\n\n• ALTERNATIVES BUDGÉTAIRES chiffrées :\n  → Taxe millionnaires : 17 milliards € potentiels\n  → Lutte fraude fiscale : plusieurs milliards",
+        "social": "👥 CONTEXTE SOCIAL :\n\n• PAUVRETÉ : 18,3% en risque AROPE (2,1 millions de personnes)\n  → Augmentation structurelle depuis COVID\n\n• CHÔMAGE DE LONGUE DURÉE : 90.000 personnes menacées\n  → Profil : 50-55 ans, ex-industriels, problèmes santé\n  → Vague 2 (mars 2026) : 8-20 ans de chômage cumulé\n\n• MALADES LONGUE DURÉE : 500.000+ (plus que chômeurs)\n  → Burnout, dépression, TMS, maladies chroniques\n  → Nouvelle cible de l'\"activation\"\n\n• BASCULEMENT VERS RIS : 30.122 personnes immédiatement\n  → Augmentation 12,7% des bénéficiaires nationaux\n  → Bruxelles = 1/3 des exclus pour 1/10 population\n\n• PRÉCARITÉ ÉTUDIANTE :\n  → 58% en insécurité alimentaire\n  → 15.000 \"non-finançables\" exclus de l'enseignement\n  → 30% travaillent régulièrement (nuit aux études)\n\n• PAUVRETÉ INFANTILE : menacée par exclusion parents chômeurs\n  → Familles monoparentales = 80% de femmes",
+        "technologique": "💻 CONTEXTE TECHNOLOGIQUE :\n\n• DIGITALISATION des services publics\n  → eBox : notifications ONEM dématérialisées\n  → MyBenefits, MyPension : portails en ligne\n\n• FRACTURE NUMÉRIQUE = barrière invisible\n  → Populations fragiles : âgées, peu lettrées\n  → Non-recours aux droits (non-take-up) aggravé\n\n• SUPPRESSION des guichets physiques\n  → Administrations fédérales et régionales\n  → Accès humain de plus en plus rare\n\n• ALGORITHMES de gestion des vagues d'exclusion\n  → ONEM : calcul automatique des dates de fin de droit\n  → Peu de marge d'interprétation humaine\n\n• RÉSEAUX SOCIAUX comme outil de mobilisation\n  → Campagnes virales, témoignages vidéo\n  → Contre-pouvoir médiatique potentiel\n\n• OPPORTUNITÉ : Outils numériques militants\n  → Pétitions en ligne, crowdfunding solidarité\n  → Coordination inter-associative facilitée",
+        "environnemental": "🌱 CONTEXTE ENVIRONNEMENTAL :\n\n• PRÉCARITÉ ÉNERGÉTIQUE aggravée\n  → Prix du gaz/électricité post-crise 2022\n  → Dépendance aux tarifs sociaux (liés au BIM)\n\n• EFFET DOMINO : perte BIM → perte tarifs sociaux\n  → Spirale de précarisation énergétique\n  → Renoncement au chauffage = problèmes santé\n\n• CRISE CLIMATIQUE = nouvelles précarités\n  → Inondations 2021 : populations fragilisées\n  → Vagues de chaleur : impact santé publique\n\n• FAUX DILEMME transition écologique vs protection sociale\n  → Discours : \"pas les moyens\" de faire les deux\n  → Alternative : fiscalité verte + sociale\n\n• LOGEMENT ÉNERGIVORE\n  → Passoires thermiques = factures élevées\n  → Rénovation inaccessible aux ménages précaires\n\n• MOBILITÉ :\n  → Dépendance voiture = frein à l'emploi en zone rurale\n  → Transports en commun : tarifs sociaux BIM menacés",
+        "legal": "⚖️ CONTEXTE JURIDIQUE :\n\n• ARTICLE 23 Constitution belge\n  → Droit à la sécurité sociale\n  → Principe de STANDSTILL (effet cliquet)\n  → Interdit régression significative sans justification impérieuse\n\n• RECOURS en annulation devant Cour Constitutionnelle\n  → Introduit le 29 octobre 2025 par front commun\n  → Suspension d'urgence rejetée, examen sur le fond en cours\n  → Arrêt attendu fin 2026/début 2027\n\n• DÉLAI LÉGAL CPAS : statuer en 30 jours\n  → Intenable avec l'afflux de 30.000+ dossiers\n  → Risque de contentieux massif\n\n• FORCE MAJEURE MÉDICALE : délai réduit 9 → 6 mois\n  → Facilite licenciement travailleurs malades\n  → Basculement plus rapide vers chômage/invalidité\n\n• DROIT EUROPÉEN :\n  → Charte sociale européenne\n  → Pilier social européen\n  → Arguments potentiels devant CJUE\n\n• SANCTIONS malades : -2,5% indemnité\n  → Contestation possible devant tribunaux du travail\n  → Avis critiques IFDH et CNT"
+    },
+    "arbre": {
+        "probleme_central": "Les réformes Arizona opèrent un TRANSFERT MASSIF des risques sociaux de l'État fédéral vers les communes (CPAS) et les individus, provoquant :\n\n• L'EXCLUSION de 90.000 personnes du système d'assurance chômage\n• Le BASCULEMENT de 30.122 ménages vers le RIS (aide sociale)\n• La SATURATION des CPAS (80M€ surcoût Bruxelles seule)\n• L'AGGRAVATION de la précarité de 2,1 millions de Belges en risque AROPE\n\nCeci constitue une RUPTURE du contrat social belge fondé depuis 1944 sur la solidarité fédérale et la logique assurantielle.",
+        "causes": [
+            "CONTRAINTE BUDGÉTAIRE européenne : 23 milliards € à économiser d'ici 2029",
+            "IDÉOLOGIE D'ACTIVATION : \"le travail doit payer plus que l'inactivité\"",
+            "RAPPORT DE FORCE politique défavorable : majorité Arizona solide",
+            "FRAGMENTATION RÉGIONALE : Flandre (plein emploi) vs Wallonie/Bruxelles",
+            "STIGMATISATION MÉDIATIQUE des bénéficiaires d'allocations",
+            "FAIBLE MOBILISATION POLITIQUE des publics précarisés (isolement, honte)",
+            "ABSENCE D'ALTERNATIVE FISCALE à l'agenda : taxe millionnaires bloquée",
+            "PRESSION PATRONALE pour réduction coût du travail et \"flexibilité\""
+        ],
+        "effets": [
+            "30.122 personnes basculant vers le RIS dès 2026 (+12,7% bénéficiaires)",
+            "Surcoût 80 millions € pour les 19 CPAS bruxellois",
+            "Saturation services sociaux : 240 ETP manquants rien qu'à Bruxelles",
+            "Délai légal 30 jours intenable → familles sans ressources",
+            "Augmentation pauvreté infantile (familles monoparentales)",
+            "Renoncement aux soins (hausse ticket modérateur, déremboursements)",
+            "Burn-out massif des travailleurs sociaux",
+            "Exclusion académique de 15.000 étudiants non-finançables"
+        ],
+        "objectif": "PRÉSERVER un niveau de protection sociale conforme à l'article 23 de la Constitution belge, garantissant :\n\n• La DIGNITÉ des personnes précarisées\n• La VIABILITÉ FINANCIÈRE des CPAS\n• La SOLIDARITÉ FÉDÉRALE comme principe\n• L'ACCÈS AUX SOINS sans renoncement\n• L'ACCOMPAGNEMENT SOCIAL de qualité (vs contrôle administratif)",
+        "moyens": [
+            "RECOURS CONSTITUTIONNEL contre la limitation du chômage (article 23 standstill)",
+            "MOBILISATION SOCIALE massive : manifestations nationales, grève interprofessionnelle",
+            "CAMPAGNE COMMUNICATION contre-narrative : témoignages, données chiffrées",
+            "LOBBYING ciblé auprès des partis centristes de la coalition (Vooruit, Engagés)",
+            "DOCUMENTATION SYSTÉMATIQUE des impacts : observatoire citoyen des exclusions",
+            "COORDINATION INTERNATIONALE : réseaux anti-pauvreté UE, comparaisons",
+            "PERMANENCES JURIDIQUES pour recours individuels",
+            "CAISSES SOLIDARITÉ pour période sans revenus chômage→RIS"
+        ],
+        "resultats": [
+            "MORATOIRE sur les exclusions pendant l'examen constitutionnel",
+            "COMPENSATION INTÉGRALE des CPAS par le fédéral (100% surcoût réel)",
+            "ABANDON du bonus-malus pénalisant les communes pauvres",
+            "ALLONGEMENT durée indemnisation chômage (24 → 36 mois minimum)",
+            "SUPPRESSION sanctions financières malades longue durée",
+            "MAINTIEN gratuité médicaments d'importance vitale",
+            "RENFORCEMENT effectifs services sociaux (financement postes)",
+            "AUTOMATISATION droits sociaux contre non-recours"
+        ]
+    },
+    "pourquoi": {
+        "probleme": "90.000 personnes vont perdre leurs allocations de chômage et basculer vers l'aide sociale (CPAS), transférant la charge financière du budget fédéral vers les communes, menaçant la viabilité des CPAS et la dignité de dizaines de milliers de ménages.",
+        "why1": "POURQUOI #1 : Parce que le gouvernement Arizona a décidé de LIMITER les allocations de chômage à 24 MOIS maximum, mettant fin à l'exception belge d'une couverture illimitée dans le temps qui empêchait le basculement dans la grande pauvreté.",
+        "why2": "POURQUOI #2 : Parce que la coalition veut réaliser 23 MILLIARDS D'ÉCONOMIES d'ici 2029 pour respecter les contraintes budgétaires européennes, et considère la sécurité sociale comme la principale VARIABLE D'AJUSTEMENT, plutôt que d'explorer les alternatives fiscales.",
+        "why3": "POURQUOI #3 : Parce que l'IDÉOLOGIE DOMINANTE de \"l'activation\" postule que seule la suppression des allocations incitera les chômeurs à reprendre un emploi, IGNORANT les freins structurels réels : problèmes de santé, mobilité, âge, obsolescence des compétences, discrimination à l'embauche.",
+        "why4": "POURQUOI #4 : Parce que les PUBLICS PRÉCARISÉS sont politiquement FAIBLES : peu organisés, stigmatisés comme \"profiteurs\", isolés socialement, et donc une CIBLE FACILE pour les réformes d'austérité — contrairement aux pensionnés ou aux entreprises qui ont des lobbies puissants.",
+        "why5": "🎯 CAUSE RACINE (POURQUOI #5) :\n\nParce que le RAPPORT DE FORCE POLITIQUE est structurellement défavorable aux classes populaires :\n\n• La REDISTRIBUTION FISCALE des riches vers les pauvres est IDÉOLOGIQUEMENT BLOQUÉE par la coalition (pas de taxe sur les grandes fortunes)\n\n• L'ALTERNATIVE BUDGÉTAIRE EXISTE (17 milliards € via taxe millionnaires + lutte fraude fiscale) mais N'EST PAS À L'AGENDA\n\n• Le DISCOURS DOMINANT (\"profiteurs\", \"assistés\") a LÉGITIMÉ l'attaque contre les plus fragiles comme \"nécessité économique\" alors qu'il s'agit d'un CHOIX POLITIQUE\n\n→ CE N'EST PAS UN PROBLÈME TECHNIQUE, C'EST UN CONFLIT DE CLASSE"
+    },
+    "pouvoir": {
+        "avec": "🤝 STRATÉGIE \"AVEC\" LE POUVOIR — Dialogue et négociation :\n\n• DIALOGUE avec le cabinet Vandenbroucke (Vooruit)\n  → Ministre socialiste potentiellement sensible à la pression\n  → Focus : maintien des avancées santé (interdiction suppléments BIM)\n\n• AUDITIONS PARLEMENTAIRES\n  → Présentation des études d'impact DULBEA devant commissions\n  → Témoignages de personnes concernées\n\n• CONCERTATION SOCIALE au CNT\n  → Participation aux négociations sur les modalités d'application\n  → Propositions d'amendements techniques\n\n• COLLABORATION avec les CPAS\n  → Alimentation en données et témoignages\n  → Appui à leurs revendications de compensation intégrale\n\n• ÉCHANGES avec l'opposition constructive\n  → Les Engagés : sensibilité éthique potentielle\n  → Vooruit : contradiction interne à exploiter",
+        "sans": "🔄 STRATÉGIE \"SANS\" LE POUVOIR — Alternatives autonomes :\n\n• OBSERVATOIRE CITOYEN des exclusions\n  → Documentation indépendante des impacts\n  → Base de données des témoignages (objectif 1000)\n  → Publication de rapports alternatifs aux statistiques officielles\n\n• CAISSES DE SOLIDARITÉ\n  → Fonds d'urgence pour la période sans revenus (chômage → RIS)\n  → Mutualisation des ressources entre associations\n\n• FORMATIONS À L'ACTION COLLECTIVE\n  → Ateliers \"connaître ses droits\" pour publics précarisés\n  → Empowerment et déconstruction de la honte\n\n• PRODUCTION DE CONTRE-RÉCITS MÉDIATIQUES\n  → Podcasts, vidéos témoignages, infographies\n  → Présence active sur réseaux sociaux\n\n• PERMANENCES JURIDIQUES GRATUITES\n  → Accompagnement recours individuels devant tribunaux\n  → Saturation judiciaire comme révélateur systémique",
+        "contre": "✊ STRATÉGIE \"CONTRE\" LE POUVOIR — Opposition et rapport de force :\n\n• MANIFESTATIONS NATIONALES\n  → Marche massive (objectif 50.000 personnes)\n  → Grève interprofessionnelle si blocage total\n\n• RECOURS CONSTITUTIONNEL COLLECTIF\n  → Déjà introduit le 29 octobre 2025\n  → Article 23 : principe de standstill\n  → Épée de Damoclès juridique sur le gouvernement\n\n• ACTIONS SYMBOLIQUES lors des vagues d'exclusion\n  → Occupation symbolique des bureaux ONEM le 1er mars 2026\n  → Chaînes humaines devant les CPAS saturés\n\n• CAMPAGNE DE DÉSOBÉISSANCE CIVILE\n  → Refus collectif de signer les PIIS punitifs\n  → Médiatisation des cas de sanctions absurdes\n\n• INTERPELLATION MÉDIATIQUE des élus de la majorité\n  → Naming and shaming : \"votre député a voté pour...\"\n  → Présence systématique lors des événements publics\n\n• COORDINATION INTERNATIONALE\n  → Saisine potentielle du Comité européen des droits sociaux\n  → Mobilisation des réseaux anti-pauvreté européens"
+    },
+    "smart": [
+        {
+            "s": "Obtenir un MORATOIRE sur les exclusions chômage pendant l'examen constitutionnel",
+            "m": "Suspension officielle des vagues 2-3-4 par décision gouvernementale ou judiciaire",
+            "a": "Réaliste si la Cour Constitutionnelle accepte des mesures provisoires ou si la pression politique est suffisante",
+            "r": "Mobilisation juridique maximale + pression médiatique intensive sur le gouvernement",
+            "t": "D'ici le 1er mars 2026 (avant la vague 2)"
+        },
+        {
+            "s": "Documenter 1000 TÉMOIGNAGES de personnes exclues ou menacées",
+            "m": "Base de données structurée avec consentement éclairé, publiée sur plateforme dédiée et relayée médias",
+            "a": "Réalisable via le réseau des CPAS (30.000+ dossiers) et associations partenaires (BAPN, RWLP)",
+            "r": "Partenariat formel avec Solidaris, syndicats et CPAS wallons/bruxellois pour la collecte",
+            "t": "1000 témoignages d'ici décembre 2026 (6 mois après premières exclusions massives)"
+        },
+        {
+            "s": "Faire basculer 3-5 DÉPUTÉS Vooruit ou Engagés contre le système bonus-malus CPAS",
+            "m": "Vote d'un amendement supprimant le mécanisme de pénalisation des communes pauvres au budget 2027",
+            "a": "Possible via pression ciblée des CPAS de leurs circonscriptions électorales",
+            "r": "Campagne de lobbying individualisé + mobilisation des bourgmestres concernés",
+            "t": "Avant le vote du budget 2027 (automne 2026)"
+        },
+        {
+            "s": "Obtenir une COMPENSATION FÉDÉRALE de 100% des coûts RIS pour les exclus du chômage",
+            "m": "Amendement budgétaire remplaçant le subside partiel de 518€/an par un remboursement intégral incluant frais de personnel",
+            "a": "Faisable si les CPAS démontrent l'insuffisance des compensations actuelles (saturation, déficits)",
+            "r": "Coalition UVCW + Brulocalis + VVSG présentant des chiffres consolidés incontestables",
+            "t": "Négociation du budget fédéral 2027 (automne 2026)"
+        },
+        {
+            "s": "Mobiliser 50.000 PERSONNES lors de la prochaine manifestation nationale",
+            "m": "Comptage officiel police/syndicats dépassant 50.000 participants",
+            "a": "Ambitieux mais réalisable avec coordination syndicale nationale (1,5M membres)",
+            "r": "Front commun FGTB-CSC-CGSLB + réseau associatif + réseaux sociaux",
+            "t": "Avant les vagues 3-4 d'exclusion (printemps 2026)"
+        }
+    ],
+    "cibles": {
+        "principale": "🎯 CIBLE PRINCIPALE : La COUR CONSTITUTIONNELLE\n\nSeule instance pouvant ANNULER les mesures législatives sur base de l'article 23 de la Constitution (principe de standstill).\n\n• Recours en annulation introduit le 29 octobre 2025\n• Demande de suspension d'urgence rejetée → examen sur le fond\n• Arrêt attendu fin 2026 / début 2027\n• Impact potentiel : annulation + indemnisation rétroactive des exclus\n\nSTRATÉGIE : \n• Alimenter le dossier en preuves d'impact disproportionné\n• Médiatiser l'enjeu constitutionnel pour créer une attente sociale\n• Préparer les scénarios post-arrêt (positif ou négatif)",
+        "secondaires": "🎯 CIBLES SECONDAIRES :\n\n• CABINET VANDENBROUCKE (Ministre Affaires sociales, Vooruit)\n  → Ministre socialiste, contradiction interne avec les réformes\n  → Levier : montrer que ses avancées santé sont neutralisées par le reste\n\n• DÉPUTÉS VOORUIT et LES ENGAGÉS des circonscriptions wallonnes/bruxelloises\n  → Leur électorat populaire est directement menacé\n  → Levier : pression des CPAS de leurs communes + témoignages locaux\n\n• COMMISSION PARLEMENTAIRE AFFAIRES SOCIALES\n  → Espace de visibilité médiatique pour les témoignages\n  → Auditions = mise en lumière des contradictions\n\n• MÉDIAS PROGRESSISTES (RTBF, Le Soir, Le Vif)\n  → Relais des contre-récits et témoignages\n  → Levier : leur fournir des histoires humaines puissantes\n\n• BOURGMESTRES des grandes villes (Charleroi, Liège, Bruxelles)\n  → Directement impactés par le surcoût CPAS\n  → Peuvent interpeller le fédéral publiquement",
+        "allies": "💚 ALLIÉS STRATÉGIQUES :\n\n• FRONT COMMUN SYNDICAL FGTB-CSC-CGSLB\n  → Force de mobilisation massive (1,5M membres)\n  → Expertise juridique et budgétaire\n  → Légitimité historique\n\n• FÉDÉRATIONS CPAS (UVCW, Brulocalis, VVSG)\n  → Légitimité institutionnelle incontestable\n  → Données de terrain : surcoût, saturation, délais\n  → Voix non-partisane (gestionnaires locaux)\n\n• RÉSEAU ASSOCIATIF ANTI-PAUVRETÉ (BAPN, RWLP)\n  → Expertise du non-recours aux droits\n  → Témoignages et histoires humaines\n  → Relais vers les publics précarisés\n\n• EXPERTISE ACADÉMIQUE (DULBEA/ULB, IWEPS)\n  → Caution scientifique des chiffres d'impact\n  → Crédibilité vis-à-vis des médias et du politique\n\n• OPPOSITION PARLEMENTAIRE (PS, Écolo, PTB, DéFI)\n  → Relais politique des revendications\n  → Questions parlementaires, propositions de loi\n  → Alternatives budgétaires chiffrées (PTB : 17 milliards)",
+        "opposants": "❌ OPPOSANTS À NEUTRALISER :\n\n• CABINET DE WEVER (Premier Ministre N-VA)\n  → Architecte idéologique des réformes\n  → Peu sensible à la pression sociale\n  → Stratégie : isoler politiquement, viser les partenaires centristes\n\n• CABINET BOUCHEZ / MR\n  → Orthodoxie budgétaire, discours anti-assistanat\n  → Impossible à convaincre\n  → Stratégie : décrédibiliser son discours (données vs idéologie)\n\n• COMMISSION EUROPÉENNE\n  → Pression pour respecter les engagements budgétaires\n  → Stratégie : mobiliser le Pilier social européen, Charte sociale\n\n• FÉDÉRATIONS PATRONALES (FEB, UCM)\n  → Soutien actif aux réformes d'activation\n  → Stratégie : exposer les aides publiques aux entreprises (coût vs efficacité)\n\n• CERTAINS MÉDIAS FLAMANDS\n  → Relais du discours sur les \"profiteurs\"\n  → Stratégie : fournir des témoignages flamands, trouver des alliés locaux\n\n• VLAAMS BELANG\n  → Risque de récupération populiste de la colère\n  → Stratégie : ne jamais leur laisser le monopole de la contestation"
+    },
+    "message": {
+        "accroche": "🎣 ACCROCHE :\n\n« En Belgique, 90.000 personnes vont perdre leur allocation de chômage d'ici 2027.\n\nPas parce qu'elles ont trouvé un emploi.\n\nMais parce qu'un gouvernement a décidé que 24 mois, c'était assez.\n\nAprès ? Les CPAS.\n\nEt quand les CPAS n'auront plus les moyens ?\n\nLa rue. »\n\n---\n\nVariante statistique :\n« 30.122 : c'est le nombre de familles belges qui basculeront vers l'aide sociale dès 2026. Pas des chiffres. Des parents. Des enfants. Des vies. »",
+        "probleme": "🔍 LE PROBLÈME :\n\nLes réformes Arizona ne sont pas une \"réforme du chômage\". C'est un TRANSFERT ORGANISÉ des responsabilités :\n\n• De l'État fédéral → vers les communes\n• De la solidarité nationale → vers l'assistance locale\n• De l'assurance → vers la charité\n\nLes 30.122 personnes qui basculeront immédiatement vers le RIS ne sont pas des statistiques :\n• Ce sont des parents de 50 ans, victimes de restructurations industrielles\n• Ce sont des malades chroniques que le marché du travail ne veut plus\n• Ce sont des mères seules qui ont sacrifié leur carrière\n\nEt la théorie de l'\"activation\" qui prétend que supprimer une allocation suffit à retrouver un emploi IGNORE sciemment la réalité : les freins sont la santé, l'âge, la mobilité, l'obsolescence des compétences, la discrimination à l'embauche.\n\nCe n'est pas de l'économie. C'est de l'idéologie.",
+        "importance": "❗ POURQUOI C'EST URGENT :\n\nSans action immédiate :\n\n• Les CPAS seront SATURÉS\n  → Délai légal de 30 jours intenable\n  → Familles sans AUCUNE ressource pendant des semaines\n\n• La PAUVRETÉ INFANTILE va exploser\n  → Chômeurs de longue durée = souvent chefs de famille monoparentale\n\n• Le RENONCEMENT AUX SOINS va augmenter\n  → Hausse ticket modérateur + déremboursements = \"taxe santé\"\n\n• Les TRAVAILLEURS SOCIAUX vont craquer\n  → Burn-out massif déjà en cours\n  → Effondrement du service public de l'aide sociale\n\nLa Belgique, pays fondateur de la sécurité sociale européenne, s'apprête à créer une nouvelle catégorie de pauvres : les \"ORPHELINS DU CHÔMAGE\".\n\n2026 est l'année de bascule. Ce qui ne sera pas empêché maintenant sera irréversible.",
+        "cible": "🎯 À QUI NOUS NOUS ADRESSONS :\n\n• À la COUR CONSTITUTIONNELLE :\n  \"Vous êtes la garante de l'article 23. Le principe de standstill n'est pas une abstraction juridique — c'est la promesse que la Belgique ne reculera pas sur la dignité humaine.\"\n\n• Aux DÉPUTÉS de la majorité (Vooruit, Engagés) :\n  \"Vos électeurs sont parmi les 90.000. Comment leur expliquerez-vous votre vote ? La loyauté coalitionnelle vaut-elle plus que la dignité de vos concitoyens ?\"\n\n• Aux BOURGMESTRES et présidents de CPAS :\n  \"Le fédéral vous transfère la charge sans vous donner les moyens. 518€ par personne et par an ne couvre même pas une heure d'accompagnement social par semaine. Refusez d'être les gestionnaires de la misère.\"\n\n• À L'OPINION PUBLIQUE :\n  \"Aujourd'hui ce sont les chômeurs de longue durée. Demain ce pourrait être vous, votre parent, votre enfant. La protection sociale, c'est l'assurance de ne jamais tomber dans le vide. Sans elle, nous sommes tous vulnérables.\"",
+        "action": "📢 CE QUE NOUS DEMANDONS :\n\n1️⃣ Un MORATOIRE IMMÉDIAT sur les exclusions\n   → Le temps de l'examen du recours constitutionnel\n   → Aucune famille ne doit basculer tant que la légalité n'est pas tranchée\n\n2️⃣ Une COMPENSATION INTÉGRALE des CPAS\n   → 100% du surcoût réel, pas 518€ symboliques\n   → Inclure les frais de personnel supplémentaires\n\n3️⃣ L'ABANDON du système BONUS-MALUS\n   → Arrêter de punir les communes d'être pauvres\n   → Reconnaître les disparités territoriales\n\n4️⃣ La SUPPRESSION des sanctions pour les malades\n   → Retrait de la réduction de 2,5% des indemnités\n   → Accompagner au lieu de punir\n\n---\n\n✊ REJOIGNEZ-NOUS :\nManifestations • Témoignages • Recours • Solidarité\n\n#StopArizona #Article23 #DigniteHumaine"
+    },
+    "checklist": [
+        {
+            "task": "Constituer le dossier juridique complet pour la Cour Constitutionnelle (preuves d'impact disproportionné)",
+            "phase": "avant",
+            "done": true
+        },
+        {
+            "task": "Identifier et briefer 10 témoins représentatifs (profils diversifiés : âge, genre, région)",
+            "phase": "avant",
+            "done": true
+        },
+        {
+            "task": "Préparer les argumentaires chiffrés à partir des études DULBEA et données ONEM",
+            "phase": "avant",
+            "done": true
+        },
+        {
+            "task": "Briefer les porte-parole syndicaux sur les éléments de langage clés",
+            "phase": "avant",
+            "done": false
+        },
+        {
+            "task": "Coordonner avec l'opposition parlementaire pour les questions au gouvernement",
+            "phase": "avant",
+            "done": false
+        },
+        {
+            "task": "Préparer le kit média complet (communiqués, visuels, infographies, vidéos témoignages)",
+            "phase": "avant",
+            "done": false
+        },
+        {
+            "task": "Contacter les journalistes clés (RTBF, Le Soir, Le Vif) pour embargo pré-action",
+            "phase": "avant",
+            "done": false
+        },
+        {
+            "task": "Vérifier la logistique de la manifestation (parcours, sono, sécurité, toilettes)",
+            "phase": "avant",
+            "done": false
+        },
+        {
+            "task": "Cadrer les prises de parole : pas de dérapage, focus sur la dignité et les données",
+            "phase": "pendant",
+            "done": false
+        },
+        {
+            "task": "Documenter l'action (photos, vidéos, comptage participants)",
+            "phase": "pendant",
+            "done": false
+        },
+        {
+            "task": "Assurer la présence médias et faciliter les interviews",
+            "phase": "pendant",
+            "done": false
+        },
+        {
+            "task": "Proposer un calendrier de suivi avec des échéances concrètes aux interlocuteurs politiques",
+            "phase": "pendant",
+            "done": false
+        },
+        {
+            "task": "Identifier les points de blocage et les leviers de négociation en temps réel",
+            "phase": "pendant",
+            "done": false
+        },
+        {
+            "task": "Diffuser le compte-rendu aux partenaires dans les 24h",
+            "phase": "apres",
+            "done": false
+        },
+        {
+            "task": "Communiquer sur les avancées (même partielles) vers les médias et les publics cibles",
+            "phase": "apres",
+            "done": false
+        },
+        {
+            "task": "Planifier les prochaines étapes selon les engagements obtenus ou les blocages identifiés",
+            "phase": "apres",
+            "done": false
+        },
+        {
+            "task": "Archiver tous les documents pour le suivi juridique et la mémoire militante",
+            "phase": "apres",
+            "done": false
+        },
+        {
+            "task": "Organiser un débriefing interne : ce qui a marché, ce qui a échoué, leçons apprises",
+            "phase": "apres",
+            "done": false
+        }
+    ],
+    "evaluation": {
+        "indicateurs": "📊 INDICATEURS QUANTITATIFS :\n\n• Nombre de personnes protégées par un moratoire\n  → Cible : 90.000 (totalité des menacés)\n  → Minimum acceptable : suspension vagues 2-3-4\n\n• Montant de la compensation fédérale CPAS obtenue\n  → Cible : passage de 518€/an à 100% du coût réel\n  → Mesurable : amendement budgétaire 2027\n\n• Nombre de témoignages collectés et médiatisés\n  → Cible : 1000 témoignages structurés\n  → Échéance : décembre 2026\n\n• Audience cumulée des actions médiatiques\n  → Cible : 500.000 personnes touchées (réseaux + presse)\n\n• Participation aux manifestations\n  → Cible : 50.000 participants à la marche nationale\n\n• Nombre de députés ayant changé de position publiquement\n  → Cible : 3-5 députés Vooruit ou Engagés\n\n📈 INDICATEURS QUALITATIFS :\n\n• Arrêt de la Cour Constitutionnelle\n  → Favorable : annulation ou réserves d'interprétation contraignantes\n\n• Inflexion du discours gouvernemental\n  → Passage de \"activation\" à \"accompagnement\"\n  → Reconnaissance publique des limites des réformes\n\n• Reconnaissance médiatique de la légitimité des revendications\n  → Éditoriaux favorables dans la presse de référence",
+        "methodes": "🔬 MÉTHODES DE COLLECTE ET SUIVI :\n\n• VEILLE MÉDIA systématique\n  → Revue de presse quotidienne (mots-clés : Arizona, chômage, CPAS, BIM)\n  → Outil : alerte Google + agrégateur presse belge\n  → Responsable : 1 bénévole dédié\n\n• SUIVI DONNÉES ONEM\n  → Comparaison exclusions effectives vs projetées\n  → Source : publications statistiques trimestrielles ONEM\n  → Analyse : service études syndical\n\n• BAROMÈTRE TRIMESTRIEL CPAS partenaires\n  → Questionnaire standardisé : charge, délais, moyens, burn-out personnel\n  → Échantillon : 20 CPAS wallons + 10 bruxellois\n  → Partenariat : UVCW + Brulocalis\n\n• ENQUÊTE QUALITATIVE auprès des personnes exclues\n  → Entretiens semi-directifs 6 mois après exclusion\n  → Thèmes : parcours administratif, impact psychologique, situation matérielle\n  → Échantillon : 100 personnes (stratification régionale/profil)\n\n• ANALYSE DÉBATS PARLEMENTAIRES\n  → Suivi des interventions et votes\n  → Identification des inflexions de position\n  → Source : comptes rendus analytiques Chambre\n\n• SUIVI RECOURS CONSTITUTIONNEL\n  → Étapes procédurales, audiences, délibérés\n  → Contact régulier avec avocats du front commun",
+        "calendrier": "📅 CALENDRIER D'ÉVALUATION :\n\n🔹 T1 2026 (Janvier-Mars)\n• Lancement campagne + premières exclusions (Vagues 1-2)\n• Séances d'information d'urgence syndicats\n• Premier bilan médiatique (couverture, réactions)\n• Évaluation : réactivité du dispositif, premiers témoignages\n\n🔹 T2 2026 (Avril-Juin)\n• Vagues 3-4 + documentation des impacts\n• Montée en pression médiatique\n• Manifestation nationale (objectif 50.000)\n• Évaluation : mobilisation, saturation CPAS mesurée\n\n🔹 T3 2026 (Juillet-Septembre)\n• Bilan 6 mois des exclusions\n• Ajustement stratégique selon résultats\n• Ciblage négociation budget 2027\n• Évaluation : 500 témoignages collectés ?, députés sensibilisés ?\n\n🔹 T4 2026 (Octobre-Décembre)\n• Négociation budgétaire intensive\n• Attente arrêt Cour Constitutionnelle\n• Évaluation : compensation CPAS ?, moratoire ?\n\n🔹 2027\n• Réception arrêt Cour Constitutionnelle\n• Évaluation globale : objectifs atteints ?\n• Décision : continuer, adapter ou clore la campagne",
+        "lecons": "💡 LEÇONS À DOCUMENTER AU FIL DE LA CAMPAGNE :\n\n❓ EFFICACITÉ DES ARGUMENTS :\n• Quels arguments ont le plus résonné auprès des cibles ?\n• Le registre émotionnel (témoignages) ou rationnel (chiffres) ?\n• Les comparaisons internationales ont-elles eu un impact ?\n\n❓ ACTIONS LES PLUS EFFICACES :\n• Quelles actions ont généré le plus de couverture médiatique ?\n• La manifestation vs les recours juridiques vs le lobbying ?\n• Les réseaux sociaux : quel contenu a le plus circulé ?\n\n❓ PARTENARIATS :\n• Quels partenariats ont été les plus efficaces ?\n• Tensions éventuelles au sein du front commun ?\n• Les CPAS comme alliés institutionnels : quelle plus-value ?\n\n❓ OBSTACLES NON ANTICIPÉS :\n• Quels obstacles n'avaient pas été anticipés ?\n• Réactions du gouvernement non prévues ?\n• Difficultés internes (fatigue, désaccords, ressources) ?\n\n❓ PARTICIPATION DES CONCERNÉS :\n• Comment les publics précarisés ont-ils participé à leur propre défense ?\n• Quel empowerment observé ? Quels freins persistants ?\n\n❓ COMPÉTENCES MANQUANTES :\n• Quelles compétences manquaient dans l'équipe ?\n• Besoins en formation ou recrutement pour la suite ?"
+    }
+};
+
+// Charger le dataset de démo si localStorage est vide
+if (!localStorage.getItem('plaidoyer-v3')) {
+    localStorage.setItem('plaidoyer-v3', JSON.stringify(DEMO_DATASET));
+    console.log('📦 Dataset Arizona chargé automatiquement');
+}
+
+
+const App = {
+    state: {
+        currentPage: 'dashboard',
+        project: { name: 'Mon plaidoyer', created: new Date().toISOString(), modified: new Date().toISOString() },
+        domino: { vision: '', obstacles: '', ressources: '' },
+        profil: { motivations: '', competences: '', temps: '', limites: '' },
+        fleur: { identites: '', privileges: '', oppressions: '' },
+        acteurs: [],
+        tdc: { changement_interne_individuel: '', changement_interne_collectif: '', changement_externe_individuel: '', changement_externe_collectif: '', hypotheses: '' },
+        swot: { strengths: '', weaknesses: '', opportunities: '', threats: '' },
+        pestel: { politique: '', economique: '', social: '', technologique: '', environnemental: '', legal: '' },
+        arbre: { probleme_central: '', causes: [], effets: [], objectif: '', moyens: [], resultats: [] },
+        pourquoi: { probleme: '', why1: '', why2: '', why3: '', why4: '', why5: '' },
+        pouvoir: { avec: '', sans: '', contre: '' },
+        smart: [],
+        cibles: { principale: '', secondaires: '', allies: '', opposants: '' },
+        message: { accroche: '', probleme: '', importance: '', cible: '', action: '' },
+        checklist: [],
+        evaluation: { indicateurs: '', methodes: '', calendrier: '', lecons: '' }
+    },
+
+    init() {
+        this.loadState();
+        this.bindNavigation();
+        this.bindKeyboard();
+        this.renderPage('dashboard');
+        this.updateStorage();
+        console.log('✅ Plaidoyer Citoyen 3.0 initialisé');
+    },
+
+    saveState() {
+        this.state.project.modified = new Date().toISOString();
+        localStorage.setItem('plaidoyer-v3', JSON.stringify(this.state));
+        this.updateStorage();
+    },
+
+    loadState() {
+        try {
+            const saved = localStorage.getItem('plaidoyer-v3');
+            if (saved) this.state = { ...this.state, ...JSON.parse(saved) };
+        } catch (e) { console.error('Load error:', e); }
+    },
+
+    quickSave() {
+        this.collectFormData();
+        this.saveState();
+        this.toast('Projet sauvegardé', 'success');
+    },
+
+    updateStorage() {
+        const data = localStorage.getItem('plaidoyer-v3') || '';
+        const kb = (new Blob([data]).size / 1024).toFixed(1);
+        document.getElementById('storage-usage').textContent = kb + ' Ko';
+        document.getElementById('storage-fill').style.width = Math.min((new Blob([data]).size / 5000000) * 100, 100) + '%';
+    },
+
+    bindNavigation() {
+        document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+            item.addEventListener('click', () => this.navigateTo(item.dataset.page));
+        });
+    },
+
+    bindKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') { e.preventDefault(); this.quickSave(); }
+            if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        });
+    },
+
+    navigateTo(page) {
+        this.collectFormData();
+        this.saveState();
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.page === page);
+        });
+        const titles = {
+            'dashboard': 'Tableau de bord', 'tool-domino': 'Domino du changement', 'tool-profil': 'Profil d\'engagement',
+            'tool-fleur': 'Fleur de pouvoir', 'tool-acteurs': 'Cartographie des acteurs', 'tool-tdc': 'Théorie du changement',
+            'tool-swot': 'Analyse SWOT', 'tool-pestel': 'Analyse PESTEL', 'tool-arbre': 'Arbre à problème',
+            'tool-pourquoi': 'Les 5 Pourquoi', 'tool-pouvoir': 'Avec/sans/contre le pouvoir', 'tool-smart': 'Objectifs SMART',
+            'tool-cibles': 'Cibles et alliances', 'tool-message': 'Construction du message', 'tool-checklist': 'Check-list rencontre',
+            'tool-evaluation': 'Suivi-évaluation', 'export': 'Exporter', 'import': 'Importer', 'settings': 'Paramètres'
+        };
+        document.getElementById('breadcrumb-current').textContent = titles[page] || page;
+        this.state.currentPage = page;
+        this.renderPage(page);
+    },
+
+    collectFormData() {
+        document.querySelectorAll('[data-field]').forEach(el => {
+            const [cat, key] = el.dataset.field.split('.');
+            if (cat && key && this.state[cat]) this.state[cat][key] = el.value;
+        });
+    },
+
+    renderPage(page) {
+        const c = document.getElementById('page-container');
+        const pages = {
+            'dashboard': () => this.renderDashboard(),
+            'tool-domino': () => this.renderToolDomino(),
+            'tool-profil': () => this.renderToolProfil(),
+            'tool-fleur': () => this.renderToolFleur(),
+            'tool-acteurs': () => this.renderToolActeurs(),
+            'tool-tdc': () => this.renderToolTdc(),
+            'tool-swot': () => this.renderToolSwot(),
+            'tool-pestel': () => this.renderToolPestel(),
+            'tool-arbre': () => this.renderToolArbre(),
+            'tool-pourquoi': () => this.renderToolPourquoi(),
+            'tool-pouvoir': () => this.renderToolPouvoir(),
+            'tool-smart': () => this.renderToolSmart(),
+            'tool-cibles': () => this.renderToolCibles(),
+            'tool-message': () => this.renderToolMessage(),
+            'tool-checklist': () => this.renderToolChecklist(),
+            'tool-evaluation': () => this.renderToolEvaluation(),
+            'export': () => this.renderExportPage(),
+            'import': () => this.renderImportPage(),
+            'settings': () => this.renderSettingsPage()
+        };
+        c.innerHTML = pages[page] ? pages[page]() : this.renderDashboard();
+    },
+
+    calcProgress() {
+        const chk = (obj) => {
+            if (!obj) return 0;
+            const vals = Object.values(obj);
+            return Math.round((vals.filter(v => v && (typeof v === 'string' ? v.trim() : true)).length / vals.length) * 100);
+        };
+        const voir = Math.round([chk(this.state.domino), chk(this.state.profil), chk(this.state.fleur), this.state.acteurs.length > 0 ? 100 : 0].reduce((a,b) => a+b, 0) / 4);
+        const juger = Math.round([chk(this.state.tdc), chk(this.state.swot), chk(this.state.pestel), this.state.arbre.probleme_central ? 50 : 0, chk(this.state.pourquoi)].reduce((a,b) => a+b, 0) / 5);
+        const agir = Math.round([chk(this.state.pouvoir), this.state.smart.length > 0 ? 100 : 0, chk(this.state.cibles), chk(this.state.message), this.state.checklist.length > 0 ? 100 : 0, chk(this.state.evaluation)].reduce((a,b) => a+b, 0) / 6);
+        return { voir, juger, agir, total: Math.round((voir + juger + agir) / 3) };
+    },
+
+    isComplete(tool) {
+        const d = this.state[tool];
+        if (!d) return false;
+        if (Array.isArray(d)) return d.length > 0;
+        return Object.values(d).some(v => v && (typeof v === 'string' ? v.trim() : true));
+    },
+
+    renderDashboard() {
+        const s = this.calcProgress();
+        const tc = (page, icon, name, desc, phase, done) => `
+            <div class="tool-card ${phase}" onclick="App.navigateTo('${page}')">
+                <div class="tool-header"><span class="tool-icon">${icon}</span><div class="tool-status ${done ? 'complete' : ''}"></div></div>
+                <div class="tool-name">${name}</div>
+                <div class="tool-description">${desc}</div>
+            </div>`;
+        return `
+            <div class="dashboard-hero animate-fade-in">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Bienvenue sur votre poste de travail</h1>
+                        <p>Construisez votre stratégie de plaidoyer citoyen étape par étape avec les 15 outils méthodologiques.</p>
+                    </div>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="progress-ring-bg" cx="60" cy="60" r="52"/>
+                            <circle class="progress-ring-fill" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="${327 - (327 * s.total / 100)}"/>
+                        </svg>
+                        <div class="progress-ring-text">
+                            <span class="progress-value">${s.total}%</span>
+                            <span class="progress-label">Complété</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-stats">
+                <div class="stat-card voir"><div class="stat-icon">👁️</div><div class="stat-value">${s.voir}%</div><div class="stat-label">Phase VOIR</div></div>
+                <div class="stat-card juger"><div class="stat-icon">⚖️</div><div class="stat-value">${s.juger}%</div><div class="stat-label">Phase JUGER</div></div>
+                <div class="stat-card agir"><div class="stat-icon">🚀</div><div class="stat-value">${s.agir}%</div><div class="stat-label">Phase AGIR</div></div>
+                <div class="stat-card total"><div class="stat-icon">📊</div><div class="stat-value">${this.state.acteurs.length}</div><div class="stat-label">Acteurs identifiés</div></div>
+            </div>
+            <div class="tools-section">
+                <div class="section-header"><h2 class="section-title"><span class="phase-badge phase-voir">VOIR</span> Analyse de la situation</h2></div>
+                <div class="tools-grid">
+                    ${tc('tool-domino', '🎯', 'Domino du changement', 'Définissez votre vision du changement', 'voir', this.isComplete('domino'))}
+                    ${tc('tool-profil', '👤', 'Profil d\'engagement', 'Évaluez vos ressources', 'voir', this.isComplete('profil'))}
+                    ${tc('tool-fleur', '🌸', 'Fleur de pouvoir', 'Analysez vos identités', 'voir', this.isComplete('fleur'))}
+                    ${tc('tool-acteurs', '👥', 'Cartographie acteurs', 'Identifiez les parties prenantes', 'voir', this.state.acteurs.length > 0)}
+                </div>
+            </div>
+            <div class="tools-section">
+                <div class="section-header"><h2 class="section-title"><span class="phase-badge phase-juger">JUGER</span> Élaboration de la stratégie</h2></div>
+                <div class="tools-grid">
+                    ${tc('tool-tdc', '🔄', 'Théorie du changement', 'Articulez votre logique d\'intervention', 'juger', this.isComplete('tdc'))}
+                    ${tc('tool-swot', '📊', 'Analyse SWOT', 'Forces, faiblesses, opportunités, menaces', 'juger', this.isComplete('swot'))}
+                    ${tc('tool-pestel', '🌍', 'Analyse PESTEL', 'Contexte macro-environnemental', 'juger', this.isComplete('pestel'))}
+                    ${tc('tool-arbre', '🌳', 'Arbre à problème', 'Causes et effets', 'juger', this.state.arbre.probleme_central)}
+                    ${tc('tool-pourquoi', '❓', 'Les 5 Pourquoi', 'Causes racines', 'juger', this.isComplete('pourquoi'))}
+                </div>
+            </div>
+            <div class="tools-section">
+                <div class="section-header"><h2 class="section-title"><span class="phase-badge phase-agir">AGIR</span> Passage à l'action</h2></div>
+                <div class="tools-grid">
+                    ${tc('tool-pouvoir', '⚡', 'Avec/sans/contre pouvoir', 'Positionnement stratégique', 'agir', this.isComplete('pouvoir'))}
+                    ${tc('tool-smart', '🎯', 'Objectifs SMART', 'Objectifs mesurables', 'agir', this.state.smart.length > 0)}
+                    ${tc('tool-cibles', '🤝', 'Cibles et alliances', 'Cibles et alliés', 'agir', this.isComplete('cibles'))}
+                    ${tc('tool-message', '💬', 'Construction message', 'Argumentaire', 'agir', this.isComplete('message'))}
+                    ${tc('tool-checklist', '✅', 'Check-list rencontre', 'Préparation', 'agir', this.state.checklist.length > 0)}
+                    ${tc('tool-evaluation', '📈', 'Suivi-évaluation', 'Mesure des progrès', 'agir', this.isComplete('evaluation'))}
+                </div>
+            </div>`;
+    },
+
+    renderToolDomino() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🎯</span> Domino du changement <span class="phase-badge phase-voir">VOIR</span></h1>
+                <p class="tool-page-description">Le Domino du changement vous aide à clarifier votre vision. Quel changement voulez-vous voir advenir ?</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">🎯 Vision du changement souhaité</label>
+                    <textarea class="form-textarea" data-field="domino.vision" placeholder="Décrivez précisément le changement...">${this.state.domino.vision || ''}</textarea>
+                    <p class="form-hint">Ex: "D'ici 2 ans, la commune adopte un plan d'accessibilité"</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🚧 Obstacles identifiés</label>
+                    <textarea class="form-textarea" data-field="domino.obstacles" placeholder="Quels sont les freins ?">${this.state.domino.obstacles || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">💪 Ressources mobilisables</label>
+                    <textarea class="form-textarea" data-field="domino.ressources" placeholder="Vos forces, alliés, compétences...">${this.state.domino.ressources || ''}</textarea>
+                </div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolProfil() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>👤</span> Profil d'engagement <span class="phase-badge phase-voir">VOIR</span></h1>
+                <p class="tool-page-description">Évaluez vos ressources personnelles et collectives.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">❤️ Motivations</label><textarea class="form-textarea" data-field="profil.motivations" placeholder="Pourquoi ce sujet vous tient à cœur ?">${this.state.profil.motivations || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">🎓 Compétences</label><textarea class="form-textarea" data-field="profil.competences" placeholder="Compétences mobilisables...">${this.state.profil.competences || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">⏰ Temps disponible</label><textarea class="form-textarea" data-field="profil.temps" placeholder="Temps que vous pouvez consacrer...">${this.state.profil.temps || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">⚠️ Limites</label><textarea class="form-textarea" data-field="profil.limites" placeholder="Contraintes...">${this.state.profil.limites || ''}</textarea></div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolFleur() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🌸</span> Fleur de pouvoir <span class="phase-badge phase-voir">VOIR</span></h1>
+                <p class="tool-page-description">Analysez vos identités, privilèges et discriminations.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">🪞 Mes identités</label><textarea class="form-textarea" data-field="fleur.identites" placeholder="Genre, âge, origine, classe...">${this.state.fleur.identites || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">✨ Mes privilèges</label><textarea class="form-textarea" data-field="fleur.privileges" placeholder="Avantages sociaux...">${this.state.fleur.privileges || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">🔗 Discriminations vécues</label><textarea class="form-textarea" data-field="fleur.oppressions" placeholder="Discriminations subies...">${this.state.fleur.oppressions || ''}</textarea></div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolActeurs() {
+        const pos = { ally: 'Allié·e', neutral: 'Neutre', opponent: 'Opposant·e', target: 'Cible' };
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>👥</span> Cartographie des acteurs <span class="phase-badge phase-voir">VOIR</span></h1>
+                <p class="tool-page-description">Identifiez toutes les parties prenantes.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">Ajouter un acteur</h3></div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:1rem;align-items:end;">
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Nom</label><input type="text" class="form-input" id="actor-name" placeholder="Nom"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Fonction</label><input type="text" class="form-input" id="actor-role" placeholder="Fonction"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Position</label><select class="form-select" id="actor-position"><option value="ally">Allié·e</option><option value="neutral">Neutre</option><option value="opponent">Opposant·e</option><option value="target">Cible</option></select></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Pouvoir</label><select class="form-select" id="actor-power"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></div>
+                        <button class="btn btn-primary" onclick="App.addActor()">+ Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Liste (${this.state.acteurs.length})</h3></div>
+                <div class="card-body" style="padding:0;">
+                    ${this.state.acteurs.length === 0 ? '<div style="padding:3rem;text-align:center;color:var(--text-muted);"><div style="font-size:2.5rem;margin-bottom:0.5rem;">👥</div><div>Aucun acteur</div></div>' : `
+                    <table class="actors-table"><thead><tr><th>Nom</th><th>Fonction</th><th>Position</th><th>Pouvoir</th><th></th></tr></thead><tbody>
+                    ${this.state.acteurs.map((a, i) => `<tr>
+                        <td><strong>${a.name}</strong></td><td>${a.role || '-'}</td>
+                        <td><span class="actor-position-badge ${a.position}">${pos[a.position]}</span></td>
+                        <td><div class="power-dots">${[1,2,3,4,5].map(n => `<div class="power-dot ${n <= a.power ? 'filled' : ''}"></div>`).join('')}</div></td>
+                        <td><button class="btn btn-ghost btn-sm" onclick="App.removeActor(${i})">🗑️</button></td>
+                    </tr>`).join('')}
+                    </tbody></table>`}
+                </div>
+            </div>
+        </div>`;
+    },
+
+    addActor() {
+        const name = document.getElementById('actor-name').value.trim();
+        if (!name) return this.toast('Entrez un nom', 'error');
+        this.state.acteurs.push({
+            name, role: document.getElementById('actor-role').value.trim(),
+            position: document.getElementById('actor-position').value,
+            power: parseInt(document.getElementById('actor-power').value)
+        });
+        this.saveState();
+        this.renderPage('tool-acteurs');
+        this.toast('Acteur ajouté', 'success');
+    },
+
+    removeActor(i) {
+        this.state.acteurs.splice(i, 1);
+        this.saveState();
+        this.renderPage('tool-acteurs');
+    },
+
+    renderToolTdc() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🔄</span> Théorie du changement <span class="phase-badge phase-juger">JUGER</span></h1>
+                <p class="tool-page-description">Articulez votre logique selon 4 quadrants.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group"><label class="form-label">🧠 Interne individuel</label><textarea class="form-textarea" data-field="tdc.changement_interne_individuel" placeholder="Changements de conscience...">${this.state.tdc.changement_interne_individuel || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label">🏛️ Externe individuel</label><textarea class="form-textarea" data-field="tdc.changement_externe_individuel" placeholder="Changements de pratiques...">${this.state.tdc.changement_externe_individuel || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label">💭 Interne collectif</label><textarea class="form-textarea" data-field="tdc.changement_interne_collectif" placeholder="Changements de culture...">${this.state.tdc.changement_interne_collectif || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label">⚖️ Externe collectif</label><textarea class="form-textarea" data-field="tdc.changement_externe_collectif" placeholder="Changements de politiques...">${this.state.tdc.changement_externe_collectif || ''}</textarea></div>
+                </div>
+                <div class="form-group mt-4"><label class="form-label">❓ Hypothèses</label><textarea class="form-textarea" data-field="tdc.hypotheses" placeholder="Hypothèses sous-jacentes...">${this.state.tdc.hypotheses || ''}</textarea></div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolSwot() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>📊</span> Analyse SWOT <span class="phase-badge phase-juger">JUGER</span></h1>
+                <p class="tool-page-description">Forces, Faiblesses, Opportunités, Menaces.</p>
+            </div>
+            <div class="swot-grid">
+                <div class="swot-card strengths"><div class="swot-header">💪 Forces</div><div class="swot-body"><textarea class="form-textarea" data-field="swot.strengths" placeholder="Points forts...">${this.state.swot.strengths || ''}</textarea></div></div>
+                <div class="swot-card weaknesses"><div class="swot-header">⚠️ Faiblesses</div><div class="swot-body"><textarea class="form-textarea" data-field="swot.weaknesses" placeholder="Points faibles...">${this.state.swot.weaknesses || ''}</textarea></div></div>
+                <div class="swot-card opportunities"><div class="swot-header">🌟 Opportunités</div><div class="swot-body"><textarea class="form-textarea" data-field="swot.opportunities" placeholder="Opportunités externes...">${this.state.swot.opportunities || ''}</textarea></div></div>
+                <div class="swot-card threats"><div class="swot-header">🔥 Menaces</div><div class="swot-body"><textarea class="form-textarea" data-field="swot.threats" placeholder="Menaces externes...">${this.state.swot.threats || ''}</textarea></div></div>
+            </div>
+        </div>`;
+    },
+
+    renderToolPestel() {
+        const f = (k, icon, label) => `<div class="pestel-card"><h4>${icon} ${label}</h4><textarea class="form-textarea" data-field="pestel.${k}" placeholder="${label}...">${this.state.pestel[k] || ''}</textarea></div>`;
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🌍</span> Analyse PESTEL <span class="phase-badge phase-juger">JUGER</span></h1>
+                <p class="tool-page-description">Contexte macro-environnemental en 6 dimensions.</p>
+            </div>
+            <div class="pestel-grid">
+                ${f('politique', '🏛️', 'Politique')}${f('economique', '💰', 'Économique')}${f('social', '👥', 'Social')}
+                ${f('technologique', '💻', 'Technologique')}${f('environnemental', '🌱', 'Environnemental')}${f('legal', '⚖️', 'Légal')}
+            </div>
+        </div>`;
+    },
+
+    renderToolArbre() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🌳</span> Arbre à problème <span class="phase-badge phase-juger">JUGER</span></h1>
+                <p class="tool-page-description">Identifiez le problème central, ses causes et effets.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">🌳 Arbre à problème</h3></div>
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">🎯 Problème central</label><textarea class="form-textarea" data-field="arbre.probleme_central" placeholder="Problème principal..." style="min-height:80px;">${this.state.arbre.probleme_central || ''}</textarea></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="form-group"><label class="form-label">🌱 Causes (racines)</label>
+                            <div id="causes-list">${(this.state.arbre.causes||[]).map((c,i) => `<div class="flex gap-2 mb-2"><input type="text" class="form-input" value="${c}" data-cause="${i}"><button class="btn btn-ghost btn-sm" onclick="App.removeCause(${i})">🗑️</button></div>`).join('')}</div>
+                            <button class="btn btn-secondary btn-sm mt-2" onclick="App.addCause()">+ Cause</button>
+                        </div>
+                        <div class="form-group"><label class="form-label">🍃 Effets (branches)</label>
+                            <div id="effets-list">${(this.state.arbre.effets||[]).map((e,i) => `<div class="flex gap-2 mb-2"><input type="text" class="form-input" value="${e}" data-effet="${i}"><button class="btn btn-ghost btn-sm" onclick="App.removeEffet(${i})">🗑️</button></div>`).join('')}</div>
+                            <button class="btn btn-secondary btn-sm mt-2" onclick="App.addEffet()">+ Effet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">🎯 Arbre à objectif</h3></div>
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">🎯 Objectif central</label><textarea class="form-textarea" data-field="arbre.objectif" placeholder="Transformez le problème en objectif..." style="min-height:80px;">${this.state.arbre.objectif || ''}</textarea></div>
+                </div>
+            </div>
+        </div>`;
+    },
+
+    addCause() { if(!this.state.arbre.causes) this.state.arbre.causes=[]; this.state.arbre.causes.push(''); this.saveState(); this.renderPage('tool-arbre'); },
+    removeCause(i) { this.state.arbre.causes.splice(i,1); this.saveState(); this.renderPage('tool-arbre'); },
+    addEffet() { if(!this.state.arbre.effets) this.state.arbre.effets=[]; this.state.arbre.effets.push(''); this.saveState(); this.renderPage('tool-arbre'); },
+    removeEffet(i) { this.state.arbre.effets.splice(i,1); this.saveState(); this.renderPage('tool-arbre'); },
+
+    renderToolPourquoi() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>❓</span> Les 5 Pourquoi <span class="phase-badge phase-juger">JUGER</span></h1>
+                <p class="tool-page-description">Remontez à la cause racine en posant "Pourquoi ?" 5 fois.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">🔍 Problème de départ</label><textarea class="form-textarea" data-field="pourquoi.probleme" placeholder="Problème observé..." style="min-height:80px;">${this.state.pourquoi.probleme || ''}</textarea></div>
+                <div style="margin-left:1rem;border-left:3px solid var(--civic-gold-muted);padding-left:1.5rem;">
+                    <div class="form-group"><label class="form-label text-gold">1. Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why1" placeholder="Première réponse...">${this.state.pourquoi.why1 || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label text-gold">2. Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why2" placeholder="Deuxième réponse...">${this.state.pourquoi.why2 || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label text-gold">3. Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why3" placeholder="Troisième réponse...">${this.state.pourquoi.why3 || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label text-gold">4. Pourquoi ?</label><textarea class="form-textarea" data-field="pourquoi.why4" placeholder="Quatrième réponse...">${this.state.pourquoi.why4 || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label text-gold">5. Pourquoi ? → Cause racine</label><textarea class="form-textarea" data-field="pourquoi.why5" placeholder="Cause racine..." style="border-color:var(--civic-gold);">${this.state.pourquoi.why5 || ''}</textarea></div>
+                </div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolPouvoir() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>⚡</span> Avec/sans/contre le pouvoir <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Trois modes d'action du plaidoyer.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+                <div class="card" style="border-top:4px solid var(--civic-emerald);"><div class="card-header"><h3 class="card-title text-emerald">🤝 AVEC</h3></div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.avec" placeholder="Dialogue, lobbying..." style="min-height:200px;">${this.state.pouvoir.avec || ''}</textarea><p class="form-hint mt-2">Auditions, commissions</p></div></div>
+                <div class="card" style="border-top:4px solid var(--civic-gold);"><div class="card-header"><h3 class="card-title text-gold">🔄 SANS</h3></div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.sans" placeholder="Alternatives, autonomie..." style="min-height:200px;">${this.state.pouvoir.sans || ''}</textarea><p class="form-hint mt-2">Projets pilotes</p></div></div>
+                <div class="card" style="border-top:4px solid var(--civic-rose);"><div class="card-header"><h3 class="card-title text-rose">✊ CONTRE</h3></div><div class="card-body"><textarea class="form-textarea" data-field="pouvoir.contre" placeholder="Opposition, mobilisation..." style="min-height:200px;">${this.state.pouvoir.contre || ''}</textarea><p class="form-hint mt-2">Manifestations</p></div></div>
+            </div>
+        </div>`;
+    },
+
+    renderToolSmart() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🎯</span> Objectifs SMART <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Spécifique, Mesurable, Atteignable, Réaliste, Temporel.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">Ajouter un objectif</h3></div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;">
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">S</label><input type="text" class="form-input" id="smart-s" placeholder="Spécifique"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">M</label><input type="text" class="form-input" id="smart-m" placeholder="Mesurable"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">A</label><input type="text" class="form-input" id="smart-a" placeholder="Atteignable"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">R</label><input type="text" class="form-input" id="smart-r" placeholder="Réaliste"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">T</label><input type="text" class="form-input" id="smart-t" placeholder="Temporel"></div>
+                    </div>
+                    <button class="btn btn-primary mt-4" onclick="App.addSmart()">+ Ajouter</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Objectifs (${this.state.smart.length})</h3></div>
+                <div class="card-body">
+                    ${this.state.smart.length === 0 ? '<div style="padding:2rem;text-align:center;color:var(--text-muted);"><div style="font-size:2.5rem;margin-bottom:0.5rem;">🎯</div><div>Aucun objectif</div></div>' : this.state.smart.map((o, i) => `
+                        <div class="card mb-2" style="background:var(--bg-base);"><div class="card-body" style="padding:1rem;">
+                            <div class="flex justify-between items-center mb-2"><strong>Objectif ${i + 1}</strong><button class="btn btn-ghost btn-sm" onclick="App.removeSmart(${i})">🗑️</button></div>
+                            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.5rem;font-size:0.85rem;">
+                                <div><span style="color:var(--text-muted);">S:</span> ${o.s}</div><div><span style="color:var(--text-muted);">M:</span> ${o.m}</div><div><span style="color:var(--text-muted);">A:</span> ${o.a}</div><div><span style="color:var(--text-muted);">R:</span> ${o.r}</div><div><span style="color:var(--text-muted);">T:</span> ${o.t}</div>
+                            </div>
+                        </div></div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>`;
+    },
+
+    addSmart() {
+        const s = document.getElementById('smart-s').value.trim();
+        if (!s) return this.toast('Remplissez au moins S', 'error');
+        this.state.smart.push({ s, m: document.getElementById('smart-m').value.trim(), a: document.getElementById('smart-a').value.trim(), r: document.getElementById('smart-r').value.trim(), t: document.getElementById('smart-t').value.trim() });
+        this.saveState();
+        this.renderPage('tool-smart');
+        this.toast('Objectif ajouté', 'success');
+    },
+
+    removeSmart(i) { this.state.smart.splice(i, 1); this.saveState(); this.renderPage('tool-smart'); },
+
+    renderToolCibles() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>🤝</span> Cibles et alliances <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Identifiez vos cibles et alliés.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">🎯 Cible principale</label><textarea class="form-textarea" data-field="cibles.principale" placeholder="Qui a le pouvoir de décision ?">${this.state.cibles.principale || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">🎯 Cibles secondaires</label><textarea class="form-textarea" data-field="cibles.secondaires" placeholder="Qui peut influencer ?">${this.state.cibles.secondaires || ''}</textarea></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group"><label class="form-label text-emerald">💚 Alliés</label><textarea class="form-textarea" data-field="cibles.allies" placeholder="Qui partage vos objectifs ?">${this.state.cibles.allies || ''}</textarea></div>
+                    <div class="form-group"><label class="form-label text-rose">❌ Opposants</label><textarea class="form-textarea" data-field="cibles.opposants" placeholder="Qui s'oppose ?">${this.state.cibles.opposants || ''}</textarea></div>
+                </div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolMessage() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>💬</span> Construction du message <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Message percutant en 5 composantes.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">🎣 Accroche</label><textarea class="form-textarea" data-field="message.accroche" placeholder="Phrase choc..." style="min-height:80px;">${this.state.message.accroche || ''}</textarea><p class="form-hint">Statistique frappante, question provocante</p></div>
+                <div class="form-group"><label class="form-label">🔍 Problème</label><textarea class="form-textarea" data-field="message.probleme" placeholder="Description du problème...">${this.state.message.probleme || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">❗ Importance</label><textarea class="form-textarea" data-field="message.importance" placeholder="Pourquoi c'est important...">${this.state.message.importance || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">🎯 À qui</label><textarea class="form-textarea" data-field="message.cible" placeholder="Adaptation à l'interlocuteur...">${this.state.message.cible || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">📢 Action demandée</label><textarea class="form-textarea" data-field="message.action" placeholder="Demande concrète..." style="border-color:var(--civic-emerald);">${this.state.message.action || ''}</textarea><p class="form-hint">Une seule demande claire</p></div>
+            </div></div>
+        </div>`;
+    },
+
+    renderToolChecklist() {
+        const phases = [['avant', '📋 Avant'], ['pendant', '🗣️ Pendant'], ['apres', '📝 Après']];
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>✅</span> Check-list rencontre <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Préparez vos rencontres.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">Ajouter</h3></div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:1rem;align-items:end;">
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Tâche</label><input type="text" class="form-input" id="checklist-task" placeholder="Description"></div>
+                        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Phase</label><select class="form-select" id="checklist-phase"><option value="avant">Avant</option><option value="pendant">Pendant</option><option value="apres">Après</option></select></div>
+                        <button class="btn btn-primary" onclick="App.addChecklistItem()">+ Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            ${phases.map(([p, label]) => `
+                <div class="card mb-4">
+                    <div class="card-header"><h3 class="card-title">${label}</h3></div>
+                    <div class="card-body">
+                        ${this.state.checklist.filter(i => i.phase === p).length === 0 ? '<p style="color:var(--text-muted);font-size:0.875rem;">Aucun</p>' : this.state.checklist.filter(i => i.phase === p).map(item => {
+                            const idx = this.state.checklist.indexOf(item);
+                            return `<div class="flex items-center gap-3 mb-2">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="App.toggleCheck(${idx})" style="width:18px;height:18px;cursor:pointer;">
+                                <span style="${item.done ? 'text-decoration:line-through;color:var(--text-muted);' : ''}">${item.task}</span>
+                                <button class="btn btn-ghost btn-sm" onclick="App.removeCheck(${idx})" style="margin-left:auto;">🗑️</button>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('')}
+        </div>`;
+    },
+
+    addChecklistItem() {
+        const task = document.getElementById('checklist-task').value.trim();
+        if (!task) return this.toast('Entrez une tâche', 'error');
+        this.state.checklist.push({ task, phase: document.getElementById('checklist-phase').value, done: false });
+        this.saveState();
+        this.renderPage('tool-checklist');
+        this.toast('Tâche ajoutée', 'success');
+    },
+
+    toggleCheck(i) { this.state.checklist[i].done = !this.state.checklist[i].done; this.saveState(); },
+    removeCheck(i) { this.state.checklist.splice(i, 1); this.saveState(); this.renderPage('tool-checklist'); },
+
+    renderToolEvaluation() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title"><span>📈</span> Suivi-évaluation <span class="phase-badge phase-agir">AGIR</span></h1>
+                <p class="tool-page-description">Définissez vos indicateurs de succès.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">📊 Indicateurs</label><textarea class="form-textarea" data-field="evaluation.indicateurs" placeholder="Indicateurs de réussite...">${this.state.evaluation.indicateurs || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">🔬 Méthodes</label><textarea class="form-textarea" data-field="evaluation.methodes" placeholder="Collecte de données...">${this.state.evaluation.methodes || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">📅 Calendrier</label><textarea class="form-textarea" data-field="evaluation.calendrier" placeholder="Fréquence d'évaluation...">${this.state.evaluation.calendrier || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">💡 Leçons apprises</label><textarea class="form-textarea" data-field="evaluation.lecons" placeholder="Enseignements...">${this.state.evaluation.lecons || ''}</textarea></div>
+            </div></div>
+        </div>`;
+    },
+
+    renderExportPage() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title">📤 Exporter le projet</h1>
+                <p class="tool-page-description">Exportez votre travail dans différents formats.</p>
+            </div>
+            <div class="export-grid">
+                <div class="export-card" onclick="App.exportJSON()"><div class="export-icon">📋</div><div class="export-name">JSON</div><div class="export-desc">Données brutes</div></div>
+                <div class="export-card" onclick="App.exportMarkdown()"><div class="export-icon">📝</div><div class="export-name">Markdown</div><div class="export-desc">Document formaté</div></div>
+                <div class="export-card" onclick="App.exportHTML()"><div class="export-icon">🌐</div><div class="export-name">HTML</div><div class="export-desc">Page web</div></div>
+                <div class="export-card" onclick="App.exportPDF()"><div class="export-icon">📄</div><div class="export-name">PDF</div><div class="export-desc">Imprimable</div></div>
+            </div>
+        </div>`;
+    },
+
+    renderImportPage() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title">📥 Importer un projet</h1>
+                <p class="tool-page-description">Chargez un projet JSON.</p>
+            </div>
+            <div class="card"><div class="card-body">
+                <div class="form-group"><label class="form-label">Fichier JSON</label><input type="file" id="import-file" accept=".json" class="form-input" onchange="App.handleImport(event)"></div>
+                <div class="mt-4" style="padding:1.5rem;background:var(--bg-base);border-radius:var(--radius-md);border:1px dashed var(--border-default);">
+                    <p style="color:var(--text-muted);font-size:0.875rem;">⚠️ L'import remplace toutes les données actuelles.</p>
+                </div>
+            </div></div>
+        </div>`;
+    },
+
+    renderSettingsPage() {
+        return `<div class="tool-page animate-slide-up">
+            <div class="tool-page-header">
+                <h1 class="tool-page-title">⚙️ Paramètres</h1>
+                <p class="tool-page-description">Configurez et gérez vos données.</p>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">Projet</h3></div>
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" value="${this.state.project.name}" onchange="App.state.project.name=this.value;App.saveState();"></div>
+                    <p style="font-size:0.85rem;color:var(--text-muted);">Créé: ${new Date(this.state.project.created).toLocaleDateString('fr-FR')} | Modifié: ${new Date(this.state.project.modified).toLocaleDateString('fr-FR')}</p>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header"><h3 class="card-title">Données</h3></div>
+                <div class="card-body">
+                    <div class="flex gap-3">
+                        <button class="btn btn-secondary" onclick="App.exportJSON()">📤 Exporter</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('settings-import').click()">📥 Importer</button>
+                        <input type="file" id="settings-import" accept=".json" style="display:none;" onchange="App.handleImport(event)">
+                        <button class="btn btn-secondary" onclick="App.resetData()" style="margin-left:auto;color:var(--civic-rose);">🗑️ Réinitialiser</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">À propos</h3></div>
+                <div class="card-body">
+                    <p style="color:var(--text-secondary);line-height:1.8;"><strong>Plaidoyer Citoyen 3.0</strong><br>Basé sur la méthodologie Justice et Paix<br>15 outils VOIR-JUGER-AGIR<br><br>100% local, 100% offline, 100% souverain.</p>
+                </div>
+            </div>
+        </div>`;
+    },
+
+    resetData() {
+        if (confirm('⚠️ Supprimer toutes les données ?')) {
+            localStorage.removeItem('plaidoyer-v3');
+            location.reload();
+        }
+    },
+
+    showExportModal() { document.getElementById('export-modal').classList.add('active'); },
+    closeModal(id) { document.getElementById(id).classList.remove('active'); },
+
+    exportJSON() {
+        this.collectFormData();
+        this.download(JSON.stringify(this.state, null, 2), `plaidoyer-${this.slug(this.state.project.name)}.json`, 'application/json');
+        this.toast('Export JSON réussi', 'success');
+        this.closeModal('export-modal');
+    },
+
+    exportMarkdown() {
+        this.collectFormData();
+        this.download(this.genMarkdown(), `plaidoyer-${this.slug(this.state.project.name)}.md`, 'text/markdown');
+        this.toast('Export Markdown réussi', 'success');
+        this.closeModal('export-modal');
+    },
+
+    exportHTML() {
+        this.collectFormData();
+        const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${this.state.project.name}</title><style>body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:2rem;line-height:1.6;}h1,h2,h3{color:#1a1a2e;}h1{border-bottom:3px solid #d4a853;padding-bottom:0.5rem;}table{width:100%;border-collapse:collapse;margin:1rem 0;}th,td{border:1px solid #ddd;padding:0.75rem;text-align:left;}th{background:#f5f5f5;}</style></head><body>${this.genMarkdown().replace(/^### (.*$)/gim,'<h3>$1</h3>').replace(/^## (.*$)/gim,'<h2>$1</h2>').replace(/^# (.*$)/gim,'<h1>$1</h1>').replace(/\*\*(.*?)\*\*/gim,'<strong>$1</strong>').replace(/^- (.*$)/gim,'<li>$1</li>').replace(/\n\n/g,'</p><p>')}</body></html>`;
+        this.download(html, `plaidoyer-${this.slug(this.state.project.name)}.html`, 'text/html');
+        this.toast('Export HTML réussi', 'success');
+        this.closeModal('export-modal');
+    },
+
+    exportPDF() {
+        this.collectFormData();
+        if (!window.jspdf) return this.toast('PDF non disponible', 'error');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+        const addSection = (title, content) => {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text(title, 20, y);
+            y += 6;
+            if (content && content.trim()) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.splitTextToSize(content, 170).forEach(line => {
+                    if (y > 280) { doc.addPage(); y = 20; }
+                    doc.text(line, 20, y);
+                    y += 5;
+                });
+            }
+            y += 6;
+        };
+        doc.setFontSize(18);
+        doc.text(this.state.project.name, 20, y);
+        y += 15;
+        addSection('Vision', this.state.domino.vision);
+        addSection('Forces', this.state.swot.strengths);
+        addSection('Message', this.state.message.accroche);
+        doc.save(`plaidoyer-${this.slug(this.state.project.name)}.pdf`);
+        this.toast('Export PDF réussi', 'success');
+        this.closeModal('export-modal');
+    },
+
+    genMarkdown() {
+        const s = this.state;
+        return `# ${s.project.name}\n\n*Généré le ${new Date().toLocaleDateString('fr-FR')}*\n\n---\n\n## VOIR\n\n### Domino\n**Vision:** ${s.domino.vision || '-'}\n**Obstacles:** ${s.domino.obstacles || '-'}\n**Ressources:** ${s.domino.ressources || '-'}\n\n### Profil\n**Motivations:** ${s.profil.motivations || '-'}\n**Compétences:** ${s.profil.competences || '-'}\n\n### Acteurs\n${s.acteurs.map(a => `- ${a.name} (${a.role}) — ${a.position}`).join('\n') || '-'}\n\n---\n\n## JUGER\n\n### SWOT\n**Forces:** ${s.swot.strengths || '-'}\n**Faiblesses:** ${s.swot.weaknesses || '-'}\n**Opportunités:** ${s.swot.opportunities || '-'}\n**Menaces:** ${s.swot.threats || '-'}\n\n### 5 Pourquoi\n**Problème:** ${s.pourquoi.probleme || '-'}\n1. ${s.pourquoi.why1 || '-'}\n2. ${s.pourquoi.why2 || '-'}\n3. ${s.pourquoi.why3 || '-'}\n4. ${s.pourquoi.why4 || '-'}\n5. **Cause racine:** ${s.pourquoi.why5 || '-'}\n\n---\n\n## AGIR\n\n### Message\n**Accroche:** ${s.message.accroche || '-'}\n**Problème:** ${s.message.probleme || '-'}\n**Action:** ${s.message.action || '-'}\n\n### SMART\n${s.smart.map((o, i) => `${i + 1}. S:${o.s} M:${o.m} A:${o.a} R:${o.r} T:${o.t}`).join('\n') || '-'}\n\n---\n*Plaidoyer Citoyen 3.0*`;
+    },
+
+    handleImport(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                this.state = { ...this.state, ...JSON.parse(ev.target.result) };
+                this.saveState();
+                this.navigateTo('dashboard');
+                this.toast('Import réussi', 'success');
+            } catch (err) {
+                this.toast('Erreur import', 'error');
+            }
+        };
+        reader.readAsText(file);
+    },
+
+    toast(msg, type = 'info') {
+        const c = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = `toast ${type}`;
+        t.innerHTML = `<span>${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;
+        c.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 200); }, 3000);
+    },
+
+    download(content, filename, mime) {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    },
+
+    slug(str) { return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+};
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => App.init());
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); }));
+document.addEventListener('input', e => {
+    if (e.target.matches('[data-field]')) {
+        clearTimeout(window._autoSave);
+        window._autoSave = setTimeout(() => { App.collectFormData(); App.saveState(); }, 1000);
+    }
+    if (e.target.matches('[data-cause]')) App.state.arbre.causes[parseInt(e.target.dataset.cause)] = e.target.value;
+    if (e.target.matches('[data-effet]')) App.state.arbre.effets[parseInt(e.target.dataset.effet)] = e.target.value;
+});
+    </script>
+</body>
+</html>
