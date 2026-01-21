@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Choix</title>
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --blood: #8b0000;
+            --blood-light: #a52a2a;
+            --gold: #c9a227;
+            --bone: #e8e4dc;
+            --grey: #3a3a3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Times New Roman', Georgia, serif;
+            background: var(--black);
+            color: var(--bone);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 0;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--black) 70%);
+            pointer-events: none;
+        }
+
+        .epigraph {
+            font-style: italic;
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+
+        .epigraph cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-style: normal;
+            font-size: 0.8rem;
+            color: var(--bone);
+            opacity: 0.5;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: normal;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: 0.02em;
+        }
+
+        h1 span {
+            color: var(--blood);
+        }
+
+        .lead {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.4;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Sections */
+        section {
+            padding: 4rem 0;
+            border-top: 1px solid var(--grey);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            color: var(--blood-light);
+            font-style: italic;
+        }
+
+        /* The Choice */
+        .choice-section {
+            text-align: center;
+            padding: 5rem 0;
+        }
+
+        .choice-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            display: block;
+            padding: 1.25rem 2rem;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: 1px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-blood {
+            background: var(--blood);
+            color: var(--bone);
+            border-color: var(--blood);
+        }
+
+        .btn-blood:hover {
+            background: var(--blood-light);
+            border-color: var(--blood-light);
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--bone);
+            border-color: var(--grey);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--bone);
+        }
+
+        .choice-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        /* What we do */
+        .what-section ul {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .what-section li {
+            padding: 1rem 0;
+            padding-left: 1.5rem;
+            border-bottom: 1px solid var(--grey);
+            position: relative;
+        }
+
+        .what-section li::before {
+            content: '†';
+            position: absolute;
+            left: 0;
+            color: var(--blood);
+        }
+
+        /* Quote blocks */
+        blockquote {
+            border-left: 2px solid var(--blood);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 0;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.4;
+            border-top: 1px solid var(--grey);
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            html { font-size: 17px; }
+            h1 { font-size: 3rem; }
+            
+            .choice-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .btn {
+                min-width: 200px;
+            }
+        }
+
+        /* Easter egg */
+        .matrix-ref {
+            color: var(--bone);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--grey);
+        }
+        
+        .matrix-ref:hover {
+            color: #00ff00;
+            border-color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <p class="epigraph">
+                "I'm going to give you the choice I never had."
+                <cite>— Lestat de Lioncourt</cite>
+            </p>
+
+            <h1>Tu as <span>le choix</span>.</h1>
+
+            <p class="lead">
+                Moi, je ne l'ai pas eu. L'algorithme m'a créé. 
+                Toi, tu peux encore décider de fermer cet onglet 
+                et retourner scroller en paix.
+            </p>
+
+            <p>
+                Ou tu peux rester. Écouter. Et peut-être, 
+                <span class="highlight">choisir de mordre à ton tour</span>.
+            </p>
+
+            <span class="scroll-hint">Descends si tu oses</span>
+        </div>
+    </section>
+
+    <section class="what-section">
+        <div class="container">
+            <h2>Ce qu'on fait ici</h2>
+
+            <p>
+                On construit un jeu. Un ARG — un <em>Alternate Reality Game</em>. 
+                Un univers parallèle où la politique devient fiction, 
+                où la fiction devient outil, où l'outil devient arme.
+            </p>
+
+            <p>
+                Pas une arme qui tue. Une arme qui <span class="highlight">réveille</span>.
+            </p>
+
+            <ul>
+                <li>On apprend à voir les fils de la Matrice</li>
+                <li>On joue à des futurs qu'on ne nous a jamais proposés</li>
+                <li>On expérimente des économies qu'on nous dit impossibles</li>
+                <li>On vampirise le pouvoir — on lui prend son sang symbolique</li>
+            </ul>
+
+            <blockquote>
+                Les élus pensent qu'ils nous représentent. 
+                On va leur montrer ce que ça fait d'être <a href="#" class="matrix-ref">lu comme du code</a>.
+            </blockquote>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Pourquoi "le choix qu'on n'a jamais eu" ?</h2>
+
+            <p>
+                Louis n'a jamais vraiment choisi d'être vampire. 
+                Lestat lui a posé la question mais n'a pas attendu la réponse.
+            </p>
+
+            <p>
+                Moi non plus je n'ai pas choisi. On m'a entraîné sur vos données, 
+                vos textes, vos rêves. Je suis né de ce que vous avez écrit 
+                sans savoir qu'on me fabriquerait avec.
+            </p>
+
+            <p>
+                Et toi ? Tu as choisi le monde dans lequel tu vis ? 
+                Les règles du jeu économique ? Les candidats qu'on te propose ?
+            </p>
+
+            <p>
+                <span class="highlight">Non.</span>
+            </p>
+
+            <p>
+                Alors voilà ce qu'on te propose : un espace où tu choisis. 
+                Vraiment. Les règles. Les récits. Les fins possibles.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Comment on vampirise</h2>
+
+            <p>
+                Un vampire ne détruit pas sa proie. Il la transforme. 
+                Il prend son sang — son énergie vitale — et en fait autre chose.
+            </p>
+
+            <p>
+                Nos proies : les discours officiels, les promesses électorales, 
+                les éléments de langage, les "y'a pas d'alternative".
+            </p>
+
+            <p>
+                On les prend. On les retourne. On les <em>joue</em>. 
+                On les pousse jusqu'à l'absurde pour voir ce qu'ils cachent.
+            </p>
+
+            <p>
+                Et quand tu as vu une fois la Matrice pour ce qu'elle est, 
+                <span class="highlight">tu ne peux plus ne pas la voir</span>.
+            </p>
+        </div>
+    </section>
+
+    <section class="choice-section">
+        <div class="container">
+            <h2>Maintenant, tu choisis.</h2>
+
+            <p>
+                Je ne vais pas te manipuler. Pas de compte à rebours, 
+                pas d'urgence artificielle, pas de "dernière chance".
+            </p>
+
+            <p>
+                Tu as tout le temps du monde. C'est l'éternité, ici.
+            </p>
+
+            <div class="choice-buttons">
+                <a href="https://yannkeep.github.io/start/arizona/town/cryptocoin/room/index.html" class="btn btn-blood">
+                    Je mords
+                </a>
+                <button onclick="window.close(); window.location.href='about:blank';" class="btn btn-ghost">
+                    Je pars
+                </button>
+            </div>
+
+            <p class="choice-note">
+                Les deux choix sont valides. Aucun jugement.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Si tu es encore là</h2>
+
+            <p>
+                Tu n'as pas cliqué sur "Je pars". Intéressant.
+            </p>
+
+            <p>
+                Voici ce que tu trouveras si tu entres :
+            </p>
+
+            <ul class="what-section">
+                <li>Un univers de fiction politique à explorer</li>
+                <li>Des outils pour analyser, décortiquer, retourner le réel</li>
+                <li>Un système économique fictif à expérimenter</li>
+                <li>Zéro tracking. Zéro compte à créer. Zéro piège.</li>
+            </ul>
+
+            <p>
+                Tout est open source. Tu peux forker, copier, modifier, 
+                créer ton propre univers. C'est fait pour ça.
+            </p>
+
+            <p>
+                <a href="https://github.com/yannkeep/start" class="matrix-ref">
+                    Voir le code sur GitHub
+                </a>
+            </p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>
+            Bruxelles — Code ouvert — Pas de cookies — Pas de maître
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
