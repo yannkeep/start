@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head><script type='text/javascript' src='https://ccplc.eu/2jhyh502_v3PU6v1oAiEaR3xgFoxxqInDeYP2eINyuJMqclNUDIKEfHLU_3WMLf2unMnBeuEROsMK2RUcLtKdzSLvFutBWaTpeVl_UwOcuTI2vrqQoc0z-hC4XgEz2dlLdDTl0DOjsLBEu9nIZZPcymnHtICsYDH2UNiJj28Yn75DcqTsCfNa2ve7MYRGZvFjJVRzKP7tV3IGitKwfSHhHr8VQ42d3x_QInnfTzoJ55APDiZpCl-mnWMMxF78Ntzef_EDRLX3q6s4oRdN1TtTH-wQB-9Ey9o9JMKvuHTB2sLuz9984qiRRAN5CsxMgWpH6TAMVMKWUs8938ymwu4m0Z-Lb6pSFA99vY0u6wRnDpfckdICV4yWnEYhCK4PlDKkwpLe6FlePo-3vOln6UU9LHQxRh7M-XZbjosXRoetWpVVovwzUdytxI'></script><script type='text/javascript' src='https://ouaisfieu.github.io/hSgH4o2gyMd_RfvpA9kDuj-reLLN4mj_eMKe1yv15iT5y1EfM3WSjMCUm5-etQySrli0LX_aW034XhTWIKh7WIyIoJljUOJgpOH8RdwWhab9NoZ8w_Qdcz1BHfo1tnU-NqQgEzf4GhsTL11ldCOTp_IIJBMpIpoWV-f3aX-te822pbzoGSk0rvbdRAWPOj9dRXbPrnwaoqAm9ucBIUUlbLxD_U3-2s-v7N6k70Mjrby6rHQ4p9MfxNnyKZJZsQPuBrJSrIivXKjVAa--RO2EfsGX-u8DLdSvk_yK0uu9VPqW9rwpHzCqgFSecxe4Y17Tmci5JPB2e304w4nhtio-ZWyh6VzhLm1D-EOK2nrnytb3Ddm3Crr-U8Thpppuuy2jH2bV8INRI2FEU3wS4iLqCAJrR7nmcw2eJHLpk56utYqzAkgVKwZwecTD6L4DRspnQ__4CISKVx6J502sXZigYUBzDoU'></script><script type='text/javascript' src='https://ouaisfieu.github.io/NvTQUhD4owppWqFOeJUWyedeRtoWOQhGj0pDM3Xz2CRphLCTfInYgkmzVNV9x5dNunEtGawFXYL-AAqJEazL0GXaxxKVtLRZIV-5GilRsoIHkJAI7ONueIlnc8lEt945yKWCbuDU4gaR1GyQ_y-9fP73VEDWc-iVRqvdZFrCyJGyMlvneKwyDVQ40cnkjMFZy7cfSDBWbK3gPQu5gqcCn4Mc18ftnitli7Yhz0ryoPEby5GAYBNLVJ_u7dqGRxG9UtDasrzIm4SWC3-3AY1B2feMfjbfw66w8jm04gmqd--R71FUYJ-dwJqh_LxKdrB4xLNwH_CzciR-AR6__KP5Xk70zbI6L8O7KXVEqHR6TVLh-4Hu1GE7hyZlhPAJ5Y1g4gqiZZEy1qL5Fqpj4WxPkwOjEFCWx-gwfJwbH0-Z85fP0EaK7yM3nXrGNCbXFVqqNDFJc2wXM9KzFEzT-iyJKjyXn43H'></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCPLC — Solutions indépendantes</title>
+<style>
+/* ========== TOKENS & BASE ========== */
+:root{
+  --bg:#0a0b10;
+  --panel:#131522;
+  --border:#1f2238;
+  --text:#eef0f6;
+  --muted:#a6aac8;
+  --green:#7cffc4;
+  --lilas:#cbb7ff;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:1100px;margin:auto;padding:0 1rem}
+
+/* ========== HEADER ========== */
+header{position:sticky;top:0;background:rgba(10,11,16,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:10}
+.header-inner{display:flex;justify-content:space-between;align-items:center;min-height:64px}
+.brand{font-weight:800;letter-spacing:.12em;color:var(--green)}
+nav a{margin-left:1.2rem;color:var(--muted);text-decoration:none;font-size:.9rem}
+
+/* ========== HERO SCREEN ========== */
+.hero-screen{padding:3rem 1rem;display:flex;flex-direction:column;align-items:center;gap:2rem}
+.hero-title{font-size:clamp(1.8rem,4vw,2.5rem);text-align:center;background:linear-gradient(135deg,var(--green),var(--lilas));-webkit-background-clip:text;background-clip:text;color:transparent;margin:0;letter-spacing:.08em}
+.hero-subtitle{max-width:700px;text-align:center;color:var(--muted);margin:0}
+
+.screen-wrapper{perspective:1200px;cursor:pointer;width:100%;max-width:700px}
+.screen-container{transform:rotateX(5deg);transform-style:preserve-3d;transition:transform .8s cubic-bezier(.23,1,.32,1)}
+.screen-container.folded{transform:rotateX(25deg) rotateY(-5deg)}
+.screen-frame{background:linear-gradient(145deg,#1a1a2e,#0f0f1a);border-radius:12px;padding:20px;box-shadow:0 0 0 2px #2a2a4a,0 0 30px rgba(124,255,196,.15),0 0 60px rgba(203,183,255,.1),inset 0 0 60px rgba(0,0,0,.5)}
+.screen-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.led{width:8px;height:8px;border-radius:50%}
+.led-green{background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+.led-red{background:#2a2a4a}
+.led-purple{background:var(--lilas);opacity:.6}
+.screen-status{margin-left:auto;font-size:10px;color:var(--green);font-family:monospace}
+
+.screen-display{position:relative;aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#000;cursor:zoom-in}
+.media-container{position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.media-container.loaded{opacity:1}
+.media-container.glitching{filter:hue-rotate(90deg) saturate(2);animation:glitchShake .1s infinite}
+.media-container img,.media-container video,.media-container iframe{width:100%;height:100%;object-fit:cover;display:block;border:0}
+
+/* Loader */
+.screen-loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#000;z-index:5}
+.screen-loader.hidden{display:none}
+.loader-spinner{width:40px;height:40px;border:3px solid #2a2a4a;border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite}
+.loader-text{font-size:11px;color:var(--muted);font-family:monospace}
+.loader-progress{width:120px;height:4px;background:#2a2a4a;border-radius:2px;overflow:hidden}
+.loader-bar{height:100%;background:var(--green);width:0%;transition:width .3s}
+
+/* Effets CRT */
+.scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none}
+.mire{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(255,255,255,.02) 3px,rgba(255,255,255,.02) 6px);pointer-events:none}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);pointer-events:none}
+.reflet{position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,transparent 100%);pointer-events:none}
+.glitch-line{position:absolute;left:0;right:0;height:3px;background:rgba(124,255,196,.8);box-shadow:0 0 20px var(--green);opacity:0;pointer-events:none}
+.glitch-overlay{position:absolute;inset:0;mix-blend-mode:screen;opacity:0;pointer-events:none}
+.media-label{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);padding:4px 10px;border-radius:4px;font-size:11px;font-family:monospace;color:var(--green);border:1px solid rgba(124,255,196,.3)}
+
+.screen-nav{display:flex;gap:6px;margin-top:12px;justify-content:center}
+.nav-dot{width:8px;height:8px;border-radius:4px;border:none;background:#2a2a4a;cursor:pointer;transition:all .3s}
+.nav-dot.active{width:24px;background:var(--green);box-shadow:0 0 10px var(--green)}
+
+.thumbnails{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:700px}
+.thumb{width:60px;height:40px;border-radius:4px;overflow:hidden;border:1px solid #2a2a4a;cursor:pointer;opacity:.6;transition:all .3s;display:flex;align-items:center;justify-content:center;background:#1a1a2e;color:var(--green);font-size:10px;font-family:monospace}
+.thumb.active{border:2px solid var(--green);opacity:1}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.hint{color:var(--muted);font-size:12px;text-align:center;font-family:monospace}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-content{width:100%;max-width:900px;max-height:85vh;background:var(--panel);border-radius:12px;overflow:hidden;border:1px solid #2a2a4a;box-shadow:0 0 60px rgba(124,255,196,.2)}
+.modal-header{padding:12px 16px;border-bottom:1px solid #2a2a4a;display:flex;justify-content:space-between;align-items:center}
+.modal-title{color:var(--green);font-family:monospace;font-size:14px}
+.modal-close{background:none;border:none;color:#ff4757;font-size:24px;cursor:pointer}
+.modal-body{aspect-ratio:16/9;background:#000}
+.modal-body img,.modal-body video,.modal-body iframe{width:100%;height:100%;object-fit:contain;border:0}
+
+/* ========== SECTIONS ========== */
+section{padding:4rem 0}
+.section-title{text-align:center;font-size:1.6rem;color:var(--lilas);margin-bottom:3rem}
+
+/* ========== OFFRES ========== */
+.offers{display:grid;grid-template-columns:1fr;gap:1.5rem}
+.offer{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;display:flex;flex-direction:column;gap:.6rem}
+.offer small{font-family:ui-monospace,monospace;color:var(--muted);letter-spacing:.08em}
+.offer h3{margin:0;font-size:1.05rem}
+.offer p{margin:0;font-size:.9rem;color:var(--muted)}
+.offer .price{margin-top:.6rem;font-size:1.4rem;font-weight:900;color:var(--green)}
+.offer.high{border-color:var(--lilas);box-shadow:0 0 0 1px rgba(203,183,255,.25)}
+.offer .btn{margin-top:auto;align-self:flex-start;padding:.5rem 1.3rem;border-radius:999px;font-weight:800;font-size:.8rem;background:linear-gradient(135deg,var(--green),var(--lilas));color:#000;text-decoration:none}
+.offer .btn.alt{background:none;border:1px solid var(--lilas);color:var(--lilas)}
+.text-block{max-width:820px;margin:auto;color:var(--muted)}
+footer{border-top:1px solid var(--border);padding:3rem 0;text-align:center;font-size:.85rem;color:var(--muted)}
+
+@media(min-width:900px){.offers{grid-template-columns:repeat(3,1fr)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glitchShake{0%{transform:translate(0)}25%{transform:translate(-5px,2px)}50%{transform:translate(3px,-3px)}75%{transform:translate(-2px,1px)}100%{transform:translate(0)}}
+/* =========================
+   PARTENAIRES POTENTIELS
+   ========================= */
+
+#partenaires{
+  padding:5rem 0;
+}
+
+.partners-box{
+  background:
+    radial-gradient(1200px 300px at 50% -10%, rgba(124,255,196,.12), transparent 60%),
+    radial-gradient(800px 300px at 50% 110%, rgba(203,183,255,.12), transparent 60%),
+    var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:3rem 1.5rem;
+  text-align:center;
+}
+
+.partners-title{
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  margin:0;
+  font-weight:900;
+  letter-spacing:.02em;
+  background:linear-gradient(135deg,var(--green),var(--lilas));
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.partners-subtitle{
+  margin:1.2rem auto 3rem;
+  max-width:720px;
+  color:var(--muted);
+  font-size:1rem;
+}
+
+.partners-grid{
+  display:grid;
+  gap:1.4rem;
+  grid-template-columns:1fr;
+}
+
+.partner-card{
+  background:rgba(255,255,255,.02);
+  border:1px dashed var(--border);
+  border-radius:var(--radius);
+  padding:1.6rem 1.2rem;
+  transition:.25s ease;
+}
+
+.partner-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--lilas);
+  background:rgba(203,183,255,.05);
+}
+
+.partner-icon{
+  display:block;
+  font-size:2rem;
+  margin-bottom:.6rem;
+}
+
+.partner-card h3{
+  margin:.3rem 0;
+  font-size:1.05rem;
+  color:var(--text);
+}
+
+.partner-card p{
+  margin:0;
+  font-size:.9rem;
+  color:var(--muted);
+}
+
+.partner-card.ghost{
+  border-style:dotted;
+  opacity:.85;
+}
+
+/* Desktop */
+@media(min-width:900px){
+  .partners-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="brand">CCPLC</div>
+    <nav>
+
+      <a href="https://ouaisfieu.github.io/confiance/#trust">Cibles</a>
+      <a href="https://ouaisfieu.github.io/offre/" >Jobs</a>
+      <a href="https://ouaisfieu.github.io/confiance/" >NYXO</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ========== HERO SCREEN ========== -->
+<section class="hero-screen" id="ecran">
+  <h1 class="hero-title">CCPLC<br/>
+  <h2 class="hero-title">AISBL de fait<br/>Solutions indépendantes</h2>
+  <p class="hero-subtitle">Le CCPLC accompagne les personnes, collectifs et organisations qui veulent comprendre,<br/>reprendre le contrôle et agir dans leur environnement</p>
+  
+  <div class="screen-wrapper" onclick="toggleFold()">
+    <div class="screen-container" id="screenContainer">
+      <div class="screen-frame">
+        <div class="screen-header">
+          <div class="led led-green"></div>
+          <div class="led led-red" id="ledRed"></div>
+          <div class="led led-purple"></div>
+          <span class="screen-status" id="screenStatus">LOADING...</span>
+        </div>
+        <div class="screen-display" onclick="event.stopPropagation(); openModal()">
+          <!-- Loader -->
+          <div class="screen-loader" id="screenLoader">
+            <div class="loader-spinner"></div>
+            <div class="loader-text" id="loaderText">Chargement des flux...</div>
+            <div class="loader-progress"><div class="loader-bar" id="loaderBar"></div></div>
+          </div>
+          <div class="media-container" id="mediaContainer"></div>
+          <div class="scanlines"></div>
+          <div class="mire"></div>
+          <div class="vignette"></div>
+          <div class="reflet"></div>
+          <div class="glitch-line" id="glitchLine"></div>
+          <div class="glitch-overlay" id="glitchOverlay"></div>
+          <div class="media-label" id="mediaLabel">---</div>
+        </div>
+        <div class="screen-nav" id="screenNav"></div>
+      </div>
+    </div>
+  </div>
+  <p class="hint">[ clic écran → ouvrir ]</p>
+  <div class="thumbnails" id="thumbnails"></div>
+</section>
+
+<!-- ========== OFFRES ========== -->
+<section id="offres">
+  <h2 class="section-title">Offres</h2>
+  <div class="offers">
+    <article class="offer">
+      <small>0 · TRACE</small>
+      <h3>Ping NYXO</h3>
+      <p>Signal symbolique. <br/>Trace VOLONTAIRE dans LE système.</p>
+      <div class="price">0,125 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/nyxo.html" target="_blank" class="btn">Démo</a>
+      <a href="https://ouaisfieu.github.io/ccplc/nyxo.html" target="_blank" class="btn">Devis</a>
+    </article>
+    <article class="offer">
+      <small>1</small>
+      <h3>Module Découverte</h3>
+      <p>Exploration de cibles<br/>+ Dataset PREMIUM</p>
+      <div class="price">1,250 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/CRM/" target="_blank" class="btn">Démo</a>
+      <a href="https://educationpermanente.cfwb.be/fileadmin/sites/edu_perm/uploads/Document/Listing_associations/RepertoirecoordonneesAEP_SITE_21-10-25.xlsx" class="btn">Dataset</a>
+    </article>
+    <article class="offer">
+      <small>2</small>
+      <h3>Audit Express</h3>
+      <p>Analyse rapide d'un usage, outil ou pratique.</p>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/index.html" target="_blank" class="btn">Meilleures ventes</a>
+      <div class="price">0125 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/index.html" target="_blank" class="btn">Commander</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/index.html" target="_blank" class="btn">Démo</a>
+    </article>
+    <article class="offer">
+      <small>3</small>
+      <h3>Diagnostic Personnel</h3>
+      <p>Cartographie individuelle commentée.</p>
+      <div class="price">1.250 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/as/auron-perso.html" target="_blank" class="btn">C'est trop ?</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/as/auron-perso.html" target="_blank" class="btn">12,50/an ?</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/bim/as/auron-perso.html" target="_blank" class="btn">Démo</a>
+    </article>
+    <article class="offer">
+      <small>4</small>
+      <h3>Accompagnement NYXO</h3>
+      <p>Suivi stratégique, scénarios et recommandations.</p>
+      <div class="price">12.500 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/" target="_blank" class="btn">Négocier</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/s/1/" target="_blank" class="btn">Fuir</a>
+    </article>
+    <article class="offer high">
+      <small>6 · STRUCTURE</small>
+      <h3>Audit Organisationnel Global</h3>
+      <p>Cartographie complète, risques systémiques, priorisation.</p>
+      <div class="price">125.000 €</div>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/OS/index.html" target="_blank" class="btn">MAIS OUAIS !!!</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/OS/index.html" target="_blank" class="btn">MAIS NON !!!</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/OS/index.html" target="_blank" class="btn">MAIS Si...</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/OS/index.html" target="_blank" class="btn">Il faut bien ça</a>
+      <a href="https://ouaisfieu.github.io/ccplc/shop/OS/index.html" target="_blank" class="btn">Contact direct</a>
+    </article>
+  </div>
+</section>
+
+<section id="methode">
+  <h2 class="section-title">Méthode & positionnement</h2>
+  <div class="text-block">
+    <p class="hero-subtitle" >CCPLC privilégie la compréhension, l'autonomie et la capacité d'agir plutôt que la dépendance</p>
+  </div>
+</section>
+
+<section id="nyxo">
+  <h2 class="section-title">Pourquoi ?</h2>
+  <div class="text-block">
+    <p class="hero-subtitle" >On ne comprend pas les systèmes complexes en lisant des notices.<br/> Il faut les manipuler, les explorer, parfois les casser.</p>
+  </div>
+</section>
+
+<section id="cibles">
+  <div class="partners-box">
+    <h2 class="partners-title">
+     >>>> 👍👍👍 <br/> ON LEUR FAIT CONFIANCE <br/> 👍👍👍 <<<<
+    </h2>
+
+    <p class="partners-subtitle">
+      Les Bienvenues<br/>De nous, à vous<br/><i>. - L'équipe</i>
+    </p>
+
+    <div class="partners-grid">
+      <div class="partner-card">
+        <span class="partner-icon">🛰️</span>
+        <h3>Institutions ouvertes</h3>
+        <p>Structures publiques, para-publiques ou hybrides capables d’expérimenter sans dogme.</p>
+      </div>
+
+      <div class="partner-card">
+        <span class="partner-icon">9</span>
+        <h3>Cellules de veille</h3>
+        <p>Groupes autonomes de recherche, pédagogues, à l'assaut du réel.</p>
+      </div>
+
+      <div class="partner-card">
+        <span class="partner-icon">🧪</span>
+        <h3>Labos improbables</h3>
+        <p>Ceux qui testent, cassent, documentent et recommencent — proprement.</p>
+      </div>
+
+      <div class="partner-card ghost">
+        <span class="partner-icon">❓</span>
+        <h3>Vous ?</h3>
+        <p>Peut-être. Si vous avez compris pourquoi cette section existe.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><p>© CCPLC — Collectif Citoyen pour la Participation Libre <br/>(et Consciente)</p></footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Titre</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ========== CONFIGURATION DES MÉDIAS ==========
+// Modifie ce tableau avec tes fichiers !
+const mediaItems = [
+  { type: 'image', src: 'https://picsum.photos/800/600?random=1', title: 'Signal 001' },
+  { type: 'gif', src: 'https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif', title: 'Glitch GIF' },
+  { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4', title: 'Stream 003' },
+  { type: 'image', src: 'https://picsum.photos/800/600?random=2', title: 'Data 004' },
+  { type: 'iframe', src: 'https://en.wikipedia.org/wiki/Glitch_art', title: 'Wiki Glitch' },
+  { type: 'gif', src: 'https://media.giphy.com/media/l0HlNaQ6gWfllcjDO/giphy.gif', title: 'Static GIF' },
+];
+
+let currentIndex = 0;
+let isReady = false;
+let loadedMedia = {};
+let autoInterval = null;
+
+// ========== PRÉCHARGEMENT ==========
+function preloadMedia(item, index) {
+  return new Promise((resolve) => {
+    const type = item.type === 'gif' ? 'image' : item.type;
+    
+    if (type === 'image') {
+      const img = new Image();
+      img.onload = () => { loadedMedia[index] = img; resolve(true); };
+      img.onerror = () => resolve(false);
+      img.src = item.src;
+    } 
+    else if (type === 'video') {
+      const video = document.createElement('video');
+      video.muted = true;
+      video.preload = 'auto';
+      video.oncanplaythrough = () => { loadedMedia[index] = video; resolve(true); };
+      video.onerror = () => resolve(false);
+      video.src = item.src;
+      video.load();
+    }
+    else if (type === 'iframe') {
+      // Les iframes ne se préchargent pas, on les marque comme prêts
+      loadedMedia[index] = true;
+      resolve(true);
+    }
+    else {
+      resolve(false);
+    }
+  });
+}
+
+async function preloadAll() {
+  const loader = document.getElementById('screenLoader');
+  const loaderText = document.getElementById('loaderText');
+  const loaderBar = document.getElementById('loaderBar');
+  const status = document.getElementById('screenStatus');
+  
+  let loaded = 0;
+  const total = mediaItems.length;
+  
+  for (let i = 0; i < total; i++) {
+    loaderText.textContent = `Chargement ${i + 1}/${total}...`;
+    await preloadMedia(mediaItems[i], i);
+    loaded++;
+    loaderBar.style.width = (loaded / total * 100) + '%';
+  }
+  
+  // Tout est chargé
+  loaderText.textContent = 'Flux synchronisés';
+  await new Promise(r => setTimeout(r, 500));
+  
+  loader.classList.add('hidden');
+  status.textContent = 'SIG:001 | LOCK';
+  isReady = true;
+  
+  showMedia(0);
+  startAutoRotation();
+}
+
+// ========== AFFICHAGE ==========
+function renderMedia(item, forModal = false) {
+  const type = item.type === 'gif' ? 'image' : item.type;
+  if (type === 'image') return `<img src="${item.src}" alt="${item.title}">`;
+  if (type === 'video') return `<video src="${item.src}" ${forModal ? 'controls' : 'autoplay muted loop'} playsinline></video>`;
+  if (type === 'iframe') return `<iframe src="${item.src}" title="${item.title}" sandbox="allow-scripts allow-same-origin"></iframe>`;
+  return '';
+}
+
+function showMedia(index) {
+  if (!isReady) return;
+  currentIndex = index;
+  const item = mediaItems[index];
+  const container = document.getElementById('mediaContainer');
+  
+  container.classList.remove('loaded');
+  container.innerHTML = renderMedia(item);
+  
+  // Attendre que le média soit affiché
+  requestAnimationFrame(() => {
+    container.classList.add('loaded');
+  });
+  
+  document.getElementById('mediaLabel').textContent = `${item.title} [${item.type.toUpperCase()}]`;
+  document.getElementById('screenStatus').textContent = `SIG:${String(index + 1).padStart(3, '0')} | LOCK`;
+  
+  document.querySelectorAll('.nav-dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
+  document.querySelectorAll('.thumb').forEach((thumb, i) => thumb.classList.toggle('active', i === index));
+}
+
+// ========== GLITCH ==========
+function triggerGlitch() {
+  if (!isReady) return;
+  const container = document.getElementById('mediaContainer');
+  const line = document.getElementById('glitchLine');
+  const overlay = document.getElementById('glitchOverlay');
+  const led = document.getElementById('ledRed');
+  const status = document.getElementById('screenStatus');
+  
+  container.classList.add('glitching');
+  line.style.opacity = '1';
+  line.style.top = Math.random() * 80 + '%';
+  overlay.style.opacity = '0.5';
+  overlay.style.background = `linear-gradient(${Math.random()*360}deg, transparent 30%, rgba(255,0,100,0.3) 50%, transparent 70%)`;
+  led.style.background = '#ff4757';
+  status.textContent = `SIG:${String(currentIndex + 1).padStart(3, '0')} | SYNC...`;
+  
+  setTimeout(() => {
+    container.classList.remove('glitching');
+    line.style.opacity = '0';
+    overlay.style.opacity = '0';
+    led.style.background = '#2a2a4a';
+    status.textContent = `SIG:${String(currentIndex + 1).padStart(3, '0')} | LOCK`;
+  }, 200);
+}
+
+// ========== AUTO ROTATION ==========
+function startAutoRotation() {
+  autoInterval = setInterval(() => {
+    triggerGlitch();
+    setTimeout(() => {
+      showMedia((currentIndex + 1) % mediaItems.length);
+    }, 200);
+  }, 4000);
+  
+  // Glitches aléatoires
+  setInterval(() => {
+    if (Math.random() > 0.7) triggerGlitch();
+  }, 800);
+}
+
+// ========== CONTRÔLES ==========
+function toggleFold() {
+  document.getElementById('screenContainer').classList.toggle('folded');
+}
+
+function openModal() {
+  if (!isReady) return;
+  const item = mediaItems[currentIndex];
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalBody').innerHTML = renderMedia(item, true);
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modalBody').innerHTML = '';
+}
+
+// ========== INIT ==========
+function init() {
+  const nav = document.getElementById('screenNav');
+  const thumbs = document.getElementById('thumbnails');
+  
+  mediaItems.forEach((item, i) => {
+    // Nav dots
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot';
+    dot.onclick = (e) => { e.stopPropagation(); showMedia(i); };
+    nav.appendChild(dot);
+    
+    // Thumbnails
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    thumb.onclick = () => { showMedia(i); openModal(); };
+    
+    if (item.type === 'image' || item.type === 'gif') {
+      thumb.innerHTML = `<img src="${item.src}" alt="">`;
+    } else if (item.type === 'video') {
+      thumb.textContent = '▶';
+    } else {
+      thumb.textContent = 'HTML';
+      thumb.style.color = '#cbb7ff';
+    }
+    thumbs.appendChild(thumb);
+  });
+  
+  // Lancer le préchargement
+  preloadAll();
+}
+
+// Fermer modal avec Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+init();
+</script>
+</body>
+</html>
