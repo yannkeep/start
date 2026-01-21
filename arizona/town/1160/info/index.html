@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratégie Socioculturelle : De 1160 au Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Warm Neutrals & Professional Tech (Professional & Stylish) -->
+    <!-- Application Structure Plan:
+         1. Header: Mission statement (1160 -> Global).
+         2. Executive Summary: The Micro/Meso/Macro concept explained.
+         3. Strategic Analysis (Chart.js Radar): Visualizing the trade-offs between Human Connection (Micro) and Global Reach/Rentability (Macro).
+         4. BROL 2.0 Toolkit (Interactive Grid): Displaying the digital tools from the source file, categorized by function, showing how they enable the strategy.
+         5. Partnership Matrix (Chart.js Bubble): Analyzing potential actions based on Impact vs. Rentability vs. Accessibility.
+         6. Roadmap (HTML Timeline): The steps from local auditing to global tokenization.
+    -->
+    <!-- Visualization & Content Choices:
+         - Radar Chart: Chosen to compare the qualitative profiles of Micro, Meso, and Macro levels across 5 dimensions (Impact, Reach, Cost, etc.).
+         - Bubble Chart: Selected to visualize the 3-variable requirement (Monetization, Impact, Accessibility) simultaneously for partnership opportunities.
+         - Interactive Grid: Used for the "BROL 2.0" toolkit to allow users to filter tools by category (Infra, Comms, Collab) without SVG diagrams.
+         - Vertical Timeline: Constructed with Tailwind borders to show the linear progression of the strategy.
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'warm-bg': '#fcfbf9',     // Very light warm gray/beige
+                        'warm-card': '#ffffff',
+                        'warm-text': '#44403c',   // Stone 700
+                        'accent-primary': '#d97706', // Amber 600 (Vitality)
+                        'accent-secondary': '#0f766e', // Teal 700 (Stability)
+                        'chart-micro': 'rgba(217, 119, 6, 0.7)',  // Amber
+                        'chart-meso': 'rgba(15, 118, 110, 0.7)',  // Teal
+                        'chart-macro': 'rgba(79, 70, 229, 0.7)',  // Indigo
+                    },
+                    fontFamily: {
+                        sans: ['Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fcfbf9;
+            color: #44403c;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom scrollbar for toolkit list */
+        .toolkit-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .toolkit-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .toolkit-scroll::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">🏛️</span>
+                    <div>
+                        <h1 class="font-bold text-lg text-stone-800 leading-tight">Stratégie Socioculturelle</h1>
+                        <p class="text-xs text-stone-500">1160 Auderghem ➔ Monde (Micro/Méso/Macro)</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-stone-600">
+                    <a href="#analysis" class="hover:text-accent-primary transition-colors">Niveaux Stratégiques</a>
+                    <a href="#toolkit" class="hover:text-accent-primary transition-colors">BROL 2.0 Toolkit</a>
+                    <a href="#matrix" class="hover:text-accent-primary transition-colors">Matrice d'Impact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800 mb-4">L'Expansion par l'Éducation Permanente</h2>
+                <p class="text-lg text-stone-600 leading-relaxed">
+                    Une approche systémique pour transformer l'ancrage local à <strong>1160 Bruxelles</strong> en une force globale. 
+                    Nous analysons les partenariats selon trois axes critiques : 
+                    <span class="font-bold text-accent-secondary">Accessibilité</span>, 
+                    <span class="font-bold text-accent-primary">Impact Social</span>, et 
+                    <span class="font-bold text-indigo-600">Rentabilité</span>.
+                </p>
+            </div>
+
+            <!-- Metric Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 text-center">
+                    <div class="text-3xl font-bold text-accent-primary mb-1">Micro</div>
+                    <div class="text-sm font-semibold text-stone-500 uppercase tracking-wide">Bruxelles (1160)</div>
+                    <p class="mt-3 text-sm text-stone-600">Ancrage physique, cohésion sociale locale, haute intensité humaine.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 text-center">
+                    <div class="text-3xl font-bold text-accent-secondary mb-1">Méso</div>
+                    <div class="text-sm font-semibold text-stone-500 uppercase tracking-wide">Réseau & Outils</div>
+                    <p class="mt-3 text-sm text-stone-600">Mutualisation (BROL 2.0), fédérations, et partenariats institutionnels.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 text-center">
+                    <div class="text-3xl font-bold text-indigo-600 mb-1">Macro</div>
+                    <div class="text-sm font-semibold text-stone-500 uppercase tracking-wide">Global & Digital</div>
+                    <p class="mt-3 text-sm text-stone-600">Monétisation, tokenisation, accessibilité universelle.</p>
+                </div>
+            </div>
+
+            <!-- SECTION 1: Strategic Analysis (Radar Chart) -->
+            <section id="analysis" class="mb-20 scroll-mt-20">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="border-l-4 border-accent-primary pl-4 mb-6">
+                            <h3 class="text-2xl font-bold text-stone-800">Profil des Niveaux d'Intervention</h3>
+                            <p class="text-stone-600 mt-2">
+                                Chaque niveau stratégique possède une empreinte unique. Le niveau local (Micro) privilégie l'humain mais coûte cher. 
+                                Le niveau global (Macro) maximise la rentabilité et l'accessibilité grâce à la technologie.
+                            </p>
+                        </div>
+                        <ul class="space-y-4 text-sm text-stone-600">
+                            <li class="flex items-start">
+                                <span class="text-xl mr-3">📍</span>
+                                <div>
+                                    <strong class="text-stone-800">Micro (1160):</strong> 
+                                    Priorité à l'interaction directe. Faible portée géographique, mais impact émotionnel fort.
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-xl mr-3">🔗</span>
+                                <div>
+                                    <strong class="text-stone-800">Méso (Infrastructure):</strong> 
+                                    Le "liant". C'est ici que se situent les outils collaboratifs (Nextcloud, Dolibarr) qui permettent de structurer l'action.
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-xl mr-3">🌍</span>
+                                <div>
+                                    <strong class="text-stone-800">Macro (Monétisation):</strong> 
+                                    Scalabilité infinie. Modèles basés sur la crypto-économie ou les abonnements digitaux à faible coût pour une audience mondiale.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-lg border border-stone-100">
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-stone-400 mt-2">Comparaison des attributs par niveau</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: BROL 2.0 Toolkit -->
+            <section id="toolkit" class="mb-20 scroll-mt-20 bg-stone-50 rounded-3xl p-8 md:p-12">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-bold text-stone-800 mb-2">La Boîte à Outils "BROL 2.0"</h3>
+                        <p class="text-stone-600">L'infrastructure technique open-source qui rend l'expansion possible.</p>
+                        
+                        <!-- Filters -->
+                        <div class="flex flex-wrap justify-center gap-2 mt-6" id="toolkit-filters">
+                            <button class="px-4 py-2 bg-white border border-stone-200 rounded-full text-sm font-medium hover:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all active-filter shadow-sm" data-category="all">
+                                Tout voir
+                            </button>
+                            <button class="px-4 py-2 bg-white border border-stone-200 rounded-full text-sm font-medium hover:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all shadow-sm" data-category="Infrastructure">
+                                Infrastructure
+                            </button>
+                            <button class="px-4 py-2 bg-white border border-stone-200 rounded-full text-sm font-medium hover:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all shadow-sm" data-category="Communication">
+                                Communication
+                            </button>
+                            <button class="px-4 py-2 bg-white border border-stone-200 rounded-full text-sm font-medium hover:border-accent-primary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all shadow-sm" data-category="Collaboration">
+                                Collaboration
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="toolkit-grid">
+                        <!-- Items will be injected here via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Partnership Matrix (Bubble Chart) -->
+            <section id="matrix" class="mb-20 scroll-mt-20">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/3 space-y-6">
+                        <h3 class="text-2xl font-bold text-stone-800">Matrice de Priorisation</h3>
+                        <p class="text-sm text-stone-600">
+                            Cette matrice guide la recherche de partenariats. Nous cherchons un équilibre entre mission sociale et viabilité économique.
+                        </p>
+                        
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                            <h4 class="font-bold text-indigo-800 text-sm mb-2">Comment lire ce graphique ?</h4>
+                            <ul class="text-xs text-indigo-700 space-y-2">
+                                <li><strong>Axe X (Horizontal) :</strong> Potentiel de Rentabilité (€).</li>
+                                <li><strong>Axe Y (Vertical) :</strong> Impact Socioculturel (Qualitatif).</li>
+                                <li><strong>Taille de la bulle :</strong> Degré d'Accessibilité (Facilité d'entrée pour l'usager).</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h4 class="font-bold text-stone-800 text-sm mb-3">Zone Cible</h4>
+                            <div class="flex items-center mb-2">
+                                <div class="w-3 h-3 rounded-full bg-teal-500 mr-2"></div>
+                                <span class="text-xs text-stone-600">Haute Accessibilité (Universel)</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
+                                <span class="text-xs text-stone-600">Haute Rentabilité (Pérénité)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:w-2/3 bg-white p-2 md:p-6 rounded-2xl shadow-lg border border-stone-100">
+                        <div class="chart-container">
+                            <canvas id="bubbleChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Roadmap -->
+            <section class="mb-12">
+                <h3 class="text-2xl font-bold text-stone-800 mb-8 text-center">Feuille de Route : L'Expansion</h3>
+                <div class="max-w-3xl mx-auto border-l-2 border-stone-200 pl-8 space-y-12">
+                    
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-0 bg-accent-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">1</span>
+                        <h4 class="font-bold text-lg text-stone-800">Ancrage Local (1160 Auderghem)</h4>
+                        <p class="text-stone-600 text-sm mt-1">Déploiement des ateliers physiques. Création de la communauté de base. Utilisation de Dolibarr pour la gestion des membres.</p>
+                    </div>
+
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-0 bg-accent-secondary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">2</span>
+                        <h4 class="font-bold text-lg text-stone-800">Digitalisation Méso (Structure)</h4>
+                        <p class="text-stone-600 text-sm mt-1">Lancement du "Site Ultime" et de la WebRadio. Mise en place de Nextcloud pour la collaboration interne/externe.</p>
+                    </div>
+
+                    <div class="relative">
+                        <span class="absolute -left-[41px] top-0 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">3</span>
+                        <h4 class="font-bold text-lg text-stone-800">Expansion Macro (Monde)</h4>
+                        <p class="text-stone-600 text-sm mt-1">Ouverture des API. Modèles de revenus basés sur l'éducation à distance (MOOCs) et la micro-monétisation crypto.</p>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm">
+        <p>© 2026 Stratégie Socioculturelle - Basé sur l'analyse BROL 2.0</p>
+    </footer>
+
+    <!-- DATA & LOGIC -->
+    <script>
+        // --- 1. DATA: BROL 2.0 TOOLKIT (From Source File) ---
+        const brolTools = [
+            { id: 'nextcloud', name: 'Nextcloud', category: 'Infrastructure', desc: 'Le cœur du système : fichiers, agenda, contacts partagés.', icon: '☁️' },
+            { id: 'site', name: 'Site Ultime', category: 'Communication', desc: 'Portail central, vitrine publique et point d\'entrée.', icon: '🌐' },
+            { id: 'webradio', name: 'WebRadio', category: 'Communication', desc: 'Flux audio continu pour l\'éducation populaire.', icon: '🎙️' },
+            { id: 'codimd', name: 'CodiMD', category: 'Collaboration', desc: 'Édition de texte collaborative en temps réel.', icon: '📝' },
+            { id: 'trello', name: 'Kanban/Trello', category: 'Collaboration', desc: 'Gestion de projets visuelle et agile.', icon: '📋' },
+            { id: 'discord', name: 'Discord', category: 'Communication', desc: 'Salon de discussion communautaire instantané.', icon: '💬' },
+            { id: 'git', name: 'Gitea / Git', category: 'Infrastructure', desc: 'Gestion de versions pour le code et les procédures.', icon: '🔧' },
+            { id: 'peertube', name: 'PeerTube', category: 'Communication', desc: 'Hébergement vidéo décentralisé et souverain.', icon: '▶️' },
+            { id: 'dolibarr', name: 'Dolibarr', category: 'Infrastructure', desc: 'ERP pour la gestion administrative et comptable.', icon: '📊' }
+        ];
+
+        // --- 2. DATA: CHART CONFIGURATION ---
+        
+        // Radar Chart Data (Strategic Profiles)
+        const radarData = {
+            labels: ['Coût Humain', 'Rentabilité Potentielle', 'Portée (Reach)', 'Complexité Tech', 'Impact Local'],
+            datasets: [
+                {
+                    label: 'Micro (1160)',
+                    data: [90, 20, 10, 20, 95], // High human cost/impact, low reach/money
+                    backgroundColor: 'rgba(217, 119, 6, 0.2)', // Amber
+                    borderColor: 'rgba(217, 119, 6, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(217, 119, 6, 1)'
+                },
+                {
+                    label: 'Macro (Global)',
+                    data: [10, 90, 100, 80, 20], // Low human cost, high reach/money/tech
+                    backgroundColor: 'rgba(79, 70, 229, 0.2)', // Indigo
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(79, 70, 229, 1)'
+                }
+            ]
+        };
+
+        // Bubble Chart Data (Partnership Matrix)
+        // x: Rentability, y: Social Impact, r: Accessibility (Size)
+        const bubbleData = [
+            { x: 10, y: 90, r: 15, label: "Ateliers Présentiels (1160)" },  // High impact, low money
+            { x: 30, y: 70, r: 20, label: "WebRadio Citoyenne" },
+            { x: 80, y: 40, r: 25, label: "Cours en Ligne (MOOC)" },         // High money, high access
+            { x: 60, y: 60, r: 10, label: "Consultance B2B" },               // Good money, low access
+            { x: 90, y: 20, r: 30, label: "Micro-Dons / Crypto" },           // High money potential, very high access
+            { x: 20, y: 80, r: 12, label: "Accompagnement Social" },
+            { x: 50, y: 50, r: 18, label: "Partenariats Publics" }
+        ];
+
+        // --- 3. INITIALIZATION & RENDERING ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderToolkit('all');
+            initCharts();
+            setupInteractions();
+        });
+
+        function setupInteractions() {
+            // Toolkit Filters
+            const buttons = document.querySelectorAll('#toolkit-filters button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // UI Update
+                    buttons.forEach(b => {
+                        b.classList.remove('bg-accent-primary', 'text-white', 'border-transparent');
+                        b.classList.add('bg-white', 'text-stone-600', 'border-stone-200');
+                    });
+                    e.target.classList.remove('bg-white', 'text-stone-600', 'border-stone-200');
+                    e.target.classList.add('bg-accent-primary', 'text-white', 'border-transparent');
+                    
+                    // Logic Update
+                    renderToolkit(e.target.dataset.category);
+                });
+            });
+            // Set initial active state visually
+            document.querySelector('[data-category="all"]').click();
+        }
+
+        function renderToolkit(category) {
+            const container = document.getElementById('toolkit-grid');
+            container.innerHTML = '';
+            
+            const filtered = category === 'all' 
+                ? brolTools 
+                : brolTools.filter(t => t.category === category);
+
+            filtered.forEach(tool => {
+                // Determine styling based on category
+                let borderClass = 'border-l-4 border-l-stone-300';
+                if(tool.category === 'Infrastructure') borderClass = 'border-l-4 border-l-accent-secondary';
+                if(tool.category === 'Communication') borderClass = 'border-l-4 border-l-accent-primary';
+                if(tool.category === 'Collaboration') borderClass = 'border-l-4 border-l-indigo-500';
+
+                const html = `
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 card-hover transition-all duration-300 ${borderClass} flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-3xl">${tool.icon}</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-stone-400 border border-stone-200 px-2 py-1 rounded-full">${tool.category}</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-stone-800 mb-2">${tool.name}</h4>
+                        <p class="text-sm text-stone-600 flex-grow">${tool.desc}</p>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function initCharts() {
+            // Radar Chart Config
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: radarData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            pointLabels: {
+                                font: { size: 11, family: 'Helvetica Neue' },
+                                color: '#57534e'
+                            },
+                            ticks: { display: false, maxTicksLimit: 5 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20 } },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    return Array.isArray(label) ? label.join(' ') : label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Bubble Chart Config
+            const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
+            new Chart(ctxBubble, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Projets Stratégiques',
+                        data: bubbleData,
+                        backgroundColor: function(context) {
+                            const val = context.raw?.x; // Rentability
+                            // Gradient logic: Low Rentability = Teal, High Rentability = Amber
+                            return val > 50 ? 'rgba(217, 119, 6, 0.6)' : 'rgba(15, 118, 110, 0.6)';
+                        },
+                        borderColor: function(context) {
+                            const val = context.raw?.x;
+                            return val > 50 ? 'rgb(217, 119, 6)' : 'rgb(15, 118, 110)';
+                        },
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Rentabilité / Monétisation (€)' },
+                            min: 0, max: 100,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Impact Social' },
+                            min: 0, max: 100,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    return item.raw.label; // Display label instead of coords
+                                },
+                                label: function(context) {
+                                    return `Rent: ${context.raw.x} | Impact: ${context.raw.y} | Access: ${context.raw.r}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
