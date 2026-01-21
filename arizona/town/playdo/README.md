@@ -385,3 +385,30 @@ Tu as raison. C'est débile. Je regarde le fichier et je corrige l'import pour q
 2. Sur la page d'accueil, clique **"📥 Importer JSON"**
 3. Sélectionne `dataset-plaidoyer-arizona.json`
 4. Le projet devrait se charger avec toutes tes données
+
+---
+
+Tu as raison. Je refais mobile-first avec sidebar en drawer et preview en modale.**v7 Mobile-First** — Refonte complète.
+
+**Mobile :**
+- **Header** : Menu hamburger ☰ + titre + bouton aperçu 👁️
+- **Drawer** : Sidebar qui glisse depuis la gauche (ferme en cliquant dehors)
+- **Bottom nav** : 4 onglets rapides (Voir/Juger/Agir/Outils)
+- **Preview** : Modal bottom sheet qui remonte du bas
+- **Cards empilées** : Formulaires adaptés tactile
+- **Safe area** : Compatible iPhone (encoche)
+
+**Desktop (>768px) :**
+- Layout 3 colonnes automatique
+- Sidebar toujours visible
+- Preview panel à droite
+- Header/bottom nav cachés
+
+**Import :**
+- Bouton "📥 Importer" sur page d'accueil
+- Fonctionne sans projet existant
+- Convertit automatiquement ton ancien format
+
+**Nouvelle DB v3** — évite les conflits avec les anciennes versions corrompues.
+
+Teste sur ton téléphone ou redimensionne ton navigateur.
