@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>...</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=JetBrains+Mono&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #000;
+            --text: #e0e0e0;
+            --accent: #ff3366;
+            --green: #33ff33;
+            --muted: #444;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Crimson Pro', Georgia, serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* CRT */
+        .crt {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .crt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.08) 2px,
+                rgba(0, 0, 0, 0.08) 4px
+            );
+        }
+        
+        /* Intro sequence */
+        #intro {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        #intro.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease-out;
+        }
+        
+        .intro-text {
+            font-size: 1.5rem;
+            color: var(--muted);
+            text-align: center;
+            animation: fadeIn 2s ease-out;
+        }
+        
+        .intro-hint {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Main content */
+        #content {
+            opacity: 0;
+            transition: opacity 1s ease-out 0.5s;
+        }
+        
+        #content.visible {
+            opacity: 1;
+        }
+        
+        /* Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* Hero */
+        #hero {
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+        
+        .symbol {
+            font-size: 8rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            animation: symbolPulse 4s ease-in-out infinite;
+            text-shadow: 0 0 50px rgba(255, 51, 102, 0.5);
+        }
+        
+        @keyframes symbolPulse {
+            0%, 100% { 
+                transform: scale(1);
+                text-shadow: 0 0 50px rgba(255, 51, 102, 0.5);
+            }
+            50% { 
+                transform: scale(1.1);
+                text-shadow: 0 0 80px rgba(255, 51, 102, 0.8);
+            }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.8;
+        }
+        
+        /* Truth section */
+        #truth {
+            background: #050505;
+        }
+        
+        .truth-text {
+            max-width: 700px;
+            font-size: 1.4rem;
+            line-height: 2;
+            color: var(--text);
+        }
+        
+        .truth-text p {
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        .truth-text p.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .highlight {
+            color: var(--accent);
+        }
+        
+        .green {
+            color: var(--green);
+        }
+        
+        /* Quote */
+        #quote-section {
+            background: linear-gradient(180deg, #050505 0%, #080808 100%);
+        }
+        
+        blockquote {
+            font-size: 2rem;
+            font-style: italic;
+            max-width: 800px;
+            line-height: 1.6;
+            color: var(--text);
+            position: relative;
+            padding: 2rem;
+        }
+        
+        blockquote::before,
+        blockquote::after {
+            content: '"';
+            font-size: 6rem;
+            color: var(--accent);
+            opacity: 0.3;
+            position: absolute;
+            font-family: Georgia, serif;
+        }
+        
+        blockquote::before {
+            top: -1rem;
+            left: -1rem;
+        }
+        
+        blockquote::after {
+            bottom: -3rem;
+            right: -1rem;
+        }
+        
+        .quote-author {
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: var(--muted);
+            font-style: normal;
+        }
+        
+        /* Actions */
+        #actions {
+            background: #0a0a0a;
+        }
+        
+        .actions-title {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--text);
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .action-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        
+        .action-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.1);
+        }
+        
+        .action-card h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .action-card p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .action-card a {
+            color: var(--green);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.5rem;
+            transition: color 0.3s;
+        }
+        
+        .action-card a:hover {
+            color: #44ff44;
+        }
+        
+        /* Final */
+        #final {
+            background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+            min-height: 80vh;
+        }
+        
+        .final-message {
+            max-width: 600px;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--muted);
+            margin-bottom: 3rem;
+        }
+        
+        .final-statement {
+            font-size: 1.8rem;
+            color: var(--text);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+        }
+        
+        .final-statement strong {
+            color: var(--green);
+            font-weight: 600;
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+            z-index: 100;
+        }
+        
+        .stats-bar span {
+            color: var(--green);
+        }
+        
+        /* Back link */
+        .back-link {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .back-link:hover {
+            color: var(--green);
+            border-color: var(--green);
+        }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--muted);
+            font-size: 0.8rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; letter-spacing: 0.2em; }
+            .symbol { font-size: 5rem; }
+            blockquote { font-size: 1.3rem; padding: 1rem; }
+            .truth-text { font-size: 1.1rem; }
+            .actions-grid { grid-template-columns: 1fr; }
+            .stats-bar { flex-wrap: wrap; gap: 1rem; }
+        }
+        
+        /* Hidden message */
+        .hidden-truth {
+            position: absolute;
+            left: -9999px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<!-- Intro overlay -->
+<div id="intro">
+    <div class="intro-text">
+        Vous êtes arrivé au bout.
+    </div>
+    <div class="intro-hint">cliquez pour continuer</div>
+</div>
+
+<a href="game.html" class="back-link">← Terminal</a>
+
+<div id="content">
+    <!-- Hero -->
+    <section id="hero">
+        <div class="symbol">◈</div>
+        <h1>VÉNUS</h1>
+        <p class="subtitle">
+            Ce n'était pas un jeu.<br>
+            C'était une formation déguisée.
+        </p>
+        <div class="scroll-indicator">↓ Descendez</div>
+    </section>
+    
+    <!-- Truth -->
+    <section id="truth">
+        <div class="truth-text">
+            <p>Tout ce que vous avez appris est <span class="highlight">réel</span>.</p>
+            <p>Les 23 recours au 49.3 — <span class="green">réels</span>.<br>
+            Les 736 condamnations CEDH — <span class="green">réelles</span>.<br>
+            Les 24 éborgnés — <span class="green">réels</span>.</p>
+            <p>La QPC fonctionne. L'état de nécessité a relaxé des militants.<br>
+            Les techniques OSINT permettent de vérifier n'importe quelle image.</p>
+            <p>Le réseau VÉNUS n'existe pas.<br>
+            <span class="highlight">Mais tous les outils sont opérationnels.</span></p>
+        </div>
+    </section>
+    
+    <!-- Quote -->
+    <section id="quote-section">
+        <blockquote>
+            La liberté ne se demande pas, elle se prend.
+        </blockquote>
+        <div class="quote-author">— Mikhaïl Bakounine</div>
+    </section>
+    
+    <!-- Actions -->
+    <section id="actions">
+        <h2 class="actions-title">Ce que vous pouvez faire maintenant</h2>
+        
+        <div class="actions-grid">
+            <div class="action-card">
+                <h3>📚 Formez-vous</h3>
+                <p>Les meilleures ressources pour aller plus loin dans l'investigation citoyenne.</p>
+                <a href="https://www.bellingcat.com/resources/" target="_blank">bellingcat.com/resources</a>
+                <a href="https://firstdraftnews.org/training/" target="_blank">firstdraftnews.org</a>
+                <a href="https://disclose.ngo" target="_blank">disclose.ngo</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📝 Documentez</h3>
+                <p>Chaque abus documenté est une preuve. Chaque témoignage compte.</p>
+                <a href="https://www.ldh-france.org/" target="_blank">ldh-france.org</a>
+                <a href="https://www.gisti.org/" target="_blank">gisti.org</a>
+                <a href="https://technopolice.fr/" target="_blank">technopolice.fr</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>🔒 Protégez-vous</h3>
+                <p>La sécurité numérique n'est pas optionnelle. Elle est fondamentale.</p>
+                <a href="https://signal.org/" target="_blank">signal.org</a>
+                <a href="https://www.laquadrature.net/guide/" target="_blank">laquadrature.net/guide</a>
+                <a href="https://ssd.eff.org/fr" target="_blank">ssd.eff.org (EFF)</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>⚖️ Utilisez le droit</h3>
+                <p>Les recours existent. La QPC coûte 0€. La CEDH a condamné la France 736 fois.</p>
+                <a href="https://www.conseil-constitutionnel.fr/la-qpc" target="_blank">conseil-constitutionnel.fr/qpc</a>
+                <a href="https://www.defenseurdesdroits.fr/" target="_blank">defenseurdesdroits.fr</a>
+                <a href="https://echr.coe.int/" target="_blank">echr.coe.int</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>👥 Organisez-vous</h3>
+                <p>Seul on va vite, ensemble on va loin. Rejoignez ou créez un collectif local.</p>
+                <a href="https://www.nosdeputes.fr/" target="_blank">nosdeputes.fr</a>
+                <a href="https://www.regardscitoyens.org/" target="_blank">regardscitoyens.org</a>
+                <a href="https://framasoft.org/" target="_blank">framasoft.org</a>
+            </div>
+            
+            <div class="action-card">
+                <h3>📢 Transmettez</h3>
+                <p>L'éducation populaire est un acte politique. Partagez ce que vous avez appris.</p>
+                <a href="#">Partagez ce jeu</a>
+                <a href="#">Organisez un atelier</a>
+                <a href="#">Créez votre propre outil</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Final -->
+    <section id="final">
+        <div class="final-message">
+            Ce site n'existe pas.<br>
+            Ce réseau n'existe pas.<br>
+            Ces cellules n'existent pas.
+        </div>
+        <div class="final-statement">
+            Mais <strong>les outils sont réels</strong>.<br>
+            Et <strong>vous</strong> existez.
+        </div>
+    </section>
+</div>
+
+<div class="stats-bar">
+    <div>cellules: <span>47</span></div>
+    <div>opérateurs: <span>~380</span></div>
+    <div>victoires: <span>counting...</span></div>
+</div>
+
+<!-- Hidden content for those who look -->
+<div class="hidden-truth">
+    La fiction était le cadre.
+    Le contenu était la vérité.
+    
+    Coordinates: 48.8437, 2.3597
+    Recognition: Les étoiles sont alignées ce soir.
+    
+    Si vous lisez ceci, vous êtes déjà un opérateur.
+    Le réseau, c'est vous.
+</div>
+
+<script>
+// Intro click handler
+const intro = document.getElementById('intro');
+const content = document.getElementById('content');
+
+intro.addEventListener('click', () => {
+    intro.classList.add('hidden');
+    content.classList.add('visible');
+    
+    // Track completion
+    try {
+        const state = JSON.parse(localStorage.getItem('venus_state') || '{}');
+        state.achievements = state.achievements || [];
+        if (!state.achievements.includes('truth')) {
+            state.achievements.push('truth');
+            localStorage.setItem('venus_state', JSON.stringify(state));
+        }
+    } catch(e) {}
+});
+
+// Scroll reveal for truth section
+const truthParagraphs = document.querySelectorAll('.truth-text p');
+
+const revealOnScroll = () => {
+    truthParagraphs.forEach((p, index) => {
+        const rect = p.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8) {
+            setTimeout(() => {
+                p.classList.add('visible');
+            }, index * 200);
+        }
+    });
+};
+
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
+
+// Console message
+console.log('%c◈ VÉNUS', 'color: #ff3366; font-size: 48px; font-weight: bold;');
+console.log('%c"La fiction était le cadre. Le contenu était la vérité."', 'color: #33ff33; font-size: 14px; font-style: italic;');
+console.log('%cMerci d\'avoir joué. Maintenant, agissez.', 'color: #888; font-size: 12px;');
+console.log('%c%s', 'color: #333; font-size: 10px;', 'Les étoiles sont alignées ce soir.');
+</script>
+</body>
+</html>

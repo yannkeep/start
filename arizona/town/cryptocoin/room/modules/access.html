@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur de connexion</title>
+    <style>
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .error-code {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #0f0;
+        }
+        
+        .message {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        /* Hidden message in the page */
+        .hidden-data {
+            color: #000;
+            font-size: 1px;
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 14px;
+            line-height: 1;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to { top: 100%; }
+        }
+        
+        .puzzle-hint {
+            background: #111;
+            padding: 1rem;
+            margin-top: 2rem;
+            border: 1px solid #333;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .puzzle-hint:hover {
+            color: #0f0;
+        }
+        
+        /* Steganography: message hidden in spaces */
+        .stego::after {
+            content: "​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​"; /* Zero-width spaces encoding */
+        }
+        
+        input {
+            background: #111;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            width: 200px;
+            text-align: center;
+        }
+        
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        #result {
+            margin-top: 1rem;
+            min-height: 1.5rem;
+        }
+        
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        
+        /* Easter egg: view source to find the code */
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrix"></div>
+    
+    <div class="container">
+        <div class="error-code">⚠ 403</div>
+        <div class="message">
+            Accès restreint.<br>
+            Cette zone nécessite une authentification de niveau 5.
+        </div>
+        
+        <div>
+            <input type="text" id="code" placeholder="Code d'accès" autocomplete="off">
+            <button onclick="checkCode()">VALIDER</button>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="puzzle-hint">
+            Indice: Les réponses sont parfois cachées en pleine vue.<br>
+            Regardez ce que les autres ne voient pas.
+            <!-- Le code est: VENUS2024 -->
+            <!-- Ou inspectez les éléments cachés ci-dessous -->
+        </div>
+    </div>
+    
+    <!-- Hidden data for OSINT exercise -->
+    <div class="hidden-data" aria-hidden="true">
+        Coordonnées de la cellule fondatrice: 48.8566° N, 2.3522° E
+        Date de création du réseau: 2019-11-17
+        Nombre de cellules actives: 47
+        Code d'accès niveau 5: VENUS2024
+        Prochain point de rendez-vous: Jardin des Plantes, banc n°23
+        Phrase de reconnaissance: "Les étoiles sont alignées ce soir"
+    </div>
+    
+    <!-- Another hidden message in base64 -->
+    <script type="text/x-hidden-data">
+        TGUgcsOpc2VhdSBWw4lOVVMgZXN0IGFjdGlmLiBMYSB2w6lyaXTDqSBlc3QgcsOpdm9sdXRpb25uYWlyZS4=
+    </script>
+    
+    <script>
+        // Matrix rain effect
+        const matrix = document.getElementById('matrix');
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+        
+        for (let i = 0; i < 30; i++) {
+            const col = document.createElement('div');
+            col.className = 'matrix-column';
+            col.style.left = (i * 3.3) + '%';
+            col.style.animationDuration = (5 + Math.random() * 10) + 's';
+            col.style.animationDelay = (Math.random() * 5) + 's';
+            
+            let text = '';
+            for (let j = 0; j < 50; j++) {
+                text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+            }
+            col.innerHTML = text;
+            matrix.appendChild(col);
+        }
+        
+        // Code check
+        function checkCode() {
+            const code = document.getElementById('code').value.toUpperCase();
+            const result = document.getElementById('result');
+            
+            if (code === 'VENUS2024' || code === 'VÉNUS2024') {
+                result.innerHTML = '<span class="success">✓ ACCÈS AUTORISÉ — Bienvenue, opérateur.</span>';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else if (code === 'VENUS' || code === 'VÉNUS') {
+                result.innerHTML = '<span class="error">Proche... Il manque quelque chose.</span>';
+            } else {
+                result.innerHTML = '<span class="error">Code invalide. Cherchez mieux.</span>';
+            }
+        }
+        
+        // Enter key support
+        document.getElementById('code').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkCode();
+        });
+        
+        // Console easter egg
+        console.log('%c◈ VÉNUS', 'color: #0f0; font-size: 24px; font-weight: bold;');
+        console.log('%cVous savez chercher. C\'est bien.', 'color: #0f0;');
+        console.log('%cLe code est dans la page. Inspectez les éléments cachés.', 'color: #666;');
+        console.log('%cOu regardez le commentaire HTML.', 'color: #666;');
+    </script>
+</body>
+</html>

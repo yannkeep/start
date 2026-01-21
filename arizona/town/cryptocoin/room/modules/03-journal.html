@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📓 KERN::JOURNAL — Documentation du parcours</title>
+    <script src="kern-core.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --bleu: #74b9ff;
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100%;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--vert);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover { background: #7ed87e; }
+        
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stat-chip .value {
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        /* Quick Entry */
+        .quick-entry {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .entry-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        
+        .entry-textarea:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        .entry-textarea::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .entry-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .tag-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .tag-btn:hover {
+            border-color: var(--lilas);
+            color: var(--lilas);
+        }
+        
+        .tag-btn.active {
+            background: var(--lilas);
+            border-color: var(--lilas);
+            color: var(--bg);
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .timeline-group {
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--lilas);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-left: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .entry-card {
+            position: relative;
+            margin-left: 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .entry-card:hover {
+            border-color: var(--vert);
+        }
+        
+        .entry-card::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--vert);
+            border-radius: 50%;
+            border: 3px solid var(--bg);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .entry-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .entry-actions {
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .entry-card:hover .entry-actions {
+            opacity: 1;
+        }
+        
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+        
+        .entry-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .entry-content a {
+            color: var(--bleu);
+        }
+        
+        .entry-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .entry-tag {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 100px;
+            background: var(--lilas-dim);
+            color: var(--lilas);
+        }
+        
+        /* Mood indicator */
+        .entry-mood {
+            position: absolute;
+            left: -38px;
+            top: 16px;
+            font-size: 1.1rem;
+        }
+        
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .filter-btn.active {
+            background: var(--vert);
+            border-color: var(--vert);
+            color: var(--bg);
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Edit mode */
+        .edit-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--vert);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        
+        .edit-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--vert);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Markdown preview hints */
+        .format-hints {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        
+        .format-hints code {
+            background: var(--bg-input);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+        
+        /* Word count */
+        .word-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* Calendar heatmap (simple version) */
+        .activity-heatmap {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        
+        .heatmap-day {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            background: var(--bg-input);
+        }
+        
+        .heatmap-day.level-1 { background: rgba(144, 238, 144, 0.2); }
+        .heatmap-day.level-2 { background: rgba(144, 238, 144, 0.4); }
+        .heatmap-day.level-3 { background: rgba(144, 238, 144, 0.6); }
+        .heatmap-day.level-4 { background: var(--vert); }
+        
+        .heatmap-label {
+            width: 100%;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="00-kern-nexus.html" class="logo" style="text-decoration: none; color: inherit;">
+                <h1>📓 KERN::JOURNAL</h1>
+            </a>
+            <div class="header-actions">
+                <a href="00-kern-nexus.html" class="btn">← NEXUS</a>
+                <button class="btn" onclick="exportEntries()">📤 Exporter</button>
+                <button class="btn" onclick="importEntries()">📥 Importer</button>
+            </div>
+        </header>
+        
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-chip">
+                <span>📝</span>
+                <span class="value" id="totalEntries">0</span>
+                <span>entrées</span>
+            </div>
+            <div class="stat-chip">
+                <span>📅</span>
+                <span class="value" id="streakDays">0</span>
+                <span>jours de suite</span>
+            </div>
+            <div class="stat-chip">
+                <span>💬</span>
+                <span class="value" id="totalWords">0</span>
+                <span>mots</span>
+            </div>
+        </div>
+        
+        <!-- Activity Heatmap -->
+        <div class="activity-heatmap" id="heatmap">
+            <div class="heatmap-label">Activité des 60 derniers jours</div>
+            <!-- Generated dynamically -->
+        </div>
+        
+        <!-- Quick Entry -->
+        <div class="quick-entry">
+            <textarea class="entry-textarea" id="newEntry" placeholder="Qu'avez-vous fait aujourd'hui ? Qu'avez-vous appris ?&#10;&#10;Astuce : utilisez #tags pour catégoriser"></textarea>
+            <div class="entry-options">
+                <div class="tag-selector">
+                    <button class="tag-btn" data-tag="apprentissage" onclick="toggleTag('apprentissage')">📚 Apprentissage</button>
+                    <button class="tag-btn" data-tag="action" onclick="toggleTag('action')">✊ Action</button>
+                    <button class="tag-btn" data-tag="rencontre" onclick="toggleTag('rencontre')">🤝 Rencontre</button>
+                    <button class="tag-btn" data-tag="reflexion" onclick="toggleTag('reflexion')">💭 Réflexion</button>
+                    <button class="tag-btn" data-tag="victoire" onclick="toggleTag('victoire')">🎉 Victoire</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span class="word-count" id="wordCount">0 mots</span>
+                    <button class="btn btn-primary" onclick="addEntry()">Publier</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filters-bar">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Tout</button>
+            <button class="filter-btn" data-filter="apprentissage" onclick="setFilter('apprentissage')">📚</button>
+            <button class="filter-btn" data-filter="action" onclick="setFilter('action')">✊</button>
+            <button class="filter-btn" data-filter="rencontre" onclick="setFilter('rencontre')">🤝</button>
+            <button class="filter-btn" data-filter="reflexion" onclick="setFilter('reflexion')">💭</button>
+            <button class="filter-btn" data-filter="victoire" onclick="setFilter('victoire')">🎉</button>
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Rechercher..." oninput="handleSearch()">
+        </div>
+        
+        <!-- Timeline -->
+        <div class="timeline" id="timeline">
+            <!-- Entries rendered here -->
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:100;">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;max-width:500px;width:90%;">
+            <h3 style="margin-bottom:1rem;">📥 Importer des entrées</h3>
+            <input type="file" id="importFile" accept=".json" style="margin-bottom:1rem;">
+            <textarea id="importJson" placeholder="Ou collez le JSON ici..." style="width:100%;min-height:100px;padding:0.75rem;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text);margin-bottom:1rem;"></textarea>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                <button class="btn" onclick="closeImportModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="processImport()">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State
+        let entries = [];
+        let selectedTags = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let editingId = null;
+        
+        const tagEmojis = {
+            apprentissage: '📚',
+            action: '✊',
+            rencontre: '🤝',
+            reflexion: '💭',
+            victoire: '🎉'
+        };
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof KERN !== 'undefined') {
+                KERN.ready(() => {
+                    loadData();
+                    setupWordCount();
+                });
+            } else {
+                loadData();
+                setupWordCount();
+            }
+        });
+        
+        // Data persistence
+        function loadData() {
+            const saved = localStorage.getItem('kern_journal');
+            if (saved) entries = JSON.parse(saved);
+            render();
+        }
+        
+        function saveData() {
+            localStorage.setItem('kern_journal', JSON.stringify(entries));
+            render();
+        }
+        
+        // Word count
+        function setupWordCount() {
+            const textarea = document.getElementById('newEntry');
+            textarea.addEventListener('input', () => {
+                const words = textarea.value.trim().split(/\s+/).filter(w => w).length;
+                document.getElementById('wordCount').textContent = `${words} mots`;
+            });
+        }
+        
+        // Tags
+        function toggleTag(tag) {
+            const idx = selectedTags.indexOf(tag);
+            if (idx === -1) {
+                selectedTags.push(tag);
+            } else {
+                selectedTags.splice(idx, 1);
+            }
+            document.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.classList.toggle('active', selectedTags.includes(btn.dataset.tag));
+            });
+        }
+        
+        // Add entry
+        function addEntry() {
+            const textarea = document.getElementById('newEntry');
+            const content = textarea.value.trim();
+            
+            if (!content) {
+                showToast('Écrivez quelque chose !');
+                return;
+            }
+            
+            // Extract hashtags from content
+            const hashtagsInContent = content.match(/#\w+/g) || [];
+            const extractedTags = hashtagsInContent.map(t => t.slice(1).toLowerCase());
+            
+            const allTags = [...new Set([...selectedTags, ...extractedTags])];
+            
+            const entry = {
+                id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                content,
+                tags: allTags,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            entries.unshift(entry);
+            saveData();
+            
+            // Award XP via KERN-CORE
+            if (typeof KERN !== 'undefined') {
+                KERN.emit('journal:entry', entry);
+            }
+            
+            // Reset
+            textarea.value = '';
+            selectedTags = [];
+            document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('wordCount').textContent = '0 mots';
+            
+            showToast('Entrée publiée ! +10 XP');
+        }
+        
+        // Edit entry
+        function startEdit(id) {
+            editingId = id;
+            render();
+        }
+        
+        function saveEdit(id) {
+            const textarea = document.querySelector(`[data-edit-id="${id}"]`);
+            if (!textarea) return;
+            
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+            
+            entry.content = textarea.value.trim();
+            entry.updatedAt = new Date().toISOString();
+            
+            // Re-extract tags
+            const hashtagsInContent = entry.content.match(/#\w+/g) || [];
+            entry.tags = hashtagsInContent.map(t => t.slice(1).toLowerCase());
+            
+            editingId = null;
+            saveData();
+            showToast('Entrée mise à jour');
+        }
+        
+        function cancelEdit() {
+            editingId = null;
+            render();
+        }
+        
+        // Delete entry
+        function deleteEntry(id) {
+            if (!confirm('Supprimer cette entrée ?')) return;
+            entries = entries.filter(e => e.id !== id);
+            saveData();
+            showToast('Entrée supprimée');
+        }
+        
+        // Filters
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            render();
+        }
+        
+        function handleSearch() {
+            searchQuery = document.getElementById('searchBox').value.toLowerCase();
+            render();
+        }
+        
+        // Render
+        function render() {
+            renderStats();
+            renderHeatmap();
+            renderTimeline();
+        }
+        
+        function renderStats() {
+            document.getElementById('totalEntries').textContent = entries.length;
+            
+            // Word count
+            const totalWords = entries.reduce((sum, e) => {
+                return sum + e.content.trim().split(/\s+/).filter(w => w).length;
+            }, 0);
+            document.getElementById('totalWords').textContent = totalWords.toLocaleString();
+            
+            // Streak
+            let streak = 0;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            for (let i = 0; i < 365; i++) {
+                const checkDate = new Date(today);
+                checkDate.setDate(checkDate.getDate() - i);
+                const dateStr = checkDate.toISOString().split('T')[0];
+                
+                const hasEntry = entries.some(e => e.createdAt.startsWith(dateStr));
+                if (hasEntry) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+            document.getElementById('streakDays').textContent = streak;
+        }
+        
+        function renderHeatmap() {
+            const heatmap = document.getElementById('heatmap');
+            const days = [];
+            const today = new Date();
+            
+            // Count entries per day
+            const entryCounts = {};
+            entries.forEach(e => {
+                const date = e.createdAt.split('T')[0];
+                entryCounts[date] = (entryCounts[date] || 0) + 1;
+            });
+            
+            // Generate last 60 days
+            for (let i = 59; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const count = entryCounts[dateStr] || 0;
+                
+                let level = 0;
+                if (count === 1) level = 1;
+                else if (count === 2) level = 2;
+                else if (count <= 4) level = 3;
+                else if (count > 4) level = 4;
+                
+                days.push(`<div class="heatmap-day level-${level}" title="${dateStr}: ${count} entrée(s)"></div>`);
+            }
+            
+            heatmap.innerHTML = `<div class="heatmap-label">Activité des 60 derniers jours</div>${days.join('')}`;
+        }
+        
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            
+            // Filter entries
+            let filtered = entries;
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(e => e.tags.includes(currentFilter));
+            }
+            
+            if (searchQuery) {
+                filtered = filtered.filter(e => 
+                    e.content.toLowerCase().includes(searchQuery) ||
+                    e.tags.some(t => t.includes(searchQuery))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📓</div>
+                        <h3>Aucune entrée</h3>
+                        <p>Commencez à documenter votre parcours</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group by date
+            const grouped = {};
+            filtered.forEach(e => {
+                const date = e.createdAt.split('T')[0];
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(e);
+            });
+            
+            // Render
+            timeline.innerHTML = Object.entries(grouped).map(([date, dayEntries]) => {
+                const dateObj = new Date(date);
+                const formattedDate = dateObj.toLocaleDateString('fr-FR', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                return `
+                    <div class="timeline-group">
+                        <div class="timeline-date">
+                            <span>📅</span> ${formattedDate}
+                        </div>
+                        ${dayEntries.map(e => renderEntry(e)).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderEntry(entry) {
+            const time = new Date(entry.createdAt).toLocaleTimeString('fr-FR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const isEditing = editingId === entry.id;
+            
+            // Linkify URLs
+            const contentWithLinks = entry.content.replace(
+                /(https?:\/\/[^\s]+)/g, 
+                '<a href="$1" target="_blank">$1</a>'
+            );
+            
+            // Highlight hashtags
+            const contentWithTags = contentWithLinks.replace(
+                /#(\w+)/g,
+                '<span style="color: var(--lilas);">#$1</span>'
+            );
+            
+            if (isEditing) {
+                return `
+                    <div class="entry-card">
+                        <textarea class="edit-textarea" data-edit-id="${entry.id}">${escapeHtml(entry.content)}</textarea>
+                        <div class="edit-actions">
+                            <button class="btn btn-primary" onclick="saveEdit('${entry.id}')">Enregistrer</button>
+                            <button class="btn" onclick="cancelEdit()">Annuler</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="entry-card">
+                    <div class="entry-header">
+                        <span class="entry-time">${time}</span>
+                        <div class="entry-actions">
+                            <button class="btn-icon" onclick="startEdit('${entry.id}')" title="Modifier">✏️</button>
+                            <button class="btn-icon" onclick="deleteEntry('${entry.id}')" title="Supprimer">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="entry-content">${contentWithTags}</div>
+                    ${entry.tags.length > 0 ? `
+                        <div class="entry-tags">
+                            ${entry.tags.map(t => `
+                                <span class="entry-tag">${tagEmojis[t] || '#'} ${t}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        // Export/Import
+        function exportEntries() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                entries
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `journal_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Journal exporté');
+        }
+        
+        function importEntries() {
+            document.getElementById('importModal').style.display = 'flex';
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+        }
+        
+        function processImport() {
+            const fileInput = document.getElementById('importFile');
+            const jsonInput = document.getElementById('importJson').value.trim();
+            
+            const process = (data) => {
+                if (data.entries) {
+                    entries = [...entries, ...data.entries];
+                    // Sort by date
+                    entries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    saveData();
+                    closeImportModal();
+                    showToast(`${data.entries.length} entrées importées`);
+                }
+            };
+            
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try { process(JSON.parse(e.target.result)); }
+                    catch { showToast('Fichier invalide'); }
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else if (jsonInput) {
+                try { process(JSON.parse(jsonInput)); }
+                catch { showToast('JSON invalide'); }
+            }
+        }
+        
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modal on outside click
+        document.getElementById('importModal').addEventListener('click', (e) => {
+            if (e.target.id === 'importModal') closeImportModal();
+        });
+    </script>
+</body>
+</html>

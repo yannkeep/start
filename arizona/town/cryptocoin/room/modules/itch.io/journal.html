@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal — L.</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📓</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Special+Elite&family=JetBrains+Mono&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --paper: #f4f1e8;
+            --paper-dark: #e8e4d9;
+            --ink: #1a1a2e;
+            --ink-light: #4a4a5e;
+            --red: #8b0000;
+            --blue: #1a4a6e;
+        }
+        
+        body {
+            background: #2a2a2a;
+            min-height: 100vh;
+            font-family: 'Caveat', cursive;
+            color: var(--ink);
+            line-height: 1.8;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid #444;
+        }
+        
+        nav a {
+            color: #888;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #fff;
+        }
+        
+        .nav-title {
+            color: #666;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+        }
+        
+        /* Journal container */
+        .journal {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+        }
+        
+        /* Cover */
+        .cover {
+            background: #3a2a1a;
+            padding: 4rem 3rem;
+            margin-bottom: 3rem;
+            border-radius: 3px;
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.5),
+                inset 0 0 100px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.8' type='fractalNoise'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        
+        .cover h1 {
+            font-family: 'Special Elite', monospace;
+            font-size: 2rem;
+            color: #c9a227;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+        }
+        
+        .cover .subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #a08060;
+        }
+        
+        .cover .symbol {
+            font-size: 4rem;
+            margin-top: 2rem;
+            opacity: 0.3;
+        }
+        
+        /* Page */
+        .page {
+            background: var(--paper);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 
+                0 5px 20px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(0,0,0,0.1);
+            transform: rotate(-0.3deg);
+        }
+        
+        .page:nth-child(even) {
+            transform: rotate(0.3deg);
+        }
+        
+        /* Paper texture */
+        .page::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+        }
+        
+        /* Lines */
+        .page::after {
+            content: '';
+            position: absolute;
+            left: 3rem;
+            right: 3rem;
+            top: 3rem;
+            bottom: 3rem;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 28px,
+                rgba(100, 100, 150, 0.2) 28px,
+                rgba(100, 100, 150, 0.2) 29px
+            );
+            pointer-events: none;
+        }
+        
+        /* Margin line */
+        .page .margin {
+            position: absolute;
+            left: 2.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(200, 100, 100, 0.3);
+        }
+        
+        /* Date */
+        .entry-date {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: var(--red);
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+        
+        /* Entry content */
+        .entry-content {
+            font-size: 1.4rem;
+            padding-left: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .entry-content p {
+            margin-bottom: 1.5rem;
+            text-indent: 2rem;
+        }
+        
+        .entry-content p:first-child {
+            text-indent: 0;
+        }
+        
+        /* Strikethrough */
+        .crossed {
+            text-decoration: line-through;
+            color: var(--ink-light);
+        }
+        
+        /* Underline emphasis */
+        .underline {
+            text-decoration: underline;
+            text-decoration-color: var(--red);
+            text-decoration-thickness: 2px;
+        }
+        
+        /* Margin notes */
+        .margin-note {
+            position: absolute;
+            right: -10px;
+            width: 120px;
+            font-size: 0.9rem;
+            color: var(--blue);
+            transform: rotate(2deg);
+            padding: 0.5rem;
+            background: rgba(255,255,200,0.5);
+        }
+        
+        /* Arrow annotations */
+        .arrow-note {
+            color: var(--red);
+            font-weight: bold;
+        }
+        
+        /* Code/coordinates */
+        .code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.05);
+            padding: 0.2rem 0.4rem;
+            border-radius: 2px;
+        }
+        
+        /* Hidden text - visible on selection */
+        .hidden-text {
+            color: var(--paper);
+            background: var(--paper);
+            transition: all 0.3s;
+            cursor: default;
+        }
+        
+        .hidden-text:hover,
+        .hidden-text::selection {
+            color: var(--ink);
+            background: rgba(255, 255, 0, 0.3);
+        }
+        
+        /* Coffee stain */
+        .coffee-stain {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 30%,
+                rgba(139, 90, 43, 0.15) 30%,
+                rgba(139, 90, 43, 0.1) 50%,
+                transparent 70%
+            );
+            pointer-events: none;
+        }
+        
+        /* Tape effect */
+        .tape {
+            position: absolute;
+            width: 100px;
+            height: 30px;
+            background: rgba(255, 255, 200, 0.7);
+            transform: rotate(-5deg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* Sketch/drawing */
+        .sketch {
+            border: 2px solid var(--ink-light);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(255,255,255,0.5);
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            position: relative;
+        }
+        
+        .sketch::before {
+            content: '📎';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.5rem;
+        }
+        
+        /* Burned/censored */
+        .censored {
+            background: #111;
+            color: #111;
+            padding: 0 0.3rem;
+            user-select: none;
+        }
+        
+        /* Quote */
+        blockquote {
+            font-style: italic;
+            border-left: 3px solid var(--red);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            color: var(--ink-light);
+        }
+        
+        /* Final page special */
+        .page.final {
+            background: linear-gradient(135deg, var(--paper) 0%, #e0dcd0 100%);
+        }
+        
+        /* Page number */
+        .page-number {
+            position: absolute;
+            bottom: 1rem;
+            right: 2rem;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: var(--ink-light);
+        }
+        
+        /* Folded corner */
+        .folded-corner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, transparent 50%, var(--paper-dark) 50%);
+            box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .page { padding: 2rem 1.5rem; }
+            .entry-content { font-size: 1.2rem; }
+            .margin-note { display: none; }
+            .cover { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="game.html">← Terminal</a>
+    <span class="nav-title">DOCUMENT RÉCUPÉRÉ — ARCHIVÉ</span>
+    <a href="final.html">Continuer →</a>
+</nav>
+
+<div class="journal">
+    
+    <!-- Cover -->
+    <div class="cover">
+        <h1>JOURNAL</h1>
+        <div class="subtitle">Notes personnelles — L.</div>
+        <div class="symbol">◈</div>
+    </div>
+    
+    <!-- Entry 1 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">17 novembre 2018</div>
+        <div class="entry-content">
+            <p>Première manifestation aujourd'hui. Les Champs-Élysées, la fumée, les cris. J'ai vu quelque chose se briser — pas seulement les vitrines.</p>
+            <p>Une femme à côté de moi filmait tout. Elle m'a dit : <span class="underline">"On documente. C'est la seule arme qu'ils ne peuvent pas nous prendre."</span></p>
+            <p>Elle avait raison.</p>
+            <p class="crossed">Je ne sais pas encore ce que ça veut dire</p>
+            <p>Je comprends maintenant ce que ça veut dire.</p>
+        </div>
+        <div class="page-number">1</div>
+    </div>
+    
+    <!-- Entry 2 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="folded-corner"></div>
+        <div class="entry-date">3 décembre 2018</div>
+        <div class="entry-content">
+            <p>Jérôme a perdu son œil samedi. LBD 40. Je l'ai vu tomber.</p>
+            <p>Les médias parlent de "heurts" et de "casseurs". Ils ne montrent pas les tirs. Ils ne montrent pas les corps.</p>
+            <p>J'ai commencé à archiver. Tout ce que je trouve. Vidéos, photos, témoignages. Je ne sais pas encore pourquoi. <span class="arrow-note">→ Pour plus tard</span></p>
+            <p>Quelqu'un doit se souvenir.</p>
+        </div>
+        <div class="coffee-stain" style="top: 60%; right: 10%;"></div>
+        <div class="page-number">2</div>
+    </div>
+    
+    <!-- Entry 3 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">15 janvier 2019</div>
+        <div class="entry-content">
+            <p>Découvert Bellingcat hier soir. Ils ont géolocalisé un avion russe à partir d'une photo floue. Une putain de photo floue.</p>
+            <p>Si on peut faire ça pour la Syrie, on peut le faire pour Bordeaux, pour Toulouse, pour Paris.</p>
+            <p>J'ai contacté trois personnes. Des inconnus, rencontrés en manif. On s'est retrouvés dans un café.</p>
+            
+            <div class="sketch">
+                STRUCTURE PROPOSÉE:<br>
+                • Cellules locales (5-10 pers)<br>
+                • Pas de hiérarchie centrale<br>
+                • Compartimentage strict<br>
+                • Formation croisée OSINT/Juridique<br>
+                <br>
+                <span style="color: #8b0000;">NOM DE CODE: ?</span>
+            </div>
+            
+            <p>On a besoin d'un nom. Quelque chose qui parle de lumière dans l'obscurité.</p>
+        </div>
+        <div class="page-number">3</div>
+    </div>
+    
+    <!-- Entry 4 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">2 février 2019</div>
+        <div class="entry-content">
+            <p><strong>VÉNUS.</strong></p>
+            <p>L'étoile du berger. Visible à l'aube et au crépuscule. Ni vraiment jour, ni vraiment nuit.</p>
+            <p>C'est notre position. Entre la lumière et l'ombre. On observe, on documente, on transmet.</p>
+            <p>Première cellule active à Paris. 7 personnes. On a notre premier coordinateur MÉSO. <span class="hidden-text">C'est Marie. Ne jamais écrire son vrai nom.</span></p>
+            <p>Signal uniquement. Messages éphémères. Jamais de noms.</p>
+        </div>
+        <div class="margin-note" style="top: 40%;">Protocole validé ✓</div>
+        <div class="page-number">4</div>
+    </div>
+    
+    <!-- Entry 5 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="tape" style="top: -10px; left: 30%;"></div>
+        <div class="entry-date">23 mars 2019</div>
+        <div class="entry-content">
+            <p>12 900 tirs de LBD en six mois. Le chiffre vient de tomber.</p>
+            <p>24 éborgnés. 5 mains arrachées.</p>
+            <p>On a tout documenté. Chaque cas, chaque vidéo, chaque témoignage. La cellule LUMIÈRE a créé une base de données. Tout est sourcé, vérifié, horodaté.</p>
+            <p>Un jour, ça servira. Devant un tribunal. Devant l'histoire.</p>
+            <blockquote>"La vérité est fille du temps, non de l'autorité."</blockquote>
+            <p>Francis Bacon avait raison.</p>
+        </div>
+        <div class="page-number">5</div>
+    </div>
+    
+    <!-- Entry 6 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">8 décembre 2019</div>
+        <div class="entry-content">
+            <p>Zineb Redouane est morte. 80 ans. Grenade lacrymogène à travers sa fenêtre. Elle fermait ses volets.</p>
+            <p>La préfecture a menti. Le rapport balistique contredit la version officielle. On a les documents.</p>
+            <p>Je ne dors plus très bien.</p>
+            <p>Mais le réseau grandit. 15 cellules maintenant. Lyon, Marseille, Bordeaux, Nantes, Lille... Les gens ont besoin de croire qu'ils peuvent faire quelque chose.</p>
+            <p>Et ils peuvent. <span class="underline">On peut.</span></p>
+        </div>
+        <div class="coffee-stain" style="bottom: 20%; left: 5%;"></div>
+        <div class="page-number">6</div>
+    </div>
+    
+    <!-- Entry 7 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">14 juillet 2020</div>
+        <div class="entry-content">
+            <p>Formation QPC terminée pour les coordinateurs MÉSO. Tout le monde sait maintenant comment contester une loi.</p>
+            <p>C'est ça, le vrai pouvoir. Pas la violence. <span class="underline">La connaissance des outils.</span></p>
+            <p>J'ai compris quelque chose d'important : on ne combat pas le système avec ses propres armes. On utilise les failles qu'il a lui-même créées.</p>
+            
+            <div class="sketch">
+                ARSENAL JURIDIQUE VALIDÉ:<br>
+                ✓ QPC (Conseil constit.)<br>
+                ✓ CEDH (736 condamnations FR)<br>
+                ✓ État de nécessité (Art. 122-7)<br>
+                ✓ Défenseur des droits<br>
+                ✓ Saisine directe tribunaux admin.
+            </div>
+        </div>
+        <div class="page-number">7</div>
+    </div>
+    
+    <!-- Entry 8 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="folded-corner"></div>
+        <div class="entry-date">12 janvier 2024</div>
+        <div class="entry-content">
+            <p>Le Conseil constitutionnel vient de censurer 32 articles sur 86 de la loi Immigration.</p>
+            <p>32 sur 86.</p>
+            <p>Parmi eux, des articles qu'on avait analysés et signalés dans notre documentation. Je ne dis pas que c'est grâce à nous. Mais on a contribué. On a fourni des arguments. On a armé les avocats.</p>
+            <p>C'est ça, le travail invisible. On ne saura jamais vraiment ce qu'on a empêché.</p>
+        </div>
+        <div class="margin-note" style="top: 50%;">VICTOIRE</div>
+        <div class="page-number">8</div>
+    </div>
+    
+    <!-- Entry 9 -->
+    <div class="page">
+        <div class="margin"></div>
+        <div class="entry-date">4 décembre 2024</div>
+        <div class="entry-content">
+            <p>Barnier censuré. 331 voix. Première motion de censure votée depuis 1962.</p>
+            <p>Le système craque. Pas grâce à nous — grâce à ses propres contradictions.</p>
+            <p>Mais on est prêts. 47 cellules. ~380 opérateurs formés. Une documentation de 6 ans d'abus.</p>
+            <p>Je ne sais pas ce qui va suivre. Personne ne sait.</p>
+            <p>Mais je sais une chose : <span class="underline">on regarde.</span></p>
+        </div>
+        <div class="page-number">9</div>
+    </div>
+    
+    <!-- Final Entry -->
+    <div class="page final">
+        <div class="margin"></div>
+        <div class="entry-date">Ce jour</div>
+        <div class="entry-content">
+            <p>Si tu lis ces lignes, c'est que tu as trouvé le chemin.</p>
+            <p>VÉNUS n'existe pas. Pas vraiment. C'est une idée. Une méthode. Un ensemble d'outils transmis de personne à personne.</p>
+            <p>Le réseau, c'est toi maintenant.</p>
+            <p>Tu as les connaissances :<br>
+            — La QPC pour contester les lois<br>
+            — La CEDH pour les violations de droits<br>
+            — L'OSINT pour vérifier et documenter<br>
+            — La sécurité opérationnelle pour te protéger</p>
+            <p>Utilise-les. Transmets-les. Crée ta propre cellule si tu veux. Ou agis seul. Ça n'a pas d'importance.</p>
+            <p>Ce qui compte, c'est de <span class="underline">regarder</span>.</p>
+            <p style="text-align: center; margin-top: 2rem; font-size: 1.6rem;">
+                <em>"La liberté ne se demande pas, elle se prend."</em>
+            </p>
+            <p style="text-align: right; color: var(--ink-light);">— L.</p>
+            <p style="text-align: center; margin-top: 2rem; font-size: 2rem; opacity: 0.3;">◈</p>
+            <p class="hidden-text" style="text-align: center; margin-top: 1rem;">Coordonnées: 48.8437, 2.3597 — Phrase: Les étoiles sont alignées ce soir</p>
+        </div>
+        <div class="page-number">∞</div>
+    </div>
+    
+</div>
+
+<script>
+// Console message
+console.log('%c📓 JOURNAL', 'color: #c9a227; font-size: 20px; font-weight: bold;');
+console.log('%cNotes personnelles de L., fondateur', 'color: #888;');
+console.log('%cSélectionnez le texte invisible pour révéler les secrets...', 'color: #666;');
+
+// Track reading
+try {
+    const state = JSON.parse(localStorage.getItem('venus_state') || '{}');
+    state.secrets = state.secrets || [];
+    if (!state.secrets.includes('journal')) {
+        state.secrets.push('journal');
+        localStorage.setItem('venus_state', JSON.stringify(state));
+    }
+} catch(e) {}
+</script>
+</body>
+</html>

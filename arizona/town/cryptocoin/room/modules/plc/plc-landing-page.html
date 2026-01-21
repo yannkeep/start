@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Parti Libre & Conscient | Reprends le pouvoir sur ta démocratie</title>
+    <meta name="description" content="Le Parti Libre & Conscient (PLC) - Mouvement citoyen pour une démocratie participative, transparente et consciente. Rejoins-nous.">
+    <meta property="og:title" content="Parti Libre & Conscient - Reprends le pouvoir">
+    <meta property="og:description" content="Ni gauche, ni droite : conscient. Rejoins le mouvement citoyen qui change les règles du jeu.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --primary: #1a1a2e;
+        --accent: #e94560;
+        --accent-light: #ff6b6b;
+        --secondary: #16213e;
+        --gold: #f1c40f;
+        --green: #2ecc71;
+        --blue: #3498db;
+        --purple: #9b59b6;
+        --bg-light: #f8f9fa;
+        --bg-dark: #0f0f1a;
+        --text-light: #ffffff;
+        --text-dark: #1a1a2e;
+        --text-muted: #6c757d;
+        --gradient-fire: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        --gradient-cool: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        --shadow: 0 10px 40px rgba(0,0,0,0.15);
+        --shadow-lg: 0 25px 80px rgba(0,0,0,0.25);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--text-dark);
+        background: var(--bg-light);
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    /* ========== HEADER ========== */
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 20px 0;
+        transition: var(--transition);
+    }
+
+    header.scrolled {
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 12px 0;
+        box-shadow: var(--shadow);
+    }
+
+    .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-light);
+        text-decoration: none;
+    }
+
+    .logo-icon {
+        width: 45px;
+        height: 45px;
+        background: var(--gradient-fire);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 35px;
+        list-style: none;
+    }
+
+    .nav-links a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+
+    .nav-links a:hover {
+        color: var(--accent);
+    }
+
+    .btn-join {
+        background: var(--gradient-fire);
+        color: var(--text-light);
+        padding: 12px 28px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+    }
+
+    .btn-join:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5);
+    }
+
+    .mobile-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .mobile-toggle span {
+        width: 25px;
+        height: 2px;
+        background: var(--text-light);
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+        min-height: 100vh;
+        background: var(--gradient-dark);
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 80%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(233,69,96,0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 50%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 800px;
+        padding: 120px 0;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(233,69,96,0.15);
+        border: 1px solid rgba(233,69,96,0.3);
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent-light);
+        margin-bottom: 30px;
+    }
+
+    .hero-badge i {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .hero h1 {
+        font-size: clamp(48px, 8vw, 80px);
+        color: var(--text-light);
+        margin-bottom: 25px;
+        letter-spacing: -2px;
+    }
+
+    .hero h1 span {
+        background: var(--gradient-fire);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-subtitle {
+        font-size: 20px;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 40px;
+        max-width: 600px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: var(--gradient-fire);
+        color: var(--text-light);
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+        box-shadow: 0 8px 30px rgba(233, 69, 96, 0.4);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(233, 69, 96, 0.5);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: var(--text-light);
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        border: 2px solid rgba(255,255,255,0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+    }
+
+    .btn-secondary:hover {
+        background: var(--text-light);
+        color: var(--primary);
+        border-color: var(--text-light);
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 50px;
+        margin-top: 60px;
+        padding-top: 40px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat {
+        text-align: left;
+    }
+
+    .stat-number {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--text-light);
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: rgba(255,255,255,0.5);
+        margin-top: 5px;
+    }
+
+    /* ========== MANIFESTO ========== */
+    .manifesto {
+        padding: 120px 0;
+        background: var(--bg-light);
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 70px;
+    }
+
+    .section-badge {
+        display: inline-block;
+        background: rgba(233,69,96,0.1);
+        color: var(--accent);
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: clamp(36px, 5vw, 52px);
+        color: var(--text-dark);
+        margin-bottom: 20px;
+    }
+
+    .section-subtitle {
+        font-size: 18px;
+        color: var(--text-muted);
+    }
+
+    .manifesto-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+
+    .manifesto-card {
+        background: white;
+        padding: 40px 35px;
+        border-radius: 20px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .manifesto-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-fire);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .manifesto-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .manifesto-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .manifesto-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 25px;
+    }
+
+    .manifesto-icon.red { background: rgba(233,69,96,0.1); color: var(--accent); }
+    .manifesto-icon.blue { background: rgba(52,152,219,0.1); color: var(--blue); }
+    .manifesto-icon.green { background: rgba(46,204,113,0.1); color: var(--green); }
+    .manifesto-icon.purple { background: rgba(155,89,182,0.1); color: var(--purple); }
+    .manifesto-icon.gold { background: rgba(241,196,15,0.1); color: var(--gold); }
+    .manifesto-icon.dark { background: rgba(26,26,46,0.1); color: var(--primary); }
+
+    .manifesto-card h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+
+    .manifesto-card p {
+        color: var(--text-muted);
+        font-size: 15px;
+    }
+
+    /* ========== PROBLEM/SOLUTION ========== */
+    .problem-section {
+        padding: 120px 0;
+        background: var(--primary);
+        color: var(--text-light);
+    }
+
+    .problem-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+    }
+
+    .problem-content h2 {
+        font-size: 42px;
+        margin-bottom: 30px;
+    }
+
+    .problem-list {
+        list-style: none;
+    }
+
+    .problem-list li {
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        font-size: 17px;
+    }
+
+    .problem-list li i {
+        color: var(--accent);
+        margin-top: 5px;
+    }
+
+    .solution-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 25px;
+        padding: 50px;
+    }
+
+    .solution-card h3 {
+        font-size: 28px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .solution-card h3 i {
+        color: var(--green);
+    }
+
+    .solution-card ul {
+        list-style: none;
+    }
+
+    .solution-card li {
+        padding: 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 16px;
+        color: rgba(255,255,255,0.8);
+    }
+
+    .solution-card li i {
+        color: var(--green);
+    }
+
+    /* ========== PILLARS ========== */
+    .pillars {
+        padding: 120px 0;
+        background: var(--bg-light);
+    }
+
+    .pillars-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+    .pillar-card {
+        background: white;
+        padding: 35px 30px;
+        border-radius: 20px;
+        text-align: center;
+        transition: var(--transition);
+        border: 2px solid transparent;
+    }
+
+    .pillar-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+    }
+
+    .pillar-number {
+        width: 50px;
+        height: 50px;
+        background: var(--gradient-fire);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 20px;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto 20px;
+    }
+
+    .pillar-card h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: var(--text-dark);
+    }
+
+    .pillar-card p {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    /* ========== CTA ========== */
+    .cta {
+        padding: 120px 0;
+        background: var(--gradient-fire);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta::before {
+        content: 'PLC';
+        position: absolute;
+        font-size: 40vw;
+        font-family: 'Space Grotesk';
+        font-weight: 800;
+        opacity: 0.05;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .cta h2 {
+        font-size: clamp(36px, 5vw, 52px);
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .cta p {
+        font-size: 20px;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 40px;
+    }
+
+    .cta-form {
+        display: flex;
+        gap: 15px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .cta-form input {
+        flex: 1;
+        padding: 18px 25px;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-family: inherit;
+    }
+
+    .cta-form input:focus {
+        outline: none;
+    }
+
+    .cta-form button {
+        padding: 18px 35px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .cta-form button:hover {
+        transform: scale(1.05);
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+        background: var(--bg-dark);
+        color: var(--text-light);
+        padding: 80px 0 40px;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 60px;
+    }
+
+    .footer-brand .logo {
+        margin-bottom: 20px;
+    }
+
+    .footer-desc {
+        color: rgba(255,255,255,0.6);
+        font-size: 15px;
+        margin-bottom: 25px;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 12px;
+    }
+
+    .footer-social a {
+        width: 42px;
+        height: 42px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: var(--transition);
+    }
+
+    .footer-social a:hover {
+        background: var(--accent);
+    }
+
+    .footer-title {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 25px;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 12px;
+    }
+
+    .footer-links a {
+        color: rgba(255,255,255,0.6);
+        text-decoration: none;
+        font-size: 15px;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--accent);
+    }
+
+    .footer-bottom {
+        padding-top: 40px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .footer-copy {
+        color: rgba(255,255,255,0.5);
+        font-size: 14px;
+    }
+
+    .footer-legal {
+        display: flex;
+        gap: 30px;
+    }
+
+    .footer-legal a {
+        color: rgba(255,255,255,0.5);
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .footer-legal a:hover {
+        color: var(--accent);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+        .nav-links, .btn-join { display: none; }
+        .mobile-toggle { display: flex; }
+        .manifesto-grid { grid-template-columns: repeat(2, 1fr); }
+        .problem-grid { grid-template-columns: 1fr; }
+        .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+        .hero-content { padding: 100px 0 80px; }
+        .hero h1 { font-size: 40px; }
+        .hero-stats { flex-direction: column; gap: 25px; }
+        .manifesto-grid { grid-template-columns: 1fr; }
+        .pillars-grid { grid-template-columns: 1fr; }
+        .cta-form { flex-direction: column; }
+        .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+        .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header id="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="#" class="logo">
+                    <div class="logo-icon">PLC</div>
+                    <span>Parti Libre & Conscient</span>
+                </a>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#manifeste">Manifeste</a></li>
+                        <li><a href="#pilliers">Nos piliers</a></li>
+                        <li><a href="#agir">Agir</a></li>
+                        <li><a href="https://ouaisfieu.github.io/tech/ccplc/" target="_blank">Documentation</a></li>
+                    </ul>
+                </nav>
+                <a href="#rejoindre" class="btn-join">Rejoindre</a>
+                <div class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-circle"></i>
+                    Mouvement citoyen en construction
+                </div>
+                <h1>Reprends le <span>pouvoir</span> sur ta démocratie</h1>
+                <p class="hero-subtitle">Ni gauche, ni droite : <strong>conscient</strong>. Le Parti Libre & Conscient rassemble les citoyens qui veulent comprendre, agir et transformer — sans attendre qu'on leur dise quoi penser.</p>
+                <div class="hero-buttons">
+                    <a href="#rejoindre" class="btn-primary">
+                        Rejoindre le mouvement <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#manifeste" class="btn-secondary">
+                        <i class="fas fa-play-circle"></i> Découvrir
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number" data-count="2847">0</div>
+                        <div class="stat-label">Citoyens engagés</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="12">0</div>
+                        <div class="stat-label">Cellules locales</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="47">0</div>
+                        <div class="stat-label">Actions menées</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MANIFESTE -->
+    <section class="manifesto" id="manifeste">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Notre manifeste</span>
+                <h2 class="section-title">Ce que nous défendons</h2>
+                <p class="section-subtitle">Six principes non-négociables pour une démocratie qui fonctionne vraiment.</p>
+            </div>
+            <div class="manifesto-grid">
+                <div class="manifesto-card">
+                    <div class="manifesto-icon red"><i class="fas fa-eye"></i></div>
+                    <h3>Transparence totale</h3>
+                    <p>Toutes nos décisions, nos finances, nos débats sont publics. Pas de coulisse, pas de deal secret. La politique, c'est l'affaire de tous.</p>
+                </div>
+                <div class="manifesto-card">
+                    <div class="manifesto-icon blue"><i class="fas fa-universal-access"></i></div>
+                    <h3>Inclusion radicale</h3>
+                    <p>Langage clair, accessibilité numérique, traduction en facile-à-lire. La démocratie ne peut pas être réservée aux initiés.</p>
+                </div>
+                <div class="manifesto-card">
+                    <div class="manifesto-icon green"><i class="fas fa-code-branch"></i></div>
+                    <h3>Co-création permanente</h3>
+                    <p>Chaque membre peut proposer, amender, voter. Le programme se construit ensemble, pas dans un bureau parisien ou bruxellois.</p>
+                </div>
+                <div class="manifesto-card">
+                    <div class="manifesto-icon purple"><i class="fas fa-ban"></i></div>
+                    <h3>Non-lucrativité</h3>
+                    <p>Aucun profit, aucune récupération commerciale. Nos contenus sont libres (CC BY-NC). Le savoir appartient à tous.</p>
+                </div>
+                <div class="manifesto-card">
+                    <div class="manifesto-icon gold"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Éducation populaire</h3>
+                    <p>Former des citoyens autonomes, pas des militants dociles. On donne les outils pour penser, pas les conclusions à adopter.</p>
+                </div>
+                <div class="manifesto-card">
+                    <div class="manifesto-icon dark"><i class="fas fa-network-wired"></i></div>
+                    <h3>Décentralisation</h3>
+                    <p>Pas de chef suprême, pas de QG tout-puissant. Chaque cellule locale est autonome et responsable de ses actions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLÈME / SOLUTION -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="problem-grid">
+                <div class="problem-content">
+                    <h2>Le système actuel est cassé</h2>
+                    <ul class="problem-list">
+                        <li>
+                            <i class="fas fa-times-circle"></i>
+                            <span><strong>Particratie</strong> — Les partis décident, les citoyens regardent. Les présidents de parti ont plus de pouvoir que les élus.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle"></i>
+                            <span><strong>Opacité</strong> — Budgets illisibles, décisions en coulisse, lobbying invisible. On vote sans comprendre.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle"></i>
+                            <span><strong>Déconnexion</strong> — Les élus ne ressemblent pas aux électeurs. Mêmes profils, mêmes réseaux, mêmes intérêts.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle"></i>
+                            <span><strong>Impuissance</strong> — Voter tous les 5 ans, c'est tout ? La démocratie se résume à mettre un bulletin dans une urne ?</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="solution-card">
+                    <h3><i class="fas fa-check-circle"></i> Notre réponse</h3>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Veille citoyenne permanente sur l'action publique</li>
+                        <li><i class="fas fa-check"></i> Documentation ouverte et réutilisable</li>
+                        <li><i class="fas fa-check"></i> Formation à l'analyse critique et au fact-checking</li>
+                        <li><i class="fas fa-check"></i> Outils concrets pour s'organiser et agir</li>
+                        <li><i class="fas fa-check"></i> Réseau de cellules locales autonomes</li>
+                        <li><i class="fas fa-check"></i> Évaluation publique de nos propres actions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PILLIERS -->
+    <section class="pillars" id="pilliers">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Comment on agit</span>
+                <h2 class="section-title">Nos 6 piliers d'action</h2>
+                <p class="section-subtitle">Chaque pilier produit des ressources libres, reproductibles par n'importe quel collectif.</p>
+            </div>
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-number">1</div>
+                    <h3>Observer</h3>
+                    <p>Veille citoyenne continue sur les politiques publiques et innovations démocratiques.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-number">2</div>
+                    <h3>Documenter</h3>
+                    <p>Transformer l'info brute en contenus réutilisables : rapports, synthèses, datasets.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-number">3</div>
+                    <h3>Outiller</h3>
+                    <p>Méthodologies, guides et scripts pour que tout collectif puisse reproduire la démarche.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-number">4</div>
+                    <h3>Former</h3>
+                    <p>Ateliers, tutoriels, MOOC pour renforcer les compétences citoyennes.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-number">5</div>
+                    <h3>Connecter</h3>
+                    <p>Fédérer associations, individus et institutions autour de projets participatifs.</p>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-number">6</div>
+                    <h3>Évaluer</h3>
+                    <p>Mesurer notre impact avec des indicateurs ouverts. Se remettre en question.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="rejoindre">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Rejoins le mouvement</h2>
+                <p>Pas de cotisation, pas de hiérarchie. Juste des citoyens qui veulent comprendre et agir.</p>
+                <form class="cta-form" action="#" method="POST">
+                    <input type="email" placeholder="Ton email" required>
+                    <button type="submit">Je rejoins</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-icon">PLC</div>
+                        <span>Parti Libre & Conscient</span>
+                    </a>
+                    <p class="footer-desc">Mouvement citoyen pour une démocratie participative, transparente et consciente. Basé sur le CCPLC.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-bluesky"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="footer-title">Le mouvement</h4>
+                    <ul class="footer-links">
+                        <li><a href="#manifeste">Manifeste</a></li>
+                        <li><a href="#pilliers">Nos piliers</a></li>
+                        <li><a href="#">Charte</a></li>
+                        <li><a href="#">Cellules locales</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Ressources</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://ouaisfieu.github.io/tech/ccplc/" target="_blank">Documentation CCPLC</a></li>
+                        <li><a href="https://ouaisfieu.github.io/tech/" target="_blank">DOCTech</a></li>
+                        <li><a href="#">Formations</a></li>
+                        <li><a href="#">Outils</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Nous écrire</a></li>
+                        <li><a href="#">Presse</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">@ouaisfieu.bsky.social</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">© 2026 Parti Libre & Conscient. Contenu sous licence CC BY-NC 4.0</p>
+                <div class="footer-legal">
+                    <a href="#">Mentions légales</a>
+                    <a href="#">Confidentialité</a>
+                    <a href="#">Charte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Header scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Counter animation
+    const counters = document.querySelectorAll('.stat-number');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.dataset.count);
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 30);
+                observer.unobserve(counter);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.A.U.R.O.N. V3 | Ultimate War Room</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --bg3: #1a1a25;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --dim: #888899;
+            --cyan: #00f0ff;
+            --magenta: #ff00aa;
+            --green: #00ff88;
+            --orange: #ff8800;
+            --red: #ff3355;
+            --purple: #aa55ff;
+            --gold: #ffd700;
+            --yellow: #ffee00;
+        }
+        
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.5} }
+        @keyframes glow { 0%,100%{filter:drop-shadow(0 0 5px var(--orange))}50%{filter:drop-shadow(0 0 20px var(--red))} }
+        @keyframes slideIn { from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)} }
+        
+        body { font-family:'Rajdhani',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        
+        .header { background:linear-gradient(180deg,var(--bg2),var(--bg)); border-bottom:1px solid var(--border); padding:.5rem 1rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:1000; }
+        .logo { display:flex; align-items:center; gap:.75rem; }
+        .eye { width:36px; height:36px; animation:glow 3s infinite; }
+        .brand { font-family:'Orbitron',sans-serif; font-size:1.2rem; font-weight:900; letter-spacing:.15em; background:linear-gradient(90deg,var(--orange),var(--red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .header-stats { display:flex; gap:1rem; }
+        .stat-box { text-align:center; padding:.25rem .5rem; border:1px solid var(--border); border-radius:4px; background:rgba(0,0,0,.3); }
+        .stat-value { font-family:'Orbitron',sans-serif; font-size:1rem; font-weight:700; color:var(--cyan); }
+        .stat-label { font-size:.55rem; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); }
+        .clock { font-family:'Share Tech Mono',monospace; font-size:1.25rem; color:var(--green); }
+        .status { display:flex; align-items:center; gap:.4rem; padding:.2rem .6rem; background:rgba(0,255,136,.1); border:1px solid var(--green); border-radius:20px; font-size:.65rem; color:var(--green); }
+        .status-dot { width:6px; height:6px; background:var(--green); border-radius:50%; animation:pulse 2s infinite; }
+        
+        .tabs { display:flex; background:var(--bg2); border-bottom:1px solid var(--border); overflow-x:auto; }
+        .tab { padding:.6rem 1rem; font-family:'Orbitron',sans-serif; font-size:.65rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); cursor:pointer; border:none; background:transparent; white-space:nowrap; transition:all .2s; }
+        .tab:hover { color:var(--text); background:rgba(255,255,255,.02); }
+        .tab.active { color:var(--cyan); border-bottom:2px solid var(--cyan); }
+        
+        .main { padding:.75rem; display:none; animation:slideIn .3s ease; }
+        .main.active { display:block; }
+        
+        .panel { background:var(--bg2); border:1px solid var(--border); border-radius:6px; margin-bottom:.75rem; }
+        .panel-header { padding:.5rem .75rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.2); }
+        .panel-title { font-family:'Orbitron',sans-serif; font-size:.65rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+        .panel-body { padding:.75rem; }
+        
+        .grid { display:grid; gap:.75rem; }
+        .grid-2 { grid-template-columns:repeat(2,1fr); }
+        .grid-3 { grid-template-columns:repeat(3,1fr); }
+        .grid-4 { grid-template-columns:repeat(4,1fr); }
+        .grid-5 { grid-template-columns:repeat(5,1fr); }
+        .grid-6 { grid-template-columns:repeat(6,1fr); }
+        
+        .kpi { background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:.75rem; border-left:3px solid var(--cyan); }
+        .kpi.magenta { border-left-color:var(--magenta); }
+        .kpi.green { border-left-color:var(--green); }
+        .kpi.orange { border-left-color:var(--orange); }
+        .kpi.gold { border-left-color:var(--gold); }
+        .kpi.purple { border-left-color:var(--purple); }
+        .kpi.red { border-left-color:var(--red); }
+        .kpi-label { font-size:.6rem; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); }
+        .kpi-value { font-family:'Orbitron',sans-serif; font-size:1.5rem; font-weight:700; color:var(--cyan); }
+        .kpi.magenta .kpi-value { color:var(--magenta); }
+        .kpi.green .kpi-value { color:var(--green); }
+        .kpi.orange .kpi-value { color:var(--orange); }
+        .kpi.gold .kpi-value { color:var(--gold); }
+        .kpi.purple .kpi-value { color:var(--purple); }
+        .kpi.red .kpi-value { color:var(--red); }
+        .kpi-sub { font-size:.7rem; color:var(--dim); margin-top:.25rem; }
+        
+        .btn { padding:.4rem .75rem; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--text); font-family:inherit; font-size:.75rem; cursor:pointer; transition:all .2s; }
+        .btn:hover { border-color:var(--cyan); color:var(--cyan); }
+        .btn.primary { background:var(--cyan); border-color:var(--cyan); color:#000; }
+        .btn.success { background:var(--green); border-color:var(--green); color:#000; }
+        .btn.danger { background:var(--red); border-color:var(--red); color:#fff; }
+        .btn.warning { background:var(--orange); border-color:var(--orange); color:#000; }
+        .btn.sm { padding:.25rem .5rem; font-size:.7rem; }
+        .btn-group { display:flex; gap:.4rem; flex-wrap:wrap; }
+        
+        .input,.select,.textarea { width:100%; padding:.5rem .6rem; background:var(--bg); border:1px solid var(--border); border-radius:4px; color:var(--text); font-family:inherit; font-size:.8rem; }
+        .input:focus,.select:focus,.textarea:focus { outline:none; border-color:var(--cyan); }
+        .textarea { min-height:80px; resize:vertical; }
+        .form-group { margin-bottom:.75rem; }
+        .form-label { display:block; font-size:.7rem; color:var(--dim); margin-bottom:.2rem; text-transform:uppercase; letter-spacing:.05em; }
+        
+        .table { width:100%; border-collapse:collapse; font-size:.8rem; }
+        .table th,.table td { padding:.5rem; text-align:left; border-bottom:1px solid var(--border); }
+        .table th { font-size:.6rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); background:rgba(0,0,0,.2); cursor:pointer; }
+        .table th:hover { color:var(--cyan); }
+        .table tr:hover td { background:rgba(0,240,255,.02); }
+        
+        .badge { display:inline-block; padding:.15rem .4rem; border-radius:3px; font-size:.65rem; font-weight:600; }
+        .badge.axe-1 { background:rgba(0,240,255,.2); color:var(--cyan); }
+        .badge.axe-2 { background:rgba(0,255,136,.2); color:var(--green); }
+        .badge.axe-3 { background:rgba(255,136,0,.2); color:var(--orange); }
+        .badge.axe-4 { background:rgba(255,0,170,.2); color:var(--magenta); }
+        .badge.mvt { background:rgba(255,215,0,.2); color:var(--gold); }
+        .badge.high { background:rgba(255,51,85,.2); color:var(--red); }
+        .badge.medium { background:rgba(255,136,0,.2); color:var(--orange); }
+        .badge.low { background:rgba(0,255,136,.2); color:var(--green); }
+        
+        .list { max-height:350px; overflow-y:auto; }
+        .list-item { padding:.6rem .75rem; border-bottom:1px solid var(--border); cursor:pointer; transition:background .2s; }
+        .list-item:hover,.list-item.active { background:rgba(0,240,255,.05); }
+        .list-item-title { font-weight:600; font-size:.85rem; margin-bottom:.15rem; }
+        .list-item-meta { font-size:.7rem; color:var(--dim); }
+        
+        .bar-chart { display:flex; flex-direction:column; gap:.4rem; }
+        .bar-row { display:flex; align-items:center; gap:.5rem; }
+        .bar-label { width:80px; font-size:.7rem; color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .bar-track { flex:1; height:18px; background:rgba(0,0,0,.3); border-radius:3px; overflow:hidden; }
+        .bar-fill { height:100%; border-radius:3px; display:flex; align-items:center; padding-left:.4rem; font-size:.7rem; font-weight:600; color:#fff; transition:width .5s ease; }
+        .bar-fill.cyan { background:linear-gradient(90deg,rgba(0,240,255,.3),var(--cyan)); }
+        .bar-fill.green { background:linear-gradient(90deg,rgba(0,255,136,.3),var(--green)); }
+        .bar-fill.orange { background:linear-gradient(90deg,rgba(255,136,0,.3),var(--orange)); }
+        .bar-fill.magenta { background:linear-gradient(90deg,rgba(255,0,170,.3),var(--magenta)); }
+        
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:2000; align-items:center; justify-content:center; }
+        .modal-overlay.active { display:flex; }
+        .modal { background:var(--bg2); border:1px solid var(--border); border-radius:8px; width:95%; max-width:900px; max-height:90vh; overflow-y:auto; }
+        .modal-header { padding:.75rem 1rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+        .modal-title { font-family:'Orbitron',sans-serif; font-size:.9rem; font-weight:600; }
+        .modal-close { background:none; border:none; color:var(--dim); font-size:1.3rem; cursor:pointer; }
+        .modal-close:hover { color:var(--red); }
+        .modal-body { padding:1rem; }
+        .modal-footer { padding:.75rem 1rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:.5rem; }
+        
+        /* MAP */
+        #map { height:400px; border-radius:6px; background:var(--bg); }
+        .leaflet-container { background:var(--bg) !important; }
+        .map-popup { font-family:'Rajdhani',sans-serif; }
+        .map-popup h4 { color:var(--cyan); margin-bottom:.25rem; }
+        
+        /* KANBAN */
+        .kanban { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; min-height:400px; }
+        .kanban-col { background:var(--bg); border:1px solid var(--border); border-radius:6px; display:flex; flex-direction:column; }
+        .kanban-header { padding:.5rem; border-bottom:1px solid var(--border); font-family:'Orbitron',sans-serif; font-size:.7rem; font-weight:600; text-align:center; }
+        .kanban-col:nth-child(1) .kanban-header { color:var(--dim); background:rgba(136,136,153,.1); }
+        .kanban-col:nth-child(2) .kanban-header { color:var(--cyan); background:rgba(0,240,255,.1); }
+        .kanban-col:nth-child(3) .kanban-header { color:var(--orange); background:rgba(255,136,0,.1); }
+        .kanban-col:nth-child(4) .kanban-header { color:var(--green); background:rgba(0,255,136,.1); }
+        .kanban-body { flex:1; padding:.5rem; overflow-y:auto; min-height:300px; }
+        .kanban-card { background:var(--bg2); border:1px solid var(--border); border-radius:4px; padding:.5rem; margin-bottom:.5rem; cursor:grab; transition:all .2s; }
+        .kanban-card:hover { border-color:var(--cyan); transform:translateY(-2px); }
+        .kanban-card.dragging { opacity:.5; }
+        .kanban-card-title { font-weight:600; font-size:.8rem; margin-bottom:.25rem; }
+        .kanban-card-meta { font-size:.7rem; color:var(--dim); }
+        
+        /* CALENDAR */
+        .calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+        .cal-header { background:var(--bg); padding:.4rem; text-align:center; font-size:.7rem; font-weight:600; color:var(--dim); }
+        .cal-day { background:var(--bg); padding:.3rem; min-height:80px; border:1px solid transparent; transition:all .2s; cursor:pointer; }
+        .cal-day:hover { border-color:var(--cyan); }
+        .cal-day.other-month { opacity:.3; }
+        .cal-day.today { border-color:var(--green); background:rgba(0,255,136,.05); }
+        .cal-day-num { font-size:.75rem; font-weight:600; margin-bottom:.25rem; }
+        .cal-event { font-size:.6rem; padding:.15rem .25rem; margin-bottom:.15rem; border-radius:2px; background:var(--cyan); color:#000; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; }
+        .cal-event.task { background:var(--orange); }
+        .cal-event.meeting { background:var(--purple); color:#fff; }
+        
+        /* NETWORK GRAPH */
+        #network-graph { width:100%; height:500px; background:var(--bg); border-radius:6px; }
+        #network-graph svg { width:100%; height:100%; }
+        .node { cursor:pointer; }
+        .node circle { stroke:#fff; stroke-width:1.5px; transition:all .2s; }
+        .node:hover circle { stroke:var(--cyan); stroke-width:3px; }
+        .node text { font-size:8px; fill:var(--text); pointer-events:none; }
+        .link { stroke:var(--border); stroke-opacity:.6; }
+        
+        /* BUDGET */
+        .budget-bar { height:30px; background:var(--bg); border-radius:4px; overflow:hidden; display:flex; }
+        .budget-segment { height:100%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:600; color:#000; transition:width .5s; }
+        
+        /* RECOMMENDATIONS */
+        .reco-card { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:.75rem; margin-bottom:.5rem; border-left:3px solid var(--gold); }
+        .reco-title { font-weight:600; color:var(--gold); margin-bottom:.25rem; }
+        .reco-reason { font-size:.8rem; color:var(--dim); margin-bottom:.5rem; }
+        .reco-score { font-family:'Orbitron',sans-serif; font-size:1.25rem; color:var(--cyan); }
+        
+        /* TIMELINE */
+        .timeline { position:relative; padding-left:20px; }
+        .timeline::before { content:''; position:absolute; left:5px; top:0; bottom:0; width:2px; background:var(--border); }
+        .timeline-item { position:relative; padding:.5rem 0 .5rem 15px; }
+        .timeline-item::before { content:''; position:absolute; left:-9px; top:.7rem; width:10px; height:10px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg2); }
+        .timeline-item.success::before { background:var(--green); }
+        .timeline-item.warning::before { background:var(--orange); }
+        .timeline-item.danger::before { background:var(--red); }
+        
+        ::-webkit-scrollbar { width:5px; height:5px; }
+        ::-webkit-scrollbar-track { background:var(--bg); }
+        ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--cyan); }
+        
+        @media (max-width:1200px) {
+            .grid-6 { grid-template-columns:repeat(3,1fr); }
+            .grid-5 { grid-template-columns:repeat(3,1fr); }
+            .grid-4 { grid-template-columns:repeat(2,1fr); }
+            .kanban { grid-template-columns:repeat(2,1fr); }
+        }
+        @media (max-width:768px) {
+            .grid-3,.grid-4,.grid-5,.grid-6 { grid-template-columns:1fr; }
+            .grid-2 { grid-template-columns:1fr; }
+            .header-stats { display:none; }
+            .kanban { grid-template-columns:1fr; }
+            .calendar { font-size:.6rem; }
+            .cal-day { min-height:50px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <svg class="eye" viewBox="0 0 100 100">
+            <ellipse cx="50" cy="50" rx="45" ry="22" fill="none" stroke="#ff5500" stroke-width="3"/>
+            <ellipse cx="50" cy="50" rx="30" ry="15" fill="none" stroke="#ff3300" stroke-width="2"/>
+            <circle cx="50" cy="50" r="10" fill="#ff3300"/>
+            <ellipse cx="50" cy="50" rx="3" ry="10" fill="#000"/>
+        </svg>
+        <span class="brand">S.A.U.R.O.N. V3</span>
+    </div>
+    <div class="header-stats">
+        <div class="stat-box"><div class="stat-value" id="h-total">274</div><div class="stat-label">Entités</div></div>
+        <div class="stat-box"><div class="stat-value" id="h-pipeline">0</div><div class="stat-label">Pipeline</div></div>
+        <div class="stat-box"><div class="stat-value" id="h-events">0</div><div class="stat-label">Events</div></div>
+        <div class="stat-box"><div class="stat-value" id="h-budget">€0</div><div class="stat-label">Budget</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="status"><span class="status-dot"></span>ONLINE</div>
+        <div class="clock" id="clock">00:00:00</div>
+    </div>
+</header>
+
+<nav class="tabs">
+    <button class="tab active" data-tab="dashboard">◉ Dashboard</button>
+    <button class="tab" data-tab="map">🗺️ Carte</button>
+    <button class="tab" data-tab="pipeline">⬡ Pipeline CRM</button>
+    <button class="tab" data-tab="calendar">📅 Calendrier</button>
+    <button class="tab" data-tab="network">🕸️ Réseau</button>
+    <button class="tab" data-tab="budget">💰 Budget</button>
+    <button class="tab" data-tab="ai">🤖 IA Recommandations</button>
+    <button class="tab" data-tab="crm">📋 CRM</button>
+    <button class="tab" data-tab="analytics">📊 Analytics</button>
+    <button class="tab" data-tab="tools">⚙️ Outils</button>
+</nav>
+
+<!-- DASHBOARD -->
+<main class="main active" id="dashboard">
+    <div class="grid grid-6" id="kpi-grid"></div>
+    <div class="grid grid-3" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📊 Axes</span></div>
+            <div class="panel-body"><div class="bar-chart" id="axes-chart"></div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📍 Localités</span></div>
+            <div class="panel-body"><div class="bar-chart" id="loc-chart"></div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">⚡ Activité</span></div>
+            <div class="panel-body" style="padding:0;"><div class="list" id="activity-list"></div></div>
+        </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">🎯 Pipeline Résumé</span></div>
+            <div class="panel-body" id="pipeline-summary"></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📅 Prochains Événements</span></div>
+            <div class="panel-body" style="padding:0;"><div class="list" id="upcoming-events"></div></div>
+        </div>
+    </div>
+</main>
+
+<!-- MAP -->
+<main class="main" id="map-tab">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">🗺️ Carte du Réseau - Belgique</span>
+            <div class="btn-group">
+                <button class="btn sm" onclick="filterMapByAxe(0)">Tous</button>
+                <button class="btn sm" onclick="filterMapByAxe(1)" style="color:var(--cyan)">Axe 1</button>
+                <button class="btn sm" onclick="filterMapByAxe(2)" style="color:var(--green)">Axe 2</button>
+                <button class="btn sm" onclick="filterMapByAxe(3)" style="color:var(--orange)">Axe 3</button>
+                <button class="btn sm" onclick="filterMapByAxe(4)" style="color:var(--magenta)">Axe 4</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="map"></div>
+            <div style="margin-top:.5rem;display:flex;gap:1rem;font-size:.75rem;color:var(--dim);">
+                <span>🔵 Axe 1</span><span>🟢 Axe 2</span><span>🟠 Axe 3</span><span>🟣 Axe 4</span><span>⭐ Mouvement</span>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-3" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Bruxelles</span></div>
+            <div class="panel-body" style="text-align:center;">
+                <div class="kpi-value" id="map-bxl">160</div>
+                <div class="kpi-sub">associations</div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Wallonie</span></div>
+            <div class="panel-body" style="text-align:center;">
+                <div class="kpi-value" style="color:var(--green);" id="map-wal">114</div>
+                <div class="kpi-sub">associations</div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">Couverture</span></div>
+            <div class="panel-body" style="text-align:center;">
+                <div class="kpi-value" style="color:var(--gold);" id="map-cities">0</div>
+                <div class="kpi-sub">villes couvertes</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- PIPELINE CRM -->
+<main class="main" id="pipeline">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">⬡ Pipeline de Relations</span>
+            <button class="btn primary sm" onclick="openAddPipeline()">+ Ajouter au Pipeline</button>
+        </div>
+        <div class="panel-body" style="padding:.5rem;">
+            <div class="kanban" id="kanban">
+                <div class="kanban-col" data-stage="prospect">
+                    <div class="kanban-header">📋 PROSPECTS <span id="count-prospect">0</span></div>
+                    <div class="kanban-body" id="kanban-prospect"></div>
+                </div>
+                <div class="kanban-col" data-stage="contact">
+                    <div class="kanban-header">📞 EN CONTACT <span id="count-contact">0</span></div>
+                    <div class="kanban-body" id="kanban-contact"></div>
+                </div>
+                <div class="kanban-col" data-stage="negotiation">
+                    <div class="kanban-header">🤝 NÉGOCIATION <span id="count-negotiation">0</span></div>
+                    <div class="kanban-body" id="kanban-negotiation"></div>
+                </div>
+                <div class="kanban-col" data-stage="partner">
+                    <div class="kanban-header">✅ PARTENAIRES <span id="count-partner">0</span></div>
+                    <div class="kanban-body" id="kanban-partner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel" style="margin-top:.75rem;">
+        <div class="panel-header"><span class="panel-title">📈 Conversion Funnel</span></div>
+        <div class="panel-body" id="funnel-chart"></div>
+    </div>
+</main>
+
+<!-- CALENDAR -->
+<main class="main" id="calendar">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">📅 Calendrier - <span id="cal-month"></span></span>
+            <div class="btn-group">
+                <button class="btn sm" onclick="changeMonth(-1)">◀ Mois préc.</button>
+                <button class="btn sm" onclick="changeMonth(0)">Aujourd'hui</button>
+                <button class="btn sm" onclick="changeMonth(1)">Mois suiv. ▶</button>
+                <button class="btn primary sm" onclick="openAddEvent()">+ Événement</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="calendar" id="calendar-grid"></div>
+        </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📋 Événements du jour</span></div>
+            <div class="panel-body" style="padding:0;"><div class="list" id="day-events"></div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📊 Statistiques</span></div>
+            <div class="panel-body" id="cal-stats"></div>
+        </div>
+    </div>
+</main>
+
+<!-- NETWORK GRAPH -->
+<main class="main" id="network">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">🕸️ Graphe de Connexions</span>
+            <div class="btn-group">
+                <button class="btn sm" onclick="generateNetworkGraph('locality')">Par Localité</button>
+                <button class="btn sm" onclick="generateNetworkGraph('axe')">Par Axe</button>
+                <button class="btn sm" onclick="generateNetworkGraph('all')">Complet</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="network-graph"></div>
+        </div>
+    </div>
+    <div class="grid grid-3" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">🔗 Nœuds Centraux</span></div>
+            <div class="panel-body" style="padding:0;"><div class="list" id="central-nodes"></div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📊 Clusters</span></div>
+            <div class="panel-body" id="clusters-info"></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">💡 Connexions Suggérées</span></div>
+            <div class="panel-body" style="padding:0;"><div class="list" id="suggested-connections"></div></div>
+        </div>
+    </div>
+</main>
+
+<!-- BUDGET -->
+<main class="main" id="budget">
+    <div class="grid grid-4">
+        <div class="kpi green">
+            <div class="kpi-label">Budget Total</div>
+            <div class="kpi-value" id="budget-total">€0</div>
+        </div>
+        <div class="kpi cyan">
+            <div class="kpi-label">Dépensé</div>
+            <div class="kpi-value" id="budget-spent">€0</div>
+        </div>
+        <div class="kpi orange">
+            <div class="kpi-label">Engagé</div>
+            <div class="kpi-value" id="budget-committed">€0</div>
+        </div>
+        <div class="kpi purple">
+            <div class="kpi-label">Disponible</div>
+            <div class="kpi-value" id="budget-available">€0</div>
+        </div>
+    </div>
+    <div class="panel" style="margin-top:.75rem;">
+        <div class="panel-header">
+            <span class="panel-title">💰 Répartition Budget</span>
+            <button class="btn primary sm" onclick="openBudgetConfig()">⚙️ Configurer</button>
+        </div>
+        <div class="panel-body">
+            <div class="budget-bar" id="budget-bar"></div>
+            <div id="budget-legend" style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.75rem;"></div>
+        </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">📝 Lignes Budgétaires</span>
+                <button class="btn sm" onclick="openAddBudgetLine()">+ Ajouter</button>
+            </div>
+            <div class="panel-body" style="padding:0;overflow-x:auto;">
+                <table class="table" id="budget-lines"></table>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📈 Projections</span></div>
+            <div class="panel-body" id="budget-projections"></div>
+        </div>
+    </div>
+</main>
+
+<!-- AI RECOMMENDATIONS -->
+<main class="main" id="ai">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">🤖 Recommandations IA</span>
+            <button class="btn primary sm" onclick="generateRecommendations()">🔄 Actualiser</button>
+        </div>
+        <div class="panel-body">
+            <p style="color:var(--dim);margin-bottom:1rem;">Suggestions de partenariats basées sur la compatibilité des axes, la proximité géographique et le potentiel stratégique.</p>
+            <div id="recommendations"></div>
+        </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:.75rem;">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">🎯 Opportunités Prioritaires</span></div>
+            <div class="panel-body" id="priority-opportunities"></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">⚠️ Zones à Développer</span></div>
+            <div class="panel-body" id="development-zones"></div>
+        </div>
+    </div>
+    <div class="panel" style="margin-top:.75rem;">
+        <div class="panel-header"><span class="panel-title">📊 Matrice de Compatibilité</span></div>
+        <div class="panel-body" id="compatibility-matrix"></div>
+    </div>
+</main>
+
+<!-- CRM -->
+<main class="main" id="crm">
+    <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title">📋 Base de Données</span>
+            <div class="btn-group">
+                <button class="btn sm" onclick="exportData()">📤 Export</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="grid grid-4">
+                <div class="form-group">
+                    <label class="form-label">Recherche</label>
+                    <input type="text" class="input" id="crm-search" placeholder="Nom, email..." oninput="renderCRM()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Localité</label>
+                    <select class="select" id="crm-loc" onchange="renderCRM()"><option value="">Toutes</option></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Axe</label>
+                    <select class="select" id="crm-axe" onchange="renderCRM()">
+                        <option value="">Tous</option>
+                        <option value="1">Axe 1</option>
+                        <option value="2">Axe 2</option>
+                        <option value="3">Axe 3</option>
+                        <option value="4">Axe 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="select" id="crm-type" onchange="renderCRM()">
+                        <option value="">Tous</option>
+                        <option value="mvt">Mouvements</option>
+                        <option value="std">Standard</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top:.25rem;font-size:.8rem;color:var(--dim);"><span id="crm-count">274</span> entités</div>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-body" style="padding:0;overflow-x:auto;">
+            <table class="table" id="crm-table">
+                <thead><tr>
+                    <th onclick="sortCRM('nom')">Nom ↕</th>
+                    <th onclick="sortCRM('localite')">Localité ↕</th>
+                    <th>Axes</th>
+                    <th onclick="sortCRM('score')">Score ↕</th>
+                    <th>Pipeline</th>
+                    <th>Actions</th>
+                </tr></thead>
+                <tbody id="crm-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- ANALYTICS -->
+<main class="main" id="analytics">
+    <div class="grid grid-3">
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">🗺️ Bruxelles vs Wallonie</span></div>
+            <div class="panel-body" id="geo-split"></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">🏷️ Types</span></div>
+            <div class="panel-body" id="type-split"></div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><span class="panel-title">📈 Scores</span></div>
+            <div class="panel-body" id="score-dist"></div>
+        </div>
+    </div>
+    <div class="panel" style="margin-top:.75rem;">
+        <div class="panel-header"><span class="panel-title">📊 Matrice Axes × Localités</span></div>
+        <div class="panel-body" style="overflow-x:auto;"><table class="table" id="cross-matrix"></table></div>
+    </div>
+</main>
+
+<!-- TOOLS -->
+<main class="main" id="tools">
+    <div class="grid grid-3">
+        <div class="panel" style="cursor:pointer;" onclick="openMassEmail()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">📧</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Email de Masse</div>
+            </div>
+        </div>
+        <div class="panel" style="cursor:pointer;" onclick="exportFullBackup()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">💾</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Backup Complet</div>
+            </div>
+        </div>
+        <div class="panel" style="cursor:pointer;" onclick="document.getElementById('import-file').click()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">📥</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Importer Données</div>
+            </div>
+        </div>
+        <div class="panel" style="cursor:pointer;" onclick="generateReport()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">📄</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Rapport HTML</div>
+            </div>
+        </div>
+        <div class="panel" style="cursor:pointer;" onclick="openSWOT()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">🎯</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Analyse SWOT</div>
+            </div>
+        </div>
+        <div class="panel" style="cursor:pointer;" onclick="clearAllData()">
+            <div class="panel-body" style="text-align:center;padding:1.5rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">🗑️</div>
+                <div style="font-family:'Orbitron';font-weight:600;">Reset Données</div>
+            </div>
+        </div>
+    </div>
+    <input type="file" id="import-file" accept=".json,.xlsx" style="display:none;" onchange="importFile(event)">
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-title">Modal</span>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer" id="modal-footer"></div>
+    </div>
+</div>
+
+<script>
+// ============================================
+// DATA & STATE
+// ============================================
+let DATA = [];
+let PIPELINE = [];
+let EVENTS = [];
+let BUDGET = { total: 100000, lines: [] };
+let ACTIVITIES = [];
+let map = null;
+let markers = [];
+let currentMonth = new Date();
+let crmSort = { field: 'score', dir: -1 };
+
+// Coordonnées des villes belges
+const CITY_COORDS = {
+    'BRUXELLES': [50.8503, 4.3517],
+    'LIEGE': [50.6326, 5.5797],
+    'NAMUR': [50.4674, 4.8720],
+    'CHARLEROI': [50.4108, 4.4446],
+    'MONS': [50.4542, 3.9523],
+    'VERVIERS': [50.5910, 5.8656],
+    'TOURNAI': [50.6058, 3.3883],
+    'NIVELLES': [50.5988, 4.3288],
+    'WAVRE': [50.7167, 4.6000],
+    'ARLON': [49.6833, 5.8167],
+    'HUY': [50.5181, 5.2375],
+    'OTTIGNIES-LOUVAIN-LA-NEUVE': [50.6667, 4.5667],
+    'LA LOUVIERE': [50.4792, 4.1858],
+    'SERAING': [50.5833, 5.5000],
+    'MOUSCRON': [50.7400, 3.2200],
+    'BRAINE-L\'ALLEUD': [50.6833, 4.3667],
+    'WATERLOO': [50.7167, 4.4000],
+    'TUBIZE': [50.6917, 4.2000],
+    'SAMBREVILLE': [50.4333, 4.6167],
+    'ANDERLECHT': [50.8333, 4.3000],
+    'SCHAERBEEK': [50.8667, 4.3833],
+    'MOLENBEEK-SAINT-JEAN': [50.8500, 4.3333],
+    'IXELLES': [50.8333, 4.3667],
+    'ETTERBEEK': [50.8333, 4.4000],
+    'SAINT-GILLES': [50.8333, 4.3500],
+    'FOREST': [50.8167, 4.3167],
+    'UCCLE': [50.8000, 4.3333],
+    'WOLUWE-SAINT-LAMBERT': [50.8500, 4.4333],
+    'WOLUWE-SAINT-PIERRE': [50.8333, 4.4500],
+    'AUDERGHEM': [50.8167, 4.4333],
+    'EVERE': [50.8667, 4.4000],
+    'JETTE': [50.8833, 4.3333],
+    'GANSHOREN': [50.8667, 4.3167],
+    'BERCHEM-SAINTE-AGATHE': [50.8667, 4.3000],
+    'KOEKELBERG': [50.8667, 4.3333],
+    'SAINT-JOSSE-TEN-NOODE': [50.8550, 4.3700],
+    'ASSESSE': [50.3667, 4.9833],
+    'BEEZ': [50.4667, 4.9000],
+    'BIERGES': [50.7167, 4.5833]
+};
+
+// ============================================
+// INIT
+// ============================================
+function init() {
+    DATA = EMBEDDED_DATA.map(e => ({
+        ...e,
+        score: calculateScore(e)
+    }));
+    
+    loadFromStorage();
+    setupTabs();
+    
+    setInterval(() => {
+        document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-BE');
+    }, 1000);
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-BE');
+    
+    // Populate CRM locality dropdown
+    const locs = [...new Set(DATA.map(e => e.localite).filter(Boolean))].sort();
+    document.getElementById('crm-loc').innerHTML = '<option value="">Toutes</option>' + locs.map(l => `<option value="${l}">${l}</option>`).join('');
+    
+    renderAll();
+}
+
+function loadFromStorage() {
+    try {
+        PIPELINE = JSON.parse(localStorage.getItem('sauron_pipeline') || '[]');
+        EVENTS = JSON.parse(localStorage.getItem('sauron_events') || '[]');
+        BUDGET = JSON.parse(localStorage.getItem('sauron_budget') || '{"total":100000,"lines":[]}');
+        ACTIVITIES = JSON.parse(localStorage.getItem('sauron_activities') || '[]');
+    } catch(e) { console.error(e); }
+}
+
+function save(key, data) {
+    localStorage.setItem('sauron_' + key, JSON.stringify(data));
+}
+
+function setupTabs() {
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.main').forEach(m => m.classList.remove('active'));
+            tab.classList.add('active');
+            const tabId = tab.dataset.tab === 'map' ? 'map-tab' : tab.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+            
+            if (tab.dataset.tab === 'map' && !map) initMap();
+            if (tab.dataset.tab === 'network') generateNetworkGraph('locality');
+        });
+    });
+}
+
+function renderAll() {
+    renderDashboard();
+    renderCRM();
+    renderPipeline();
+    renderCalendar();
+    renderBudget();
+    renderAnalytics();
+    generateRecommendations();
+    updateHeaderStats();
+}
+
+function updateHeaderStats() {
+    document.getElementById('h-total').textContent = DATA.length;
+    document.getElementById('h-pipeline').textContent = PIPELINE.length;
+    document.getElementById('h-events').textContent = EVENTS.length;
+    document.getElementById('h-budget').textContent = '€' + (BUDGET.total / 1000).toFixed(0) + 'K';
+}
+
+function addActivity(text, type = 'info') {
+    ACTIVITIES.unshift({ text, type, time: new Date().toISOString() });
+    if (ACTIVITIES.length > 100) ACTIVITIES.pop();
+    save('activities', ACTIVITIES);
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+function parseAxes(str) {
+    if (!str) return [];
+    const m = String(str).match(/\d/g);
+    return m ? m.map(Number) : [];
+}
+
+function isMvt(e) { return e.reconnaissance && e.reconnaissance.includes('Mvt'); }
+function isBxl(e) { return e.localite === 'BRUXELLES'; }
+
+function calculateScore(e) {
+    let s = 30;
+    if (isMvt(e)) s += 20;
+    const axes = parseAxes(e.axes);
+    if (axes.length > 1) s += (axes.length - 1) * 10;
+    if (isBxl(e)) s += 5;
+    if (e.email && e.email.trim()) s += 10;
+    if (e.web && e.web.trim()) s += 10;
+    return Math.min(100, s);
+}
+
+function openModal(title, body, footer = '') {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = body;
+    document.getElementById('modal-footer').innerHTML = footer;
+    document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+}
+
+// ============================================
+// DASHBOARD
+// ============================================
+function renderDashboard() {
+    const total = DATA.length;
+    const bxl = DATA.filter(isBxl).length;
+    const mvt = DATA.filter(isMvt).length;
+    const avgScore = Math.round(DATA.reduce((a, e) => a + e.score, 0) / total);
+    const partners = PIPELINE.filter(p => p.stage === 'partner').length;
+    
+    document.getElementById('kpi-grid').innerHTML = `
+        <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value">${total}</div></div>
+        <div class="kpi magenta"><div class="kpi-label">Bruxelles</div><div class="kpi-value">${bxl}</div></div>
+        <div class="kpi green"><div class="kpi-label">Wallonie</div><div class="kpi-value">${total - bxl}</div></div>
+        <div class="kpi gold"><div class="kpi-label">Mouvements</div><div class="kpi-value">${mvt}</div></div>
+        <div class="kpi orange"><div class="kpi-label">Score Moy.</div><div class="kpi-value">${avgScore}</div></div>
+        <div class="kpi purple"><div class="kpi-label">Partenaires</div><div class="kpi-value">${partners}</div></div>
+    `;
+    
+    // Axes chart
+    const axesCounts = {1:0, 2:0, 3:0, 4:0};
+    DATA.forEach(e => parseAxes(e.axes).forEach(ax => axesCounts[ax]++));
+    const maxAxe = Math.max(...Object.values(axesCounts));
+    const axeColors = {1:'cyan', 2:'green', 3:'orange', 4:'magenta'};
+    document.getElementById('axes-chart').innerHTML = [1,2,3,4].map(ax => `
+        <div class="bar-row">
+            <div class="bar-label">Axe ${ax}</div>
+            <div class="bar-track"><div class="bar-fill ${axeColors[ax]}" style="width:${axesCounts[ax]/maxAxe*100}%">${axesCounts[ax]}</div></div>
+        </div>
+    `).join('');
+    
+    // Locations chart
+    const locCounts = {};
+    DATA.forEach(e => locCounts[e.localite] = (locCounts[e.localite]||0)+1);
+    const topLocs = Object.entries(locCounts).sort((a,b) => b[1]-a[1]).slice(0,6);
+    const maxLoc = topLocs[0][1];
+    document.getElementById('loc-chart').innerHTML = topLocs.map(([l, c]) => `
+        <div class="bar-row">
+            <div class="bar-label">${l.substring(0,10)}</div>
+            <div class="bar-track"><div class="bar-fill cyan" style="width:${c/maxLoc*100}%">${c}</div></div>
+        </div>
+    `).join('');
+    
+    // Activity
+    document.getElementById('activity-list').innerHTML = ACTIVITIES.slice(0,10).map(a => {
+        const t = new Date(a.time).toLocaleTimeString('fr-BE', {hour:'2-digit',minute:'2-digit'});
+        return `<div class="list-item"><div class="list-item-title">${a.text}</div><div class="list-item-meta">${t}</div></div>`;
+    }).join('') || '<div style="padding:1rem;text-align:center;color:var(--dim);">Aucune activité</div>';
+    
+    // Pipeline summary
+    const stages = ['prospect', 'contact', 'negotiation', 'partner'];
+    const stageCounts = stages.map(s => PIPELINE.filter(p => p.stage === s).length);
+    document.getElementById('pipeline-summary').innerHTML = `
+        <div style="display:flex;justify-content:space-between;text-align:center;">
+            ${stages.map((s, i) => `
+                <div>
+                    <div style="font-family:'Orbitron';font-size:1.5rem;color:var(--cyan);">${stageCounts[i]}</div>
+                    <div style="font-size:.7rem;color:var(--dim);text-transform:uppercase;">${s}</div>
+                </div>
+            `).join('<div style="width:1px;background:var(--border);"></div>')}
+        </div>
+    `;
+    
+    // Upcoming events
+    const upcoming = EVENTS.filter(e => new Date(e.date) >= new Date()).sort((a,b) => new Date(a.date) - new Date(b.date)).slice(0,5);
+    document.getElementById('upcoming-events').innerHTML = upcoming.map(e => `
+        <div class="list-item">
+            <div class="list-item-title">${e.title}</div>
+            <div class="list-item-meta">${new Date(e.date).toLocaleDateString('fr-BE')} ${e.time || ''}</div>
+        </div>
+    `).join('') || '<div style="padding:1rem;text-align:center;color:var(--dim);">Aucun événement</div>';
+}
+
+// ============================================
+// MAP
+// ============================================
+function initMap() {
+    map = L.map('map').setView([50.5, 4.5], 8);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap © CARTO'
+    }).addTo(map);
+    
+    renderMapMarkers();
+    
+    const locs = [...new Set(DATA.map(e => e.localite))];
+    document.getElementById('map-cities').textContent = locs.length;
+    document.getElementById('map-bxl').textContent = DATA.filter(isBxl).length;
+    document.getElementById('map-wal').textContent = DATA.filter(e => !isBxl(e)).length;
+}
+
+function renderMapMarkers(axeFilter = 0) {
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+    
+    const axeColors = {1:'#00f0ff', 2:'#00ff88', 3:'#ff8800', 4:'#ff00aa'};
+    const locGroups = {};
+    
+    DATA.forEach(e => {
+        const axes = parseAxes(e.axes);
+        if (axeFilter > 0 && !axes.includes(axeFilter)) return;
+        
+        if (!locGroups[e.localite]) locGroups[e.localite] = [];
+        locGroups[e.localite].push(e);
+    });
+    
+    Object.entries(locGroups).forEach(([loc, entities]) => {
+        let coords = CITY_COORDS[loc];
+        if (!coords) {
+            // Approximation pour villes inconnues
+            coords = [50.5 + Math.random() * 0.5 - 0.25, 4.5 + Math.random() * 1 - 0.5];
+        }
+        
+        const mainAxe = parseAxes(entities[0].axes)[0] || 1;
+        const color = axeColors[mainAxe];
+        const isMouv = entities.some(isMvt);
+        
+        const marker = L.circleMarker(coords, {
+            radius: Math.min(20, 5 + entities.length * 2),
+            fillColor: isMouv ? '#ffd700' : color,
+            color: '#fff',
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        });
+        
+        const popup = `
+            <div class="map-popup">
+                <h4>${loc}</h4>
+                <p><strong>${entities.length}</strong> association(s)</p>
+                <ul style="font-size:.8rem;max-height:150px;overflow-y:auto;">
+                    ${entities.slice(0,10).map(e => `<li>${e.nom}</li>`).join('')}
+                    ${entities.length > 10 ? `<li><em>+${entities.length - 10} autres...</em></li>` : ''}
+                </ul>
+            </div>
+        `;
+        marker.bindPopup(popup);
+        marker.addTo(map);
+        markers.push(marker);
+    });
+}
+
+function filterMapByAxe(axe) {
+    renderMapMarkers(axe);
+}
+
+// ============================================
+// PIPELINE CRM
+// ============================================
+function renderPipeline() {
+    const stages = ['prospect', 'contact', 'negotiation', 'partner'];
+    
+    stages.forEach(stage => {
+        const items = PIPELINE.filter(p => p.stage === stage);
+        document.getElementById('count-' + stage).textContent = items.length;
+        document.getElementById('kanban-' + stage).innerHTML = items.map(p => {
+            const entity = DATA.find(e => e.nom === p.entity);
+            return `
+                <div class="kanban-card" draggable="true" data-id="${p.id}" ondragstart="dragStart(event)" ondragend="dragEnd(event)">
+                    <div class="kanban-card-title">${p.entity}</div>
+                    <div class="kanban-card-meta">
+                        ${entity ? entity.localite : ''} • Score: ${entity ? entity.score : '-'}
+                        <br>
+                        <button class="btn sm" style="margin-top:.25rem;" onclick="removePipeline(${p.id})">✕</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    });
+    
+    // Setup drag & drop
+    document.querySelectorAll('.kanban-body').forEach(col => {
+        col.ondragover = e => e.preventDefault();
+        col.ondrop = e => {
+            e.preventDefault();
+            const id = parseInt(e.dataTransfer.getData('text/plain'));
+            const newStage = col.id.replace('kanban-', '');
+            const item = PIPELINE.find(p => p.id === id);
+            if (item) {
+                item.stage = newStage;
+                save('pipeline', PIPELINE);
+                renderPipeline();
+                addActivity(`Pipeline: ${item.entity} → ${newStage}`, 'info');
+            }
+        };
+    });
+    
+    // Funnel
+    const counts = stages.map(s => PIPELINE.filter(p => p.stage === s).length);
+    const maxCount = Math.max(...counts, 1);
+    document.getElementById('funnel-chart').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+            ${stages.map((s, i) => {
+                const w = 30 + (counts[i] / maxCount) * 70;
+                const colors = ['var(--dim)', 'var(--cyan)', 'var(--orange)', 'var(--green)'];
+                return `<div style="width:${w}%;background:${colors[i]};padding:.5rem;text-align:center;border-radius:4px;color:#000;font-weight:600;">${s.toUpperCase()}: ${counts[i]}</div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+function dragStart(e) {
+    e.target.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', e.target.dataset.id);
+}
+
+function dragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function openAddPipeline() {
+    const available = DATA.filter(e => !PIPELINE.find(p => p.entity === e.nom));
+    openModal('Ajouter au Pipeline', `
+        <div class="form-group">
+            <label class="form-label">Entité</label>
+            <select class="select" id="pipe-entity">
+                ${available.map(e => `<option value="${e.nom}">${e.nom} (${e.localite})</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Étape initiale</label>
+            <select class="select" id="pipe-stage">
+                <option value="prospect">Prospect</option>
+                <option value="contact">En Contact</option>
+                <option value="negotiation">Négociation</option>
+                <option value="partner">Partenaire</option>
+            </select>
+        </div>
+    `, `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="savePipeline()">Ajouter</button>
+    `);
+}
+
+function savePipeline() {
+    const entity = document.getElementById('pipe-entity').value;
+    const stage = document.getElementById('pipe-stage').value;
+    PIPELINE.push({ id: Date.now(), entity, stage, addedAt: new Date().toISOString() });
+    save('pipeline', PIPELINE);
+    renderPipeline();
+    updateHeaderStats();
+    closeModal();
+    addActivity(`Pipeline: ${entity} ajouté`, 'success');
+}
+
+function removePipeline(id) {
+    PIPELINE = PIPELINE.filter(p => p.id !== id);
+    save('pipeline', PIPELINE);
+    renderPipeline();
+    updateHeaderStats();
+}
+
+// ============================================
+// CALENDAR
+// ============================================
+function renderCalendar() {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    
+    document.getElementById('cal-month').textContent = currentMonth.toLocaleDateString('fr-BE', { month: 'long', year: 'numeric' });
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDay = (firstDay.getDay() + 6) % 7; // Monday = 0
+    const daysInMonth = lastDay.getDate();
+    
+    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    let html = days.map(d => `<div class="cal-header">${d}</div>`).join('');
+    
+    // Previous month days
+    const prevMonth = new Date(year, month, 0);
+    for (let i = startDay - 1; i >= 0; i--) {
+        html += `<div class="cal-day other-month"><div class="cal-day-num">${prevMonth.getDate() - i}</div></div>`;
+    }
+    
+    // Current month days
+    const today = new Date();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const isToday = date.toDateString() === today.toDateString();
+        const dateStr = date.toISOString().slice(0, 10);
+        const dayEvents = EVENTS.filter(e => e.date === dateStr);
+        
+        html += `
+            <div class="cal-day ${isToday ? 'today' : ''}" onclick="selectDay('${dateStr}')">
+                <div class="cal-day-num">${day}</div>
+                ${dayEvents.slice(0, 3).map(e => `<div class="cal-event ${e.type || ''}" title="${e.title}">${e.title}</div>`).join('')}
+                ${dayEvents.length > 3 ? `<div style="font-size:.6rem;color:var(--dim);">+${dayEvents.length - 3}</div>` : ''}
+            </div>
+        `;
+    }
+    
+    // Next month days
+    const remaining = 42 - startDay - daysInMonth;
+    for (let i = 1; i <= remaining; i++) {
+        html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+    }
+    
+    document.getElementById('calendar-grid').innerHTML = html;
+    
+    // Stats
+    const thisMonthEvents = EVENTS.filter(e => {
+        const d = new Date(e.date);
+        return d.getMonth() === month && d.getFullYear() === year;
+    });
+    document.getElementById('cal-stats').innerHTML = `
+        <div class="grid grid-2" style="text-align:center;">
+            <div><div style="font-family:'Orbitron';font-size:1.5rem;color:var(--cyan);">${thisMonthEvents.length}</div><div style="font-size:.7rem;color:var(--dim);">Ce mois</div></div>
+            <div><div style="font-family:'Orbitron';font-size:1.5rem;color:var(--green);">${EVENTS.length}</div><div style="font-size:.7rem;color:var(--dim);">Total</div></div>
+        </div>
+    `;
+    
+    selectDay(today.toISOString().slice(0, 10));
+}
+
+function changeMonth(delta) {
+    if (delta === 0) {
+        currentMonth = new Date();
+    } else {
+        currentMonth.setMonth(currentMonth.getMonth() + delta);
+    }
+    renderCalendar();
+}
+
+function selectDay(dateStr) {
+    const dayEvents = EVENTS.filter(e => e.date === dateStr);
+    document.getElementById('day-events').innerHTML = dayEvents.map(e => `
+        <div class="list-item">
+            <div class="list-item-title">${e.title}</div>
+            <div class="list-item-meta">${e.time || 'Journée'} ${e.entity ? '• ' + e.entity : ''}</div>
+        </div>
+    `).join('') || `<div style="padding:1rem;text-align:center;color:var(--dim);">Aucun événement le ${dateStr}</div>`;
+}
+
+function openAddEvent() {
+    openModal('Nouvel Événement', `
+        <div class="form-group">
+            <label class="form-label">Titre</label>
+            <input type="text" class="input" id="event-title" placeholder="Titre de l'événement">
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="input" id="event-date" value="${new Date().toISOString().slice(0,10)}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Heure</label>
+                <input type="time" class="input" id="event-time">
+            </div>
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="select" id="event-type">
+                    <option value="">Standard</option>
+                    <option value="task">Tâche</option>
+                    <option value="meeting">Réunion</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Entité liée</label>
+                <select class="select" id="event-entity">
+                    <option value="">Aucune</option>
+                    ${DATA.map(e => `<option value="${e.nom}">${e.nom}</option>`).join('')}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="textarea" id="event-notes"></textarea>
+        </div>
+    `, `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="saveEvent()">Créer</button>
+    `);
+}
+
+function saveEvent() {
+    const title = document.getElementById('event-title').value.trim();
+    if (!title) return alert('Titre requis');
+    
+    EVENTS.push({
+        id: Date.now(),
+        title,
+        date: document.getElementById('event-date').value,
+        time: document.getElementById('event-time').value,
+        type: document.getElementById('event-type').value,
+        entity: document.getElementById('event-entity').value,
+        notes: document.getElementById('event-notes').value
+    });
+    save('events', EVENTS);
+    renderCalendar();
+    updateHeaderStats();
+    closeModal();
+    addActivity(`Événement créé: ${title}`, 'success');
+}
+
+// ============================================
+// NETWORK GRAPH
+// ============================================
+function generateNetworkGraph(mode) {
+    const width = document.getElementById('network-graph').clientWidth;
+    const height = 500;
+    
+    document.getElementById('network-graph').innerHTML = '';
+    
+    const svg = d3.select('#network-graph')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+    
+    let nodes = [];
+    let links = [];
+    
+    if (mode === 'locality') {
+        // Nodes = localités, links = entités partagées
+        const locs = [...new Set(DATA.map(e => e.localite))];
+        nodes = locs.map(l => ({ id: l, count: DATA.filter(e => e.localite === l).length }));
+        
+        // Links basés sur les axes partagés entre localités
+        for (let i = 0; i < locs.length; i++) {
+            for (let j = i + 1; j < locs.length; j++) {
+                const axes1 = new Set(DATA.filter(e => e.localite === locs[i]).flatMap(e => parseAxes(e.axes)));
+                const axes2 = new Set(DATA.filter(e => e.localite === locs[j]).flatMap(e => parseAxes(e.axes)));
+                const shared = [...axes1].filter(a => axes2.has(a)).length;
+                if (shared > 0) {
+                    links.push({ source: locs[i], target: locs[j], value: shared });
+                }
+            }
+        }
+    } else if (mode === 'axe') {
+        // Nodes = axes, size = count
+        nodes = [1,2,3,4].map(ax => {
+            const count = DATA.filter(e => parseAxes(e.axes).includes(ax)).length;
+            return { id: 'Axe ' + ax, count };
+        });
+        
+        // Links = entités multi-axes
+        for (let i = 1; i <= 4; i++) {
+            for (let j = i + 1; j <= 4; j++) {
+                const shared = DATA.filter(e => {
+                    const axes = parseAxes(e.axes);
+                    return axes.includes(i) && axes.includes(j);
+                }).length;
+                if (shared > 0) {
+                    links.push({ source: 'Axe ' + i, target: 'Axe ' + j, value: shared });
+                }
+            }
+        }
+    } else {
+        // Sample of entities
+        const sample = DATA.slice(0, 50);
+        nodes = sample.map(e => ({ id: e.nom, count: e.score, locality: e.localite }));
+        
+        // Links based on same locality
+        for (let i = 0; i < sample.length; i++) {
+            for (let j = i + 1; j < sample.length; j++) {
+                if (sample[i].localite === sample[j].localite) {
+                    links.push({ source: sample[i].nom, target: sample[j].nom, value: 1 });
+                }
+            }
+        }
+    }
+    
+    const simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-200))
+        .force('center', d3.forceCenter(width / 2, height / 2));
+    
+    const link = svg.append('g')
+        .selectAll('line')
+        .data(links)
+        .enter().append('line')
+        .attr('class', 'link')
+        .attr('stroke-width', d => Math.sqrt(d.value));
+    
+    const axeColors = {'Axe 1':'#00f0ff', 'Axe 2':'#00ff88', 'Axe 3':'#ff8800', 'Axe 4':'#ff00aa'};
+    
+    const node = svg.append('g')
+        .selectAll('.node')
+        .data(nodes)
+        .enter().append('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended));
+    
+    node.append('circle')
+        .attr('r', d => Math.max(5, Math.min(20, d.count / 5)))
+        .attr('fill', d => axeColors[d.id] || '#00f0ff');
+    
+    node.append('text')
+        .attr('dx', 12)
+        .attr('dy', 4)
+        .text(d => d.id.substring(0, 15));
+    
+    simulation.on('tick', () => {
+        link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+    
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
+    
+    // Central nodes
+    const centralNodes = [...nodes].sort((a, b) => b.count - a.count).slice(0, 5);
+    document.getElementById('central-nodes').innerHTML = centralNodes.map(n => `
+        <div class="list-item">
+            <div class="list-item-title">${n.id}</div>
+            <div class="list-item-meta">Score/Count: ${n.count}</div>
+        </div>
+    `).join('');
+    
+    // Clusters info
+    document.getElementById('clusters-info').innerHTML = `
+        <div><strong>Nœuds:</strong> ${nodes.length}</div>
+        <div><strong>Connexions:</strong> ${links.length}</div>
+        <div><strong>Densité:</strong> ${(links.length / (nodes.length * (nodes.length - 1) / 2) * 100).toFixed(1)}%</div>
+    `;
+    
+    // Suggested connections
+    document.getElementById('suggested-connections').innerHTML = links.slice(0, 5).map(l => `
+        <div class="list-item">
+            <div class="list-item-title">${l.source.id || l.source} ↔ ${l.target.id || l.target}</div>
+            <div class="list-item-meta">Force: ${l.value}</div>
+        </div>
+    `).join('');
+}
+
+// ============================================
+// BUDGET
+// ============================================
+function renderBudget() {
+    const spent = BUDGET.lines.filter(l => l.type === 'spent').reduce((a, l) => a + l.amount, 0);
+    const committed = BUDGET.lines.filter(l => l.type === 'committed').reduce((a, l) => a + l.amount, 0);
+    const available = BUDGET.total - spent - committed;
+    
+    document.getElementById('budget-total').textContent = '€' + BUDGET.total.toLocaleString();
+    document.getElementById('budget-spent').textContent = '€' + spent.toLocaleString();
+    document.getElementById('budget-committed').textContent = '€' + committed.toLocaleString();
+    document.getElementById('budget-available').textContent = '€' + available.toLocaleString();
+    
+    // Bar
+    const spentPct = (spent / BUDGET.total * 100).toFixed(1);
+    const commitPct = (committed / BUDGET.total * 100).toFixed(1);
+    const availPct = (available / BUDGET.total * 100).toFixed(1);
+    
+    document.getElementById('budget-bar').innerHTML = `
+        <div class="budget-segment" style="width:${spentPct}%;background:var(--cyan);">€${spent.toLocaleString()}</div>
+        <div class="budget-segment" style="width:${commitPct}%;background:var(--orange);">€${committed.toLocaleString()}</div>
+        <div class="budget-segment" style="width:${availPct}%;background:var(--green);">€${available.toLocaleString()}</div>
+    `;
+    
+    document.getElementById('budget-legend').innerHTML = `
+        <span><span style="display:inline-block;width:12px;height:12px;background:var(--cyan);border-radius:2px;"></span> Dépensé (${spentPct}%)</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:var(--orange);border-radius:2px;"></span> Engagé (${commitPct}%)</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:var(--green);border-radius:2px;"></span> Disponible (${availPct}%)</span>
+    `;
+    
+    // Lines table
+    document.getElementById('budget-lines').innerHTML = `
+        <thead><tr><th>Description</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead>
+        <tbody>
+            ${BUDGET.lines.map(l => `
+                <tr>
+                    <td>${l.description}</td>
+                    <td><span class="badge ${l.type === 'spent' ? 'axe-1' : 'axe-3'}">${l.type}</span></td>
+                    <td>€${l.amount.toLocaleString()}</td>
+                    <td><button class="btn sm danger" onclick="removeBudgetLine(${l.id})">✕</button></td>
+                </tr>
+            `).join('')}
+        </tbody>
+    `;
+    
+    // Projections
+    const monthlyBurn = spent / (new Date().getMonth() + 1);
+    const projectedEnd = monthlyBurn * 12;
+    document.getElementById('budget-projections').innerHTML = `
+        <div class="grid grid-2" style="text-align:center;">
+            <div>
+                <div style="font-family:'Orbitron';font-size:1.25rem;color:var(--orange);">€${monthlyBurn.toFixed(0)}</div>
+                <div style="font-size:.7rem;color:var(--dim);">Burn mensuel moy.</div>
+            </div>
+            <div>
+                <div style="font-family:'Orbitron';font-size:1.25rem;color:${projectedEnd > BUDGET.total ? 'var(--red)' : 'var(--green)'};">€${projectedEnd.toFixed(0)}</div>
+                <div style="font-size:.7rem;color:var(--dim);">Projection annuelle</div>
+            </div>
+        </div>
+    `;
+}
+
+function openBudgetConfig() {
+    openModal('Configurer Budget', `
+        <div class="form-group">
+            <label class="form-label">Budget Total Annuel (€)</label>
+            <input type="number" class="input" id="budget-total-input" value="${BUDGET.total}">
+        </div>
+    `, `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="saveBudgetTotal()">Sauvegarder</button>
+    `);
+}
+
+function saveBudgetTotal() {
+    BUDGET.total = parseInt(document.getElementById('budget-total-input').value) || 100000;
+    save('budget', BUDGET);
+    renderBudget();
+    updateHeaderStats();
+    closeModal();
+}
+
+function openAddBudgetLine() {
+    openModal('Ajouter Ligne Budgétaire', `
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <input type="text" class="input" id="bl-desc" placeholder="Description">
+        </div>
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="select" id="bl-type">
+                    <option value="spent">Dépensé</option>
+                    <option value="committed">Engagé</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Montant (€)</label>
+                <input type="number" class="input" id="bl-amount" value="0">
+            </div>
+        </div>
+    `, `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="saveBudgetLine()">Ajouter</button>
+    `);
+}
+
+function saveBudgetLine() {
+    const desc = document.getElementById('bl-desc').value.trim();
+    if (!desc) return alert('Description requise');
+    
+    BUDGET.lines.push({
+        id: Date.now(),
+        description: desc,
+        type: document.getElementById('bl-type').value,
+        amount: parseInt(document.getElementById('bl-amount').value) || 0
+    });
+    save('budget', BUDGET);
+    renderBudget();
+    closeModal();
+    addActivity(`Budget: ${desc} ajouté`, 'success');
+}
+
+function removeBudgetLine(id) {
+    BUDGET.lines = BUDGET.lines.filter(l => l.id !== id);
+    save('budget', BUDGET);
+    renderBudget();
+}
+
+// ============================================
+// AI RECOMMENDATIONS
+// ============================================
+function generateRecommendations() {
+    // Calculate compatibility scores
+    const recommendations = [];
+    
+    // Find entities not in pipeline with high potential
+    const notInPipeline = DATA.filter(e => !PIPELINE.find(p => p.entity === e.nom));
+    
+    // Score based on multiple factors
+    notInPipeline.forEach(e => {
+        let compatScore = e.score;
+        const axes = parseAxes(e.axes);
+        
+        // Bonus for multi-axis
+        if (axes.length > 1) compatScore += 15;
+        
+        // Bonus for movements
+        if (isMvt(e)) compatScore += 20;
+        
+        // Bonus for having contact info
+        if (e.email) compatScore += 10;
+        if (e.web) compatScore += 5;
+        
+        // Bonus for strategic locations
+        if (e.localite === 'BRUXELLES') compatScore += 5;
+        if (['LIEGE', 'NAMUR', 'CHARLEROI'].includes(e.localite)) compatScore += 3;
+        
+        recommendations.push({
+            entity: e,
+            score: compatScore,
+            reasons: []
+        });
+    });
+    
+    // Sort and get top 10
+    recommendations.sort((a, b) => b.score - a.score);
+    const top10 = recommendations.slice(0, 10);
+    
+    // Generate reasons
+    top10.forEach(r => {
+        if (isMvt(r.entity)) r.reasons.push('Mouvement reconnu (influence élevée)');
+        const axes = parseAxes(r.entity.axes);
+        if (axes.length > 2) r.reasons.push(`${axes.length} axes couverts (synergie potentielle)`);
+        if (r.entity.email && r.entity.web) r.reasons.push('Contact digital complet');
+        if (r.entity.localite === 'BRUXELLES') r.reasons.push('Localisation stratégique (BXL)');
+    });
+    
+    document.getElementById('recommendations').innerHTML = top10.map(r => `
+        <div class="reco-card">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+                <div>
+                    <div class="reco-title">${r.entity.nom}</div>
+                    <div class="reco-reason">${r.entity.localite} • ${r.entity.axes}</div>
+                    <ul style="font-size:.75rem;color:var(--dim);margin:.5rem 0;">
+                        ${r.reasons.map(re => `<li>${re}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="text-align:right;">
+                    <div class="reco-score">${r.score}</div>
+                    <button class="btn sm primary" onclick="quickAddPipeline('${r.entity.nom.replace(/'/g, "\\'")}')">+ Pipeline</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Priority opportunities (mouvements not in pipeline)
+    const mvtOpps = notInPipeline.filter(isMvt).slice(0, 5);
+    document.getElementById('priority-opportunities').innerHTML = mvtOpps.map(e => `
+        <div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);">
+            <div>
+                <div style="font-weight:600;">${e.nom}</div>
+                <div style="font-size:.75rem;color:var(--dim);">${e.localite}</div>
+            </div>
+            <button class="btn sm" onclick="quickAddPipeline('${e.nom.replace(/'/g, "\\'")}')">+</button>
+        </div>
+    `).join('') || '<div style="color:var(--dim);">Tous les mouvements sont dans le pipeline!</div>';
+    
+    // Zones to develop (localities with low coverage)
+    const locCounts = {};
+    DATA.forEach(e => locCounts[e.localite] = (locCounts[e.localite]||0)+1);
+    const lowCoverage = Object.entries(locCounts)
+        .filter(([l, c]) => c < 5 && c > 0)
+        .sort((a, b) => a[1] - b[1])
+        .slice(0, 8);
+    
+    document.getElementById('development-zones').innerHTML = lowCoverage.map(([l, c]) => `
+        <div style="display:flex;justify-content:space-between;padding:.25rem 0;">
+            <span>${l}</span>
+            <span style="color:var(--orange);">${c} entité(s)</span>
+        </div>
+    `).join('') || '<div style="color:var(--dim);">Bonne couverture partout!</div>';
+    
+    // Compatibility matrix (axes)
+    const axeMatrix = {};
+    [1,2,3,4].forEach(a1 => {
+        axeMatrix[a1] = {};
+        [1,2,3,4].forEach(a2 => {
+            axeMatrix[a1][a2] = DATA.filter(e => {
+                const axes = parseAxes(e.axes);
+                return axes.includes(a1) && axes.includes(a2);
+            }).length;
+        });
+    });
+    
+    const axeNames = {1:'Participation', 2:'Formation', 3:'Production', 4:'Sensibilisation'};
+    document.getElementById('compatibility-matrix').innerHTML = `
+        <table class="table" style="font-size:.75rem;">
+            <thead><tr><th></th>${[1,2,3,4].map(a => `<th>Axe ${a}</th>`).join('')}</tr></thead>
+            <tbody>
+                ${[1,2,3,4].map(a1 => `
+                    <tr>
+                        <td><strong>Axe ${a1}</strong></td>
+                        ${[1,2,3,4].map(a2 => `<td style="text-align:center;${a1 !== a2 && axeMatrix[a1][a2] > 10 ? 'color:var(--green);font-weight:600;' : ''}">${axeMatrix[a1][a2]}</td>`).join('')}
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        <div style="margin-top:.5rem;font-size:.75rem;color:var(--dim);">Nombre d'entités ayant les deux axes</div>
+    `;
+}
+
+function quickAddPipeline(nom) {
+    if (PIPELINE.find(p => p.entity === nom)) return;
+    PIPELINE.push({ id: Date.now(), entity: nom, stage: 'prospect', addedAt: new Date().toISOString() });
+    save('pipeline', PIPELINE);
+    renderPipeline();
+    generateRecommendations();
+    updateHeaderStats();
+    addActivity(`${nom} ajouté au pipeline`, 'success');
+}
+
+// ============================================
+// CRM
+// ============================================
+function renderCRM() {
+    const search = document.getElementById('crm-search').value.toLowerCase();
+    const loc = document.getElementById('crm-loc').value;
+    const axe = document.getElementById('crm-axe').value;
+    const type = document.getElementById('crm-type').value;
+    
+    let filtered = DATA.filter(e => {
+        if (search && !e.nom.toLowerCase().includes(search) && !(e.sigle && e.sigle.toLowerCase().includes(search))) return false;
+        if (loc && e.localite !== loc) return false;
+        if (axe && !parseAxes(e.axes).includes(parseInt(axe))) return false;
+        if (type === 'mvt' && !isMvt(e)) return false;
+        if (type === 'std' && isMvt(e)) return false;
+        return true;
+    });
+    
+    filtered.sort((a, b) => {
+        let va = a[crmSort.field] || '';
+        let vb = b[crmSort.field] || '';
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        return va < vb ? -1 * crmSort.dir : va > vb ? 1 * crmSort.dir : 0;
+    });
+    
+    document.getElementById('crm-count').textContent = filtered.length;
+    
+    document.getElementById('crm-tbody').innerHTML = filtered.slice(0, 100).map(e => {
+        const axes = parseAxes(e.axes);
+        const inPipeline = PIPELINE.find(p => p.entity === e.nom);
+        return `
+            <tr>
+                <td>
+                    <div style="font-weight:600;">${e.nom}</div>
+                    <div style="font-size:.7rem;color:var(--dim);">${e.email || '-'}</div>
+                </td>
+                <td>${e.localite}</td>
+                <td>${axes.map(ax => `<span class="badge axe-${ax}">${ax}</span>`).join(' ')} ${isMvt(e) ? '<span class="badge mvt">MVT</span>' : ''}</td>
+                <td style="font-family:'Orbitron';color:var(--cyan);">${e.score}</td>
+                <td>${inPipeline ? `<span class="badge low">${inPipeline.stage}</span>` : '-'}</td>
+                <td>
+                    <button class="btn sm" onclick="showEntity('${e.nom.replace(/'/g, "\\'")}')">👁</button>
+                    ${!inPipeline ? `<button class="btn sm" onclick="quickAddPipeline('${e.nom.replace(/'/g, "\\'")}')">+</button>` : ''}
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function sortCRM(field) {
+    if (crmSort.field === field) crmSort.dir *= -1;
+    else { crmSort.field = field; crmSort.dir = 1; }
+    renderCRM();
+}
+
+function showEntity(nom) {
+    const e = DATA.find(x => x.nom === nom);
+    if (!e) return;
+    
+    openModal(e.nom, `
+        <div class="grid grid-2">
+            <div>
+                <h4 style="color:var(--cyan);margin-bottom:.5rem;">Informations</h4>
+                <p><strong>Sigle:</strong> ${e.sigle || '-'}</p>
+                <p><strong>Reconnaissance:</strong> ${e.reconnaissance}</p>
+                <p><strong>Axes:</strong> ${e.axes}</p>
+                <p><strong>Score:</strong> <span style="color:var(--cyan);font-family:'Orbitron';">${e.score}</span></p>
+            </div>
+            <div>
+                <h4 style="color:var(--cyan);margin-bottom:.5rem;">Contact</h4>
+                <p><strong>Adresse:</strong> ${e.adresse}<br>${e.cp} ${e.localite}</p>
+                <p><strong>Tél:</strong> ${e.tel || '-'}</p>
+                <p><strong>Email:</strong> ${e.email ? `<a href="mailto:${e.email}" style="color:var(--cyan);">${e.email}</a>` : '-'}</p>
+                <p><strong>Web:</strong> ${e.web ? `<a href="https://${e.web}" target="_blank" style="color:var(--cyan);">${e.web}</a>` : '-'}</p>
+            </div>
+        </div>
+    `, `<button class="btn" onclick="closeModal()">Fermer</button>`);
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+function renderAnalytics() {
+    const total = DATA.length;
+    const bxl = DATA.filter(isBxl).length;
+    const mvt = DATA.filter(isMvt).length;
+    
+    document.getElementById('geo-split').innerHTML = `
+        <div style="display:flex;justify-content:center;gap:2rem;text-align:center;">
+            <div><div style="font-family:'Orbitron';font-size:2rem;color:var(--magenta);">${bxl}</div><div style="color:var(--dim);">Bruxelles (${(bxl/total*100).toFixed(0)}%)</div></div>
+            <div><div style="font-family:'Orbitron';font-size:2rem;color:var(--green);">${total-bxl}</div><div style="color:var(--dim);">Wallonie (${((total-bxl)/total*100).toFixed(0)}%)</div></div>
+        </div>
+    `;
+    
+    document.getElementById('type-split').innerHTML = `
+        <div style="display:flex;justify-content:center;gap:2rem;text-align:center;">
+            <div><div style="font-family:'Orbitron';font-size:2rem;color:var(--gold);">${mvt}</div><div style="color:var(--dim);">Mouvements</div></div>
+            <div><div style="font-family:'Orbitron';font-size:2rem;color:var(--cyan);">${total-mvt}</div><div style="color:var(--dim);">Standard</div></div>
+        </div>
+    `;
+    
+    // Score distribution
+    const ranges = [{l:'90-100',min:90,max:100},{l:'70-89',min:70,max:89},{l:'50-69',min:50,max:69},{l:'30-49',min:30,max:49},{l:'0-29',min:0,max:29}];
+    const counts = ranges.map(r => DATA.filter(e => e.score >= r.min && e.score <= r.max).length);
+    const maxC = Math.max(...counts);
+    document.getElementById('score-dist').innerHTML = ranges.map((r, i) => `
+        <div class="bar-row">
+            <div class="bar-label">${r.l}</div>
+            <div class="bar-track"><div class="bar-fill cyan" style="width:${counts[i]/maxC*100}%">${counts[i]}</div></div>
+        </div>
+    `).join('');
+    
+    // Cross matrix
+    const locCounts = {};
+    DATA.forEach(e => locCounts[e.localite] = (locCounts[e.localite]||0)+1);
+    const topLocs = Object.entries(locCounts).sort((a,b) => b[1]-a[1]).slice(0,8).map(x => x[0]);
+    
+    const crossData = {};
+    topLocs.forEach(l => { crossData[l] = {1:0,2:0,3:0,4:0,total:0}; });
+    DATA.forEach(e => {
+        if (crossData[e.localite]) {
+            crossData[e.localite].total++;
+            parseAxes(e.axes).forEach(ax => { if(crossData[e.localite][ax] !== undefined) crossData[e.localite][ax]++; });
+        }
+    });
+    
+    document.getElementById('cross-matrix').innerHTML = `
+        <thead><tr><th>Localité</th><th>Axe 1</th><th>Axe 2</th><th>Axe 3</th><th>Axe 4</th><th>Total</th></tr></thead>
+        <tbody>${topLocs.map(l => `
+            <tr>
+                <td>${l}</td>
+                <td style="color:var(--cyan);">${crossData[l][1]}</td>
+                <td style="color:var(--green);">${crossData[l][2]}</td>
+                <td style="color:var(--orange);">${crossData[l][3]}</td>
+                <td style="color:var(--magenta);">${crossData[l][4]}</td>
+                <td><strong>${crossData[l].total}</strong></td>
+            </tr>
+        `).join('')}</tbody>
+    `;
+}
+
+// ============================================
+// TOOLS
+// ============================================
+function openMassEmail() {
+    const emails = DATA.filter(e => e.email && e.email.trim()).map(e => e.email);
+    openModal('Email de Masse', `
+        <p style="color:var(--dim);margin-bottom:.5rem;">${emails.length} adresses disponibles</p>
+        <textarea class="textarea" style="height:200px;" readonly>${emails.join('; ')}</textarea>
+    `, `
+        <button class="btn" onclick="closeModal()">Fermer</button>
+        <button class="btn primary" onclick="navigator.clipboard.writeText('${emails.join('; ')}');alert('Copié!')">📋 Copier</button>
+    `);
+}
+
+function exportData() {
+    const ws = XLSX.utils.json_to_sheet(DATA.map(e => ({
+        NOM: e.nom, SIGLE: e.sigle, RECONNAISSANCE: e.reconnaissance, AXES: e.axes,
+        ADRESSE: e.adresse, CP: e.cp, LOCALITE: e.localite, TEL: e.tel,
+        EMAIL: e.email, WEB: e.web, SCORE: e.score
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Entités');
+    XLSX.writeFile(wb, `SAURON_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
+    addActivity('Export Excel effectué', 'success');
+}
+
+function exportFullBackup() {
+    const backup = {
+        version: '3.0',
+        date: new Date().toISOString(),
+        pipeline: PIPELINE,
+        events: EVENTS,
+        budget: BUDGET,
+        activities: ACTIVITIES
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SAURON_Backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    addActivity('Backup exporté', 'success');
+}
+
+function importFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            if (file.name.endsWith('.json')) {
+                const backup = JSON.parse(e.target.result);
+                if (backup.pipeline) PIPELINE = backup.pipeline;
+                if (backup.events) EVENTS = backup.events;
+                if (backup.budget) BUDGET = backup.budget;
+                if (backup.activities) ACTIVITIES = backup.activities;
+                save('pipeline', PIPELINE);
+                save('events', EVENTS);
+                save('budget', BUDGET);
+                save('activities', ACTIVITIES);
+                renderAll();
+                alert('Backup restauré!');
+            }
+        } catch (err) {
+            alert('Erreur: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function generateReport() {
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport SAURON</title>
+    <style>body{font-family:Arial;max-width:900px;margin:0 auto;padding:2rem;}h1{color:#ff5500;}h2{color:#00f0ff;border-bottom:2px solid #00f0ff;}</style></head>
+    <body><h1>Rapport SAURON - ${new Date().toLocaleDateString('fr-BE')}</h1>
+    <h2>Statistiques</h2><p>Total: ${DATA.length} | Bruxelles: ${DATA.filter(isBxl).length} | Mouvements: ${DATA.filter(isMvt).length}</p>
+    <h2>Pipeline</h2><p>Prospects: ${PIPELINE.filter(p=>p.stage==='prospect').length} | Contacts: ${PIPELINE.filter(p=>p.stage==='contact').length} | Négociations: ${PIPELINE.filter(p=>p.stage==='negotiation').length} | Partenaires: ${PIPELINE.filter(p=>p.stage==='partner').length}</p>
+    <h2>Budget</h2><p>Total: €${BUDGET.total.toLocaleString()}</p>
+    </body></html>`;
+    
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SAURON_Rapport_${new Date().toISOString().slice(0,10)}.html`;
+    a.click();
+}
+
+function openSWOT() {
+    openModal('Analyse SWOT', `
+        <div class="grid grid-2" style="gap:1rem;">
+            <div style="background:rgba(0,255,136,.1);padding:1rem;border-radius:6px;border:1px solid var(--green);">
+                <h4 style="color:var(--green);">💪 Forces</h4>
+                <ul><li>274 associations reconnues</li><li>17 mouvements stratégiques</li><li>Couverture nationale</li><li>4 axes complémentaires</li></ul>
+            </div>
+            <div style="background:rgba(255,51,85,.1);padding:1rem;border-radius:6px;border:1px solid var(--red);">
+                <h4 style="color:var(--red);">⚠️ Faiblesses</h4>
+                <ul><li>Concentration à Bruxelles</li><li>Coordination limitée</li><li>Digitalisation variable</li></ul>
+            </div>
+            <div style="background:rgba(0,240,255,.1);padding:1rem;border-radius:6px;border:1px solid var(--cyan);">
+                <h4 style="color:var(--cyan);">🚀 Opportunités</h4>
+                <ul><li>Financements EU</li><li>Mutualisation ressources</li><li>Transformation digitale</li></ul>
+            </div>
+            <div style="background:rgba(255,136,0,.1);padding:1rem;border-radius:6px;border:1px solid var(--orange);">
+                <h4 style="color:var(--orange);">🔥 Menaces</h4>
+                <ul><li>Coupes budgétaires</li><li>Concurrence sectorielle</li><li>Complexité administrative</li></ul>
+            </div>
+        </div>
+    `, '<button class="btn" onclick="closeModal()">Fermer</button>');
+}
+
+function clearAllData() {
+    if (confirm('Supprimer TOUTES les données?')) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+// ============================================
+// EMBEDDED DATA
+// ============================================
+const EMBEDDED_DATA = [{"nom": "Abracadabus", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE SAINT-CHRISTOPHE  38", "cp": "1000", "localite": "BRUXELLES", "tel": "02/513 75 35", "fax": "", "email": "abracadabus@skynet.be", "web": "www.abracadabus.net"}, {"nom": "ACRF - Femmes en Milieu rural", "sigle": "ACRF", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE M. JAUMAIN  15", "cp": "5330", "localite": "ASSESSE", "tel": "083/65 51 92", "fax": "083/65 62 56", "email": "contact@acrf.be", "web": "www.acrf.be"}, {"nom": "Action et Recherche culturelles", "sigle": "ARC", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE L'ASSOCIATION  20", "cp": "1000", "localite": "BRUXELLES", "tel": "02/219 68 88", "fax": "02/219 39 72", "email": "direction@arc-culture.be", "web": "www.arc-culture.be"}, {"nom": "Action mondiale pour la Solidarité", "sigle": "AMONSOLI", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE AUX LAINES  22", "cp": "4800", "localite": "VERVIERS", "tel": "087/42 05 36", "fax": "", "email": "amonsoli@outlook.com", "web": "www.amonsoli.be"}, {"nom": "Action Vivre ensemble", "sigle": "AVE", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU GOUVERNEMENT PROVISOIRE  32", "cp": "1000", "localite": "BRUXELLES", "tel": "02/227 66 80", "fax": "02/217 32 59", "email": "info@vivre-ensemble.be", "web": "www.vivre-ensemble.be"}, {"nom": "Actions Consommateurs Travailleurs", "sigle": "achACT", "reconnaissance": "DECRET 2003", "axes": "3 + 4", "adresse": "RUE NANON  98", "cp": "5000", "localite": "NAMUR", "tel": "010/45 75 27", "fax": "", "email": "achacteurs@achact.be", "web": "www.achact.be"}, {"nom": "Agence Alter", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE GUILLAUME TELL  57", "cp": "1060", "localite": "BRUXELLES", "tel": "02/541 85 20", "fax": "02/231 15 59", "email": "alter@alter.be", "web": "www.alter.be"}, {"nom": "Ages et Transmissions", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE BELLIARD  20/3", "cp": "1040", "localite": "BRUXELLES", "tel": "02/514 45 61", "fax": "", "email": "info@agesettransmissions.be", "web": "www.agesettransmissions.be"}, {"nom": "Agir pour la Paix", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VAN ELEWIJCK  35", "cp": "1050", "localite": "BRUXELLES", "tel": "02/648 52 20", "fax": "02/646 87 92", "email": "info@agirpourlapaix.be", "web": "www.agirpourlapaix.be"}, {"nom": "Âgo", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LIVOURNE  25", "cp": "1050", "localite": "BRUXELLES", "tel": "02/538 10 48", "fax": "02/542 87 45", "email": "info@ago-asbl.be", "web": "www.ago-asbl.be"}, {"nom": "Ag'y Sont", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE JEANNE D'ARC  59/46", "cp": "7500", "localite": "TOURNAI", "tel": "069/84 85 86", "fax": "069/84 85 86", "email": "info@agysont.be", "web": "www.agysont.be"}, {"nom": "Aide et Reclassement", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE RIOUL  22", "cp": "4500", "localite": "HUY", "tel": "085/21 45 83 ", "fax": "085/23 28 10", "email": "info@aideetreclassement.be", "web": "www.aideetreclassement.be"}, {"nom": "Altéo - Mouvement social de Personnes malades valides et handicapées", "sigle": "ALTEO", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "CHAUSSEE DE HAECHT  579/40", "cp": "1031", "localite": "BRUXELLES", "tel": "02/246 42 26", "fax": "02/246 48 21", "email": "alteo@mc.be", "web": "www.alteoasbl.be"}, {"nom": "Amis de la Fagne (Les)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE DE PETIT-RECHAIN  1", "cp": "4800", "localite": "VERVIERS", "tel": "010/61 48 50", "fax": "", "email": "info@amisdelafagne.be", "web": "www.amisdelafagne.be"}, {"nom": "Amis de la Terre (Les) - Belgique", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE NANON  98", "cp": "5000", "localite": "NAMUR", "tel": "081/39 06 39", "fax": "081/39 06 38", "email": "contact@amisdelaterre.be", "web": "www.amisdelaterre.be"}, {"nom": "Amnesty International - Belgique francophone", "sigle": "AIBF", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "CHAUSSEE DE WAVRE  169", "cp": "1050", "localite": "BRUXELLES", "tel": "02/538 81 77", "fax": "02/537 37 29", "email": "amnesty@amnesty.be", "web": "www.amnesty.be"}, {"nom": "Aquilone (L') - Centre interculturel", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "BOULEVARD SAUCY  25", "cp": "4020", "localite": "LIEGE", "tel": "", "fax": "", "email": "aquiloneinfo@gmail.com", "web": "www.aquilone.be"}, {"nom": "Arab Women'S Solidarity Association", "sigle": "AWSA-BE", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DE L'ETERNITE  6", "cp": "1070", "localite": "BRUXELLES", "tel": "02/229 38 10", "fax": "02/229 38 01", "email": "awsabe@gmail.com", "web": "www.awsa.be"}, {"nom": "Article 27", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE LA SENNE  81", "cp": "1000", "localite": "BRUXELLES", "tel": "02/646 30 28", "fax": "02/646 59 36", "email": "bruxelles@article27.be", "web": "www.article27.be"}, {"nom": "ASBL Joseph Swinnen", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU PONT DE L'AVENUE  35", "cp": "1000", "localite": "BRUXELLES", "tel": "02/203 56 13", "fax": "02/201 67 29", "email": "coordination@swinnen-asbl.be", "web": ""}, {"nom": "Association belgo-palestinienne", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "RUE DES PALAIS  154", "cp": "1030", "localite": "BRUXELLES", "tel": "02/223 07 56", "fax": "02/250 12 63", "email": "info@abp-wb.be", "web": "www.association-belgo-palestinienne.be"}, {"nom": "Association culturelle Joseph Jacquemotte", "sigle": "ACJJ", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE JULIEN LAHAUT  11", "cp": "6020", "localite": "DAMPREMY", "tel": "", "fax": "", "email": "info.acjj@gmail.com", "web": "www.acjj.be"}, {"nom": "Association des Comités de Quartiers ucclois", "sigle": "ACQU", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES BIGARREAUX  34", "cp": "1180", "localite": "BRUXELLES", "tel": "02/374 97 03", "fax": "", "email": "acqu.asbl@gmail.com", "web": "www.acqu.be"}, {"nom": "Association des Habitants de Louvain-la-Neuve", "sigle": "AHLL", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "SCAVEE DU BIEREAU  3", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/45 29 12", "fax": "010/45 29 12", "email": "info@ahlln.be", "web": "www.ahlln.be"}, {"nom": "Association des Parents d'Enfants déficients auditifs francophones", "sigle": "APEDAF", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "RUE DE PICARDIE  43", "cp": "1140", "localite": "BRUXELLES", "tel": "02/644 66 77", "fax": "02/640 20 44", "email": "info@apedaf.be", "web": "www.apedaf.be"}, {"nom": "Association d'Information, d'Aide et d'Education sociale et culturelle pour la Femme - Infor-Femmes", "sigle": "ADIF", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU CHIMISTE  34-36", "cp": "1070", "localite": "BRUXELLES", "tel": "02/529 03 74", "fax": "", "email": "info@inforfemmes.be", "web": "www.inforfemmes.be"}, {"nom": "Association interculturelle de l'Europe de l'Est en Belgique - Harmonie", "sigle": "AIRBE", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "GRAND' RUE  95", "cp": "7000", "localite": "MONS", "tel": "065/56 91 97", "fax": "", "email": "info@airbeharmonie.be", "web": "airbeharmonie.be"}, {"nom": "Association Marcel Hicter pour la Démocratie culturelle", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE MAURICE  1", "cp": "1050", "localite": "BRUXELLES", "tel": "02/641 89 80", "fax": "02/641 89 81", "email": "contact@fondation-hicter.org", "web": "www.fondation-hicter.org"}, {"nom": "Association pour la Taxation des Transactions financières pour l'Aide aux Citoyens - Bruxelles 2", "sigle": "ATTAC Bxl 2", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES PALAIS  154", "cp": "1030", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "admin@attac.be", "web": "bxl2.attac.be"}, {"nom": "Association pour la Taxation des Transactions financières pour l'Aide aux Citoyens - Liège", "sigle": "ATTAC", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU PLOPE  184", "cp": "4041", "localite": "HERSTAL", "tel": "04/349 19 02", "fax": "04/349 01 44", "email": "info@liege.attac.be", "web": "www.attacliege.be"}, {"nom": "Association pour le Droit des Etrangers", "sigle": "ADDE", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU BOULET  22", "cp": "1000", "localite": "BRUXELLES", "tel": "02/227 42 42", "fax": "02/227 42 44", "email": "accueil@adde.be", "web": "www.adde.be"}, {"nom": "Association pour une Fondation Travail-Université", "sigle": "FTU", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "CHAUSSEE DE HAECHT  579/50", "cp": "1031", "localite": "BRUXELLES", "tel": "02/246 38 51", "fax": "", "email": "info@ftu.be", "web": "www.ftu.be"}, {"nom": "Association professionnelle des Métiers de la Création / SmartBe", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE EMILE FERON 70", "cp": "1060", "localite": "BRUXELLES", "tel": "02/542 10 80", "fax": "02/420 52 93", "email": "coop@smart.coop", "web": "www.smartbe.be"}, {"nom": "Association provinciale des Seniors du Luxembourg", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE COMMUNALE  21-25", "cp": "6800", "localite": "LIBRAMONT", "tel": "061/61 29 26", "fax": "061/61 29 26", "email": "seniorlux@skynet.be", "web": ""}, {"nom": "ATD Quart-Monde Wallonie-Bruxelles", "sigle": "ATD", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE VICTOR JACOBS  12", "cp": "1040", "localite": "BRUXELLES", "tel": "02/647 99 00", "fax": "02/640 73 84", "email": "contact@atd-quartmonde.be ", "web": "www.atd-quartmonde.be"}, {"nom": "Atelier (L')", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "EN CHAROTTE  20/1", "cp": "6940", "localite": "BARVAUX", "tel": "0473/66 45 99", "fax": "", "email": "atelier.cec@skynet.be", "web": "www.atelier-cec.org"}, {"nom": "Atelier de Recherche et d'Action urbaines", "sigle": "ARAU", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU MIDI  165/2", "cp": "1000", "localite": "BRUXELLES", "tel": "02/219 33 45", "fax": "02/219 86 75", "email": "info@arau.org", "web": "www.arau.org"}, {"nom": "Atelier d'Education permanente pour Personnes incarcérées", "sigle": "ADEPPI", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE D'ALSEMBERG  303/3/1", "cp": "1190", "localite": "BRUXELLES", "tel": "02/223 47 02", "fax": "02/223 47 03", "email": "info@adeppi.be", "web": "www.adeppi.be"}, {"nom": "Atelier des Droits sociaux", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE LA PORTE ROUGE  4", "cp": "1000", "localite": "BRUXELLES", "tel": "02/512 02 13", "fax": "02/512 76 68", "email": "secretariat@ladds.be", "web": "www.ladds.be"}, {"nom": "Ateliers du Soleil", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE PAVIE  53", "cp": "1000", "localite": "BRUXELLES", "tel": "02/736 78 95", "fax": "02/215 58 60", "email": "direction@ateliersdusoleil.be", "web": "www.ateliersdusoleil.be"}, {"nom": "Ateliers Paysans-Artisans", "sigle": "APA", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE CELESTIN HASTIR  107", "cp": "5150", "localite": "FLOREFFE", "tel": "", "fax": "", "email": "ateliers@paysans-artisans.be", "web": "www.paysans-artisans.be"}, {"nom": "Autre \"Lieu\" (L') - Recherche-Action sur la Psychiatrie et les Alternatives", "sigle": "RAPA", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "RUE DE LA CLE  5", "cp": "1000", "localite": "BRUXELLES", "tel": "02/230 62 60", "fax": "02/230 47 62", "email": "info@autrelieu.be", "web": "www.autrelieu.be"}, {"nom": "Bamko", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE LA CLINIQUE  21", "cp": "1070", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "bamko.asbl@gmail.com", "web": "www.bamko.org"}, {"nom": "Barricade - Culture d'Alternatives", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE PIERREUSE  19-21", "cp": "4000", "localite": "LIEGE", "tel": "04/222 06 22", "fax": "", "email": "info@barricade.be", "web": "www.barricade.be"}, {"nom": "Barricade (La)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE JOSAPHAT  33", "cp": "1210", "localite": "BRUXELLES", "tel": "02/219 69 96", "fax": "", "email": "labarricade@skynet.be", "web": "www.labarricade.be"}, {"nom": "Bataclan (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU PAVILLON  7-9/7A", "cp": "1030", "localite": "BRUXELLES", "tel": "02/646 30 13", "fax": "", "email": "info@bataclan.be", "web": "www.bataclan.be"}, {"nom": "BePax", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "CHAUSSEE SAINT-PIERRE  208", "cp": "1040", "localite": "BRUXELLES", "tel": "02/896 95 00", "fax": "", "email": "info@bepax.org", "web": "www.bepax.org"}, {"nom": "Bobine (La)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE GEORGES TRUFFAUT  18", "cp": "4020", "localite": "LIEGE", "tel": "04/342 94 49", "fax": "04/342 86 45", "email": "info@labobine.be", "web": "www.labobine.be"}, {"nom": "Bouillon de CultureS", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE PHILOMENE  41", "cp": "1030", "localite": "BRUXELLES", "tel": "02/210 94 20", "fax": "02/223 73 95", "email": "projets@bouillondecultures.be", "web": "www.bouillondecultures.be"}, {"nom": "Bruxelles Nous Appartient", "sigle": "BNA-BBOT", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE LAEKEN  119", "cp": "1000", "localite": "BRUXELLES", "tel": "02/223 21 51", "fax": "02/223 21 52", "email": "any@bna-bbot.be", "web": "www.bna-bbot.be"}, {"nom": "Cactus (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VAN LINT  16", "cp": "1070", "localite": "BRUXELLES", "tel": "02/521 48 10", "fax": "02/523 04 17", "email": "lecactus.info@skynet.be", "web": ""}, {"nom": "Canopea", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "BOULEVARD E. MELOT  5/12", "cp": "5000", "localite": "NAMUR", "tel": "081/39 07 50", "fax": "", "email": "info@canopea.be", "web": "www.canopea.be"}, {"nom": "Carrefour des Cultures", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE CARDINAL MERCIER  40", "cp": "5000", "localite": "NAMUR", "tel": "081/41 27 51", "fax": "", "email": "info@carrefourdescultures.org", "web": "www.carrefourdescultures.org"}, {"nom": "Ceinture Aliment-Terre liégeoise", "sigle": "CATL", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DE JUPILLE  16b", "cp": "4020", "localite": "LIEGE", "tel": "04/223 15 51", "fax": "", "email": "info@catl.be", "web": "www.catl.be"}, {"nom": "Centre Avec", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE MAURICE LIETART  31/4", "cp": "1150", "localite": "BRUXELLES", "tel": "02/738 08 28", "fax": "02/738 08 16", "email": "secretariat@centreavec.be", "web": "www.centreavec.be"}, {"nom": "Centre bruxellois d'Action Interculturelle", "sigle": "CBAI", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DE STALINGRAD  24", "cp": "1000", "localite": "BRUXELLES", "tel": "02/513 96 02", "fax": "02/512 17 96", "email": "info@cbai.be", "web": "www.cbai.be"}, {"nom": "Centre communautaire laïc juif", "sigle": "CCLJ", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE HOTEL DES MONNAIES  52", "cp": "1060", "localite": "BRUXELLES", "tel": "02/543 02 70", "fax": "02/543 02 71", "email": "info@cclj.be ", "web": "www.cclj.be"}, {"nom": "Centre culturel arabe en Pays de Liège", "sigle": "CCAPL", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE BELVAUX  128", "cp": "4030", "localite": "LIEGE", "tel": "04/342 78 84", "fax": "04/342 78 84", "email": "info@ccapl.be", "web": "www.ccapl.be"}, {"nom": "Centre culturel Le Réverbère", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CENTRE  2", "cp": "4890", "localite": "CLERMONT", "tel": "087/44 68 06 ", "fax": "", "email": "", "web": "www.lereverbere.be"}, {"nom": "Centre d'Accueil, de Rencontre, d'Insertion et d'Animation", "sigle": "CARIA", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE HAUTE  135", "cp": "1000", "localite": "BRUXELLES", "tel": "02/513 00 14", "fax": "02/511 02 12", "email": "caria135@skynet.be", "web": "www.asblcaria.be"}, {"nom": "Centre d'Action laïque", "sigle": "CAL", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "BOULEVARD DE LA PLAINE - CAMPUS DE LA PLAINE / ULB CP 236", "cp": "1050", "localite": "BRUXELLES", "tel": "02/627 68 11", "fax": "02/627 68 01", "email": "cal@laicite.net", "web": "www.laicite.be"}, {"nom": "Centre d'Action sociale italien - Université ouvrière", "sigle": "CASI-UO", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE SAINT-GUIDON  94", "cp": "1070", "localite": "BRUXELLES", "tel": "02/521 21 25", "fax": "02/521 21 25", "email": "casi-uo@skynet.be", "web": "www.casi-uo.com"}, {"nom": "Centre d'Animation et de Recherche en Histoire ouvrière et populaire", "sigle": "CARHOP", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DE LA HOUSSIERE 80", "cp": "7090", "localite": "BRAINE-LE-COMTE", "tel": "067/48 58 61", "fax": "067/55 72 34", "email": "info@carhop.be", "web": "www.carhop.be"}, {"nom": "Centre de Développement et d'Animation schaerbeekois", "sigle": "CEDAS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VERTE  210", "cp": "1030", "localite": "BRUXELLES", "tel": "02/242 20 83", "fax": "02/242 20 83", "email": "cedas.asbl@gmail.com", "web": "www.cedasasbl.be"}, {"nom": "Centre de Dynamique des Groupes et d'Analyse institutionnelle", "sigle": "CDGAI", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "LIEGE SCIENCE PARK - RUE BOIS SAINT-JEAN  9", "cp": "4102", "localite": "SERAING", "tel": "04/366 06 63", "fax": "04/366 06 68", "email": "info@cdgai.be", "web": "www.cdgai.be"}, {"nom": "Centre de Formation Cardijn", "sigle": "CEFOC", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE SAINT-NICOLAS  84", "cp": "5000", "localite": "NAMUR", "tel": "081/23 15 22", "fax": "081/23 15 22", "email": "info@cefoc.be", "web": "www.cefoc.be"}, {"nom": "Centre de Formation pour le Développement et la Solidarité internationale", "sigle": "ITECO", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "RUE RENKIN  2", "cp": "1030", "localite": "BRUXELLES", "tel": "02/243 70 30", "fax": "02/245 39 29", "email": "iteco@iteco.be", "web": "www.iteco.be"}, {"nom": "Centre de Prévention des Violences conjugales et familiales", "sigle": "CPVCF", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES COLONIES  11", "cp": "1000", "localite": "BRUXELLES", "tel": "02/539 27 44", "fax": "02/534 49 46", "email": "info@cpvcf.org", "web": "www.cpvcf.org"}, {"nom": "Centre de Recherche et de Rencontre", "sigle": "CRR", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE PUITS EN SOCK  63", "cp": "4020", "localite": "LIEGE", "tel": "04/342 57 76", "fax": "", "email": "crrliege63@gmail.com", "web": "crrliege.wordpress.com"}, {"nom": "Centre de Recherche et d'Information socio-politiques", "sigle": "CRISP", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "PLACE QUETELET  1A", "cp": "1210", "localite": "BRUXELLES", "tel": "02/211 01 80", "fax": "02/219 79 34", "email": "info@crisp.be", "web": "www.crisp.be"}, {"nom": "Centre d'Education populaire André Genot", "sigle": "CEPAG", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;2;3;4)", "adresse": "RUE DE NAMUR  47", "cp": "5000", "localite": "BEEZ", "tel": "081/26 51 52", "fax": "081/26 51 51", "email": "cepag@cepag.be", "web": "www.cepag.be"}, {"nom": "Centre d'Etudes Jacques Georgin", "sigle": "CEG", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "CHAUSSEE DE CHARLEROI  127", "cp": "1060", "localite": "BRUXELLES", "tel": "02/533 30 16", "fax": "", "email": "", "web": "www.cejg.be"}, {"nom": "Centre d'Expertise et de Ressources pour l'Enfance", "sigle": "CERE", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE LA POSTE  105", "cp": "1030", "localite": "BRUXELLES", "tel": "02/333 46 10", "fax": "02/333 46 19", "email": "info@cere-asbl.be", "web": "www.cere-asbl.be"}, {"nom": "Centre d'Information et d'Education populaire du M.O.C.", "sigle": "CIEP MOC", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;2;3;4)", "adresse": "CHAUSSEE DE HAECHT  579 / BP 50", "cp": "1031", "localite": "BRUXELLES", "tel": "02/246 38 43", "fax": "02/246 38 25", "email": "communautaire@ciep.be", "web": "www.ciep.be"}, {"nom": "Centre féminin d'Education permanente", "sigle": "CFEP", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU MERIDIEN  10", "cp": "1210", "localite": "BRUXELLES", "tel": "02/229 38 42", "fax": "", "email": "info@cfep.be", "web": "www.cfep.be"}, {"nom": "Centre Femmes / Hommes Verviers", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE HODIMONT   44", "cp": "4800", "localite": "VERVIERS", "tel": "087/33 18 76", "fax": "087/63 29 82", "email": "info@cfhv.be ", "web": "www.cfhv.be"}, {"nom": "Centre Franco Basaglia", "sigle": "CFB", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "CHAUSSEE DES PRES  42-44", "cp": "4020", "localite": "LIEGE", "tel": "04/227 02 58", "fax": "04/227 02 97", "email": "educationpermanente@psychiatries.be", "web": "www.psychiatries.be"}, {"nom": "Centre hervien d'Animation culturelle", "sigle": "CHAC", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE DE L'HOTEL DE VILLE  18", "cp": "4650", "localite": "HERVE", "tel": "087/66 09 07", "fax": "087/66 09 07", "email": "info@chac.be", "web": "www.chac.be"}, {"nom": "Centre Jean Gol", "sigle": "CJG", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DE LA TOISON D'OR   84-86", "cp": "1060", "localite": "BRUXELLES", "tel": "02/500 50 41", "fax": "", "email": "", "web": "www.cjg.be"}, {"nom": "Centre libéral d'Action et de Réflexion sur l'Audiovisuel", "sigle": "CLARA", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "BOULEVARD BAUDOUIN  8", "cp": "1000", "localite": "BRUXELLES", "tel": "02/203 94 44", "fax": "", "email": "contact@clara.be", "web": "www.clara.be"}, {"nom": "Centre national de Coopération au Développement", "sigle": "CNCD", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "QUAI DU COMMERCE  9", "cp": "1000", "localite": "BRUXELLES", "tel": "02/250 12 30", "fax": "", "email": "cncd@cncd.be", "web": "www.cncd.be"}, {"nom": "Centre permanent pour la Citoyenneté et la Participation", "sigle": "CPCP", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "AVENUE DES ARTS  50/6", "cp": "1000", "localite": "BRUXELLES", "tel": "02/318 44 33", "fax": "", "email": "info@cpcp.be", "web": "www.cpcp.be"}, {"nom": "Centre Placet", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES SPORTS  2", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/47 46 92", "fax": "", "email": "info@placet.be", "web": "www.placet.be"}, {"nom": "Centre polyculturel Résistances", "sigle": "CP-CR", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "JONRUELLE  11-15", "cp": "4000", "localite": "LIEGE", "tel": "04/227 54 19", "fax": "", "email": "info@cpcr.be", "web": "www.cpcr.be"}, {"nom": "Centre pour la Formation et l'Intervention psycho-sociologiques", "sigle": "CFIP", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "AVENUE GRIBAUMONT  153", "cp": "1200", "localite": "BRUXELLES", "tel": "02/770 50 48", "fax": "02/772 67 84", "email": "secretariat@cfip.be", "web": "www.cfip.be"}, {"nom": "Centre régional du Libre Examen de Bruxelles", "sigle": "Librex", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE COENRAETS  66", "cp": "1060", "localite": "BRUXELLES", "tel": "02/538 19 42", "fax": "", "email": "info@centrelibrex.be", "web": "centrelibrex.be"}, {"nom": "Centre socialiste d'Education permanente", "sigle": "CESEP", "reconnaissance": "DECRET 2003", "axes": "2 + 3", "adresse": "RUE DE CHARLEROI  47", "cp": "1400", "localite": "NIVELLES", "tel": "067/89 08 70", "fax": "067/21 00 97", "email": "administration@cesep.be", "web": "www.cesep.be"}, {"nom": "Centre tricontinental", "sigle": "CETRI", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE SAINTE-GERTRUDE  5", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/48 95 60", "fax": "010/48 95 69", "email": "cetri@cetri.be", "web": "www.cetri.be"}, {"nom": "Centre Vidéo de Bruxelles", "sigle": "CVB", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE LA POSTE  111", "cp": "1030", "localite": "BRUXELLES", "tel": "02/221 10 50", "fax": "02/221 10 51", "email": "info@cvb.be", "web": "cvb.be"}, {"nom": "Centres d'Entraînement aux Méthodes d'Education active", "sigle": "CEMEA", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "AVENUE DE LA PORTE DE HAL  39/3", "cp": "1060", "localite": "BRUXELLES", "tel": "02/543 05 90", "fax": "02/543 05 99", "email": "education-permanente@cemea.be", "web": "www.cemea.be"}, {"nom": "Cercle du Laveu", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES ACACIAS  24", "cp": "4000", "localite": "LIEGE", "tel": "0497/26 07 08", "fax": "", "email": "contact@cercledulaveu.info", "web": "www.cercledulaveu.be"}, {"nom": "Cercle du Libre Examen de l'ULB", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE PAUL HEGER  22  CP166", "cp": "1000", "localite": "BRUXELLES", "tel": "02/650 37 65", "fax": "02/647 56 65", "email": "cercle@librexulb.be", "web": "www.librex.be"}, {"nom": "Cercles des Naturalistes de Belgique", "sigle": "CNB", "reconnaissance": "DECRET 2003", "axes": "1 + 2", "adresse": "RUE DES ECOLES  21", "cp": "5670", "localite": "VIERVES-SUR-VIROIN", "tel": "060/39 98 78", "fax": "060/39 94 36", "email": "info@cercles-naturalistes.be", "web": "www.cercles-naturalistes.be"}, {"nom": "Changements pour l'Egalité", "sigle": "Cgé", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DES PALAIS  154", "cp": "1030", "localite": "BRUXELLES", "tel": "02/218 34 50", "fax": "02/218 49 67", "email": "info@changement-egalite.be", "web": "www.changement-egalite.be"}, {"nom": "Collectif Alpha", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE ROME  12", "cp": "1060", "localite": "BRUXELLES", "tel": "02/538 36 57", "fax": "02/538 27 44", "email": "info@collectif-alpha.be", "web": "www.collectif-alpha.be"}, {"nom": "Collectif contre les Violences familiales et l'Exclusion", "sigle": "CVFE", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE MAGHIN  11", "cp": "4000", "localite": "LIEGE", "tel": "04/221 60 69", "fax": "", "email": "cvfe@cvfe.be", "web": "www.cvfe.be"}, {"nom": "Collectif des Femmes", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES SPORTS  19", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/47 47 69", "fax": "", "email": "info@collectifdesfemmes.be ", "web": "www.collectifdesfemmes.be"}, {"nom": "Collectif Formation Société", "sigle": "CFS", "reconnaissance": "DECRET 2003", "axes": "2 + 3", "adresse": "RUE DE LA VICTOIRE  26", "cp": "1060", "localite": "BRUXELLES", "tel": "02/543 03 03", "fax": "02/543 03 09", "email": "info@cfsasbl.be", "web": "www.ep.cfsasbl.be"}, {"nom": "Collectif Solidarité contre l'Exclusion", "sigle": "CSCE", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "CHAUSSEE DE HAECHT  51", "cp": "1210", "localite": "BRUXELLES", "tel": "02/535 93 50", "fax": "02/535 93 59", "email": "info@asbl-csce.be", "web": "www.asbl-csce.be"}, {"nom": "Comité de la Samaritaine", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA SAMARITAINE  41", "cp": "1000", "localite": "BRUXELLES", "tel": "02/513 06 26", "fax": "02/513 06 26", "email": "coordinationsamaritaine@gmail.com", "web": "www.comitedelasamartaine.be"}, {"nom": "Comité pour l'Abolition des Dettes illégitimes", "sigle": "CADTM", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE JONFOSSE  8", "cp": "4000", "localite": "LIEGE", "tel": "0460/97 96 80", "fax": "", "email": "info@cadtm.org", "web": "www.cadtm.org"}, {"nom": "Commission Justice & Paix - Belgique francophone", "sigle": "CJP", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "CHAUSSEE SAINT-PIERRE  208", "cp": "1040", "localite": "BRUXELLES", "tel": "02/896 95 00", "fax": "", "email": "info@justicepaix.be", "web": "www.justicepaix.be"}, {"nom": "Coopération Education Culture", "sigle": "CEC ONG", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU GRAND HOSPICE 7 (local A17)", "cp": "1000", "localite": "BRUXELLES", "tel": "02/217 90 71", "fax": "", "email": "info@cec-ong.org", "web": "www.cec-ong.org"}, {"nom": "Coordination des ONG pour les Droits de l'Enfant", "sigle": "CODE", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE EMILE DE BECO  109", "cp": "1050", "localite": "BRUXELLES", "tel": "02/223 75 00", "fax": "", "email": "info@lacode.be", "web": "www.lacode.be"}, {"nom": "Coordination et Initiatives pour Réfugiés et Etrangers", "sigle": "CIRE", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU VIVIER   80-82", "cp": "1050", "localite": "BRUXELLES", "tel": "02/629 77 10", "fax": "02/629 77 33", "email": "cire@cire.be", "web": "www.cire.be"}, {"nom": "Corps écrits", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "PLACE GALILEE  6", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/47 28 61", "fax": "", "email": "info@corps-ecrits.be", "web": "www.corps-ecrits.be"}, {"nom": "Couples et Familles", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE BASSE MARCELLE  26", "cp": "5000", "localite": "NAMUR", "tel": "081/45 02 99", "fax": "", "email": "info@couplesfamilles.be ", "web": "www.couplesfamilles.be"}, {"nom": "Création chez les Handicapés mentaux", "sigle": "CREAHM", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "QUAI SAINT-LEONARD  6", "cp": "4000", "localite": "LIEGE", "tel": "04/227 23 28", "fax": "", "email": "direction@creahm.be", "web": "www.creahm.be"}, {"nom": "Culture & Démocratie", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE COENRAETS  72", "cp": "1060", "localite": "BRUXELLES", "tel": "02/502 12 15", "fax": "", "email": "info@cultureetdemocratie.be", "web": "www.cultureetdemocratie.be"}, {"nom": "Culture & Développement ", "sigle": "C&D", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU BEAU MUR  50", "cp": "4030", "localite": "LIEGE", "tel": "04/358 04 27", "fax": "", "email": "coordination@cultureetdeveloppement.be", "web": "www.cultureetdeveloppement.be"}, {"nom": "Cultures & Santé", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE D'ANDERLECHT  148", "cp": "1000", "localite": "BRUXELLES", "tel": "02/558 88 10", "fax": "02/520 51 04", "email": "info@cultures-sante.be", "web": "www.cultures-sante.be"}, {"nom": "Début des Haricots (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA CROIX DE PIERRE  85", "cp": "1060", "localite": "BRUXELLES", "tel": "02/644 07 77", "fax": "", "email": "ledebut@haricots.org", "web": "www.haricots.org"}, {"nom": "Défense des Enfants International - Belgique", "sigle": "DEI", "reconnaissance": "DECRET 2003", "axes": "3 + 4", "adresse": "RUE MARCHE-AUX-POULETS  30", "cp": "1000", "localite": "BRUXELLES", "tel": "02/203 79 08", "fax": "02/209 61 60", "email": "info@defensedesenfants.be", "web": "www.defensedesenfants.be"}, {"nom": "Dominos la Fontaine", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA STATION  25", "cp": "5500", "localite": "DINANT", "tel": "", "fax": "", "email": "lafontaineasbl@hotmail.be", "web": "www.unlabo.net/dominoslafontaine/"}, {"nom": "D'Une Certaine Gaieté", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "BOULEVARD DE LA SAUVENIERE  97", "cp": "4000", "localite": "LIEGE", "tel": "04/222 12 46", "fax": "04/223 21 26", "email": "info@d1cg.org", "web": "www.d1cg.org"}, {"nom": "éclosio", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PASSAGE DES DEPORTES  2", "cp": "5030", "localite": "GEMBLOUX", "tel": "081/62 25 75", "fax": "081/60 00 22", "email": "info@eclosio.ong", "web": "www.eclosio.ong"}, {"nom": "Ecoconso", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "RUE NANON  98", "cp": "5000", "localite": "NAMUR", "tel": "081/73 07 30", "fax": "081/39 07 90", "email": "info@ecoconso.be", "web": "www.ecoconso.be"}, {"nom": "Ecole paysanne indépendante", "sigle": "EPI", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE D'HANNUT  181", "cp": "5021", "localite": "BONINNE", "tel": "060/51 21 11", "fax": "", "email": "", "web": "lemap.be/L-EPI-ecole-paysanne-independante"}, {"nom": "Ecomusée du Pays des Collines", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE PLADA  6", "cp": "7890", "localite": "ELLEZELLES", "tel": "068/64 51 55", "fax": "068/45 67 37", "email": "info@ecomusee.eu", "web": "www.ecomusee.eu"}, {"nom": "Ecotopie - Laboratoire d'Ecopédagogie", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "RUE FUSCH  3", "cp": "4000", "localite": "LIEGE", "tel": "04/366 38 18", "fax": "04/366 29 24", "email": "info@ecotopie.be", "web": "www.ecotopie.be"}, {"nom": "Education Environnement", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "RUE FUSCH  3", "cp": "4000", "localite": "LIEGE", "tel": "04/250 75 10", "fax": "", "email": "info@education-environnement.be ", "web": "www.education-environnement.be"}, {"nom": "Education Santé Société", "sigle": "ESS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE REMPART DES MOINES  78", "cp": "1000", "localite": "BRUXELLES", "tel": "02/371 31 11", "fax": "", "email": "ess.asbl@croix-rouge.be", "web": "www.ess-asbl.be"}, {"nom": "Emancipe", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "RUE LUTHER  52", "cp": "1000", "localite": "BRUXELLES", "tel": "02/315 79 26", "fax": "", "email": "info@emancipe.be", "web": "www.emancipe.be"}, {"nom": "Enéo", "sigle": "", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "CHAUSSEE DE HAECHT  579/50", "cp": "1031", "localite": "BRUXELLES", "tel": "02/246 46 70", "fax": "02/246 46 77", "email": "info@eneo.be", "web": "www.eneo.be"}, {"nom": "Energie commune", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "RUE FERNAND BERNIER, 15", "cp": "1060", "localite": "BRUXELLES", "tel": "02/218 78 99", "fax": "", "email": "info@energiecommune.be", "web": "www.energiecommune.be"}, {"nom": "Entr'Ages", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "BOULEVARD DE LA REVISION  38", "cp": "1070", "localite": "BRUXELLES", "tel": "02/544 17 87", "fax": "02/544 17 88", "email": "info@entrages.be", "web": "www.entrages.be"}, {"nom": "Entraide et Fraternité", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU GOUVERNEMENT PROVISOIRE  32", "cp": "1000", "localite": "BRUXELLES", "tel": "02/640 84 17", "fax": "", "email": "info@entraide.be", "web": "www.entraide.be"}, {"nom": "Equipes populaires (Les)", "sigle": "EP", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "RUE DU LOMBARD  8/2", "cp": "5000", "localite": "NAMUR", "tel": "081/73 40 86", "fax": "081/74 28 33", "email": "secretariat@equipespopulaires.be", "web": "www.equipespopulaires.be"}, {"nom": "Esenca", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3 + 4", "adresse": "RUE SAINT-JEAN  32-38", "cp": "1000", "localite": "BRUXELLES", "tel": "02/515.02.65", "fax": "", "email": "esenca@solidaris.be", "web": "www.esenca.be"}, {"nom": "Esenca- Liège", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DOUFFET  36", "cp": "4020", "localite": "LIEGE", "tel": "04/341 63 06", "fax": "", "email": "esenca.liege@solidaris.be", "web": "www.esenca.be"}, {"nom": "Esenca - Namur-Philippeville", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE WATERLOO  182", "cp": "5002", "localite": "SAINT-SERVAIS", "tel": "071/66.94.52", "fax": "", "email": "325.esenca@solidaris.be", "web": "www.esenca.be"}, {"nom": "Esenca – Wallonie picarde", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DES NOUVELLES TECHNOLOGIES  24", "cp": "7080", "localite": "FRAMERIES", "tel": "068/84.82.70", "fax": "", "email": "esenca.315@solidaris.be ", "web": "www.esenca.be"}, {"nom": "Espace citoyen du C.T.L. 10", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "", "cp": "7700", "localite": "MOUSCRON", "tel": "", "fax": "", "email": "info@24hmouscron.be", "web": "www.24hmouscron.be"}, {"nom": "Espace Environnement", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE MONTIGNY  29", "cp": "6000", "localite": "CHARLEROI", "tel": "071/30 03 00", "fax": "071/30 02 54", "email": "info@espace-environnement.be", "web": "www.espace-environnement.be"}, {"nom": "Etopia", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "AVENUE DE MARLAGNE  52", "cp": "5000", "localite": "NAMUR", "tel": "081/22 58 48", "fax": "081/23 18 47", "email": "info@etopia.be", "web": "www.etopia.be"}, {"nom": "Eyad - La Maison de Turquie", "sigle": "EYAD", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE HAECHT  75", "cp": "1210", "localite": "BRUXELLES", "tel": "02/218 05 07", "fax": "02/219 10 87", "email": "info@eyadasbl.be", "web": "www.eyadasbl.be"}, {"nom": "Faites-le Autrement", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE TAISNIERES  53", "cp": "7080", "localite": "SARS-LA-BRUYERE", "tel": "065/95 06 43", "fax": "", "email": "faites-le-autrement@hotmail.com", "web": "www.faites-le-autrement.net"}, {"nom": "Fédération des Amis de la Morale laïque", "sigle": "FAML", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE LA CROIX DE FER  60-62", "cp": "1000", "localite": "BRUXELLES", "tel": "02/476 92 83", "fax": "02/476 94 35", "email": "info@faml.be", "web": "www.faml.be"}, {"nom": "Fédération des Associations de Parents de l'Enseignement officiel", "sigle": "FAPEO", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE BOURGOGNE  48", "cp": "1190", "localite": "BRUXELLES", "tel": "02/527 25 75", "fax": "02/527 25 70", "email": "secretariat@fapeo.be", "web": "www.fapeo.be"}, {"nom": "Fédération des Centres pluralistes de Planning familial", "sigle": "FCPPF", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE EMILE DE BECO  109", "cp": "1050", "localite": "BRUXELLES", "tel": "02/514 61 03", "fax": "02/514 61 03", "email": "info@fcppf.be", "web": "www.fcppf.be"}, {"nom": "Fédération des Employeurs des Secteurs de l'Education permanente et de la Formation des Adultes", "sigle": "FESEFA", "reconnaissance": "DECRET 2003", "axes": "Féd. représentative", "adresse": "RUE D'ARENBERG  44", "cp": "1000", "localite": "BRUXELLES", "tel": "02/502 46 73", "fax": "02/502 64 77", "email": "info@fesefa.be", "web": "www.fesefa.be"}, {"nom": "Fédération des Maisons de la Laïcité", "sigle": "FdML", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "ROUTE DE LOUVAIN-LA-NEUVE  4", "cp": "5001", "localite": "BELGRADE", "tel": "081/73 82 99", "fax": "081/73 86 14", "email": "info@fdml.be", "web": "www.fdml.be"}, {"nom": "Fédération des Maisons médicales", "sigle": "FMM", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "BOULEVARD DU MIDI  25/5", "cp": "1000", "localite": "BRUXELLES", "tel": "02/514 40 14", "fax": "02/514 40 04", "email": "ep@fmm.be", "web": "www.maisonmedicale.org"}, {"nom": "Fédération francophone des Sourds de Belgique", "sigle": "FFSB", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE MARNIX  19A/25", "cp": "1000", "localite": "BRUXELLES", "tel": "02/644 69 01", "fax": "02/644 68 44", "email": "info@ffsb.be", "web": "www.ffsb.be"}, {"nom": "Fédération indépendante des Seniors", "sigle": "FIS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "BOULEVARD BAUDOUIN  18", "cp": "1000", "localite": "BRUXELLES", "tel": "02/223 10 00", "fax": "02/217 82 11", "email": "fedindseniors@skynet.be", "web": "www.fedindseniors.be"}, {"nom": "Fédération laïque des Centres de Planning familial", "sigle": "FLCPF", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE LA TULIPE  34", "cp": "1050", "localite": "BRUXELLES", "tel": "02/502 82 03", "fax": "02/503 30 93", "email": "flcpf@planningfamilial.net", "web": "www.planningfamilial.net"}, {"nom": "Fédération Luttes Solidarités Travail", "sigle": "LST", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE PEPIN  27", "cp": "5000", "localite": "NAMUR", "tel": "081/22 15 12", "fax": "081/22 63 59", "email": "federation@mouvement-LST.org", "web": "www.mouvement-lst.org"}, {"nom": "Femmes épanouies et actives", "sigle": "FEZA", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VOGLER  38", "cp": "1030", "localite": "BRUXELLES", "tel": "02/242 36 42", "fax": "", "email": "info@feza-asbl.be", "web": ""}, {"nom": "Financité", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "Mouv. (1;3;4)", "adresse": "RUE BOTANIQUE  75", "cp": "1210", "localite": "BRUXELLES", "tel": "02/340 08 60", "fax": "", "email": "info@financite.be", "web": "www.financite.be"}, {"nom": "Fonderie (La)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE RANSFORT  27", "cp": "1080", "localite": "BRUXELLES", "tel": "02/410 10 80", "fax": "", "email": "info@lafonderie.be", "web": "www.lafonderie.be"}, {"nom": "Food First Information and Action Network - Belgium", "sigle": "FIAN", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE VAN ELEWIJCK  35", "cp": "1050", "localite": "BRUXELLES", "tel": "02/640 84 17", "fax": "", "email": "fian@fian.be", "web": "www.fian.be"}, {"nom": "Form'Action André Renard", "sigle": "FAR", "reconnaissance": "DECRET 2003", "axes": "2 + 3", "adresse": "PLACE SAINT-PAUL  9-11", "cp": "4000", "localite": "LIEGE", "tel": "04/221 96 34", "fax": "04/223 10 11", "email": "info@far.be", "web": "www.far.be"}, {"nom": "Form'Anim", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU PAPILLON   45", "cp": "4100", "localite": "SERAING", "tel": "04/338 16 35", "fax": "04/338 42 53", "email": "info@formanim.be", "web": "www.formanim.be"}, {"nom": "Formation Assistance et Soutien aux Travailleur.euse.s", "sigle": "FAST", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "BOULEVARD BAUDOUIN  11", "cp": "1000", "localite": "BRUXELLES", "tel": "02/558 51 70", "fax": "", "email": "fast@cgslb.be", "web": "www.fast-asbl.be"}, {"nom": "Formation Education Culture", "sigle": "FEC", "reconnaissance": "DECRET 2003", "axes": "1 + 2", "adresse": "CHAUSSEE DE HAECHT  579/50", "cp": "1031", "localite": "BRUXELLES", "tel": "02/246 32 56", "fax": "02/246 30 10", "email": "info@fecasbl.be", "web": "www.fecasbl.be"}, {"nom": "Formation Insertion Jeunes", "sigle": "FIJ", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE FRANZ GAILLIARD  2", "cp": "1060", "localite": "BRUXELLES", "tel": "02/542 01 50", "fax": "02/542 01 59", "email": "fij@fij.be", "web": "www.fij.be"}, {"nom": "Formation Léon Lesoil", "sigle": "FLL", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DE MONTE-CARLO  69", "cp": "1190", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "formationleonlesoil@gmail.com", "web": "www.formationleonlesoil.org"}, {"nom": "Formation pour l'Université ouverte de Charleroi", "sigle": "FUNOC", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DES ALLIES  19", "cp": "6000", "localite": "CHARLEROI", "tel": "071/31 15 81", "fax": "071/33 32 19", "email": "funoc@funoc.be", "web": "www.funoc.be"}, {"nom": "Forum universitaire pour la Coopération internationale au Développement", "sigle": "FUCID", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE BRUXELLES  61", "cp": "5000", "localite": "NAMUR", "tel": "081/72 50 88", "fax": "", "email": "info@fucid-unamur.be", "web": "www.fucid.be"}, {"nom": "Frères des Hommes", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE RENKIN  2", "cp": "1030", "localite": "BRUXELLES", "tel": "02/512 97 94", "fax": "02/511 47 61", "email": "fdhbel@skynet.be", "web": "www.freresdeshommes.org"}, {"nom": "Garance", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE ROYALE  55", "cp": "1000", "localite": "BRUXELLES", "tel": "02/216 61 16", "fax": "02/216 31 16", "email": "info@garance.be", "web": "www.garance.be"}, {"nom": "Grain (Le) - Atelier de Pédagogie sociale", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU MARTEAU  19", "cp": "1000", "localite": "BRUXELLES", "tel": "02/217 94 48", "fax": "02/217 94 48", "email": "info@legrainasbl.org", "web": "www.legrainasbl.org"}, {"nom": "Grignoux (Les)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE SOEURS DE HASQUE  9", "cp": "4000", "localite": "LIEGE", "tel": "04/222 27 78", "fax": "04/222 31 78", "email": "contact@grignoux.be", "web": "www.grignoux.be"}, {"nom": "Groupe Alpha Gembloux", "sigle": "GAGX", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE CHARLEROI  65/1", "cp": "5030", "localite": "GEMBLOUX", "tel": "081/60 06 09", "fax": "", "email": "alphagembloux@gmail.com", "web": "www.alpha-gembloux.be"}, {"nom": "Groupe d'Action sociale et scolaire", "sigle": "GASS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "DEGRES DES TISSERANDS  33", "cp": "4000", "localite": "LIEGE", "tel": "04/226 84 84", "fax": "", "email": "gass.alpha.edd@gmail.com", "web": ""}, {"nom": "Groupe d'Animation de la Basse-Sambre", "sigle": "GABS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES GLACES NATIONALES  142-144", "cp": "5060", "localite": "AUVELAIS", "tel": "071/78 42 71", "fax": "071/78 77 30", "email": "info@gabs.be", "web": "www.gabs.be"}, {"nom": "Groupe de Recherche et d'Action des Cyclistes quotidiens", "sigle": "GRACQ", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LONDRES  15", "cp": "1050", "localite": "BRUXELLES", "tel": "02/502 61 30", "fax": "02/502 61 30", "email": "info@gracq.org", "web": "www.gracq.org"}, {"nom": "Groupe de Recherche et d'Information sur la Paix et la Sécurité", "sigle": "GRIP", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "MUNDO-MADOU, AVENUE DES ARTS  7-8", "cp": "1210", "localite": "BRUXELLES", "tel": "02/241 80 96", "fax": "", "email": "admi@grip.org", "web": "www.grip.org"}, {"nom": "Groupe de Recherche pour une Stratégie économique alternative", "sigle": "GRESEA", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE ROYALE  11", "cp": "1000", "localite": "BRUXELLES", "tel": "02/219 70 76", "fax": "02/219 64 86", "email": "info@gresea.be", "web": "www.gresea.be"}, {"nom": "Groupe de Réflexion et d'Action pour une Pédagogie progressiste et alternative", "sigle": "GRAPPA", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE JARDON  44", "cp": "4800", "localite": "VERVIERS", "tel": "087/35 21 48", "fax": "087/78 51 59", "email": "grappa@skynet.be", "web": "www.asblgrappa.be"}, {"nom": "Groupe de Réflexion et d'Action pour une Politique écologique", "sigle": "GRAPPE", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE RAYMOND NOEL  100", "cp": "5170", "localite": "BOIS DE VILLERS", "tel": "081/23 09 69", "fax": "081/21 29 53", "email": "info@grappebelgique.org", "web": "www.grappebelgique.org"}, {"nom": "Groupe socialiste d'Action et de Réflexion sur l'Audiovisuel", "sigle": "GSARA", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "RUE DU MARTEAU  26", "cp": "1210", "localite": "BRUXELLES", "tel": "02/218 58 85", "fax": "02/217 29 02", "email": "info@gsara.be", "web": "www.gsara.be"}, {"nom": "Habitants des Images", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE L'ASSOCIATION  14", "cp": "1000", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "admin@habitants-des-images.be", "web": "www.habitants-des-images.be"}, {"nom": "Habitat et Participation", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "TRAVERSE D'ESOPE  6", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/45 06 04", "fax": "010/45 65 64", "email": "contact@habitat-participation.be", "web": "www.habitat-participation.be"}, {"nom": "Hispano-Belga", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE FOREST  244-246", "cp": "1060", "localite": "BRUXELLES", "tel": "02/539 19 39", "fax": "", "email": "accueil.hb@hispano-belga.be", "web": "www.hispano-belga.be"}, {"nom": "Humundi", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE AUX LAINES  4", "cp": "1000", "localite": "BRUXELLES", "tel": "02/548 06 70", "fax": "", "email": "info@humundi.org", "web": "www.humundi.org"}, {"nom": "Iles de Paix", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU MARCHE  37", "cp": "4500", "localite": "HUY", "tel": "085/23 02 54", "fax": "", "email": "info@ilesdepaix.org", "web": "www.ilesdepaix.org"}, {"nom": "Inclusion", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "RUE COLONEL BOURG  123-125/6", "cp": "1140", "localite": "BRUXELLES", "tel": "02/247 28 19", "fax": "", "email": "secretariat@inclusion-asbl.be", "web": "www.inclusion-asbl.be"}, {"nom": "Infor Famille EP Liège", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE PITTEURS  8", "cp": "4020", "localite": "LIEGE", "tel": "04/222 45 86", "fax": "", "email": "educationpermanente.liege@inforfamille.be", "web": "www.inforfamille.be"}, {"nom": "Inqlusion", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE MARCHE AU CHARBON  42", "cp": "1000", "localite": "BRUXELLES", "tel": "02/503 59 90", "fax": "02/503 59 90", "email": "info@rainbowhouse.be", "web": "www.rainbowhouse.be"}, {"nom": "Institut de Recherche, de Formation et d'Action sur les Migrations", "sigle": "IRFAM", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE AGIMONT  17", "cp": "4000", "localite": "LIEGE", "tel": "04/221 49 89", "fax": "04/221 49 87", "email": "info@irfam.org", "web": "www.irfam.org"}, {"nom": "Institut d'Histoire ouvrière, économique et sociale", "sigle": "IHOES", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "AVENUE MONTESQUIEU  3", "cp": "4101", "localite": "JEMEPPE-SERAING", "tel": "04/224 60 70", "fax": "04/224 60 71", "email": "info@ihoes.be", "web": "www.ihoes.be"}, {"nom": "Institut Emile Vandervelde", "sigle": "IEV", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "BOULEVARD DE L'EMPEREUR  13", "cp": "1000", "localite": "BRUXELLES", "tel": "02/548 33 18", "fax": "", "email": "iev@iev.be", "web": "www.iev.be"}, {"nom": "Institut kurde de Bruxelles", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE BONNEELS  16", "cp": "1210", "localite": "BRUXELLES", "tel": "02/230 89 30", "fax": "02/231 00 97", "email": "info@kurdishinstitute.be", "web": "www.kurdishinstitute.be"}, {"nom": "Institut libéral de Formation et d'Animation culturelle", "sigle": "ILFAC", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DE LA TOISON D'OR  84-86", "cp": "1060", "localite": "BRUXELLES", "tel": "02/500 50 95", "fax": "02/500 50 96", "email": "info@ilfac.be", "web": "www.ilfac.be"}, {"nom": "Inter-Environnement Bruxelles", "sigle": "IEB", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU CHIMISTE  34-36", "cp": "1070", "localite": "BRUXELLES", "tel": "02/801 14 80", "fax": "", "email": "info@ieb.be", "web": "www.ieb.be"}, {"nom": "La Pensée et les Hommes", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE VICTORIA  5", "cp": "1000", "localite": "BRUXELLES", "tel": "02/640 15 20", "fax": "02/650 35 04      ", "email": "secretariat@lapenseeetleshommes.be", "web": "www.lapenseeetleshommes.be"}, {"nom": "Laïcité Brabant wallon", "sigle": "CAL BW", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE LAMBERT FORTUNE  33", "cp": "1300", "localite": "WAVRE", "tel": "010/22 31 91", "fax": "010/22 72 11", "email": "calbw@laicite.net", "web": "www.calbw.be"}, {"nom": "Lézarts urbains", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA VICTOIRE  102", "cp": "1060", "localite": "BRUXELLES", "tel": "02/538 15 12", "fax": "02/538 42 43", "email": "", "web": "www.lezarts-urbains.be"}, {"nom": "Liages", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "PLACE SAINT-JEAN  1", "cp": "1000", "localite": "BRUXELLES", "tel": "02/515 02 65", "fax": "", "email": "liages@solidaris.be", "web": "www.liages.be"}, {"nom": "Ligue de l'Enseignement et de l'Education permanente", "sigle": "LEEP", "reconnaissance": "DECRET 2003", "axes": "2 + 3", "adresse": "RUE DE LA FONTAINE  2", "cp": "1000", "localite": "BRUXELLES", "tel": "02/511 25 87", "fax": "02/514 26 01", "email": "info@ligue-enseignement.be", "web": "www.ligue-enseignement.be"}, {"nom": "Ligue de l'Enseignement et de l'Education permanente  - Mons-Borinage-Centre", "sigle": "LEEP MBC", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA GRANDE TRIPERIE   44", "cp": "7000", "localite": "MONS", "tel": "065/31 90 14", "fax": "065/31 90 14", "email": "leepmonsbor@yahoo.fr", "web": ""}, {"nom": "Ligue des Droits de l'Enfant", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "HUNDERENVELD  705", "cp": "1082", "localite": "BRUXELLES", "tel": "02/465 98 92", "fax": "", "email": "contact@liguedroitsenfant.be", "web": "www.liguedroitsenfant.be"}, {"nom": "Ligue des Droits humains", "sigle": "LDH", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU BOULET  22", "cp": "1000", "localite": "BRUXELLES", "tel": "02/209 62 80", "fax": "02/209 63 80", "email": "ldh@liguedh.be", "web": "www.liguedh.be"}, {"nom": "Ligue des Familles (La)", "sigle": "", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "AVENUE EMILE DE BECO  109", "cp": "1050", "localite": "BRUXELLES", "tel": "02/507 72 11", "fax": "", "email": "info@liguedesfamilles.be", "web": "www.laligue.be"}, {"nom": "Ligue des Usagers des Services de Santé", "sigle": "LUSS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE SERGENT VRITHOFF   123", "cp": "5000", "localite": "NAMUR", "tel": "081/74 44 28", "fax": "081/74 47 25", "email": "luss@luss.be", "web": "www.luss.be"}, {"nom": "Lire et Ecrire", "sigle": "", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;2;3;4)", "adresse": "RUE DES VETERINAIRES  42/4 BLOC A", "cp": "1070", "localite": "BRUXELLES", "tel": "02/502 72 01", "fax": "02/502 85 56", "email": "lire-et-ecrire@lire-et-ecrire.be", "web": "www.lire-et-ecrire.be"}, {"nom": "Louvain Coopération", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DU GRAND CORTIL  15A", "cp": "1348", "localite": "LOUVAIN-LA-NEUVE", "tel": "010/39 03 00", "fax": "", "email": "info@louvaincooperation.org", "web": "www.louvaincooperation.org"}, {"nom": "Magasins du Monde - OXFAM (Les)", "sigle": "MDM OXFAM", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "RUE PROVINCIALE  285", "cp": "1301", "localite": "BIERGES", "tel": "010/43 79 50", "fax": "010/43 79 69", "email": "info@mdmoxfam.be", "web": "www.oxfammagasinsdumonde.be"}, {"nom": "Maison culturelle belgo-roumaine", "sigle": "ARTHIS", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE FLANDRE  33", "cp": "1000", "localite": "BRUXELLES", "tel": "02/511 34 20", "fax": "02/511 34 20", "email": "info@arthis.org", "web": "www.arthis.org"}, {"nom": "Maison de Quartier d'Helmet", "sigle": "MQH", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "SQUARE RIGA  39", "cp": "1030", "localite": "BRUXELLES", "tel": "02/241 03 27", "fax": "02/245 55 79", "email": "info@mqh.be", "web": "www.maisondequartierhelmet.be"}, {"nom": "Média Animation", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE LA FUSEE  62", "cp": "1130", "localite": "BRUXELLES", "tel": "02/242 57 93", "fax": "02/245 82 80", "email": "info@media-animation.be", "web": "www.media-animation.be"}, {"nom": "Mémoire d'Auschwitz", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE AUX LAINES  17/50", "cp": "1000", "localite": "BRUXELLES", "tel": "02/512 79 98", "fax": "02/512 58 84", "email": "info@auschwitz.be", "web": "www.auschwitz.be"}, {"nom": "Miroir vagabond", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "VIEILLE ROUTE DE MARENNE  2-4", "cp": "6990", "localite": "BOURDON", "tel": "084/31 19 46", "fax": "", "email": "bureau@miroirvagabond.be", "web": "www.miroirvagabond.be"}, {"nom": "Monde des Possibles (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DES CHAMPS  97", "cp": "4020", "localite": "LIEGE", "tel": "04/232 02 92", "fax": "04/232 02 92", "email": "lemondedespossibles@skynet.be", "web": "www.possibles.org"}, {"nom": "Monde selon les Femmes (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "RUE DE LA SABLONNIERE  18", "cp": "1000", "localite": "BRUXELLES", "tel": "02/223 05 12", "fax": "02/223 15 12", "email": "contact@mondefemmes.org", "web": "www.mondefemmes.org"}, {"nom": "Monty (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE CHARLEROI  58", "cp": "1470", "localite": "GENAPPE", "tel": "0492/85 70 72", "fax": "", "email": "info@lemonty.be", "web": "www.lemonty.be"}, {"nom": "Mouvance", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU BROECK  10/3.2", "cp": "1070", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "commu@mouvance-asbl.be", "web": "www.mouvance-asbl.be"}, {"nom": "Mouvement contre le Racisme, l'Antisémitisme et la Xénophobie", "sigle": "MRAX", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA POSTE  37", "cp": "1210", "localite": "BRUXELLES", "tel": "02/209 62 50", "fax": "02/218 23 71", "email": "mrax@mrax.be", "web": "www.mrax.be"}, {"nom": "Natagora", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "TRAVERSE DES MUSES  1", "cp": "5000", "localite": "NAMUR", "tel": "02/893 09 91", "fax": "", "email": "info@natagora.be", "web": "www.natagora.be"}, {"nom": "Nature & Progrès", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE DAVE  520", "cp": "5100", "localite": "JAMBES", "tel": "081/30 36 90", "fax": "081/31 03 06", "email": "info@natpro.be", "web": "www.natpro.be"}, {"nom": "Nature Attitude", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA COMTESSE ADELE  36", "cp": "6721", "localite": "ANLIER", "tel": "063/42 47 27", "fax": "", "email": "info@natureattitude.be", "web": "www.natureattitude.be"}, {"nom": "Nova", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE D'ARENBERG  14", "cp": "1000", "localite": "BRUXELLES", "tel": "02/511 24 77", "fax": "02/511 24 77", "email": "nova@nova-cinema.org", "web": "www.nova-cinema.org"}, {"nom": "Options - Développement communautaire", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE DU CHATELET  7A", "cp": "4960", "localite": "MALMEDY", "tel": "080/33 99 37", "fax": "080/33 93 20", "email": "optionsmalmedy@gmail.com", "web": ""}, {"nom": "Organisme régional d'Education à l'Environnement - Orée (L')", "sigle": "OREE", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE SAINT-GERMAIN  166", "cp": "4861", "localite": "SOIRON", "tel": "0472/78 96 96", "fax": "", "email": "oreeasbl@gmail.com", "web": "www.oreeasbl.worldpress.com"}, {"nom": "Partenariat Intégration Cohabitation de Laeken", "sigle": "PICOL", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "BOULEVARD EMILE BOCKSTAEL  160", "cp": "1020", "localite": "BRUXELLES", "tel": "02/675 05 95", "fax": "", "email": "info@picol.be", "web": "www.picol.be"}, {"nom": "Passe Muraille", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "LOTTO MONS EXPO, HALL A, AVENUE THOMAS EDISON  2", "cp": "7000", "localite": "MONS", "tel": "065/77 03 70", "fax": "065/77 03 73", "email": "info@passe-muraille.be", "web": "www.passe-muraille.be"}, {"nom": "People's Place", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE JEAN-HUBERT CAVENS  49", "cp": "4960", "localite": "MALMEDY", "tel": "080/64 36 93", "fax": "", "email": "info@peoplesplace.be", "web": "www.peoplesplace.be"}, {"nom": "Periferia", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DE LA COLONNE  1", "cp": "1080", "localite": "BRUXELLES", "tel": "02/544 07 93", "fax": "02/411 93 31", "email": "contact@periferia.be", "web": "www.periferia.be"}, {"nom": "Petit Théâtre de la Grande Vie (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU BONNIER  12", "cp": "5580", "localite": "FORZEE", "tel": "083/61 32 60", "fax": "", "email": "petittheatreforzee@gmail.com", "web": "www.lepetittheatredelagrandevie.com/"}, {"nom": "Peuple et Culture - Wallonie et Bruxelles", "sigle": "PEC W-B", "reconnaissance": "DECRET 2003", "axes": "1 + 2", "adresse": "RUE DU BEAU MUR  45", "cp": "4030", "localite": "LIEGE (Grivegnée)", "tel": "04/368 82 32", "fax": "", "email": "info@peuple-et-culture-wb.be", "web": "www.peuple-et-culture-wb.be"}, {"nom": "Pianocktail (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE HAUTE  304", "cp": "1000", "localite": "BRUXELLES", "tel": "02/218 46 34", "fax": "", "email": "lepianocktail.bruxelles@gmail.com", "web": "www.pianocktail.be"}, {"nom": "Piment (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA COLONNE  56", "cp": "1080", "localite": "BRUXELLES", "tel": "02/218 27 29", "fax": "02/219 36 27", "email": "courrier@lepiment.org", "web": "www.lepiment.org"}, {"nom": "Pivot (Le) - Promotion communautaire", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE PHILIPPE BAUCQ  163", "cp": "1040", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "lepivot@lepivot.be", "web": "www.lepivot.be"}, {"nom": "Plate-forme francophone du Volontariat", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "PLACE L'ILON  13", "cp": "5000", "localite": "NAMUR", "tel": "02/512 01 12", "fax": "", "email": "info@levolontariat.be", "web": "www.levolontariat.be"}, {"nom": "Poisson sans Bicyclette (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU PONT NEUF  4", "cp": "1000", "localite": "BRUXELLES", "tel": "", "fax": "", "email": "lepoissonsansbicyclette@gmail.com", "web": "www.lepoissonsansbicyclette.be"}, {"nom": "Politique", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU FAUCON  9", "cp": "1000", "localite": "BRUXELLES", "tel": "02/538 69 96", "fax": "", "email": "info@revuepolitique.be", "web": "www.revuepolitique.be"}, {"nom": "Présence et Action culturelles", "sigle": "PAC", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;2;3;4)", "adresse": "RUE LAMBERT CRICKX  5", "cp": "1070", "localite": "BRUXELLES", "tel": "02/545 79 11", "fax": "02/545 79 29", "email": "info@pac-g.be", "web": "www.pac-g.be"}, {"nom": "Promotion & Culture", "sigle": "P&C", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE SAINT-PAUL  9-11", "cp": "4000", "localite": "LIEGE", "tel": "04/221 95 11", "fax": "04/223 11 44", "email": "info@promotionetculture.be", "web": "www.promotionetculture.be/"}, {"nom": "Qualité Village Wallonie", "sigle": "QVW", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE D'ARGENTEAU  21", "cp": "4601", "localite": "ARGENTEAU", "tel": "04/379 05 01", "fax": "04/379 11 53", "email": "contact@qvw.be", "web": "www.qvw.be"}, {"nom": "Question Santé", "sigle": "QS", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU VIADUC  72", "cp": "1050", "localite": "BRUXELLES", "tel": "02/512 41 74", "fax": "02/512 54 36", "email": "info@questionsante.org", "web": "www.questionsante.org"}, {"nom": "Radio Panik", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE SAINT-JOSSE  49", "cp": "1210", "localite": "BRUXELLES", "tel": "02/732 14 45", "fax": "02/732 14 45", "email": "info@radiopanik.org", "web": "www.radiopanik.org"}, {"nom": "Ras El Hanout", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU RUISSEAU  17-19", "cp": "1080", "localite": "BRUXELLES", "tel": "0488/01 14 11", "fax": "", "email": "info@ras-el-hanout.be", "web": "www.ras-el-hanout.be"}, {"nom": "Rassemblement bruxellois pour le Droit à l'Habitat", "sigle": "RBDH", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "QUAI DU HAINAUT   29", "cp": "1080", "localite": "BRUXELLES", "tel": "02/502 84 63", "fax": "02/503 49 05", "email": "info@rbdh.be", "web": "www.rbdh.be"}, {"nom": "Réalisation Téléformation Animation", "sigle": "RTA", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DES RELIS NAMURWES  1", "cp": "5000", "localite": "NAMUR", "tel": "081/74 67 48", "fax": "081/74 24 73", "email": "info@rta.be", "web": "www.rta.be"}, {"nom": "Rencontre des Continents", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VAN ELEWIJCK  35", "cp": "1050", "localite": "BRUXELLES", "tel": "02/734 23 24", "fax": "", "email": "", "web": "rencontredescontinents.be"}, {"nom": "Réseau de Collectifs en Recherche de Résilience", "sigle": "RCR2", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "PLACE L'ILON  13", "cp": "5000", "localite": "NAMUR", "tel": "0495/79 86 33", "fax": "", "email": "info@asblrcr.be", "web": "www.asblrcr.be"}, {"nom": "Réseau IDée - Information et Diffusion en Education à l'Environnement", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE ROYALE  266", "cp": "1210", "localite": "BRUXELLES", "tel": "02/286 95 70", "fax": "02/286 95 79", "email": "info@reseau-idee.be", "web": "www.reseau-idee.be"}, {"nom": "Réseau wallon de Lutte contre la Pauvreté", "sigle": "RWLP", "reconnaissance": "DECRET 2003", "axes": "1 + 4", "adresse": "RUE MARIE-HENRIETTE  12", "cp": "5000", "localite": "NAMUR", "tel": "081/31 21 17", "fax": "", "email": "bureau@rwlp.be", "web": "www.rwlp.be"}, {"nom": "Revers", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE MAGHIN  76-78", "cp": "4000", "localite": "LIEGE", "tel": "04/227 02 58", "fax": "02/227 02 97", "email": "info@revers.be", "web": "www.revers.be"}, {"nom": "Rue (La)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE RANSFORT  61", "cp": "1080", "localite": "BRUXELLES", "tel": "02/410 33 03", "fax": "02/410 39 85", "email": "info@larueasbl.be", "web": "www.larueasbl.be"}, {"nom": "ScriptaLinea - Collectifs d'Ecrits", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE WAVRE  205", "cp": "1050", "localite": "BRUXELLES", "tel": "02/688 46 90", "fax": "", "email": "info@scriptalinea.org", "web": "www.scriptalinea.org"}, {"nom": "Service d'Intégration et d'Insertion - Missions Actions", "sigle": "SIMA", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE BRIALMONT  21", "cp": "1210", "localite": "BRUXELLES", "tel": "02/219 45 98", "fax": "02/218 38 68", "email": "sima.asbl@skynet.be", "web": "www.simaasbl.be"}, {"nom": "Service international de Recherche, d'Education et d'Action sociale", "sigle": "SIREAS", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU BOULET  26", "cp": "1000", "localite": "BRUXELLES", "tel": "02/274 15 51", "fax": "02/274 15 58", "email": "sireas@sireas.be", "web": "www.sireas.be"}, {"nom": "Service pour la Transformation, l'Innovation et le Changement social", "sigle": "STICS", "reconnaissance": "DECRET 2003", "axes": "2", "adresse": "BOULEVARD LAMBERMONT  32", "cp": "1030", "localite": "BRUXELLES", "tel": "02/414 23 04", "fax": "", "email": "stics@stics.be", "web": "www.stics.be"}, {"nom": "Silex (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE VOOT  82", "cp": "1200", "localite": "BRUXELLES", "tel": "02/762 40 09", "fax": "02/779 15 75", "email": "info@lesilex.be", "web": "www.lesilex.be"}, {"nom": "Sofélia", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "PLACE SAINT-JEAN  1/2", "cp": "1000", "localite": "BRUXELLES", "tel": "02/515 17 68", "fax": "", "email": "sofelia@solidaris.be", "web": "www.sofelia.be"}, {"nom": "Solidarité des Alternatives wallonnes et bruxelloises", "sigle": "SAW-B", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE MONCEAU FONTAINE  42/6", "cp": "6031", "localite": "MONCEAU-SUR-SAMBRE", "tel": "071/53 28 30", "fax": "071/53 28 31", "email": "info@saw-b.be", "web": "www.saw-b.be"}, {"nom": "Solidarité Femmes et Refuge pour Femmes Victimes de Violences", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE L'OLIVE  43", "cp": "7100", "localite": "LA LOUVIERE", "tel": "064/21 33 03", "fax": "064/28 02 41", "email": "solidaritefemmes@skynet.be", "web": "www.solidarite-femmes.be"}, {"nom": "Solidarités nouvelles", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "BOULEVARD. J. BERTRAND  8", "cp": "6000", "localite": "CHARLEROI", "tel": "071/30 36 77", "fax": "071/30 69 50", "email": "sn.secretariat@skynet.be", "web": "www.solidaritesnouvelles.org"}, {"nom": "Soralia", "sigle": "", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;3;4)", "adresse": "PLACE  SAINT-JEAN  1/2", "cp": "1000", "localite": "BRUXELLES", "tel": "02/515 04 01", "fax": "", "email": "soralia@solidaris.be", "web": "www.soralia.be"}, {"nom": "Source", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA SENNE  78", "cp": "1000", "localite": "BRUXELLES", "tel": "02/512 71 75", "fax": "", "email": "info@sourceasbl.be", "web": "www.sourceasbl.be"}, {"nom": "Spirale (La) - Centre des Métiers d'Art", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE NAMUR  22", "cp": "5360", "localite": "NATOYE", "tel": "083/69 07 90", "fax": "", "email": "contact@laspirale.be", "web": "www.laspirale.be"}, {"nom": "Syndicat des Locataires", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "SQUARE ALBERT Ier  32", "cp": "1070", "localite": "BRUXELLES", "tel": "02/522 98 69", "fax": "02/524 18 16", "email": "syndicatdeslocataires@gmail.com", "web": "syndicatdeslocataires.wordpress.com/"}, {"nom": "Télévision du Monde", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DE BRUXELLES  36", "cp": "5000", "localite": "NAMUR", "tel": "081/45 46 68", "fax": "", "email": "tdm@televisiondumonde.be", "web": "www.televisiondumonde.be"}, {"nom": "Tels quels", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "PLACE DE LA LIBERTE  4", "cp": "1000", "localite": "BRUXELLES", "tel": "02/512 45 87", "fax": "02/511 31 48", "email": "info@telsquels.be", "web": "telsquels.be"}, {"nom": "Terre", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE MILMORT  690", "cp": "4040", "localite": "HERSTAL", "tel": "04/240 58 58", "fax": "", "email": "info@groupeterre.org", "web": "www.terre.be"}, {"nom": "Terre-en-vue", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE WAVRE  37", "cp": "5030", "localite": "GEMBLOUX", "tel": "0483/49 22 56", "fax": "", "email": "info@terre-en-vue.be", "web": "www.terre-en-vue.be"}, {"nom": "Territoires de la Mémoire (Les)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "BOULEVARD DE LA SAUVENIERE  33-35", "cp": "4000", "localite": "LIEGE", "tel": "04/232 70 64", "fax": "04/232 70 65", "email": "accueil@territoires-memoire.be", "web": "www.territoires-memoire.be"}, {"nom": "Théâtre de la Parole", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE DU ROUGE-CLOÎTRE  7D", "cp": "1160", "localite": "BRUXELLES", "tel": "02/736 69 50", "fax": "", "email": "info@theatredelaparole.be", "web": "www.theatredelaparole.be"}, {"nom": "Troisième Oeil (Le)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU MONITEUR  18", "cp": "1000", "localite": "BRUXELLES", "tel": "02/427 75 42", "fax": "02/427 75 42", "email": "troisiemeoeil@gmail.com", "web": "www.letroisemeoeil.be"}, {"nom": "Union des Agricultrices wallonnes", "sigle": "UAW", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "CHAUSSEE DE NAMUR  47", "cp": "5030", "localite": "GEMBLOUX", "tel": "081/60 00 60", "fax": "081/60 04 46", "email": "uaw@fwa.be", "web": "uniondesagricultriceswallonnes.be/"}, {"nom": "Union des Progressistes juifs de Belgique", "sigle": "UPJB", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE LA VICTOIRE  61", "cp": "1060", "localite": "BRUXELLES", "tel": "02/537 82 45", "fax": "02/534.66.96", "email": "info@upjb.be", "web": "www.upjb.be"}, {"nom": "Union francophone des Associations de Parents de l'Enseignement catholique", "sigle": "UFAPEC", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "AVENUE DES COMBATTANTS  24", "cp": "1340", "localite": "OTTIGNIES", "tel": "010/42 00 50", "fax": "010/42 00 59", "email": "info@ufapec.be", "web": "www.ufapec.be"}, {"nom": "Université des Femmes", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "RUE DU MERIDIEN  10", "cp": "1210", "localite": "BRUXELLES", "tel": "02/229 38 25", "fax": "02/229 38 53", "email": "info@universitedesfemmes.be", "web": "www.universitedesfemmes.be"}, {"nom": "Urbagora", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "3", "adresse": "RUE SAINT-DENIS  10", "cp": "4000", "localite": "LIEGE", "tel": "", "fax": "", "email": "secretariat@urbagora.be", "web": "urbagora.be"}, {"nom": "Vie féminine", "sigle": "VF", "reconnaissance": "DECRET 2003 (Mvt)", "axes": "Mouv. (1;2;3;4)", "adresse": "RUE DE LA POSTE  111", "cp": "1030", "localite": "BRUXELLES", "tel": "02/227 13 00", "fax": "02/223 04 42", "email": "secretariat-national@viefeminine.be", "web": "www.viefeminine.be"}, {"nom": "Voix de Femmes", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE SAINT-THOMAS  32", "cp": "4000", "localite": "LIEGE", "tel": "04/257 48 14", "fax": "", "email": "contact@voixdefemmes.org", "web": "www.voixdefemmes.org"}, {"nom": "Voix des Femmes (La)", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DE L'ALLIANCE  18", "cp": "1210", "localite": "BRUXELLES", "tel": "02/218 77 87", "fax": "02/219 60 85", "email": "lvdf@lavoixdesfemmes.org", "web": "www.lavoixdesfemmes.org"}, {"nom": "Wolu-Inter-Quartiers", "sigle": "WIQ", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "AVENUE DU CAPRICORNE  1A", "cp": "1200", "localite": "BRUXELLES", "tel": "02/762 39 44", "fax": "02/762 39 44", "email": "info@wiq.be", "web": "wiq.be"}, {"nom": "WWF - Belgique", "sigle": "WWF", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "BOULEVARD EMILE JACQMAIN  90", "cp": "1000", "localite": "BRUXELLES", "tel": "02/340 09 99", "fax": "02/340 09 77", "email": "events@wwf.be", "web": "www.wwf.be"}, {"nom": "Z - Les Amis d'Esperanzah", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "4", "adresse": "RUE CELESTIN HASTIR  105", "cp": "5150", "localite": "FLOREFFE", "tel": "081/44 15 18", "fax": "", "email": "info@esperanzah.be", "web": "www.esperanzah.be"}, {"nom": "Zéphyr", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1", "adresse": "RUE DU COLLEGE  31", "cp": "4600", "localite": "VISE", "tel": "04/374 31 45", "fax": "", "email": "info@zephyr-formation.be", "web": "zephyr-formation.be"}, {"nom": "Zin TV", "sigle": "", "reconnaissance": "DECRET 2003", "axes": "1 + 3", "adresse": "CHAUSSEE DE JETTE  407", "cp": "1090", "localite": "BRUXELLES", "tel": "02/318 41 49", "fax": "", "email": "contact@zintv.org", "web": "www.zintv.org"}];
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

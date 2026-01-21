@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Bibliothèque — Ressources & Documentation</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --bleu: #74b9ff;
+            --rouge: #ff6b6b;
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .app-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 800px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--vert);
+            margin-bottom: 2rem;
+        }
+        
+        .nav-section { margin-bottom: 1.5rem; }
+        
+        .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+        .nav-item.active { background: var(--vert-dim); color: var(--vert); }
+        
+        .nav-item .count {
+            margin-left: auto;
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 100px;
+        }
+        
+        .folder-item {
+            padding-left: 1.5rem;
+        }
+        
+        .add-folder-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .add-folder-btn:hover { color: var(--vert); }
+        
+        .sidebar-stats {
+            margin-top: auto;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+        
+        .stat-row:last-child { margin-bottom: 0; }
+        .stat-row .value { color: var(--vert); font-weight: 600; }
+        
+        /* Main */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .main-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover { background: #7ed87e; }
+        
+        /* Search & Filters */
+        .search-bar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-chip {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .filter-chip:hover { border-color: var(--lilas); color: var(--lilas); }
+        .filter-chip.active { background: var(--lilas); border-color: var(--lilas); color: var(--bg); }
+        
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        
+        .resource-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .resource-card:hover {
+            border-color: var(--vert);
+            transform: translateY(-2px);
+        }
+        
+        .resource-preview {
+            height: 120px;
+            background: var(--bg-input);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            opacity: 0.5;
+        }
+        
+        .resource-body {
+            padding: 1rem;
+        }
+        
+        .resource-type {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .type-link { background: var(--bleu); color: var(--bg); }
+        .type-doc { background: var(--lilas); color: var(--bg); }
+        .type-video { background: var(--rouge); color: white; }
+        .type-image { background: var(--orange); color: var(--bg); }
+        .type-pdf { background: #e74c3c; color: white; }
+        .type-note { background: var(--vert); color: var(--bg); }
+        
+        .resource-title {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .resource-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .resource-tags {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .resource-tag {
+            padding: 0.15rem 0.4rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 0.65rem;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .resource-card:hover .resource-actions { opacity: 1; }
+        
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .action-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+        
+        /* List View */
+        .resources-list {
+            display: none;
+        }
+        
+        .resources-list.active { display: block; }
+        .resources-grid.hidden { display: none; }
+        
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .list-item:hover {
+            border-color: var(--vert);
+        }
+        
+        .list-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .list-info { flex: 1; }
+        
+        .list-title { font-weight: 500; margin-bottom: 0.2rem; }
+        
+        .list-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal-overlay.show { display: flex; }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body { padding: 1.5rem; }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .type-btn {
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .type-btn:hover { background: rgba(255,255,255,0.05); }
+        .type-btn.active { background: var(--vert-dim); border-color: var(--vert); color: var(--vert); }
+        
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-height: 44px;
+        }
+        
+        .tags-input:focus-within { border-color: var(--vert); }
+        
+        .tag-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--lilas-dim);
+            color: var(--lilas);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .tag-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+        
+        .tags-input input {
+            flex: 1;
+            min-width: 100px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        .tags-input input:focus { outline: none; }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--vert);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.show { transform: translateY(0); opacity: 1; }
+        
+        /* View toggle */
+        .view-toggle {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .view-btn {
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .view-btn.active {
+            background: var(--vert);
+            color: var(--bg);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">📚 Bibliothèque</div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Navigation</div>
+                <div class="nav-item active" data-filter="all" onclick="setFilter('all')">
+                    <span>📁</span> Tout
+                    <span class="count" id="countAll">0</span>
+                </div>
+                <div class="nav-item" data-filter="recent" onclick="setFilter('recent')">
+                    <span>🕐</span> Récents
+                </div>
+                <div class="nav-item" data-filter="favorites" onclick="setFilter('favorites')">
+                    <span>⭐</span> Favoris
+                    <span class="count" id="countFavorites">0</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Types</div>
+                <div class="nav-item" data-filter="link" onclick="setFilter('link')">
+                    <span>🔗</span> Liens
+                </div>
+                <div class="nav-item" data-filter="doc" onclick="setFilter('doc')">
+                    <span>📄</span> Documents
+                </div>
+                <div class="nav-item" data-filter="video" onclick="setFilter('video')">
+                    <span>🎬</span> Vidéos
+                </div>
+                <div class="nav-item" data-filter="note" onclick="setFilter('note')">
+                    <span>📝</span> Notes
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Dossiers</div>
+                <div id="foldersList"></div>
+                <div class="add-folder-btn" onclick="addFolder()">
+                    <span>+</span> Nouveau dossier
+                </div>
+            </div>
+            
+            <div class="sidebar-stats">
+                <div class="stat-row">
+                    <span>Total ressources</span>
+                    <span class="value" id="totalResources">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Tags utilisés</span>
+                    <span class="value" id="totalTags">0</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main -->
+        <main class="main-content">
+            <div class="main-header">
+                <h1 class="main-title" id="viewTitle">Toutes les ressources</h1>
+                <div class="header-actions">
+                    <div class="view-toggle">
+                        <button class="view-btn active" onclick="setView('grid')">▦</button>
+                        <button class="view-btn" onclick="setView('list')">☰</button>
+                    </div>
+                    <button class="btn" onclick="exportResources()">📤</button>
+                    <button class="btn" onclick="importResources()">📥</button>
+                    <button class="btn btn-primary" onclick="openAddModal()">+ Ajouter</button>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Rechercher par titre, tag, description..." oninput="handleSearch()">
+            </div>
+            
+            <div class="filter-chips" id="tagFilters">
+                <!-- Generated from tags -->
+            </div>
+            
+            <div class="resources-grid" id="resourcesGrid">
+                <!-- Generated -->
+            </div>
+            
+            <div class="resources-list" id="resourcesList">
+                <!-- Generated -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="resourceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouvelle ressource</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <div class="type-grid">
+                        <button class="type-btn active" data-type="link" onclick="setResourceType('link')">🔗 Lien</button>
+                        <button class="type-btn" data-type="doc" onclick="setResourceType('doc')">📄 Document</button>
+                        <button class="type-btn" data-type="video" onclick="setResourceType('video')">🎬 Vidéo</button>
+                        <button class="type-btn" data-type="pdf" onclick="setResourceType('pdf')">📕 PDF</button>
+                        <button class="type-btn" data-type="image" onclick="setResourceType('image')">🖼️ Image</button>
+                        <button class="type-btn" data-type="note" onclick="setResourceType('note')">📝 Note</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Titre</label>
+                    <input type="text" class="form-input" id="resourceTitle" placeholder="Titre de la ressource">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">URL (optionnel)</label>
+                    <input type="url" class="form-input" id="resourceUrl" placeholder="https://...">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" id="resourceDesc" rows="3" placeholder="Description..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tags (appuyez Entrée pour ajouter)</label>
+                    <div class="tags-input" id="tagsInput">
+                        <input type="text" id="tagInput" placeholder="Ajouter un tag...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Dossier (optionnel)</label>
+                    <select class="form-input" id="resourceFolder">
+                        <option value="">Aucun dossier</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="resourceFavorite">
+                        <span>⭐ Ajouter aux favoris</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="deleteResource()" id="deleteBtn" style="color: var(--rouge); display: none;">Supprimer</button>
+                <button class="btn" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="saveResource()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Importer des ressources</h3>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="file" class="form-input" id="importFile" accept=".json" style="margin-bottom: 1rem;">
+                <textarea class="form-input" id="importJson" rows="4" placeholder="Ou collez le JSON..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeImportModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="processImport()">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Type icons
+        const typeIcons = {
+            link: '🔗',
+            doc: '📄',
+            video: '🎬',
+            pdf: '📕',
+            image: '🖼️',
+            note: '📝'
+        };
+        
+        // State
+        let resources = [];
+        let folders = [];
+        let currentFilter = 'all';
+        let currentView = 'grid';
+        let searchQuery = '';
+        let selectedTagFilter = null;
+        let editingId = null;
+        let selectedType = 'link';
+        let currentTags = [];
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupTagInput();
+        });
+        
+        // Data
+        function loadData() {
+            const saved = localStorage.getItem('resourceLibrary');
+            if (saved) {
+                const data = JSON.parse(saved);
+                resources = data.resources || [];
+                folders = data.folders || [];
+            }
+            render();
+        }
+        
+        function saveData() {
+            localStorage.setItem('resourceLibrary', JSON.stringify({ resources, folders }));
+            render();
+        }
+        
+        // Tag input
+        function setupTagInput() {
+            const input = document.getElementById('tagInput');
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && input.value.trim()) {
+                    e.preventDefault();
+                    const tag = input.value.trim().toLowerCase();
+                    if (!currentTags.includes(tag)) {
+                        currentTags.push(tag);
+                        renderCurrentTags();
+                    }
+                    input.value = '';
+                }
+            });
+        }
+        
+        function renderCurrentTags() {
+            const container = document.getElementById('tagsInput');
+            const input = document.getElementById('tagInput');
+            
+            // Remove existing chips
+            container.querySelectorAll('.tag-chip').forEach(c => c.remove());
+            
+            // Add chips before input
+            currentTags.forEach((tag, i) => {
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+                chip.innerHTML = `${tag} <button onclick="removeCurrentTag(${i})">×</button>`;
+                container.insertBefore(chip, input);
+            });
+        }
+        
+        function removeCurrentTag(index) {
+            currentTags.splice(index, 1);
+            renderCurrentTags();
+        }
+        
+        // Filters
+        function setFilter(filter) {
+            currentFilter = filter;
+            selectedTagFilter = null;
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.filter === filter);
+            });
+            
+            // Update title
+            const titles = {
+                all: 'Toutes les ressources',
+                recent: 'Ajoutés récemment',
+                favorites: 'Favoris',
+                link: 'Liens',
+                doc: 'Documents',
+                video: 'Vidéos',
+                note: 'Notes'
+            };
+            document.getElementById('viewTitle').textContent = titles[filter] || 'Ressources';
+            
+            render();
+        }
+        
+        function setTagFilter(tag) {
+            selectedTagFilter = selectedTagFilter === tag ? null : tag;
+            render();
+        }
+        
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            render();
+        }
+        
+        // View
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === (view === 'grid' ? '▦' : '☰'));
+            });
+            document.getElementById('resourcesGrid').classList.toggle('hidden', view === 'list');
+            document.getElementById('resourcesList').classList.toggle('active', view === 'list');
+        }
+        
+        // Render
+        function render() {
+            renderResources();
+            renderFolders();
+            renderTagFilters();
+            renderStats();
+        }
+        
+        function renderResources() {
+            let filtered = [...resources];
+            
+            // Apply filters
+            if (currentFilter === 'recent') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                filtered = filtered.slice(0, 20);
+            } else if (currentFilter === 'favorites') {
+                filtered = filtered.filter(r => r.favorite);
+            } else if (['link', 'doc', 'video', 'note', 'pdf', 'image'].includes(currentFilter)) {
+                filtered = filtered.filter(r => r.type === currentFilter);
+            } else if (currentFilter.startsWith('folder:')) {
+                const folderId = currentFilter.replace('folder:', '');
+                filtered = filtered.filter(r => r.folder === folderId);
+            }
+            
+            // Tag filter
+            if (selectedTagFilter) {
+                filtered = filtered.filter(r => r.tags?.includes(selectedTagFilter));
+            }
+            
+            // Search
+            if (searchQuery) {
+                filtered = filtered.filter(r => 
+                    r.title.toLowerCase().includes(searchQuery) ||
+                    r.description?.toLowerCase().includes(searchQuery) ||
+                    r.tags?.some(t => t.includes(searchQuery))
+                );
+            }
+            
+            // Grid view
+            const grid = document.getElementById('resourcesGrid');
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📚</div>
+                        <h3>Aucune ressource</h3>
+                        <p>Ajoutez votre première ressource</p>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = filtered.map(r => `
+                    <div class="resource-card" onclick="openResource('${r.id}')">
+                        <div class="resource-preview">${typeIcons[r.type] || '📄'}</div>
+                        <div class="resource-body">
+                            <span class="resource-type type-${r.type}">${r.type}</span>
+                            <h3 class="resource-title">${escapeHtml(r.title)}</h3>
+                            <p class="resource-desc">${escapeHtml(r.description || '')}</p>
+                            <div class="resource-meta">
+                                <div class="resource-tags">
+                                    ${(r.tags || []).slice(0, 3).map(t => `<span class="resource-tag">${t}</span>`).join('')}
+                                </div>
+                                <div class="resource-actions">
+                                    ${r.favorite ? '<span>⭐</span>' : ''}
+                                    <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite('${r.id}')">${r.favorite ? '★' : '☆'}</button>
+                                    <button class="action-btn" onclick="event.stopPropagation(); openEditModal('${r.id}')">✏️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // List view
+            const list = document.getElementById('resourcesList');
+            list.innerHTML = filtered.map(r => `
+                <div class="list-item" onclick="openResource('${r.id}')">
+                    <div class="list-icon">${typeIcons[r.type] || '📄'}</div>
+                    <div class="list-info">
+                        <div class="list-title">${escapeHtml(r.title)}</div>
+                        <div class="list-meta">
+                            ${r.tags?.slice(0, 3).join(', ') || 'Pas de tags'}
+                            ${r.favorite ? ' ⭐' : ''}
+                        </div>
+                    </div>
+                    <button class="action-btn" onclick="event.stopPropagation(); openEditModal('${r.id}')">✏️</button>
+                </div>
+            `).join('');
+        }
+        
+        function renderFolders() {
+            const list = document.getElementById('foldersList');
+            list.innerHTML = folders.map(f => `
+                <div class="nav-item folder-item ${currentFilter === 'folder:' + f.id ? 'active' : ''}" 
+                     data-filter="folder:${f.id}" 
+                     onclick="setFilter('folder:${f.id}')">
+                    <span>📂</span> ${escapeHtml(f.name)}
+                    <span class="count">${resources.filter(r => r.folder === f.id).length}</span>
+                </div>
+            `).join('');
+            
+            // Update folder dropdown
+            const select = document.getElementById('resourceFolder');
+            select.innerHTML = '<option value="">Aucun dossier</option>' + 
+                folders.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+        }
+        
+        function renderTagFilters() {
+            const container = document.getElementById('tagFilters');
+            const allTags = [...new Set(resources.flatMap(r => r.tags || []))].sort();
+            
+            container.innerHTML = allTags.slice(0, 15).map(tag => `
+                <button class="filter-chip ${selectedTagFilter === tag ? 'active' : ''}" 
+                        onclick="setTagFilter('${tag}')">${tag}</button>
+            `).join('');
+        }
+        
+        function renderStats() {
+            document.getElementById('countAll').textContent = resources.length;
+            document.getElementById('countFavorites').textContent = resources.filter(r => r.favorite).length;
+            document.getElementById('totalResources').textContent = resources.length;
+            document.getElementById('totalTags').textContent = [...new Set(resources.flatMap(r => r.tags || []))].length;
+        }
+        
+        // Open resource
+        function openResource(id) {
+            const resource = resources.find(r => r.id === id);
+            if (!resource) return;
+            
+            if (resource.url) {
+                window.open(resource.url, '_blank');
+            } else {
+                openEditModal(id);
+            }
+        }
+        
+        // Modal
+        function openAddModal() {
+            editingId = null;
+            selectedType = 'link';
+            currentTags = [];
+            
+            document.getElementById('modalTitle').textContent = 'Nouvelle ressource';
+            document.getElementById('resourceTitle').value = '';
+            document.getElementById('resourceUrl').value = '';
+            document.getElementById('resourceDesc').value = '';
+            document.getElementById('resourceFolder').value = '';
+            document.getElementById('resourceFavorite').checked = false;
+            document.getElementById('deleteBtn').style.display = 'none';
+            
+            updateTypeButtons();
+            renderCurrentTags();
+            
+            document.getElementById('resourceModal').classList.add('show');
+        }
+        
+        function openEditModal(id) {
+            const resource = resources.find(r => r.id === id);
+            if (!resource) return;
+            
+            editingId = id;
+            selectedType = resource.type;
+            currentTags = resource.tags ? [...resource.tags] : [];
+            
+            document.getElementById('modalTitle').textContent = 'Modifier la ressource';
+            document.getElementById('resourceTitle').value = resource.title;
+            document.getElementById('resourceUrl').value = resource.url || '';
+            document.getElementById('resourceDesc').value = resource.description || '';
+            document.getElementById('resourceFolder').value = resource.folder || '';
+            document.getElementById('resourceFavorite').checked = resource.favorite || false;
+            document.getElementById('deleteBtn').style.display = 'block';
+            
+            updateTypeButtons();
+            renderCurrentTags();
+            
+            document.getElementById('resourceModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('resourceModal').classList.remove('show');
+        }
+        
+        function setResourceType(type) {
+            selectedType = type;
+            updateTypeButtons();
+        }
+        
+        function updateTypeButtons() {
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === selectedType);
+            });
+        }
+        
+        // Save
+        function saveResource() {
+            const title = document.getElementById('resourceTitle').value.trim();
+            if (!title) {
+                showToast('Le titre est requis');
+                return;
+            }
+            
+            const resource = {
+                id: editingId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                type: selectedType,
+                title,
+                url: document.getElementById('resourceUrl').value.trim() || null,
+                description: document.getElementById('resourceDesc').value.trim() || null,
+                tags: currentTags,
+                folder: document.getElementById('resourceFolder').value || null,
+                favorite: document.getElementById('resourceFavorite').checked,
+                createdAt: editingId ? resources.find(r => r.id === editingId)?.createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            if (editingId) {
+                const idx = resources.findIndex(r => r.id === editingId);
+                resources[idx] = resource;
+            } else {
+                resources.unshift(resource);
+            }
+            
+            saveData();
+            closeModal();
+            showToast(editingId ? 'Ressource mise à jour' : 'Ressource ajoutée');
+        }
+        
+        function deleteResource() {
+            if (!editingId || !confirm('Supprimer cette ressource ?')) return;
+            resources = resources.filter(r => r.id !== editingId);
+            saveData();
+            closeModal();
+            showToast('Ressource supprimée');
+        }
+        
+        // Toggle favorite
+        function toggleFavorite(id) {
+            const resource = resources.find(r => r.id === id);
+            if (resource) {
+                resource.favorite = !resource.favorite;
+                saveData();
+            }
+        }
+        
+        // Folders
+        function addFolder() {
+            const name = prompt('Nom du dossier :');
+            if (!name?.trim()) return;
+            
+            folders.push({
+                id: Date.now().toString(36),
+                name: name.trim()
+            });
+            saveData();
+            showToast('Dossier créé');
+        }
+        
+        // Export/Import
+        function exportResources() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                resources,
+                folders
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bibliotheque_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Bibliothèque exportée');
+        }
+        
+        function importResources() {
+            document.getElementById('importModal').classList.add('show');
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+        }
+        
+        function processImport() {
+            const fileInput = document.getElementById('importFile');
+            const jsonInput = document.getElementById('importJson').value.trim();
+            
+            const process = (data) => {
+                if (data.resources) {
+                    resources = [...resources, ...data.resources];
+                }
+                if (data.folders) {
+                    folders = [...folders, ...data.folders];
+                }
+                saveData();
+                closeImportModal();
+                showToast(`${data.resources?.length || 0} ressources importées`);
+            };
+            
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try { process(JSON.parse(e.target.result)); }
+                    catch { showToast('Fichier invalide'); }
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else if (jsonInput) {
+                try { process(JSON.parse(jsonInput)); }
+                catch { showToast('JSON invalide'); }
+            }
+        }
+        
+        // Utilities
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

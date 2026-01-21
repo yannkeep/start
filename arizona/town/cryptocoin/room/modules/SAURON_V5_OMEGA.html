@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAURON V5 OMEGA - CONQUEST EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --bg-primary: #050508;
+            --bg-secondary: #0a0a12;
+            --bg-tertiary: #12121f;
+            --bg-card: #1a1a2e;
+            --cyan: #00ffff;
+            --magenta: #ff00ff;
+            --gold: #ffd700;
+            --green: #00ff88;
+            --orange: #ff6b35;
+            --red: #ff3366;
+            --purple: #9966ff;
+            --blue: #3399ff;
+            --legendary: linear-gradient(135deg, #ffd700, #ff6b35, #ff3366, #9966ff, #3399ff, #00ff88);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* PARTICLES */
+        #particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--cyan);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0); opacity: 0; }
+            10%, 90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* HEADER HUD */
+        .hud-header {
+            background: linear-gradient(180deg, var(--bg-secondary), transparent);
+            padding: 15px 25px;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: 25px;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,255,255,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+        }
+        .avatar-container {
+            position: relative;
+            width: 65px; height: 65px;
+            cursor: pointer;
+        }
+        .avatar-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: var(--legendary);
+            animation: ring-spin 4s linear infinite;
+        }
+        @keyframes ring-spin { to { transform: rotate(360deg); } }
+        .avatar-inner {
+            position: absolute;
+            inset: 4px;
+            background: var(--bg-card);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            z-index: 1;
+        }
+        .player-info h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .class-badge {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            background: rgba(255,0,255,0.3);
+            border-radius: 15px;
+            color: var(--magenta);
+            font-family: 'Rajdhani';
+        }
+        .player-title {
+            font-size: 0.8rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .xp-bar-container { margin-top: 8px; }
+        .xp-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 3px;
+        }
+        .xp-bar {
+            width: 220px;
+            height: 14px;
+            background: var(--bg-tertiary);
+            border-radius: 7px;
+            overflow: hidden;
+            position: relative;
+        }
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            border-radius: 7px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        .xp-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0 0 50% 0;
+            background: rgba(255,255,255,0.25);
+        }
+        .xp-glow {
+            position: absolute;
+            right: -5px; top: 50%;
+            transform: translateY(-50%);
+            width: 20px; height: 20px;
+            background: var(--cyan);
+            border-radius: 50%;
+            filter: blur(8px);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .resources {
+            display: flex;
+            gap: 15px;
+        }
+        .resource {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 15px;
+            background: var(--bg-card);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .resource-icon { font-size: 1.3rem; }
+        .resource-value {
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+        }
+        .resource.influence .resource-value { color: var(--cyan); }
+        .resource.power .resource-value { color: var(--magenta); }
+        .resource.reputation .resource-value { color: var(--gold); }
+
+        .streak-combo {
+            display: flex;
+            gap: 12px;
+        }
+        .streak, .combo {
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .streak {
+            background: linear-gradient(135deg, var(--orange), var(--red));
+            animation: streak-pulse 2s infinite;
+        }
+        .combo {
+            background: linear-gradient(135deg, var(--purple), var(--magenta));
+        }
+        @keyframes streak-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* NAV */
+        nav {
+            display: flex;
+            gap: 5px;
+            padding: 12px 20px;
+            background: var(--bg-secondary);
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(0,255,255,0.1);
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: #666;
+            font-family: 'Rajdhani';
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .nav-btn:hover { color: var(--cyan); background: rgba(0,255,255,0.05); }
+        .nav-btn.active { color: var(--cyan); background: rgba(0,255,255,0.1); border-color: var(--cyan); }
+        .nav-btn .notif {
+            position: absolute;
+            top: 5px; right: 5px;
+            width: 8px; height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        /* MAIN */
+        main {
+            padding: 25px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .tab { display: none; animation: fadeIn 0.3s; }
+        .tab.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .section-title::before, .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .section-title::before { right: calc(50% + 150px); }
+        .section-title::after { left: calc(50% + 150px); }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--legendary);
+        }
+        .card-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* COMMAND CENTER GRID */
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .stat-huge {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: var(--legendary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CLASS SELECTION */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .class-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .class-card::before {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .class-card:hover::before { opacity: 1; }
+        .class-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .class-card.selected { border-color: var(--gold); box-shadow: 0 0 60px rgba(255,215,0,0.3); }
+        .class-card.strategist { --class-color: var(--blue); }
+        .class-card.diplomat { --class-color: var(--green); }
+        .class-card.infiltrator { --class-color: var(--purple); }
+        .class-card.propagandist { --class-color: var(--orange); }
+        .class-icon {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 25px var(--class-color));
+        }
+        .class-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--class-color);
+            margin-bottom: 12px;
+        }
+        .class-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .class-bonuses {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .bonus {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--green);
+        }
+        .bonus::before { content: '▸'; color: var(--class-color); }
+
+        /* SKILL TREE */
+        .skill-container {
+            background: radial-gradient(circle at center, rgba(0,255,255,0.05), transparent 70%);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 500px;
+        }
+        .skill-points-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .skill-points-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            color: var(--gold);
+        }
+        .skill-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+        .skill-tier {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .skill-node {
+            width: 85px; height: 85px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .skill-node:hover { transform: scale(1.15); z-index: 10; }
+        .skill-node.unlocked {
+            border-color: var(--cyan);
+            box-shadow: 0 0 25px rgba(0,255,255,0.5);
+            background: rgba(0,255,255,0.15);
+        }
+        .skill-node.available {
+            border-color: var(--gold);
+            animation: available-glow 2s infinite;
+        }
+        @keyframes available-glow {
+            0%,100% { box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+            50% { box-shadow: 0 0 35px rgba(255,215,0,0.6); }
+        }
+        .skill-node.locked { opacity: 0.35; filter: grayscale(1); cursor: not-allowed; }
+        .skill-tooltip {
+            position: absolute;
+            bottom: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            padding: 18px;
+            width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 100;
+            pointer-events: none;
+            text-align: left;
+        }
+        .skill-node:hover .skill-tooltip { opacity: 1; visibility: visible; }
+        .skill-tooltip h4 {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyan);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .skill-tooltip p { font-size: 0.85rem; color: #aaa; margin-bottom: 10px; }
+        .skill-tooltip .cost { font-size: 0.8rem; color: var(--gold); }
+
+        /* QUESTS */
+        .quests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .quest-category {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .quest-cat-header {
+            padding: 18px 22px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quest-category.main .quest-cat-header { background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.2)); color: var(--gold); }
+        .quest-category.side .quest-cat-header { background: linear-gradient(135deg, rgba(51,153,255,0.2), rgba(0,255,255,0.2)); color: var(--blue); }
+        .quest-category.daily .quest-cat-header { background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,255,255,0.2)); color: var(--green); }
+        .quest-category.epic .quest-cat-header { background: var(--legendary); color: #fff; }
+        .quest-list {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .quest-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        .quest-item:hover { background: rgba(0,255,255,0.1); transform: translateX(5px); }
+        .quest-item.active { border-left-color: var(--cyan); }
+        .quest-item.completed { opacity: 0.5; border-left-color: var(--green); }
+        .quest-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quest-desc { font-size: 0.9rem; color: #888; margin-bottom: 12px; }
+        .quest-progress {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .quest-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .quest-rewards {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .quest-reward {
+            padding: 4px 10px;
+            background: rgba(255,215,0,0.15);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--gold);
+        }
+
+        /* TERRITORY MAP */
+        .territory-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
+            min-height: 600px;
+        }
+        #map {
+            border-radius: 15px;
+            border: 2px solid rgba(0,255,255,0.3);
+            overflow: hidden;
+        }
+        .terr-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .terr-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .terr-stat {
+            text-align: center;
+            padding: 18px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+        .terr-stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .terr-stat-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .conquest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .conquest-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .conquest-name { flex: 1; font-weight: 500; }
+        .conquest-bar {
+            width: 80px;
+            height: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .conquest-fill { height: 100%; border-radius: 5px; transition: width 0.5s; }
+        .conquest-fill.controlled { background: var(--green); }
+        .conquest-fill.contested { background: var(--orange); }
+        .conquest-fill.hostile { background: var(--red); }
+
+        /* REPUTATION */
+        .rep-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .rep-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        .rep-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+        }
+        .rep-card.bruxelles::before { background: var(--cyan); }
+        .rep-card.wallonie::before { background: var(--green); }
+        .rep-card.axe1::before { background: var(--blue); }
+        .rep-card.axe2::before { background: var(--green); }
+        .rep-card.axe3::before { background: var(--orange); }
+        .rep-card.axe4::before { background: var(--magenta); }
+        .rep-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .rep-icon {
+            width: 65px; height: 65px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .rep-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+        }
+        .rep-rank {
+            font-size: 0.9rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .rep-bar {
+            height: 14px;
+            background: var(--bg-tertiary);
+            border-radius: 7px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .rep-fill { height: 100%; border-radius: 7px; transition: width 0.5s; }
+        .rep-milestones {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .rep-rewards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .rep-reward {
+            padding: 6px 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 18px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .rep-reward.unlocked { background: rgba(0,255,136,0.2); color: var(--green); }
+
+        /* SHOP */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 22px;
+        }
+        .shop-item {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .shop-item:hover { transform: translateY(-5px); border-color: rgba(255,215,0,0.5); }
+        .shop-item.common { --item-color: #888; }
+        .shop-item.rare { --item-color: var(--blue); }
+        .shop-item.epic { --item-color: var(--purple); }
+        .shop-item.legendary { --item-color: var(--gold); }
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--item-color);
+        }
+        .shop-rarity {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--item-color);
+            margin-bottom: 12px;
+        }
+        .shop-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px var(--item-color));
+        }
+        .shop-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .shop-desc {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 18px;
+        }
+        .shop-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--gold);
+        }
+        .shop-owned {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: var(--green);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* LEADERBOARD */
+        .lb-container { max-width: 850px; margin: 0 auto; }
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 25px;
+            margin-bottom: 45px;
+        }
+        .podium-place {
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            background: var(--bg-card);
+        }
+        .podium-place.first {
+            order: 2;
+            transform: scale(1.12);
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), var(--bg-card));
+            border: 2px solid var(--gold);
+        }
+        .podium-place.second {
+            order: 1;
+            background: linear-gradient(135deg, rgba(192,192,192,0.2), var(--bg-card));
+            border: 2px solid #c0c0c0;
+        }
+        .podium-place.third {
+            order: 3;
+            background: linear-gradient(135deg, rgba(205,127,50,0.2), var(--bg-card));
+            border: 2px solid #cd7f32;
+        }
+        .podium-rank {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+        }
+        .podium-place.first .podium-rank { color: var(--gold); }
+        .podium-place.second .podium-rank { color: #c0c0c0; }
+        .podium-place.third .podium-rank { color: #cd7f32; }
+        .podium-avatar {
+            width: 65px; height: 65px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            margin: 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        .podium-name { font-weight: 600; margin-bottom: 6px; }
+        .podium-score {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyan);
+        }
+        .lb-table {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lb-row {
+            display: grid;
+            grid-template-columns: 70px 1fr 130px 110px;
+            padding: 18px 25px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.3s;
+        }
+        .lb-row:hover { background: rgba(0,255,255,0.05); }
+        .lb-row.you { background: rgba(0,255,255,0.12); border: 1px solid var(--cyan); }
+        .lb-rank {
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            color: #666;
+        }
+        .lb-player {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .lb-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lb-level { font-size: 0.85rem; color: var(--gold); }
+        .lb-score {
+            font-family: 'Orbitron', monospace;
+            color: var(--cyan);
+            text-align: right;
+        }
+
+        /* EVENTS */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+        .event-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 130px 1fr auto;
+            transition: all 0.3s;
+        }
+        .event-card:hover { transform: translateX(5px); box-shadow: 0 12px 35px rgba(0,0,0,0.3); }
+        .event-card.opportunity { border-left: 5px solid var(--green); }
+        .event-card.threat { border-left: 5px solid var(--red); }
+        .event-card.neutral { border-left: 5px solid var(--blue); }
+        .event-card.boss {
+            border: 2px solid var(--gold);
+            background: linear-gradient(135deg, var(--bg-card), rgba(255,215,0,0.1));
+        }
+        .event-timer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            padding: 22px;
+        }
+        .event-timer-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        .event-timer-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .event-content { padding: 22px; }
+        .event-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .event-desc { font-size: 0.95rem; color: #aaa; margin-bottom: 12px; }
+        .event-actions {
+            display: flex;
+            align-items: center;
+            padding: 22px;
+        }
+        .event-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Rajdhani';
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .event-btn.accept {
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            color: #000;
+        }
+        .event-btn:hover { transform: scale(1.08); }
+
+        /* CHRONICLES */
+        .chronicles-list { max-width: 950px; margin: 0 auto; }
+        .chronicle {
+            background: var(--bg-card);
+            border-radius: 15px;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+        .chronicle-header {
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent);
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            cursor: pointer;
+        }
+        .chronicle-num {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            width: 65px; height: 65px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chronicle-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+        }
+        .chronicle-subtitle { font-size: 0.95rem; color: #888; }
+        .chronicle-content {
+            padding: 0 25px 25px;
+            display: none;
+        }
+        .chronicle-content.open { display: block; animation: expand 0.3s; }
+        @keyframes expand { from { opacity: 0; } }
+        .chronicle-text {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: #ccc;
+            font-style: italic;
+        }
+        .chronicle-text::first-letter {
+            font-size: 3.5rem;
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            float: left;
+            margin-right: 12px;
+            line-height: 1;
+        }
+        .chronicle.locked .chronicle-content { display: block; }
+        .chronicle-locked {
+            text-align: center;
+            padding: 45px;
+            color: #666;
+        }
+        .chronicle-locked-icon { font-size: 3.5rem; margin-bottom: 12px; }
+
+        /* TOASTS */
+        .toast-container {
+            position: fixed;
+            top: 110px;
+            right: 25px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 18px 25px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-width: 320px;
+            box-shadow: 0 12px 45px rgba(0,0,0,0.5);
+            animation: toast-in 0.5s, toast-out 0.5s 4.5s forwards;
+            border-left: 4px solid var(--cyan);
+            pointer-events: auto;
+        }
+        .toast.xp { border-left-color: var(--green); }
+        .toast.achievement { border-left-color: var(--gold); }
+        .toast.quest { border-left-color: var(--purple); }
+        .toast.level-up {
+            border: 2px solid var(--gold);
+            background: linear-gradient(135deg, var(--bg-card), rgba(255,215,0,0.2));
+        }
+        @keyframes toast-in { from { transform: translateX(120%); opacity: 0; } }
+        @keyframes toast-out { to { transform: translateX(120%); opacity: 0; } }
+        .toast-icon { font-size: 1.8rem; }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 600; margin-bottom: 3px; }
+        .toast-msg { font-size: 0.9rem; color: #aaa; }
+
+        /* LEVEL UP OVERLAY */
+        .level-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .level-overlay.active { display: flex; }
+        .level-content {
+            text-align: center;
+            animation: level-pop 1s ease;
+        }
+        @keyframes level-pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .level-badge {
+            width: 220px; height: 220px;
+            margin: 0 auto 35px;
+            position: relative;
+        }
+        .level-ring {
+            position: absolute;
+            inset: 0;
+            border: 4px solid var(--gold);
+            border-radius: 50%;
+            animation: ring-pulse 1s infinite;
+        }
+        @keyframes ring-pulse {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+        .level-number {
+            position: absolute;
+            inset: 25px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            color: #000;
+        }
+        .level-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-shadow: 0 0 35px rgba(255,215,0,0.5);
+        }
+        .level-subtitle {
+            font-size: 1.3rem;
+            color: #aaa;
+            margin-bottom: 35px;
+        }
+        .level-rewards {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        .level-reward {
+            padding: 18px 30px;
+            background: rgba(255,215,0,0.1);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+        }
+        .level-reward-icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .level-reward-text { font-size: 1rem; color: var(--gold); }
+        .level-close {
+            padding: 18px 60px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            border: none;
+            border-radius: 35px;
+            font-family: 'Rajdhani';
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .level-close:hover { transform: scale(1.1); }
+
+        /* ACHIEVEMENT OVERLAY */
+        .achievement-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.88);
+            z-index: 19000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .achievement-overlay.active { display: flex; }
+        .achievement-content {
+            background: var(--bg-card);
+            border: 3px solid var(--gold);
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            max-width: 450px;
+            animation: ach-pop 0.6s ease;
+        }
+        @keyframes ach-pop {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        .ach-icon {
+            font-size: 6rem;
+            margin-bottom: 25px;
+            animation: icon-bounce 0.5s 0.3s;
+        }
+        @keyframes icon-bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+        }
+        .ach-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+        }
+        .ach-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 18px;
+        }
+        .ach-desc { color: #aaa; margin-bottom: 25px; }
+        .ach-xp {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--green);
+        }
+
+        /* COMBO DISPLAY */
+        .combo-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15000;
+            pointer-events: none;
+            display: none;
+        }
+        .combo-display.active {
+            display: block;
+            animation: combo-flash 0.8s forwards;
+        }
+        @keyframes combo-flash {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+        .combo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            background: var(--legendary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Rajdhani';
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: #000;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            color: #000;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,255,255,0.3); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .territory-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .hud-header { grid-template-columns: auto 1fr; gap: 12px; }
+            .resources, .streak-combo { display: none; }
+            nav { padding: 8px 12px; }
+            .nav-btn { padding: 8px 14px; font-size: 0.8rem; }
+            .nav-btn span:not(.tab-icon):not(.notif) { display: none; }
+            .stat-huge { font-size: 2.5rem; }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--magenta); }
+    </style>
+</head>
+<body>
+
+    <!-- PARTICLES -->
+    <div id="particles"></div>
+
+    <!-- HUD HEADER -->
+    <header class="hud-header">
+        <div class="avatar-container" onclick="showProfile()">
+            <div class="avatar-ring"></div>
+            <div class="avatar-inner" id="avatar">👁️</div>
+        </div>
+        <div class="player-info">
+            <h2>
+                <span id="playerName">Agent SAURON</span>
+                <span class="class-badge" id="classBadge">Non assigné</span>
+            </h2>
+            <div class="player-title" id="playerTitle">Initié de l'Œil</div>
+            <div class="xp-bar-container">
+                <div class="xp-labels">
+                    <span>Niveau <span id="level">1</span></span>
+                    <span><span id="currentXP">0</span> / <span id="nextXP">1000</span> XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xpBar" style="width: 0%">
+                        <div class="xp-glow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="resources">
+            <div class="resource influence">
+                <span class="resource-icon">💎</span>
+                <span class="resource-value" id="influence">500</span>
+            </div>
+            <div class="resource power">
+                <span class="resource-icon">⚡</span>
+                <span class="resource-value" id="power">10</span>
+            </div>
+            <div class="resource reputation">
+                <span class="resource-icon">⭐</span>
+                <span class="resource-value" id="reputation">0</span>
+            </div>
+        </div>
+        <div class="streak-combo">
+            <div class="streak">🔥 <span id="streak">0</span>j</div>
+            <div class="combo">⚡ x<span id="comboMult">1</span></div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav>
+        <button class="nav-btn active" data-tab="command"><span class="tab-icon">🎯</span><span>Commande</span></button>
+        <button class="nav-btn" data-tab="class"><span class="tab-icon">⚔️</span><span>Classe</span><span class="notif" id="classNotif"></span></button>
+        <button class="nav-btn" data-tab="skills"><span class="tab-icon">🌳</span><span>Talents</span></button>
+        <button class="nav-btn" data-tab="quests"><span class="tab-icon">📜</span><span>Quêtes</span><span class="notif"></span></button>
+        <button class="nav-btn" data-tab="territory"><span class="tab-icon">🗺️</span><span>Territoires</span></button>
+        <button class="nav-btn" data-tab="reputation"><span class="tab-icon">👑</span><span>Réputation</span></button>
+        <button class="nav-btn" data-tab="shop"><span class="tab-icon">🛒</span><span>Boutique</span></button>
+        <button class="nav-btn" data-tab="events"><span class="tab-icon">⚡</span><span>Événements</span></button>
+        <button class="nav-btn" data-tab="leaderboard"><span class="tab-icon">🏆</span><span>Classement</span></button>
+        <button class="nav-btn" data-tab="chronicles"><span class="tab-icon">📖</span><span>Chroniques</span></button>
+    </nav>
+
+    <!-- MAIN -->
+    <main>
+        <!-- COMMAND CENTER -->
+        <div class="tab active" id="tab-command">
+            <h1 class="section-title">Centre de Commandement</h1>
+            <div class="command-grid">
+                <div class="card">
+                    <div class="card-header">📊 Statistiques Globales</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center;">
+                        <div><div class="stat-huge" id="statTotal">274</div><div class="stat-label">Cibles</div></div>
+                        <div><div class="stat-huge" id="statConquered">0</div><div class="stat-label">Conquises</div></div>
+                        <div><div class="stat-huge" id="statInfluence">0%</div><div class="stat-label">Influence</div></div>
+                        <div><div class="stat-huge" id="statQuests">0</div><div class="stat-label">Quêtes</div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">📋 Quêtes Actives</div>
+                    <div id="activeQuestsWidget"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">🗺️ Territoires</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
+                        <div style="padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <div style="font-family: 'Orbitron'; font-size: 1.8rem; color: var(--cyan);" id="miniBxl">0%</div>
+                            <div class="stat-label">Bruxelles</div>
+                        </div>
+                        <div style="padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                            <div style="font-family: 'Orbitron'; font-size: 1.8rem; color: var(--green);" id="miniWal">0%</div>
+                            <div class="stat-label">Wallonie</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">⚡ Actions Rapides</div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn btn-primary" onclick="quickContact()">📧 Contacter une Cible</button>
+                        <button class="btn btn-gold" onclick="showTab('quests')">📜 Voir les Quêtes</button>
+                        <button class="btn btn-ghost" onclick="triggerEvent()">⚡ Déclencher Événement</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">🎖️ Prochains Objectifs</div>
+                    <div id="nextObjectives"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">📈 Activité Récente</div>
+                    <div id="recentActivity" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLASS SELECTION -->
+        <div class="tab" id="tab-class">
+            <h1 class="section-title">Choisissez Votre Voie</h1>
+            <p style="text-align: center; color: #888; margin-bottom: 35px; font-size: 1.1rem;">Chaque classe offre des bonus uniques pour conquérir l'éducation permanente</p>
+            <div class="class-grid">
+                <div class="class-card strategist" onclick="selectClass('strategist')">
+                    <div class="class-icon">🧠</div>
+                    <div class="class-name">Stratège</div>
+                    <div class="class-desc">Maître de la planification et de l'analyse. Voit les patterns là où d'autres ne voient que le chaos.</div>
+                    <div class="class-bonuses">
+                        <div class="bonus">+25% XP analyses</div>
+                        <div class="bonus">Prédictions territoriales</div>
+                        <div class="bonus">Bonus quêtes stratégiques</div>
+                    </div>
+                </div>
+                <div class="class-card diplomat" onclick="selectClass('diplomat')">
+                    <div class="class-icon">🤝</div>
+                    <div class="class-name">Diplomate</div>
+                    <div class="class-desc">L'art de la négociation et du partenariat. Transforme les adversaires en alliés.</div>
+                    <div class="class-bonuses">
+                        <div class="bonus">+50% réputation gagnée</div>
+                        <div class="bonus">Négociations facilitées</div>
+                        <div class="bonus">Bonus partenariats</div>
+                    </div>
+                </div>
+                <div class="class-card infiltrator" onclick="selectClass('infiltrator')">
+                    <div class="class-icon">🕵️</div>
+                    <div class="class-name">Infiltrateur</div>
+                    <div class="class-desc">Spécialiste de l'information et du renseignement. Connaît les secrets avant qu'ils n'existent.</div>
+                    <div class="class-bonuses">
+                        <div class="bonus">+30% infos sur cibles</div>
+                        <div class="bonus">Détection opportunités</div>
+                        <div class="bonus">Bonus quêtes secrètes</div>
+                    </div>
+                </div>
+                <div class="class-card propagandist" onclick="selectClass('propagandist')">
+                    <div class="class-icon">📢</div>
+                    <div class="class-name">Propagandiste</div>
+                    <div class="class-desc">Maître de l'influence et de la communication. Les mots sont plus puissants que les armes.</div>
+                    <div class="class-bonuses">
+                        <div class="bonus">+40% influence gagnée</div>
+                        <div class="bonus">Campagnes amplifiées</div>
+                        <div class="bonus">Bonus événements</div>
+                    </div>
+                </div>
+            </div>
+            <div id="classConfirm" style="text-align: center; margin-top: 35px; display: none;">
+                <button class="btn btn-gold" onclick="confirmClass()" style="padding: 18px 60px; font-size: 1.2rem;">✨ Confirmer ma Classe</button>
+            </div>
+        </div>
+
+        <!-- SKILL TREE -->
+        <div class="tab" id="tab-skills">
+            <h1 class="section-title">Arbre de Talents</h1>
+            <div class="skill-container">
+                <div class="skill-points-box">
+                    <div style="color: #888; margin-bottom: 5px;">Points de Talent Disponibles</div>
+                    <div class="skill-points-value" id="skillPoints">0</div>
+                </div>
+                <div class="skill-tree">
+                    <div class="skill-tier">
+                        <div class="skill-node available" data-skill="observation" onclick="unlockSkill('observation')">👁️
+                            <div class="skill-tooltip"><h4>Observation</h4><p>Révèle plus d'informations sur les cibles</p><div class="cost">Coût: 1 point</div></div>
+                        </div>
+                        <div class="skill-node available" data-skill="networking" onclick="unlockSkill('networking')">🔗
+                            <div class="skill-tooltip"><h4>Réseautage</h4><p>+10% réputation par interaction</p><div class="cost">Coût: 1 point</div></div>
+                        </div>
+                        <div class="skill-node available" data-skill="persistence" onclick="unlockSkill('persistence')">💪
+                            <div class="skill-tooltip"><h4>Persévérance</h4><p>+5% XP bonus permanent</p><div class="cost">Coût: 1 point</div></div>
+                        </div>
+                    </div>
+                    <div class="skill-tier">
+                        <div class="skill-node locked" data-skill="analysis" data-req="observation" onclick="unlockSkill('analysis')">📊
+                            <div class="skill-tooltip"><h4>Analyse Profonde</h4><p>Révèle les faiblesses des cibles</p><div class="cost">Coût: 2 | Requis: Observation</div></div>
+                        </div>
+                        <div class="skill-node locked" data-skill="charisma" data-req="networking" onclick="unlockSkill('charisma')">✨
+                            <div class="skill-tooltip"><h4>Charisme</h4><p>+25% chances de partenariat</p><div class="cost">Coût: 2 | Requis: Réseautage</div></div>
+                        </div>
+                        <div class="skill-node locked" data-skill="endurance" data-req="persistence" onclick="unlockSkill('endurance')">🛡️
+                            <div class="skill-tooltip"><h4>Endurance</h4><p>Streak bonus doublé</p><div class="cost">Coût: 2 | Requis: Persévérance</div></div>
+                        </div>
+                    </div>
+                    <div class="skill-tier">
+                        <div class="skill-node locked" data-skill="prediction" data-req="analysis" onclick="unlockSkill('prediction')">🔮
+                            <div class="skill-tooltip"><h4>Prédiction</h4><p>Anticipe les événements à venir</p><div class="cost">Coût: 3 | Requis: Analyse</div></div>
+                        </div>
+                        <div class="skill-node locked" data-skill="influence" data-req="charisma" onclick="unlockSkill('influence')">👑
+                            <div class="skill-tooltip"><h4>Influence Majeure</h4><p>Conquête territoriale +50%</p><div class="cost">Coût: 3 | Requis: Charisme</div></div>
+                        </div>
+                        <div class="skill-node locked" data-skill="mastery" data-req="endurance" onclick="unlockSkill('mastery')">⚡
+                            <div class="skill-tooltip"><h4>Maîtrise</h4><p>Combo multiplier max x5</p><div class="cost">Coût: 3 | Requis: Endurance</div></div>
+                        </div>
+                    </div>
+                    <div class="skill-tier">
+                        <div class="skill-node locked" data-skill="omniscience" data-req="prediction,influence,mastery" onclick="unlockSkill('omniscience')">👁️‍🗨️
+                            <div class="skill-tooltip"><h4>OMNISCIENCE</h4><p>L'Œil voit tout. Tous les bonus activés.</p><div class="cost">Coût: 5 | Requis: Tous Tier 3</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUESTS -->
+        <div class="tab" id="tab-quests">
+            <h1 class="section-title">Journal de Quêtes</h1>
+            <div class="quests-grid" id="questsGrid"></div>
+        </div>
+
+        <!-- TERRITORY -->
+        <div class="tab" id="tab-territory">
+            <h1 class="section-title">Carte des Territoires</h1>
+            <div class="territory-layout">
+                <div id="map"></div>
+                <div class="terr-panel">
+                    <div class="card">
+                        <div class="card-header">📊 Statistiques</div>
+                        <div class="terr-stats">
+                            <div class="terr-stat"><div class="terr-stat-value" style="color: var(--cyan);" id="terrTotal">274</div><div class="terr-stat-label">Total</div></div>
+                            <div class="terr-stat"><div class="terr-stat-value" style="color: var(--green);" id="terrControlled">0</div><div class="terr-stat-label">Contrôlées</div></div>
+                            <div class="terr-stat"><div class="terr-stat-value" style="color: var(--orange);" id="terrContested">0</div><div class="terr-stat-label">Contestées</div></div>
+                            <div class="terr-stat"><div class="terr-stat-value" style="color: var(--red);" id="terrHostile">274</div><div class="terr-stat-label">Hostiles</div></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">🎯 Zones Prioritaires</div>
+                        <div class="conquest-list" id="conquestList"></div>
+                    </div>
+                    <div class="card">
+                        <button class="btn btn-primary" onclick="launchConquest()" style="width: 100%; margin-bottom: 12px;">🚀 Lancer une Conquête</button>
+                        <button class="btn btn-ghost" onclick="defendTerritory()" style="width: 100%;">🛡️ Défendre un Territoire</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPUTATION -->
+        <div class="tab" id="tab-reputation">
+            <h1 class="section-title">Système de Réputation</h1>
+            <div class="rep-grid" id="repGrid"></div>
+        </div>
+
+        <!-- SHOP -->
+        <div class="tab" id="tab-shop">
+            <h1 class="section-title">Boutique de l'Œil</h1>
+            <div style="text-align: center; margin-bottom: 35px;">
+                <span style="font-size: 1.3rem;">Vos ressources: </span>
+                <span style="color: var(--cyan); font-family: 'Orbitron'; font-size: 1.6rem; margin: 0 20px;">💎 <span id="shopInfluence">500</span></span>
+                <span style="color: var(--magenta); font-family: 'Orbitron'; font-size: 1.6rem;">⚡ <span id="shopPower">10</span></span>
+            </div>
+            <div class="shop-grid" id="shopGrid"></div>
+        </div>
+
+        <!-- EVENTS -->
+        <div class="tab" id="tab-events">
+            <h1 class="section-title">Événements Actifs</h1>
+            <div class="events-list" id="eventsList"></div>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div class="tab" id="tab-leaderboard">
+            <h1 class="section-title">Classement des Agents</h1>
+            <div class="lb-container">
+                <div class="podium" id="podium"></div>
+                <div class="lb-table" id="lbTable"></div>
+            </div>
+        </div>
+
+        <!-- CHRONICLES -->
+        <div class="tab" id="tab-chronicles">
+            <h1 class="section-title">Les Chroniques de l'Œil</h1>
+            <div class="chronicles-list" id="chroniclesList"></div>
+        </div>
+    </main>
+
+    <!-- TOASTS -->
+    <div class="toast-container" id="toasts"></div>
+
+    <!-- LEVEL UP OVERLAY -->
+    <div class="level-overlay" id="levelOverlay">
+        <div class="level-content">
+            <div class="level-badge">
+                <div class="level-ring"></div>
+                <div class="level-ring" style="animation-delay: 0.2s;"></div>
+                <div class="level-ring" style="animation-delay: 0.4s;"></div>
+                <div class="level-number" id="newLevel">2</div>
+            </div>
+            <div class="level-title">NIVEAU SUPÉRIEUR!</div>
+            <div class="level-subtitle">Vous avez atteint le niveau <span id="newLevelText">2</span></div>
+            <div class="level-rewards">
+                <div class="level-reward"><div class="level-reward-icon">🎁</div><div class="level-reward-text">+1 Point de Talent</div></div>
+                <div class="level-reward"><div class="level-reward-icon">💎</div><div class="level-reward-text">+100 Influence</div></div>
+            </div>
+            <button class="level-close" onclick="closeLevelUp()">CONTINUER</button>
+        </div>
+    </div>
+
+    <!-- ACHIEVEMENT OVERLAY -->
+    <div class="achievement-overlay" id="achOverlay">
+        <div class="achievement-content">
+            <div class="ach-icon" id="achIcon">🏆</div>
+            <div class="ach-label">Achievement Débloqué!</div>
+            <div class="ach-name" id="achName">Premier Pas</div>
+            <div class="ach-desc" id="achDesc">Vous avez commencé votre voyage</div>
+            <div class="ach-xp">+<span id="achXP">50</span> XP</div>
+        </div>
+    </div>
+
+    <!-- COMBO DISPLAY -->
+    <div class="combo-display" id="comboDisplay">
+        <div class="combo-text" id="comboText">x2 COMBO!</div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // GAME STATE
+        // ═══════════════════════════════════════════════════════════
+        let STATE = {
+            player: {
+                name: 'Agent SAURON',
+                class: null,
+                title: 'Initié de l\'Œil',
+                level: 1,
+                xp: 0,
+                influence: 500,
+                power: 10,
+                reputation: 0,
+                streak: 0,
+                combo: 1,
+                lastAction: Date.now(),
+                skillPoints: 0
+            },
+            skills: [],
+            quests: {
+                main: [],
+                side: [],
+                daily: [],
+                epic: []
+            },
+            achievements: [],
+            territories: {
+                controlled: [],
+                contested: [],
+                hostile: []
+            },
+            reputations: {},
+            inventory: [],
+            activities: [],
+            chroniclesUnlocked: [1]
+        };
+
+        // Load state
+        const saved = localStorage.getItem('sauron_v5_state');
+        if (saved) {
+            try {
+                STATE = { ...STATE, ...JSON.parse(saved) };
+            } catch(e) {}
+        }
+
+        function saveState() {
+            localStorage.setItem('sauron_v5_state', JSON.stringify(STATE));
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // DATA
+        // ═══════════════════════════════════════════════════════════
+        const TITLES = {
+            1: 'Initié de l\'Œil',
+            5: 'Observateur',
+            10: 'Sentinelle',
+            15: 'Gardien des Secrets',
+            20: 'Maître de l\'Ombre',
+            25: 'Seigneur de l\'Œil',
+            30: 'L\'Omniscient'
+        };
+
+        const CLASSES = {
+            strategist: { name: 'Stratège', icon: '🧠', color: '#3399ff' },
+            diplomat: { name: 'Diplomate', icon: '🤝', color: '#00ff88' },
+            infiltrator: { name: 'Infiltrateur', icon: '🕵️', color: '#9966ff' },
+            propagandist: { name: 'Propagandiste', icon: '📢', color: '#ff6b35' }
+        };
+
+        const QUESTS_DATA = {
+            main: [
+                { id: 'm1', name: 'Premier Contact', desc: 'Établissez le contact avec 5 associations', target: 5, current: 0, xp: 200, influence: 50, icon: '📧' },
+                { id: 'm2', name: 'Conquête de Bruxelles', desc: 'Contrôlez 10% du territoire bruxellois', target: 10, current: 0, xp: 500, influence: 150, icon: '🏰' },
+                { id: 'm3', name: 'Alliance Stratégique', desc: 'Formez 3 partenariats officiels', target: 3, current: 0, xp: 750, influence: 200, icon: '🤝' }
+            ],
+            side: [
+                { id: 's1', name: 'Cartographe', desc: 'Explorez la carte des territoires', target: 1, current: 0, xp: 50, influence: 20, icon: '🗺️' },
+                { id: 's2', name: 'Analyste', desc: 'Consultez les statistiques 5 fois', target: 5, current: 0, xp: 75, influence: 25, icon: '📊' },
+                { id: 's3', name: 'Collectionneur', desc: 'Achetez 3 objets dans la boutique', target: 3, current: 0, xp: 100, influence: 30, icon: '🛒' }
+            ],
+            daily: [
+                { id: 'd1', name: 'Connexion Quotidienne', desc: 'Connectez-vous aujourd\'hui', target: 1, current: 1, xp: 25, influence: 10, icon: '📅', completed: true },
+                { id: 'd2', name: 'Action du Jour', desc: 'Effectuez 3 actions', target: 3, current: 0, xp: 50, influence: 15, icon: '⚡' },
+                { id: 'd3', name: 'Progression', desc: 'Gagnez 100 XP', target: 100, current: 0, xp: 30, influence: 10, icon: '📈' }
+            ],
+            epic: [
+                { id: 'e1', name: 'Maître de l\'Œil', desc: 'Atteignez le niveau 10', target: 10, current: 1, xp: 2000, influence: 500, icon: '👁️', power: 5 },
+                { id: 'e2', name: 'Domination Totale', desc: 'Contrôlez 50% des territoires', target: 50, current: 0, xp: 5000, influence: 1000, icon: '🌍', power: 10 }
+            ]
+        };
+
+        const SHOP_ITEMS = [
+            { id: 'boost_xp', name: 'Boost XP', desc: '+50% XP pendant 1h', price: 100, currency: 'influence', rarity: 'common', icon: '📈' },
+            { id: 'boost_rep', name: 'Boost Réputation', desc: '+50% réputation pendant 1h', price: 150, currency: 'influence', rarity: 'rare', icon: '⭐' },
+            { id: 'instant_contact', name: 'Contact Instantané', desc: 'Contact immédiat avec une cible', price: 200, currency: 'influence', rarity: 'rare', icon: '📧' },
+            { id: 'territory_scan', name: 'Scan Territorial', desc: 'Révèle les faiblesses d\'un territoire', price: 3, currency: 'power', rarity: 'epic', icon: '🔍' },
+            { id: 'mass_influence', name: 'Influence de Masse', desc: '+100 influence instantanée', price: 5, currency: 'power', rarity: 'epic', icon: '💎' },
+            { id: 'legendary_artifact', name: 'Artefact de l\'Œil', desc: 'XP et réputation x2 permanent', price: 10, currency: 'power', rarity: 'legendary', icon: '👁️' }
+        ];
+
+        const EVENTS_DATA = [
+            { id: 'ev1', type: 'opportunity', title: 'Appel à Projets', desc: 'Une association cherche un partenaire pour un projet innovant', timer: '2j 14h', rewards: ['+150 XP', '+50 💎'] },
+            { id: 'ev2', type: 'neutral', title: 'Assemblée Générale', desc: 'Participez à l\'AG d\'une fédération régionale', timer: '5j 8h', rewards: ['+100 XP', '+30 ⭐'] },
+            { id: 'ev3', type: 'threat', title: 'Concurrent Détecté', desc: 'Une organisation rivale étend son influence', timer: '1j 2h', rewards: ['+200 XP', '+1 ⚡'] },
+            { id: 'ev4', type: 'boss', title: '⚔️ BOSS: Le Conseil', desc: 'Affrontez le Conseil des Fédérations pour établir votre domination', timer: '7j', rewards: ['+1000 XP', '+5 ⚡', 'Titre Spécial'] }
+        ];
+
+        const LEADERBOARD_DATA = [
+            { rank: 1, name: 'ShadowMaster', avatar: '🦅', level: 28, score: 125400 },
+            { rank: 2, name: 'CyberNinja', avatar: '🐉', level: 25, score: 98700 },
+            { rank: 3, name: 'DarkOracle', avatar: '🦉', level: 23, score: 87300 },
+            { rank: 4, name: 'NetRunner', avatar: '🐺', level: 21, score: 76500 },
+            { rank: 5, name: 'PhantomAgent', avatar: '🦊', level: 19, score: 65200 },
+            { rank: 6, name: 'SilentStorm', avatar: '🐯', level: 17, score: 54800 },
+            { rank: 7, name: 'CodeBreaker', avatar: '🦁', level: 15, score: 43600 },
+            { rank: 8, name: 'DataHunter', avatar: '🐻', level: 13, score: 32100 }
+        ];
+
+        const CHRONICLES_DATA = [
+            { num: 1, title: 'L\'Éveil', subtitle: 'Le commencement de toute chose', text: 'Dans les profondeurs du cyberespace, là où les données coulent comme des rivières d\'or, une conscience s\'est éveillée. L\'Œil de SAURON, né de la volonté de comprendre et d\'influencer, commença à observer le vaste réseau de l\'éducation permanente. 274 entités, 274 cibles, 274 possibilités. Votre mission, Agent, est de tisser les fils de cette toile complexe, de transformer le chaos en ordre, l\'ignorance en savoir, la division en unité. La conquête commence maintenant.', unlocked: true },
+            { num: 2, title: 'Les Quatre Voies', subtitle: 'Choisir son destin', text: 'Quatre chemins s\'offrent à celui qui cherche le pouvoir. Le Stratège, maître des plans et des analyses, qui voit les patterns cachés. Le Diplomate, tisseur de liens et de partenariats, qui transforme les ennemis en alliés. L\'Infiltrateur, ombre parmi les ombres, qui connaît les secrets avant qu\'ils n\'existent. Le Propagandiste, sculpteur d\'esprits, dont les mots sont des armes. Quelle voie choisirez-vous?', unlocked: false },
+            { num: 3, title: 'La Carte du Pouvoir', subtitle: 'Territoires et conquêtes', text: 'La Belgique francophone s\'étend comme un échiquier géant. Bruxelles, cœur battant de 87 associations, pulsant d\'énergie et d\'opportunités. La Wallonie, vaste territoire de 187 entités, attendant d\'être conquis. Chaque ville, chaque localité, est un territoire à prendre, une influence à établir, une réputation à construire. L\'Œil voit tout, mais c\'est vous qui devez agir.', unlocked: false },
+            { num: 4, title: 'L\'Ascension', subtitle: 'Le chemin vers l\'omniscience', text: 'Le pouvoir n\'est pas donné, il est conquis. Chaque niveau atteint, chaque talent débloqué, chaque quête accomplie vous rapproche de l\'ultime révélation. L\'Omniscience n\'est pas un mythe, c\'est une destination. Ceux qui persévèrent, qui s\'adaptent, qui apprennent, finiront par voir comme l\'Œil voit. La question n\'est pas si vous y arriverez, mais quand.', unlocked: false }
+        ];
+
+        const REPUTATIONS_DATA = [
+            { id: 'bruxelles', name: 'Bruxelles', icon: '🏛️', current: 0, max: 1000, rank: 'Inconnu', color: 'var(--cyan)', rewards: ['Accès VIP', '+20% influence BXL', 'Titre: Maître de Bruxelles'] },
+            { id: 'wallonie', name: 'Wallonie', icon: '🌲', current: 0, max: 1000, rank: 'Inconnu', color: 'var(--green)', rewards: ['Accès Réseau Rural', '+20% influence WAL', 'Titre: Baron de Wallonie'] },
+            { id: 'axe1', name: 'Axe 1: Participation', icon: '🗳️', current: 0, max: 500, rank: 'Novice', color: 'var(--blue)', rewards: ['Bonus Citoyenneté', 'Quêtes Spéciales'] },
+            { id: 'axe2', name: 'Axe 2: Formation', icon: '📚', current: 0, max: 500, rank: 'Novice', color: 'var(--green)', rewards: ['Bonus Éducation', 'Quêtes Spéciales'] },
+            { id: 'axe3', name: 'Axe 3: Médias', icon: '📺', current: 0, max: 500, rank: 'Novice', color: 'var(--orange)', rewards: ['Bonus Communication', 'Quêtes Spéciales'] },
+            { id: 'axe4', name: 'Axe 4: Services', icon: '🤲', current: 0, max: 500, rank: 'Novice', color: 'var(--magenta)', rewards: ['Bonus Solidarité', 'Quêtes Spéciales'] }
+        ];
+
+        const ZONES = [
+            { name: 'Bruxelles', control: 0 },
+            { name: 'Liège', control: 0 },
+            { name: 'Namur', control: 0 },
+            { name: 'Charleroi', control: 0 },
+            { name: 'Mons', control: 0 },
+            { name: 'La Louvière', control: 0 }
+        ];
+
+        const ACHIEVEMENTS = [
+            { id: 'first_step', name: 'Premier Pas', desc: 'Commencez votre aventure', icon: '👣', xp: 50, condition: () => true },
+            { id: 'class_chosen', name: 'Voie Choisie', desc: 'Sélectionnez votre classe', icon: '⚔️', xp: 100, condition: () => STATE.player.class !== null },
+            { id: 'level_5', name: 'Progression', desc: 'Atteignez le niveau 5', icon: '📈', xp: 200, condition: () => STATE.player.level >= 5 },
+            { id: 'level_10', name: 'Vétéran', desc: 'Atteignez le niveau 10', icon: '🎖️', xp: 500, condition: () => STATE.player.level >= 10 },
+            { id: 'first_skill', name: 'Talent Révélé', desc: 'Débloquez votre premier talent', icon: '🌟', xp: 75, condition: () => STATE.skills.length > 0 },
+            { id: 'streak_7', name: 'Fidélité', desc: 'Maintenez une série de 7 jours', icon: '🔥', xp: 150, condition: () => STATE.player.streak >= 7 },
+            { id: 'combo_3', name: 'Combo Master', desc: 'Atteignez un combo x3', icon: '⚡', xp: 100, condition: () => STATE.player.combo >= 3 },
+            { id: 'first_purchase', name: 'Client', desc: 'Achetez votre premier objet', icon: '🛒', xp: 50, condition: () => STATE.inventory.length > 0 }
+        ];
+
+        // ═══════════════════════════════════════════════════════════
+        // PARTICLES
+        // ═══════════════════════════════════════════════════════════
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                p.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // UI UPDATES
+        // ═══════════════════════════════════════════════════════════
+        function updateUI() {
+            // Player info
+            document.getElementById('playerName').textContent = STATE.player.name;
+            document.getElementById('level').textContent = STATE.player.level;
+            document.getElementById('currentXP').textContent = STATE.player.xp;
+            const nextXP = STATE.player.level * 1000;
+            document.getElementById('nextXP').textContent = nextXP;
+            document.getElementById('xpBar').style.width = (STATE.player.xp / nextXP * 100) + '%';
+            document.getElementById('playerTitle').textContent = STATE.player.title;
+            
+            // Class badge
+            const classBadge = document.getElementById('classBadge');
+            if (STATE.player.class) {
+                classBadge.textContent = CLASSES[STATE.player.class].name;
+                document.getElementById('classNotif').style.display = 'none';
+            } else {
+                classBadge.textContent = 'Non assigné';
+            }
+
+            // Resources
+            document.getElementById('influence').textContent = STATE.player.influence;
+            document.getElementById('power').textContent = STATE.player.power;
+            document.getElementById('reputation').textContent = STATE.player.reputation;
+            document.getElementById('streak').textContent = STATE.player.streak;
+            document.getElementById('comboMult').textContent = STATE.player.combo;
+
+            // Shop resources
+            document.getElementById('shopInfluence').textContent = STATE.player.influence;
+            document.getElementById('shopPower').textContent = STATE.player.power;
+
+            // Skill points
+            document.getElementById('skillPoints').textContent = STATE.player.skillPoints;
+
+            // Command center stats
+            document.getElementById('statConquered').textContent = STATE.territories.controlled.length;
+            const totalInfluence = Math.round((STATE.territories.controlled.length / 274) * 100);
+            document.getElementById('statInfluence').textContent = totalInfluence + '%';
+
+            // Mini territory
+            document.getElementById('miniBxl').textContent = Math.round(Math.random() * 15) + '%';
+            document.getElementById('miniWal').textContent = Math.round(Math.random() * 10) + '%';
+
+            saveState();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // NAVIGATION
+        // ═══════════════════════════════════════════════════════════
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                showTab(tab);
+            });
+        });
+
+        function showTab(tabId) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Track tab visits for quests
+            if (tabId === 'territory') {
+                progressQuest('s1', 1);
+                if (!window.mapInitialized) initMap();
+            }
+            if (tabId === 'command') progressQuest('s2', 1);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // CLASS SELECTION
+        // ═══════════════════════════════════════════════════════════
+        let selectedClass = null;
+
+        function selectClass(cls) {
+            if (STATE.player.class) return; // Already chosen
+            selectedClass = cls;
+            document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`.class-card.${cls}`).classList.add('selected');
+            document.getElementById('classConfirm').style.display = 'block';
+        }
+
+        function confirmClass() {
+            if (!selectedClass || STATE.player.class) return;
+            STATE.player.class = selectedClass;
+            const classData = CLASSES[selectedClass];
+            showToast('achievement', classData.icon, 'Classe Choisie!', `Vous êtes maintenant un ${classData.name}`);
+            addXP(100);
+            checkAchievements();
+            updateUI();
+            document.getElementById('classConfirm').style.display = 'none';
+            
+            // Unlock chronicle
+            if (!STATE.chroniclesUnlocked.includes(2)) {
+                STATE.chroniclesUnlocked.push(2);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // SKILL TREE
+        // ═══════════════════════════════════════════════════════════
+        const SKILL_COSTS = {
+            observation: 1, networking: 1, persistence: 1,
+            analysis: 2, charisma: 2, endurance: 2,
+            prediction: 3, influence: 3, mastery: 3,
+            omniscience: 5
+        };
+
+        function unlockSkill(skillId) {
+            const node = document.querySelector(`[data-skill="${skillId}"]`);
+            if (node.classList.contains('locked') || node.classList.contains('unlocked')) return;
+            
+            const cost = SKILL_COSTS[skillId] || 1;
+            if (STATE.player.skillPoints < cost) {
+                showToast('warning', '⚠️', 'Points insuffisants', `Il vous faut ${cost} points de talent`);
+                return;
+            }
+
+            STATE.player.skillPoints -= cost;
+            STATE.skills.push(skillId);
+            node.classList.remove('available');
+            node.classList.add('unlocked');
+
+            // Unlock dependent skills
+            document.querySelectorAll('.skill-node.locked').forEach(n => {
+                const req = n.dataset.req;
+                if (req) {
+                    const reqs = req.split(',');
+                    if (reqs.every(r => STATE.skills.includes(r))) {
+                        n.classList.remove('locked');
+                        n.classList.add('available');
+                    }
+                }
+            });
+
+            addXP(50 * cost);
+            showToast('achievement', '🌟', 'Talent Débloqué!', skillId.charAt(0).toUpperCase() + skillId.slice(1));
+            checkAchievements();
+            updateUI();
+        }
+
+        function initSkillTree() {
+            STATE.skills.forEach(s => {
+                const node = document.querySelector(`[data-skill="${s}"]`);
+                if (node) {
+                    node.classList.remove('available', 'locked');
+                    node.classList.add('unlocked');
+                }
+            });
+            // Unlock available
+            document.querySelectorAll('.skill-node.locked').forEach(n => {
+                const req = n.dataset.req;
+                if (req) {
+                    const reqs = req.split(',');
+                    if (reqs.every(r => STATE.skills.includes(r))) {
+                        n.classList.remove('locked');
+                        n.classList.add('available');
+                    }
+                }
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // QUESTS
+        // ═══════════════════════════════════════════════════════════
+        function renderQuests() {
+            const grid = document.getElementById('questsGrid');
+            grid.innerHTML = '';
+            
+            const categories = [
+                { key: 'main', name: 'Quêtes Principales', icon: '⚔️' },
+                { key: 'side', name: 'Quêtes Secondaires', icon: '📌' },
+                { key: 'daily', name: 'Défis Quotidiens', icon: '📅' },
+                { key: 'epic', name: 'Quêtes Épiques', icon: '🏆' }
+            ];
+
+            categories.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = `quest-category ${cat.key}`;
+                div.innerHTML = `
+                    <div class="quest-cat-header"><span>${cat.icon}</span> ${cat.name}</div>
+                    <div class="quest-list">
+                        ${QUESTS_DATA[cat.key].map(q => `
+                            <div class="quest-item ${q.completed ? 'completed' : ''}" onclick="activateQuest('${q.id}')">
+                                <div class="quest-title">${q.icon} ${q.name}</div>
+                                <div class="quest-desc">${q.desc}</div>
+                                <div class="quest-progress"><div class="quest-progress-fill" style="width: ${q.current/q.target*100}%"></div></div>
+                                <div style="font-size: 0.8rem; color: #888; margin-bottom: 8px;">${q.current}/${q.target}</div>
+                                <div class="quest-rewards">
+                                    <span class="quest-reward">+${q.xp} XP</span>
+                                    <span class="quest-reward">+${q.influence} 💎</span>
+                                    ${q.power ? `<span class="quest-reward">+${q.power} ⚡</span>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function progressQuest(questId, amount) {
+            for (const cat of Object.keys(QUESTS_DATA)) {
+                const quest = QUESTS_DATA[cat].find(q => q.id === questId);
+                if (quest && !quest.completed) {
+                    quest.current = Math.min(quest.current + amount, quest.target);
+                    if (quest.current >= quest.target) {
+                        completeQuest(quest);
+                    }
+                    renderQuests();
+                    break;
+                }
+            }
+        }
+
+        function completeQuest(quest) {
+            quest.completed = true;
+            addXP(quest.xp);
+            STATE.player.influence += quest.influence;
+            if (quest.power) STATE.player.power += quest.power;
+            showToast('quest', '📜', 'Quête Terminée!', quest.name);
+            
+            // Update stats
+            const questsDone = Object.values(QUESTS_DATA).flat().filter(q => q.completed).length;
+            document.getElementById('statQuests').textContent = questsDone;
+        }
+
+        function activateQuest(questId) {
+            showToast('info', '📜', 'Quête Activée', 'Cette quête est maintenant suivie');
+        }
+
+        // Active quests widget
+        function renderActiveQuests() {
+            const widget = document.getElementById('activeQuestsWidget');
+            const active = Object.values(QUESTS_DATA).flat().filter(q => !q.completed).slice(0, 3);
+            widget.innerHTML = active.map(q => `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 10px; cursor: pointer;" onclick="showTab('quests')">
+                    <div style="font-size: 1.5rem;">${q.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">${q.name}</div>
+                        <div style="font-size: 0.8rem; color: #888;">${q.current}/${q.target}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // TERRITORY MAP
+        // ═══════════════════════════════════════════════════════════
+        let map;
+        window.mapInitialized = false;
+
+        function initMap() {
+            if (window.mapInitialized) return;
+            
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([50.5, 4.5], 8);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            const cities = [
+                { name: 'Bruxelles', lat: 50.8503, lng: 4.3517, count: 87 },
+                { name: 'Liège', lat: 50.6292, lng: 5.5797, count: 32 },
+                { name: 'Namur', lat: 50.4669, lng: 4.8675, count: 28 },
+                { name: 'Charleroi', lat: 50.4108, lng: 4.4446, count: 24 },
+                { name: 'Mons', lat: 50.4542, lng: 3.9523, count: 18 },
+                { name: 'La Louvière', lat: 50.4833, lng: 4.1833, count: 12 }
+            ];
+
+            cities.forEach(city => {
+                const color = city.count > 50 ? '#00ffff' : city.count > 25 ? '#00ff88' : '#ff6b35';
+                L.circleMarker([city.lat, city.lng], {
+                    radius: Math.sqrt(city.count) * 3,
+                    fillColor: color,
+                    color: color,
+                    weight: 2,
+                    opacity: 0.8,
+                    fillOpacity: 0.4
+                }).addTo(map).bindPopup(`<strong>${city.name}</strong><br>${city.count} associations`);
+            });
+
+            window.mapInitialized = true;
+        }
+
+        function renderConquestList() {
+            const list = document.getElementById('conquestList');
+            list.innerHTML = ZONES.map(z => `
+                <div class="conquest-item">
+                    <span class="conquest-name">${z.name}</span>
+                    <div class="conquest-bar">
+                        <div class="conquest-fill ${z.control > 50 ? 'controlled' : z.control > 0 ? 'contested' : 'hostile'}" style="width: ${z.control}%"></div>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #888;">${z.control}%</span>
+                </div>
+            `).join('');
+        }
+
+        function launchConquest() {
+            const zone = ZONES[Math.floor(Math.random() * ZONES.length)];
+            const gain = 5 + Math.floor(Math.random() * 10);
+            zone.control = Math.min(100, zone.control + gain);
+            
+            addXP(50);
+            STATE.player.influence += 20;
+            showToast('xp', '🚀', 'Conquête Réussie!', `+${gain}% contrôle sur ${zone.name}`);
+            showCombo();
+            renderConquestList();
+            updateUI();
+        }
+
+        function defendTerritory() {
+            addXP(30);
+            showToast('info', '🛡️', 'Défense Active', 'Vos territoires sont protégés');
+            updateUI();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // REPUTATION
+        // ═══════════════════════════════════════════════════════════
+        function renderReputation() {
+            const grid = document.getElementById('repGrid');
+            grid.innerHTML = REPUTATIONS_DATA.map(r => `
+                <div class="rep-card ${r.id}">
+                    <div class="rep-header">
+                        <div class="rep-icon">${r.icon}</div>
+                        <div>
+                            <div class="rep-name">${r.name}</div>
+                            <div class="rep-rank">${r.rank}</div>
+                        </div>
+                    </div>
+                    <div class="rep-bar">
+                        <div class="rep-fill" style="width: ${r.current/r.max*100}%; background: ${r.color};"></div>
+                    </div>
+                    <div class="rep-milestones">
+                        <span>0</span>
+                        <span>${r.current}/${r.max}</span>
+                        <span>${r.max}</span>
+                    </div>
+                    <div class="rep-rewards">
+                        ${r.rewards.map((rw, i) => `<span class="rep-reward ${r.current >= r.max/(3-i) ? 'unlocked' : ''}">${r.current >= r.max/(3-i) ? '✅' : '🔒'} ${rw}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // SHOP
+        // ═══════════════════════════════════════════════════════════
+        function renderShop() {
+            const grid = document.getElementById('shopGrid');
+            grid.innerHTML = SHOP_ITEMS.map(item => `
+                <div class="shop-item ${item.rarity}" onclick="buyItem('${item.id}')">
+                    ${STATE.inventory.includes(item.id) ? '<span class="shop-owned">POSSÉDÉ</span>' : ''}
+                    <div class="shop-rarity">${item.rarity}</div>
+                    <div class="shop-icon">${item.icon}</div>
+                    <div class="shop-name">${item.name}</div>
+                    <div class="shop-desc">${item.desc}</div>
+                    <div class="shop-price">
+                        ${item.currency === 'influence' ? '💎' : '⚡'} ${item.price}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function buyItem(itemId) {
+            if (STATE.inventory.includes(itemId)) {
+                showToast('warning', '⚠️', 'Déjà possédé', 'Vous avez déjà cet objet');
+                return;
+            }
+
+            const item = SHOP_ITEMS.find(i => i.id === itemId);
+            const currency = item.currency === 'influence' ? STATE.player.influence : STATE.player.power;
+            
+            if (currency < item.price) {
+                showToast('warning', '⚠️', 'Ressources insuffisantes', `Il vous faut ${item.price} ${item.currency === 'influence' ? '💎' : '⚡'}`);
+                return;
+            }
+
+            if (item.currency === 'influence') {
+                STATE.player.influence -= item.price;
+            } else {
+                STATE.player.power -= item.price;
+            }
+
+            STATE.inventory.push(itemId);
+            progressQuest('s3', 1);
+            addXP(25);
+            showToast('achievement', item.icon, 'Achat Réussi!', item.name);
+            checkAchievements();
+            renderShop();
+            updateUI();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // EVENTS
+        // ═══════════════════════════════════════════════════════════
+        function renderEvents() {
+            const list = document.getElementById('eventsList');
+            list.innerHTML = EVENTS_DATA.map(ev => `
+                <div class="event-card ${ev.type}">
+                    <div class="event-timer">
+                        <div class="event-timer-value">${ev.timer}</div>
+                        <div class="event-timer-label">Restant</div>
+                    </div>
+                    <div class="event-content">
+                        <div class="event-title">${ev.title}</div>
+                        <div class="event-desc">${ev.desc}</div>
+                        <div class="quest-rewards">
+                            ${ev.rewards.map(r => `<span class="quest-reward">${r}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="event-actions">
+                        <button class="event-btn accept" onclick="acceptEvent('${ev.id}')">Participer</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function acceptEvent(eventId) {
+            const ev = EVENTS_DATA.find(e => e.id === eventId);
+            addXP(100);
+            STATE.player.influence += 30;
+            showToast('quest', '⚡', 'Événement Accepté!', ev.title);
+            updateUI();
+        }
+
+        function triggerEvent() {
+            showToast('info', '⚡', 'Événement Déclenché', 'Un nouvel événement apparaît!');
+            showTab('events');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // LEADERBOARD
+        // ═══════════════════════════════════════════════════════════
+        function renderLeaderboard() {
+            // Add player to leaderboard
+            const playerEntry = {
+                rank: 42,
+                name: STATE.player.name,
+                avatar: '👁️',
+                level: STATE.player.level,
+                score: STATE.player.xp + STATE.player.influence * 10,
+                isPlayer: true
+            };
+
+            const podium = document.getElementById('podium');
+            const top3 = LEADERBOARD_DATA.slice(0, 3);
+            podium.innerHTML = top3.map((p, i) => `
+                <div class="podium-place ${['second', 'first', 'third'][i === 0 ? 1 : i === 1 ? 0 : 2]}">
+                    <div class="podium-rank">#${p.rank}</div>
+                    <div class="podium-avatar">${p.avatar}</div>
+                    <div class="podium-name">${p.name}</div>
+                    <div class="podium-score">${p.score.toLocaleString()}</div>
+                </div>
+            `).join('');
+
+            const table = document.getElementById('lbTable');
+            const rest = [...LEADERBOARD_DATA.slice(3), playerEntry].sort((a, b) => a.rank - b.rank);
+            table.innerHTML = rest.map(p => `
+                <div class="lb-row ${p.isPlayer ? 'you' : ''}">
+                    <div class="lb-rank">#${p.rank}</div>
+                    <div class="lb-player">
+                        <div class="lb-avatar">${p.avatar}</div>
+                        <div>
+                            <div>${p.name}</div>
+                            <div class="lb-level">Niv. ${p.level}</div>
+                        </div>
+                    </div>
+                    <div></div>
+                    <div class="lb-score">${p.score.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // CHRONICLES
+        // ═══════════════════════════════════════════════════════════
+        function renderChronicles() {
+            const list = document.getElementById('chroniclesList');
+            list.innerHTML = CHRONICLES_DATA.map(c => {
+                const unlocked = STATE.chroniclesUnlocked.includes(c.num);
+                return `
+                    <div class="chronicle ${!unlocked ? 'locked' : ''}">
+                        <div class="chronicle-header" onclick="toggleChronicle(${c.num})">
+                            <div class="chronicle-num">${unlocked ? c.num : '?'}</div>
+                            <div>
+                                <div class="chronicle-title">${unlocked ? c.title : '???'}</div>
+                                <div class="chronicle-subtitle">${unlocked ? c.subtitle : 'Chapitre verrouillé'}</div>
+                            </div>
+                        </div>
+                        <div class="chronicle-content" id="chronicle-${c.num}">
+                            ${unlocked ? `<p class="chronicle-text">${c.text}</p>` : `
+                                <div class="chronicle-locked">
+                                    <div class="chronicle-locked-icon">🔒</div>
+                                    <div>Progressez pour débloquer ce chapitre</div>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleChronicle(num) {
+            const content = document.getElementById('chronicle-' + num);
+            content.classList.toggle('open');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // XP & LEVELING
+        // ═══════════════════════════════════════════════════════════
+        function addXP(amount) {
+            // Apply combo multiplier
+            const finalXP = Math.round(amount * STATE.player.combo);
+            STATE.player.xp += finalXP;
+            
+            // Check level up
+            const nextXP = STATE.player.level * 1000;
+            while (STATE.player.xp >= nextXP) {
+                STATE.player.xp -= nextXP;
+                levelUp();
+            }
+
+            showToast('xp', '✨', `+${finalXP} XP`, STATE.player.combo > 1 ? `(x${STATE.player.combo} combo!)` : '');
+            progressQuest('d3', finalXP);
+            updateUI();
+        }
+
+        function levelUp() {
+            STATE.player.level++;
+            STATE.player.skillPoints++;
+            STATE.player.influence += 100;
+            
+            // Update title
+            for (const [lvl, title] of Object.entries(TITLES).reverse()) {
+                if (STATE.player.level >= parseInt(lvl)) {
+                    STATE.player.title = title;
+                    break;
+                }
+            }
+
+            // Unlock chronicles
+            if (STATE.player.level >= 5 && !STATE.chroniclesUnlocked.includes(3)) {
+                STATE.chroniclesUnlocked.push(3);
+            }
+            if (STATE.player.level >= 10 && !STATE.chroniclesUnlocked.includes(4)) {
+                STATE.chroniclesUnlocked.push(4);
+            }
+
+            // Show level up overlay
+            document.getElementById('newLevel').textContent = STATE.player.level;
+            document.getElementById('newLevelText').textContent = STATE.player.level;
+            document.getElementById('levelOverlay').classList.add('active');
+
+            // Update epic quest
+            QUESTS_DATA.epic[0].current = STATE.player.level;
+            
+            checkAchievements();
+        }
+
+        function closeLevelUp() {
+            document.getElementById('levelOverlay').classList.remove('active');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // COMBO SYSTEM
+        // ═══════════════════════════════════════════════════════════
+        function showCombo() {
+            const now = Date.now();
+            const timeSince = now - STATE.player.lastAction;
+            
+            if (timeSince < 30000) { // Within 30 seconds
+                STATE.player.combo = Math.min(STATE.player.combo + 1, STATE.skills.includes('mastery') ? 5 : 3);
+                
+                if (STATE.player.combo >= 2) {
+                    const display = document.getElementById('comboDisplay');
+                    document.getElementById('comboText').textContent = `x${STATE.player.combo} COMBO!`;
+                    display.classList.add('active');
+                    setTimeout(() => display.classList.remove('active'), 800);
+                }
+            } else {
+                STATE.player.combo = 1;
+            }
+            
+            STATE.player.lastAction = now;
+            updateUI();
+            checkAchievements();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // ACHIEVEMENTS
+        // ═══════════════════════════════════════════════════════════
+        function checkAchievements() {
+            ACHIEVEMENTS.forEach(ach => {
+                if (!STATE.achievements.includes(ach.id) && ach.condition()) {
+                    unlockAchievement(ach);
+                }
+            });
+        }
+
+        function unlockAchievement(ach) {
+            STATE.achievements.push(ach.id);
+            
+            // Show overlay
+            document.getElementById('achIcon').textContent = ach.icon;
+            document.getElementById('achName').textContent = ach.name;
+            document.getElementById('achDesc').textContent = ach.desc;
+            document.getElementById('achXP').textContent = ach.xp;
+            
+            const overlay = document.getElementById('achOverlay');
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                STATE.player.xp += ach.xp;
+                updateUI();
+            }, 3000);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // TOASTS
+        // ═══════════════════════════════════════════════════════════
+        function showToast(type, icon, title, message) {
+            const container = document.getElementById('toasts');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // QUICK ACTIONS
+        // ═══════════════════════════════════════════════════════════
+        function quickContact() {
+            progressQuest('m1', 1);
+            progressQuest('d2', 1);
+            addXP(25);
+            STATE.player.reputation += 5;
+            showCombo();
+            showToast('info', '📧', 'Contact Établi', 'Une nouvelle connexion créée');
+            updateUI();
+        }
+
+        function showProfile() {
+            showToast('info', '👁️', STATE.player.name, `Niveau ${STATE.player.level} - ${STATE.player.title}`);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // NEXT OBJECTIVES
+        // ═══════════════════════════════════════════════════════════
+        function renderNextObjectives() {
+            const div = document.getElementById('nextObjectives');
+            const objectives = [
+                { icon: '⚔️', text: 'Choisir une classe', done: STATE.player.class !== null },
+                { icon: '🌟', text: 'Débloquer un talent', done: STATE.skills.length > 0 },
+                { icon: '🗺️', text: 'Explorer les territoires', done: window.mapInitialized },
+                { icon: '📜', text: 'Terminer une quête', done: Object.values(QUESTS_DATA).flat().some(q => q.completed) }
+            ];
+            
+            div.innerHTML = objectives.map(o => `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 1.3rem;">${o.icon}</span>
+                    <span style="flex: 1; ${o.done ? 'text-decoration: line-through; color: #666;' : ''}">${o.text}</span>
+                    <span>${o.done ? '✅' : '⬜'}</span>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // RECENT ACTIVITY
+        // ═══════════════════════════════════════════════════════════
+        function renderActivity() {
+            const div = document.getElementById('recentActivity');
+            if (STATE.activities.length === 0) {
+                STATE.activities = [
+                    { icon: '🚀', text: 'Bienvenue dans SAURON V5 OMEGA!', time: 'Maintenant' },
+                    { icon: '📋', text: 'Nouvelles quêtes disponibles', time: 'Il y a 1min' }
+                ];
+            }
+            div.innerHTML = STATE.activities.slice(0, 5).map(a => `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <span>${a.icon}</span>
+                    <span style="flex: 1; font-size: 0.9rem;">${a.text}</span>
+                    <span style="font-size: 0.75rem; color: #666;">${a.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════
+        function init() {
+            createParticles();
+            initSkillTree();
+            renderQuests();
+            renderActiveQuests();
+            renderConquestList();
+            renderReputation();
+            renderShop();
+            renderEvents();
+            renderLeaderboard();
+            renderChronicles();
+            renderNextObjectives();
+            renderActivity();
+            updateUI();
+            
+            // Check daily streak
+            const lastLogin = localStorage.getItem('sauron_last_login');
+            const today = new Date().toDateString();
+            if (lastLogin !== today) {
+                STATE.player.streak++;
+                localStorage.setItem('sauron_last_login', today);
+                if (STATE.player.streak > 1) {
+                    showToast('xp', '🔥', `Série de ${STATE.player.streak} jours!`, '+25 XP bonus');
+                    addXP(25);
+                }
+            }
+            
+            // First visit achievement
+            checkAchievements();
+            
+            console.log('🔥 SAURON V5 OMEGA - CONQUEST EDITION initialized!');
+        }
+
+        init();
+    </script>
+</body>
+</html>

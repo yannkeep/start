@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@ÆGIS V7 METAVERSE - Libertas Per Technologiam</title>
+    
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta property="og:title" content="@ÆGIS METAVERSE - Join the Revolution">
+    <meta property="og:description" content="Decentralized. Sovereign. Unstoppable.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Cinzel:wght@400;700;900&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #101018;
+            --bg3: #18182a;
+            --card: #1e1e32;
+            --gold: #f7d354;
+            --gold-dark: #c9a227;
+            --cyan: #00f0ff;
+            --magenta: #ff00aa;
+            --green: #00ff6a;
+            --red: #ff2d55;
+            --purple: #8b5cf6;
+            --orange: #ff6b2b;
+            --anarchy: #f7d354;
+            --gradient-gold: linear-gradient(135deg, #f7d354, #c9a227, #f7d354);
+            --gradient-cyber: linear-gradient(135deg, #00f0ff, #8b5cf6, #ff00aa);
+            --gradient-anarchy: linear-gradient(135deg, #f7d354, #ff6b2b, #f7d354);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           LOGO @ÆGIS avec Ⓐ
+        ═══════════════════════════════════════════════════════════ */
+        .aegis-logo {
+            display: inline-flex;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+        }
+        .aegis-logo .at { color: var(--cyan); }
+        .aegis-logo .anarchy-a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2em;
+            height: 1.2em;
+            border: 3px solid var(--gold);
+            border-radius: 50%;
+            font-size: 0.9em;
+            color: var(--gold);
+            margin: 0 2px;
+            position: relative;
+        }
+        .aegis-logo .anarchy-a::after {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 3px;
+            background: var(--gold);
+            top: 50%;
+            left: -10%;
+            transform: translateY(-50%);
+        }
+        .aegis-logo .rest { color: #fff; }
+        .aegis-logo.small { font-size: 1.2rem; }
+        .aegis-logo.medium { font-size: 2rem; }
+        .aegis-logo.large { font-size: 4rem; }
+        .aegis-logo.giant { font-size: 6rem; }
+
+        /* ═══════════════════════════════════════════════════════════
+           INTRO SCREEN - MANIFESTO
+        ═══════════════════════════════════════════════════════════ */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 30000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .intro-overlay.hidden { display: none; }
+        
+        .intro-logo-wrap {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .intro-logo-glow {
+            position: absolute;
+            inset: -50px;
+            background: radial-gradient(circle, rgba(247,211,84,0.3) 0%, transparent 70%);
+            animation: logo-pulse 3s ease-in-out infinite;
+        }
+        @keyframes logo-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .intro-tagline {
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: var(--cyan);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+        .intro-manifesto {
+            max-width: 600px;
+            font-size: 1.1rem;
+            color: #888;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+        .intro-manifesto em {
+            color: var(--gold);
+            font-style: normal;
+        }
+        
+        .lang-select-intro {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .lang-btn-intro {
+            padding: 12px 25px;
+            background: var(--card);
+            border: 2px solid transparent;
+            border-radius: 30px;
+            color: #888;
+            font-family: 'Rajdhani';
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lang-btn-intro:hover { border-color: var(--gold); color: #fff; }
+        .lang-btn-intro.active { border-color: var(--gold); color: var(--gold); background: rgba(247,211,84,0.1); }
+        
+        .enter-btn {
+            padding: 20px 60px;
+            background: var(--gradient-gold);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .enter-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: var(--gradient-gold);
+            border-radius: 50px;
+            z-index: -1;
+            animation: btn-glow 2s ease-in-out infinite;
+        }
+        @keyframes btn-glow {
+            0%, 100% { filter: blur(10px); opacity: 0.5; }
+            50% { filter: blur(20px); opacity: 1; }
+        }
+        
+        .intro-stats {
+            display: flex;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        .intro-stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--cyan);
+        }
+        .intro-stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           CYBER GRID BACKGROUND
+        ═══════════════════════════════════════════════════════════ */
+        .cyber-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: 
+                linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+        }
+        @keyframes grid-move {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+
+        .floating-symbols {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .float-symbol {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: float-up 20s linear infinite;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           HEADER
+        ═══════════════════════════════════════════════════════════ */
+        header {
+            background: linear-gradient(180deg, rgba(10,10,15,0.95), transparent);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(247,211,84,0.2);
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-logo .version {
+            font-size: 0.6rem;
+            color: var(--cyan);
+            background: rgba(0,240,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .wallet-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px 15px;
+            background: var(--card);
+            border-radius: 25px;
+            border: 1px solid rgba(247,211,84,0.3);
+        }
+        .wallet-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .wallet-item.aeg { color: var(--gold); }
+        .wallet-item.nrg { color: var(--cyan); }
+        .wallet-item.rep { color: var(--green); }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #888;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .header-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .header-btn.has-notif { position: relative; }
+        .header-btn.has-notif::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           NAVIGATION
+        ═══════════════════════════════════════════════════════════ */
+        .main-nav {
+            display: flex;
+            gap: 5px;
+            padding: 10px 20px;
+            background: var(--bg2);
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(0,240,255,0.1);
+        }
+        .nav-tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-family: 'Rajdhani';
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        .nav-tab:hover { color: var(--cyan); background: rgba(0,240,255,0.05); }
+        .nav-tab.active { 
+            color: var(--gold); 
+            background: rgba(247,211,84,0.1);
+            border-bottom: 2px solid var(--gold);
+        }
+        .nav-tab .badge {
+            background: var(--red);
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MAIN CONTENT
+        ═══════════════════════════════════════════════════════════ */
+        main {
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .screen { display: none; animation: fadeIn 0.4s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .section-title::before, .section-title::after {
+            content: '';
+            flex: 1;
+            max-width: 150px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           CARDS
+        ═══════════════════════════════════════════════════════════ */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-gold);
+        }
+        .card-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           METAVERSE HUB (Home)
+        ═══════════════════════════════════════════════════════════ */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .realm-card {
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .realm-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--gold);
+            box-shadow: 0 20px 50px rgba(247,211,84,0.2);
+        }
+        .realm-preview {
+            height: 180px;
+            background: var(--gradient-cyber);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .realm-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, var(--card));
+        }
+        .realm-info {
+            padding: 20px;
+        }
+        .realm-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        .realm-desc {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .realm-stats {
+            display: flex;
+            gap: 20px;
+        }
+        .realm-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: var(--cyan);
+        }
+        .realm-live {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--red);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse 2s infinite;
+        }
+        .realm-live::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        /* ═══════════════════════════════════════════════════════════
+           AVATAR CUSTOMIZATION
+        ═══════════════════════════════════════════════════════════ */
+        .avatar-section {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+        .avatar-preview {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 100px;
+        }
+        .avatar-3d {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background: radial-gradient(circle, var(--bg3), var(--bg));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+            animation: avatar-float 4s ease-in-out infinite;
+        }
+        @keyframes avatar-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .avatar-ring-outer {
+            position: absolute;
+            inset: -10px;
+            border: 3px solid var(--gold);
+            border-radius: 50%;
+            animation: ring-rotate 10s linear infinite;
+        }
+        @keyframes ring-rotate { to { transform: rotate(360deg); } }
+        .avatar-name-input {
+            width: 100%;
+            background: var(--bg3);
+            border: 1px solid rgba(247,211,84,0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'Cinzel';
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .avatar-title {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+        
+        .customization-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .custom-category {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .custom-cat-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            color: var(--cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .custom-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .custom-option {
+            width: 60px;
+            height: 60px;
+            background: var(--bg3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .custom-option:hover { border-color: var(--cyan); transform: scale(1.1); }
+        .custom-option.selected { border-color: var(--gold); background: rgba(247,211,84,0.1); }
+        .custom-option.locked { opacity: 0.3; cursor: not-allowed; }
+        .custom-option.nft {
+            position: relative;
+            border-color: var(--purple);
+        }
+        .custom-option.nft::after {
+            content: 'NFT';
+            position: absolute;
+            bottom: -8px;
+            font-size: 0.5rem;
+            background: var(--purple);
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           TOKEN ECONOMY
+        ═══════════════════════════════════════════════════════════ */
+        .token-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .token-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .token-card:hover { border-color: var(--gold); }
+        .token-card.aeg { --token-color: var(--gold); }
+        .token-card.nrg { --token-color: var(--cyan); }
+        .token-card.rep { --token-color: var(--green); }
+        
+        .token-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: rgba(247,211,84,0.1);
+            border: 3px solid var(--token-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        .token-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--token-color);
+            margin-bottom: 5px;
+        }
+        .token-fullname {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .token-balance {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            color: var(--token-color);
+            margin-bottom: 15px;
+        }
+        .token-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .token-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Rajdhani';
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .token-btn.buy { background: var(--green); border: none; color: #000; }
+        .token-btn.stake { background: transparent; border: 1px solid var(--token-color); color: var(--token-color); }
+        .token-btn:hover { transform: scale(1.05); }
+
+        /* ═══════════════════════════════════════════════════════════
+           DAO GOVERNANCE
+        ═══════════════════════════════════════════════════════════ */
+        .dao-section {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+        .proposals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .proposal-card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 4px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .proposal-card:hover { transform: translateX(5px); background: rgba(247,211,84,0.05); }
+        .proposal-card.active { border-left-color: var(--green); }
+        .proposal-card.closed { border-left-color: #666; opacity: 0.7; }
+        
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .proposal-id {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+        }
+        .proposal-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .proposal-status.active { background: var(--green); color: #000; }
+        .proposal-status.pending { background: var(--orange); color: #000; }
+        .proposal-status.closed { background: #666; color: #fff; }
+        
+        .proposal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .proposal-desc {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .proposal-votes {
+            display: flex;
+            gap: 20px;
+        }
+        .proposal-vote {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .vote-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--bg3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .vote-fill { height: 100%; border-radius: 4px; }
+        .vote-fill.yes { background: var(--green); }
+        .vote-fill.no { background: var(--red); }
+
+        .dao-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .dao-stat-card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .dao-stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--gold);
+        }
+        .dao-stat-label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MARKETPLACE NFT
+        ═══════════════════════════════════════════════════════════ */
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .nft-card {
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .nft-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--purple);
+            box-shadow: 0 15px 40px rgba(139,92,246,0.2);
+        }
+        .nft-preview {
+            height: 200px;
+            background: var(--gradient-cyber);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+        .nft-rarity {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .nft-rarity.legendary { background: var(--gold); color: #000; }
+        .nft-rarity.epic { background: var(--purple); color: #fff; }
+        .nft-rarity.rare { background: var(--cyan); color: #000; }
+        
+        .nft-info {
+            padding: 15px;
+        }
+        .nft-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .nft-creator {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .nft-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nft-price-value {
+            font-family: 'Space Mono', monospace;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nft-buy-btn {
+            padding: 8px 15px;
+            background: var(--purple);
+            border: none;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           SOCIAL / GUILD
+        ═══════════════════════════════════════════════════════════ */
+        .guild-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .guild-card-large {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid var(--gold);
+        }
+        .guild-banner {
+            height: 100px;
+            background: var(--gradient-gold);
+            border-radius: 15px;
+            margin: -25px -25px 20px -25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .guild-emblem {
+            width: 80px;
+            height: 80px;
+            background: var(--bg);
+            border: 4px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-top: 50px;
+        }
+        .guild-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 10px 0 5px;
+        }
+        .guild-tag {
+            text-align: center;
+            color: var(--cyan);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .guild-stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .guild-mini-stat {
+            text-align: center;
+            padding: 15px;
+            background: var(--bg3);
+            border-radius: 12px;
+        }
+        .guild-mini-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyan);
+        }
+        .guild-mini-label {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .chat-container {
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        .chat-tabs {
+            display: flex;
+            background: var(--bg3);
+        }
+        .chat-tab {
+            flex: 1;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-family: 'Rajdhani';
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .chat-tab:hover { color: #fff; }
+        .chat-tab.active { color: var(--gold); background: var(--card); }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .chat-msg {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .chat-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--bg3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .chat-content { flex: 1; }
+        .chat-name {
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 3px;
+        }
+        .chat-text { font-size: 0.95rem; }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: var(--bg3);
+        }
+        .chat-input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 12px 20px;
+            color: #fff;
+            font-family: 'Rajdhani';
+        }
+        .chat-send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: none;
+            color: #000;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           WORLD MAP
+        ═══════════════════════════════════════════════════════════ */
+        #worldMap {
+            height: 400px;
+            border-radius: 20px;
+            border: 2px solid rgba(247,211,84,0.3);
+            margin-bottom: 20px;
+        }
+        .world-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .world-stat {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .world-flag { font-size: 2rem; margin-bottom: 10px; }
+        .world-country { font-size: 0.9rem; color: #888; margin-bottom: 5px; }
+        .world-leader { font-weight: 600; margin-bottom: 5px; }
+        .world-score { font-family: 'Space Mono'; color: var(--cyan); font-size: 0.9rem; }
+
+        /* ═══════════════════════════════════════════════════════════
+           LANGUAGE PANEL
+        ═══════════════════════════════════════════════════════════ */
+        .lang-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        .lang-current {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .lang-dropdown {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--gold);
+            border-radius: 15px;
+            padding: 10px;
+            display: none;
+            min-width: 180px;
+        }
+        .lang-dropdown.open { display: block; }
+        .lang-option {
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        .lang-option:hover { background: var(--bg3); }
+        .lang-option.active { background: rgba(247,211,84,0.1); color: var(--gold); }
+
+        /* ═══════════════════════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .avatar-section, .dao-section, .guild-section {
+                grid-template-columns: 1fr;
+            }
+            .avatar-preview { position: static; }
+        }
+        @media (max-width: 768px) {
+            header { flex-wrap: wrap; gap: 10px; }
+            .header-center { order: 3; width: 100%; }
+            .wallet-display { width: 100%; justify-content: center; }
+            .main-nav { padding: 5px 10px; }
+            .nav-tab { padding: 10px 12px; font-size: 0.8rem; }
+            .aegis-logo.large { font-size: 2.5rem; }
+            .intro-stats { flex-direction: column; gap: 20px; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           SCROLLBAR
+        ═══════════════════════════════════════════════════════════ */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- CYBER GRID BACKGROUND -->
+    <div class="cyber-grid"></div>
+    <div class="floating-symbols" id="floatingSymbols"></div>
+
+    <!-- INTRO OVERLAY -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-logo-wrap">
+            <div class="intro-logo-glow"></div>
+            <div class="aegis-logo giant">
+                <span class="at">@</span><span class="anarchy-a">Æ</span><span class="rest">GIS</span>
+            </div>
+        </div>
+        
+        <div class="intro-tagline" data-i18n="tagline">LIBERTAS PER TECHNOLOGIAM</div>
+        
+        <p class="intro-manifesto" data-i18n="manifesto">
+            <em data-i18n="manifesto-em">Nous croyons en la souveraineté individuelle.</em><br>
+            Un métaverse décentralisé où chaque agent est maître de son destin.
+            Pas de censure. Pas de contrôle central. Juste la liberté pure.
+        </p>
+        
+        <div class="lang-select-intro">
+            <button class="lang-btn-intro active" onclick="setLanguage('fr')">🇫🇷 Français</button>
+            <button class="lang-btn-intro" onclick="setLanguage('en')">🇬🇧 English</button>
+            <button class="lang-btn-intro" onclick="setLanguage('tlh')">🖖 Qapla'</button>
+        </div>
+        
+        <button class="enter-btn" onclick="enterMetaverse()" data-i18n="enter">⚡ ENTRER DANS LE MÉTAVERSE</button>
+        
+        <div class="intro-stats">
+            <div>
+                <div class="intro-stat-value" id="agentCount">847,293</div>
+                <div class="intro-stat-label" data-i18n="agents">Agents Souverains</div>
+            </div>
+            <div>
+                <div class="intro-stat-value">🌍 167</div>
+                <div class="intro-stat-label" data-i18n="nations">Nations Libres</div>
+            </div>
+            <div>
+                <div class="intro-stat-value">∞</div>
+                <div class="intro-stat-label" data-i18n="freedom">Liberté</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-logo">
+            <div class="aegis-logo small">
+                <span class="at">@</span><span class="anarchy-a">Æ</span><span class="rest">GIS</span>
+            </div>
+            <span class="version">V7 META</span>
+        </div>
+        
+        <div class="header-center">
+            <div class="wallet-display">
+                <div class="wallet-item aeg">Ⓐ <span id="aegBalance">12,450</span></div>
+                <div class="wallet-item nrg">⚡ <span id="nrgBalance">847</span></div>
+                <div class="wallet-item rep">★ <span id="repBalance">4,521</span></div>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button class="header-btn has-notif" onclick="showNotifications()">🔔</button>
+            <button class="header-btn" onclick="showSettings()">⚙️</button>
+            <button class="header-btn" onclick="showProfile()">👤</button>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="main-nav">
+        <button class="nav-tab active" data-screen="hub">🏠 <span data-i18n="nav-hub">Hub</span></button>
+        <button class="nav-tab" data-screen="avatar">👤 <span data-i18n="nav-avatar">Avatar</span></button>
+        <button class="nav-tab" data-screen="realms">🌌 <span data-i18n="nav-realms">Royaumes</span></button>
+        <button class="nav-tab" data-screen="economy">💰 <span data-i18n="nav-economy">Économie</span></button>
+        <button class="nav-tab" data-screen="dao">⚖️ <span data-i18n="nav-dao">DAO</span> <span class="badge">3</span></button>
+        <button class="nav-tab" data-screen="nft">🎨 <span data-i18n="nav-nft">NFTs</span></button>
+        <button class="nav-tab" data-screen="guild">⚔️ <span data-i18n="nav-guild">Guilde</span></button>
+        <button class="nav-tab" data-screen="world">🌍 <span data-i18n="nav-world">Monde</span></button>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HUB SCREEN -->
+        <div class="screen active" id="screen-hub">
+            <h2 class="section-title" data-i18n="hub-title">Portails du Métaverse</h2>
+            
+            <div class="hub-grid">
+                <div class="realm-card" onclick="enterRealm('agora')">
+                    <div class="realm-live">LIVE</div>
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #f7d354, #ff6b2b);">🏛️</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-agora">L'Agora</div>
+                        <div class="realm-desc" data-i18n="realm-agora-desc">Place publique du débat libre et de la démocratie directe</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">👥 1,247</div>
+                            <div class="realm-stat">💬 Active</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realm-card" onclick="enterRealm('market')">
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #00f0ff, #8b5cf6);">🏪</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-market">Le Marché Libre</div>
+                        <div class="realm-desc" data-i18n="realm-market-desc">Échangez sans intermédiaire, sans taxe, sans limite</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">🛒 3,421</div>
+                            <div class="realm-stat">📈 +15%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realm-card" onclick="enterRealm('academy')">
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #00ff6a, #00f0ff);">📚</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-academy">L'Académie</div>
+                        <div class="realm-desc" data-i18n="realm-academy-desc">Savoir décentralisé, éducation permanente pour tous</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">🎓 892</div>
+                            <div class="realm-stat">📖 274 cours</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realm-card" onclick="enterRealm('forge')">
+                    <div class="realm-live">LIVE</div>
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #ff2d55, #ff6b2b);">🔨</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-forge">La Forge</div>
+                        <div class="realm-desc" data-i18n="realm-forge-desc">Créez, mintez et vendez vos NFTs uniques</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">🎨 547</div>
+                            <div class="realm-stat">🔥 Hot</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realm-card" onclick="enterRealm('arena')">
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #8b5cf6, #ff00aa);">⚔️</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-arena">L'Arène</div>
+                        <div class="realm-desc" data-i18n="realm-arena-desc">Combats PvP, tournois et gloire éternelle</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">⚔️ 2,103</div>
+                            <div class="realm-stat">🏆 Season 7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realm-card" onclick="enterRealm('sanctuary')">
+                    <div class="realm-preview" style="background: linear-gradient(135deg, #1e1e32, #8b5cf6);">🌙</div>
+                    <div class="realm-info">
+                        <div class="realm-name" data-i18n="realm-sanctuary">Le Sanctuaire</div>
+                        <div class="realm-desc" data-i18n="realm-sanctuary-desc">Espace privé, crypté, inviolable</div>
+                        <div class="realm-stats">
+                            <div class="realm-stat">🔒 Private</div>
+                            <div class="realm-stat">🛡️ E2E</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AVATAR SCREEN -->
+        <div class="screen" id="screen-avatar">
+            <h2 class="section-title" data-i18n="avatar-title">Forge ton Identité</h2>
+            
+            <div class="avatar-section">
+                <div class="avatar-preview">
+                    <div class="avatar-3d">
+                        <div class="avatar-ring-outer"></div>
+                        <span id="avatarDisplay">👁️</span>
+                    </div>
+                    <input type="text" class="avatar-name-input" id="avatarName" value="Agent Sovereign" placeholder="Ton nom...">
+                    <div class="avatar-title" data-i18n="avatar-class">Ⓐ Anarchiste Éclairé</div>
+                </div>
+                
+                <div class="customization-panel">
+                    <div class="custom-category">
+                        <div class="custom-cat-title" data-i18n="custom-base">Base Avatar</div>
+                        <div class="custom-options">
+                            <div class="custom-option selected" onclick="setAvatar('👁️')">👁️</div>
+                            <div class="custom-option" onclick="setAvatar('🦅')">🦅</div>
+                            <div class="custom-option" onclick="setAvatar('🐺')">🐺</div>
+                            <div class="custom-option" onclick="setAvatar('🦊')">🦊</div>
+                            <div class="custom-option" onclick="setAvatar('🐉')">🐉</div>
+                            <div class="custom-option" onclick="setAvatar('🦁')">🦁</div>
+                            <div class="custom-option nft" onclick="setAvatar('👑')">👑</div>
+                            <div class="custom-option nft" onclick="setAvatar('⚔️')">⚔️</div>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-category">
+                        <div class="custom-cat-title" data-i18n="custom-aura">Aura</div>
+                        <div class="custom-options">
+                            <div class="custom-option selected" style="background: var(--gradient-gold);">✨</div>
+                            <div class="custom-option" style="background: var(--gradient-cyber);">💫</div>
+                            <div class="custom-option" style="background: linear-gradient(135deg, #ff2d55, #ff6b2b);">🔥</div>
+                            <div class="custom-option locked">❄️</div>
+                            <div class="custom-option nft" style="background: linear-gradient(135deg, #000, #8b5cf6);">🌑</div>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-category">
+                        <div class="custom-cat-title" data-i18n="custom-title">Titre</div>
+                        <div class="custom-options" style="flex-direction: column; gap: 8px;">
+                            <div class="custom-option selected" style="width: 100%; justify-content: flex-start; padding: 10px 15px; font-size: 0.9rem;">
+                                Ⓐ <span data-i18n="title-anarchist">Anarchiste Éclairé</span>
+                            </div>
+                            <div class="custom-option" style="width: 100%; justify-content: flex-start; padding: 10px 15px; font-size: 0.9rem;">
+                                🛡️ <span data-i18n="title-guardian">Gardien de la Liberté</span>
+                            </div>
+                            <div class="custom-option locked" style="width: 100%; justify-content: flex-start; padding: 10px 15px; font-size: 0.9rem;">
+                                👑 <span data-i18n="title-sovereign">Souverain Absolu</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECONOMY SCREEN -->
+        <div class="screen" id="screen-economy">
+            <h2 class="section-title" data-i18n="economy-title">Économie Souveraine</h2>
+            
+            <div class="token-section">
+                <div class="token-card aeg">
+                    <div class="token-icon">Ⓐ</div>
+                    <div class="token-name">$ÆG</div>
+                    <div class="token-fullname" data-i18n="token-aeg">ÆgisToken - Governance</div>
+                    <div class="token-balance" id="aegTokenBalance">12,450</div>
+                    <div class="token-actions">
+                        <button class="token-btn buy" onclick="buyToken('aeg')" data-i18n="buy">Acheter</button>
+                        <button class="token-btn stake" onclick="stakeToken('aeg')" data-i18n="stake">Staker</button>
+                    </div>
+                </div>
+                
+                <div class="token-card nrg">
+                    <div class="token-icon">⚡</div>
+                    <div class="token-name">$NRG</div>
+                    <div class="token-fullname" data-i18n="token-nrg">Energy - Utility</div>
+                    <div class="token-balance" id="nrgTokenBalance">847</div>
+                    <div class="token-actions">
+                        <button class="token-btn buy" onclick="buyToken('nrg')" data-i18n="buy">Acheter</button>
+                        <button class="token-btn stake" onclick="stakeToken('nrg')" data-i18n="stake">Staker</button>
+                    </div>
+                </div>
+                
+                <div class="token-card rep">
+                    <div class="token-icon">★</div>
+                    <div class="token-name">$REP</div>
+                    <div class="token-fullname" data-i18n="token-rep">Reputation - Soulbound</div>
+                    <div class="token-balance" id="repTokenBalance">4,521</div>
+                    <div class="token-actions">
+                        <button class="token-btn stake" onclick="viewRepHistory()" data-i18n="history">Historique</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAO SCREEN -->
+        <div class="screen" id="screen-dao">
+            <h2 class="section-title" data-i18n="dao-title">Gouvernance Directe</h2>
+            
+            <div class="dao-section">
+                <div class="proposals-list">
+                    <div class="proposal-card active">
+                        <div class="proposal-header">
+                            <div class="proposal-id">ÆIP-042</div>
+                            <div class="proposal-status active" data-i18n="status-active">ACTIF</div>
+                        </div>
+                        <div class="proposal-title" data-i18n="proposal-1-title">Réduction des frais de transaction</div>
+                        <div class="proposal-desc" data-i18n="proposal-1-desc">Proposition de réduire les frais de 0.5% à 0.3% pour stimuler l'économie</div>
+                        <div class="proposal-votes">
+                            <div class="proposal-vote">
+                                <span>👍</span>
+                                <div class="vote-bar"><div class="vote-fill yes" style="width: 73%;"></div></div>
+                                <span>73%</span>
+                            </div>
+                            <div class="proposal-vote">
+                                <span>👎</span>
+                                <div class="vote-bar"><div class="vote-fill no" style="width: 27%;"></div></div>
+                                <span>27%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-card active">
+                        <div class="proposal-header">
+                            <div class="proposal-id">ÆIP-041</div>
+                            <div class="proposal-status active" data-i18n="status-active">ACTIF</div>
+                        </div>
+                        <div class="proposal-title" data-i18n="proposal-2-title">Nouveau Royaume: L'Observatoire</div>
+                        <div class="proposal-desc" data-i18n="proposal-2-desc">Création d'un espace dédié à l'astronomie et la science citoyenne</div>
+                        <div class="proposal-votes">
+                            <div class="proposal-vote">
+                                <span>👍</span>
+                                <div class="vote-bar"><div class="vote-fill yes" style="width: 89%;"></div></div>
+                                <span>89%</span>
+                            </div>
+                            <div class="proposal-vote">
+                                <span>👎</span>
+                                <div class="vote-bar"><div class="vote-fill no" style="width: 11%;"></div></div>
+                                <span>11%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <div class="proposal-id">ÆIP-040</div>
+                            <div class="proposal-status pending" data-i18n="status-pending">EN ATTENTE</div>
+                        </div>
+                        <div class="proposal-title" data-i18n="proposal-3-title">Système de parrainage amélioré</div>
+                        <div class="proposal-desc" data-i18n="proposal-3-desc">Augmentation des récompenses de parrainage de 100 à 250 $ÆG</div>
+                        <div class="proposal-votes">
+                            <div class="proposal-vote">
+                                <span>⏳</span>
+                                <span data-i18n="votes-soon">Vote bientôt</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dao-stats">
+                    <div class="dao-stat-card">
+                        <div class="dao-stat-value">42</div>
+                        <div class="dao-stat-label" data-i18n="dao-proposals">Propositions Totales</div>
+                    </div>
+                    <div class="dao-stat-card">
+                        <div class="dao-stat-value">847K</div>
+                        <div class="dao-stat-label" data-i18n="dao-staked">$ÆG Stakés</div>
+                    </div>
+                    <div class="dao-stat-card">
+                        <div class="dao-stat-value">12,450</div>
+                        <div class="dao-stat-label" data-i18n="dao-your-power">Votre Pouvoir de Vote</div>
+                    </div>
+                    <div class="dao-stat-card">
+                        <div class="dao-stat-value">94%</div>
+                        <div class="dao-stat-label" data-i18n="dao-participation">Participation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFT SCREEN -->
+        <div class="screen" id="screen-nft">
+            <h2 class="section-title" data-i18n="nft-title">Marché des Artefacts</h2>
+            
+            <div class="nft-grid">
+                <div class="nft-card">
+                    <div class="nft-preview" style="background: linear-gradient(135deg, #f7d354, #c9a227);">
+                        <div class="nft-rarity legendary">LÉGENDAIRE</div>
+                        👁️
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">L'Œil Primordial</div>
+                        <div class="nft-creator">par @SauronPrime</div>
+                        <div class="nft-price">
+                            <div class="nft-price-value">Ⓐ 5,000</div>
+                            <button class="nft-buy-btn" data-i18n="buy">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nft-card">
+                    <div class="nft-preview" style="background: linear-gradient(135deg, #8b5cf6, #ff00aa);">
+                        <div class="nft-rarity epic">ÉPIQUE</div>
+                        ⚔️
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Lame de Liberté</div>
+                        <div class="nft-creator">par @FreedomForge</div>
+                        <div class="nft-price">
+                            <div class="nft-price-value">Ⓐ 2,500</div>
+                            <button class="nft-buy-btn" data-i18n="buy">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nft-card">
+                    <div class="nft-preview" style="background: linear-gradient(135deg, #00f0ff, #00ff6a);">
+                        <div class="nft-rarity rare">RARE</div>
+                        🛡️
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Bouclier Crypto</div>
+                        <div class="nft-creator">par @CipherPunk</div>
+                        <div class="nft-price">
+                            <div class="nft-price-value">Ⓐ 800</div>
+                            <button class="nft-buy-btn" data-i18n="buy">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nft-card">
+                    <div class="nft-preview" style="background: linear-gradient(135deg, #f7d354, #ff2d55);">
+                        <div class="nft-rarity legendary">LÉGENDAIRE</div>
+                        🐉
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Dragon Souverain</div>
+                        <div class="nft-creator">par @DragonLord</div>
+                        <div class="nft-price">
+                            <div class="nft-price-value">Ⓐ 10,000</div>
+                            <button class="nft-buy-btn" data-i18n="buy">Acheter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GUILD SCREEN -->
+        <div class="screen" id="screen-guild">
+            <h2 class="section-title" data-i18n="guild-title">Fraternité Libre</h2>
+            
+            <div class="guild-section">
+                <div class="guild-card-large">
+                    <div class="guild-banner">
+                        <div class="guild-emblem">🦅</div>
+                    </div>
+                    <div class="guild-name">Libertas Æterna</div>
+                    <div class="guild-tag">[LIBRE] • Top 10 Mondial</div>
+                    <div class="guild-stats-row">
+                        <div class="guild-mini-stat">
+                            <div class="guild-mini-value">48</div>
+                            <div class="guild-mini-label" data-i18n="members">Membres</div>
+                        </div>
+                        <div class="guild-mini-stat">
+                            <div class="guild-mini-value">2.4M</div>
+                            <div class="guild-mini-label" data-i18n="power">Puissance</div>
+                        </div>
+                        <div class="guild-mini-stat">
+                            <div class="guild-mini-value">#7</div>
+                            <div class="guild-mini-label" data-i18n="rank">Rang</div>
+                        </div>
+                        <div class="guild-mini-stat">
+                            <div class="guild-mini-value">94%</div>
+                            <div class="guild-mini-label" data-i18n="activity">Activité</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-tabs">
+                        <button class="chat-tab active" data-i18n="chat-guild">Guilde</button>
+                        <button class="chat-tab" data-i18n="chat-global">Global</button>
+                        <button class="chat-tab" data-i18n="chat-trade">Trade</button>
+                    </div>
+                    <div class="chat-messages" id="guildChat">
+                        <div class="chat-msg">
+                            <div class="chat-avatar">🦅</div>
+                            <div class="chat-content">
+                                <div class="chat-name">@LibertyEagle</div>
+                                <div class="chat-text">Qapla'! Who's ready for the raid? 🔥</div>
+                            </div>
+                        </div>
+                        <div class="chat-msg">
+                            <div class="chat-avatar">🐺</div>
+                            <div class="chat-content">
+                                <div class="chat-name">@WolfPack</div>
+                                <div class="chat-text">Primus inter pares! Let's go!</div>
+                            </div>
+                        </div>
+                        <div class="chat-msg">
+                            <div class="chat-avatar">👁️</div>
+                            <div class="chat-content">
+                                <div class="chat-name">@SauronPrime</div>
+                                <div class="chat-text">tlhIngan maH! Victory awaits.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chatInput" data-i18n-placeholder="chat-placeholder" placeholder="Écrivez un message...">
+                        <button class="chat-send-btn" onclick="sendGuildMessage()">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WORLD MAP SCREEN -->
+        <div class="screen" id="screen-world">
+            <h2 class="section-title" data-i18n="world-title">Domination Mondiale</h2>
+            
+            <div id="worldMap"></div>
+            
+            <div class="world-stats">
+                <div class="world-stat">
+                    <div class="world-flag">🇫🇷</div>
+                    <div class="world-country">France</div>
+                    <div class="world-leader">@DarkLord_FR</div>
+                    <div class="world-score">Ⓐ 2.1M</div>
+                </div>
+                <div class="world-stat">
+                    <div class="world-flag">🇧🇪</div>
+                    <div class="world-country">Belgique</div>
+                    <div class="world-leader">@ÆgisBE</div>
+                    <div class="world-score">Ⓐ 1.8M</div>
+                </div>
+                <div class="world-stat">
+                    <div class="world-flag">🇺🇸</div>
+                    <div class="world-country">USA</div>
+                    <div class="world-leader">@FreedomUSA</div>
+                    <div class="world-score">Ⓐ 3.2M</div>
+                </div>
+                <div class="world-stat">
+                    <div class="world-flag">🇯🇵</div>
+                    <div class="world-country">Japan</div>
+                    <div class="world-leader">@SamuraiX</div>
+                    <div class="world-score">Ⓐ 2.9M</div>
+                </div>
+                <div class="world-stat">
+                    <div class="world-flag">🇰🇷</div>
+                    <div class="world-country">Korea</div>
+                    <div class="world-leader">@K-Liberty</div>
+                    <div class="world-score">Ⓐ 2.7M</div>
+                </div>
+                <div class="world-stat">
+                    <div class="world-flag">🇧🇷</div>
+                    <div class="world-country">Brazil</div>
+                    <div class="world-leader">@LibreRio</div>
+                    <div class="world-score">Ⓐ 1.5M</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- LANGUAGE PANEL -->
+    <div class="lang-panel">
+        <div class="lang-current" id="langCurrent" onclick="toggleLangDropdown()">🇫🇷</div>
+        <div class="lang-dropdown" id="langDropdown">
+            <div class="lang-option active" onclick="setLanguage('fr')">🇫🇷 Français</div>
+            <div class="lang-option" onclick="setLanguage('en')">🇬🇧 English</div>
+            <div class="lang-option" onclick="setLanguage('tlh')">🖖 Qapla' (Latin-Klingon)</div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // i18n - MULTILINGUAL SYSTEM (FR / EN / LATIN-KLINGON)
+        // ═══════════════════════════════════════════════════════════
+        const TRANSLATIONS = {
+            fr: {
+                tagline: "LIBERTAS PER TECHNOLOGIAM",
+                manifesto: "<em>Nous croyons en la souveraineté individuelle.</em><br>Un métaverse décentralisé où chaque agent est maître de son destin. Pas de censure. Pas de contrôle central. Juste la liberté pure.",
+                "manifesto-em": "Nous croyons en la souveraineté individuelle.",
+                enter: "⚡ ENTRER DANS LE MÉTAVERSE",
+                agents: "Agents Souverains",
+                nations: "Nations Libres",
+                freedom: "Liberté",
+                "nav-hub": "Hub",
+                "nav-avatar": "Avatar",
+                "nav-realms": "Royaumes",
+                "nav-economy": "Économie",
+                "nav-dao": "DAO",
+                "nav-nft": "NFTs",
+                "nav-guild": "Guilde",
+                "nav-world": "Monde",
+                "hub-title": "Portails du Métaverse",
+                "realm-agora": "L'Agora",
+                "realm-agora-desc": "Place publique du débat libre et de la démocratie directe",
+                "realm-market": "Le Marché Libre",
+                "realm-market-desc": "Échangez sans intermédiaire, sans taxe, sans limite",
+                "realm-academy": "L'Académie",
+                "realm-academy-desc": "Savoir décentralisé, éducation permanente pour tous",
+                "realm-forge": "La Forge",
+                "realm-forge-desc": "Créez, mintez et vendez vos NFTs uniques",
+                "realm-arena": "L'Arène",
+                "realm-arena-desc": "Combats PvP, tournois et gloire éternelle",
+                "realm-sanctuary": "Le Sanctuaire",
+                "realm-sanctuary-desc": "Espace privé, crypté, inviolable",
+                "avatar-title": "Forge ton Identité",
+                "avatar-class": "Ⓐ Anarchiste Éclairé",
+                "custom-base": "Base Avatar",
+                "custom-aura": "Aura",
+                "custom-title": "Titre",
+                "title-anarchist": "Anarchiste Éclairé",
+                "title-guardian": "Gardien de la Liberté",
+                "title-sovereign": "Souverain Absolu",
+                "economy-title": "Économie Souveraine",
+                "token-aeg": "ÆgisToken - Gouvernance",
+                "token-nrg": "Energy - Utilité",
+                "token-rep": "Réputation - Soulbound",
+                buy: "Acheter",
+                stake: "Staker",
+                history: "Historique",
+                "dao-title": "Gouvernance Directe",
+                "status-active": "ACTIF",
+                "status-pending": "EN ATTENTE",
+                "proposal-1-title": "Réduction des frais de transaction",
+                "proposal-1-desc": "Proposition de réduire les frais de 0.5% à 0.3% pour stimuler l'économie",
+                "proposal-2-title": "Nouveau Royaume: L'Observatoire",
+                "proposal-2-desc": "Création d'un espace dédié à l'astronomie et la science citoyenne",
+                "proposal-3-title": "Système de parrainage amélioré",
+                "proposal-3-desc": "Augmentation des récompenses de parrainage de 100 à 250 $ÆG",
+                "votes-soon": "Vote bientôt",
+                "dao-proposals": "Propositions Totales",
+                "dao-staked": "$ÆG Stakés",
+                "dao-your-power": "Votre Pouvoir de Vote",
+                "dao-participation": "Participation",
+                "nft-title": "Marché des Artefacts",
+                "guild-title": "Fraternité Libre",
+                members: "Membres",
+                power: "Puissance",
+                rank: "Rang",
+                activity: "Activité",
+                "chat-guild": "Guilde",
+                "chat-global": "Global",
+                "chat-trade": "Trade",
+                "chat-placeholder": "Écrivez un message...",
+                "world-title": "Domination Mondiale"
+            },
+            en: {
+                tagline: "FREEDOM THROUGH TECHNOLOGY",
+                manifesto: "<em>We believe in individual sovereignty.</em><br>A decentralized metaverse where every agent is master of their destiny. No censorship. No central control. Just pure freedom.",
+                "manifesto-em": "We believe in individual sovereignty.",
+                enter: "⚡ ENTER THE METAVERSE",
+                agents: "Sovereign Agents",
+                nations: "Free Nations",
+                freedom: "Freedom",
+                "nav-hub": "Hub",
+                "nav-avatar": "Avatar",
+                "nav-realms": "Realms",
+                "nav-economy": "Economy",
+                "nav-dao": "DAO",
+                "nav-nft": "NFTs",
+                "nav-guild": "Guild",
+                "nav-world": "World",
+                "hub-title": "Metaverse Portals",
+                "realm-agora": "The Agora",
+                "realm-agora-desc": "Public square for free debate and direct democracy",
+                "realm-market": "The Free Market",
+                "realm-market-desc": "Trade without middlemen, taxes, or limits",
+                "realm-academy": "The Academy",
+                "realm-academy-desc": "Decentralized knowledge, lifelong education for all",
+                "realm-forge": "The Forge",
+                "realm-forge-desc": "Create, mint and sell your unique NFTs",
+                "realm-arena": "The Arena",
+                "realm-arena-desc": "PvP battles, tournaments and eternal glory",
+                "realm-sanctuary": "The Sanctuary",
+                "realm-sanctuary-desc": "Private, encrypted, inviolable space",
+                "avatar-title": "Forge Your Identity",
+                "avatar-class": "Ⓐ Enlightened Anarchist",
+                "custom-base": "Avatar Base",
+                "custom-aura": "Aura",
+                "custom-title": "Title",
+                "title-anarchist": "Enlightened Anarchist",
+                "title-guardian": "Guardian of Freedom",
+                "title-sovereign": "Absolute Sovereign",
+                "economy-title": "Sovereign Economy",
+                "token-aeg": "ÆgisToken - Governance",
+                "token-nrg": "Energy - Utility",
+                "token-rep": "Reputation - Soulbound",
+                buy: "Buy",
+                stake: "Stake",
+                history: "History",
+                "dao-title": "Direct Governance",
+                "status-active": "ACTIVE",
+                "status-pending": "PENDING",
+                "proposal-1-title": "Transaction Fee Reduction",
+                "proposal-1-desc": "Proposal to reduce fees from 0.5% to 0.3% to stimulate the economy",
+                "proposal-2-title": "New Realm: The Observatory",
+                "proposal-2-desc": "Creation of a space dedicated to astronomy and citizen science",
+                "proposal-3-title": "Enhanced Referral System",
+                "proposal-3-desc": "Increase referral rewards from 100 to 250 $ÆG",
+                "votes-soon": "Vote coming soon",
+                "dao-proposals": "Total Proposals",
+                "dao-staked": "$ÆG Staked",
+                "dao-your-power": "Your Voting Power",
+                "dao-participation": "Participation",
+                "nft-title": "Artifact Market",
+                "guild-title": "Free Brotherhood",
+                members: "Members",
+                power: "Power",
+                rank: "Rank",
+                activity: "Activity",
+                "chat-guild": "Guild",
+                "chat-global": "Global",
+                "chat-trade": "Trade",
+                "chat-placeholder": "Write a message...",
+                "world-title": "World Domination"
+            },
+            tlh: {
+                // LATIN-KLINGON HYBRID - Qapla'!
+                tagline: "LIBERTAS PER TECHNOLOGIAM - Qapla'!",
+                manifesto: "<em>Individuum imperator est - tlhIngan maH!</em><br>Metaversum decentralizatum ubi unusquisque dominus fati sui. Nulla censura. Nullum imperium centrale. Libertas pura tantum. Heghlu'meH QaQ jajvam!",
+                "manifesto-em": "Individuum imperator est - tlhIngan maH!",
+                enter: "⚡ INGREDI METAVERSUM - Qapla'!",
+                agents: "Agentes Sovrani - tlhInganpu'",
+                nations: "Nationes Liberae",
+                freedom: "Libertas",
+                "nav-hub": "Centrum",
+                "nav-avatar": "Imago",
+                "nav-realms": "Regna",
+                "nav-economy": "Œconomia",
+                "nav-dao": "Consilium",
+                "nav-nft": "Artifacta",
+                "nav-guild": "Fraternitas",
+                "nav-world": "Mundus",
+                "hub-title": "Portae Metaversi - nuqneH!",
+                "realm-agora": "Agora Liberum",
+                "realm-agora-desc": "Forum publicum disputationis liberae - batlh!",
+                "realm-market": "Mercatus Liber",
+                "realm-market-desc": "Commercium sine tributis - Qapla'!",
+                "realm-academy": "Academia",
+                "realm-academy-desc": "Scientia decentralizata pro omnibus - ghojmoH!",
+                "realm-forge": "Fabrica",
+                "realm-forge-desc": "Crea et vende artifacta tua - baQa'!",
+                "realm-arena": "Arena",
+                "realm-arena-desc": "Pugna et gloria aeterna - batlh bIHeghjaj!",
+                "realm-sanctuary": "Sanctuarium",
+                "realm-sanctuary-desc": "Spatium privatum et cryptatum - pagh!",
+                "avatar-title": "Finge Identitatem - wo'!",
+                "avatar-class": "Ⓐ Anarchista Illuminatus - SuvwI'",
+                "custom-base": "Basis Imaginis",
+                "custom-aura": "Aura",
+                "custom-title": "Titulus",
+                "title-anarchist": "Anarchista Illuminatus",
+                "title-guardian": "Custos Libertatis - 'avwI'",
+                "title-sovereign": "Imperator Absolutus - ta'",
+                "economy-title": "Œconomia Sovrana - Huch!",
+                "token-aeg": "ÆgisToken - Gubernatio",
+                "token-nrg": "Energia - Utilitas",
+                "token-rep": "Fama - Soulbound",
+                buy: "Emere - je'",
+                stake: "Ponere - lan",
+                history: "Historia",
+                "dao-title": "Gubernatio Directa - yIn!",
+                "status-active": "ACTIVUM - taH!",
+                "status-pending": "EXPECTANS",
+                "proposal-1-title": "Reductio Tributorum - Qapla'!",
+                "proposal-1-desc": "Propositio reducendi tributa de 0.5% ad 0.3%",
+                "proposal-2-title": "Novum Regnum: Observatorium",
+                "proposal-2-desc": "Creatio spatii astronomiae dedicati - Hovmey!",
+                "proposal-3-title": "Systema Referentiae Melioratum",
+                "proposal-3-desc": "Augmentum praemiorum de 100 ad 250 $ÆG",
+                "votes-soon": "Suffragium mox - tugh!",
+                "dao-proposals": "Propositiones Totales",
+                "dao-staked": "$ÆG Positi",
+                "dao-your-power": "Potestas Tua Suffragandi",
+                "dao-participation": "Participatio",
+                "nft-title": "Mercatus Artifactorum - nuqneH!",
+                "guild-title": "Fraternitas Libera - tuqwIj!",
+                members: "Sodales - puqloD",
+                power: "Potestas - HoS",
+                rank: "Gradus - patlh",
+                activity: "Activitas",
+                "chat-guild": "Fraternitas",
+                "chat-global": "Mundus",
+                "chat-trade": "Commercium",
+                "chat-placeholder": "Scribe nuntium... nuqneH?",
+                "world-title": "Dominatio Mundi - Qapla'!"
+            }
+        };
+
+        let currentLang = 'fr';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const flags = { fr: '🇫🇷', en: '🇬🇧', tlh: '🖖' };
+            document.getElementById('langCurrent').textContent = flags[lang];
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (TRANSLATIONS[lang][key]) {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = TRANSLATIONS[lang][key];
+                    } else {
+                        el.innerHTML = TRANSLATIONS[lang][key];
+                    }
+                }
+            });
+            
+            // Update placeholder separately
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                if (TRANSLATIONS[lang][key]) {
+                    el.placeholder = TRANSLATIONS[lang][key];
+                }
+            });
+            
+            // Update intro buttons
+            document.querySelectorAll('.lang-btn-intro').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('active'));
+            event?.target?.classList.add('active');
+            
+            localStorage.setItem('aegis_lang', lang);
+            toggleLangDropdown(false);
+        }
+
+        function toggleLangDropdown(force) {
+            const dropdown = document.getElementById('langDropdown');
+            if (force === false) {
+                dropdown.classList.remove('open');
+            } else {
+                dropdown.classList.toggle('open');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // GAME STATE
+        // ═══════════════════════════════════════════════════════════
+        let STATE = {
+            name: 'Agent Sovereign',
+            avatar: '👁️',
+            aeg: 12450,
+            nrg: 847,
+            rep: 4521,
+            level: 42,
+            guild: 'Libertas Æterna'
+        };
+
+        const saved = localStorage.getItem('aegis_v7_state');
+        if (saved) STATE = { ...STATE, ...JSON.parse(saved) };
+
+        function saveState() {
+            localStorage.setItem('aegis_v7_state', JSON.stringify(STATE));
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // FLOATING SYMBOLS
+        // ═══════════════════════════════════════════════════════════
+        function createFloatingSymbols() {
+            const container = document.getElementById('floatingSymbols');
+            const symbols = ['Ⓐ', '⚡', '★', '🛡️', '⚔️', '∞', '◈', '◆'];
+            for (let i = 0; i < 20; i++) {
+                const sym = document.createElement('div');
+                sym.className = 'float-symbol';
+                sym.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                sym.style.left = Math.random() * 100 + '%';
+                sym.style.animationDelay = Math.random() * 20 + 's';
+                sym.style.animationDuration = (15 + Math.random() * 15) + 's';
+                sym.style.color = ['#f7d354', '#00f0ff', '#8b5cf6', '#00ff6a'][Math.floor(Math.random() * 4)];
+                container.appendChild(sym);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INTRO
+        // ═══════════════════════════════════════════════════════════
+        function enterMetaverse() {
+            document.getElementById('introOverlay').classList.add('hidden');
+            if (navigator.vibrate) navigator.vibrate(100);
+            
+            // Load saved language
+            const savedLang = localStorage.getItem('aegis_lang');
+            if (savedLang) setLanguage(savedLang);
+        }
+
+        // Animate agent count
+        function animateCount() {
+            const el = document.getElementById('agentCount');
+            let count = 800000;
+            const target = 847293;
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 2000);
+                if (count >= target) { count = target; clearInterval(interval); }
+                el.textContent = count.toLocaleString();
+            }, 30);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // NAVIGATION
+        // ═══════════════════════════════════════════════════════════
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const screen = tab.dataset.screen;
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-' + screen).classList.add('active');
+                
+                if (screen === 'world') initWorldMap();
+            });
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        // AVATAR
+        // ═══════════════════════════════════════════════════════════
+        function setAvatar(emoji) {
+            STATE.avatar = emoji;
+            document.getElementById('avatarDisplay').textContent = emoji;
+            document.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
+            event.target.classList.add('selected');
+            saveState();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // TOKENS
+        // ═══════════════════════════════════════════════════════════
+        function buyToken(type) {
+            alert(currentLang === 'tlh' 
+                ? 'Qapla\'! Transactio simulata - nuqneH!' 
+                : currentLang === 'en'
+                ? 'Transaction simulated - Demo mode'
+                : 'Transaction simulée - Mode démo');
+        }
+
+        function stakeToken(type) {
+            alert(currentLang === 'tlh'
+                ? 'batlh! Staking activatum!'
+                : currentLang === 'en'
+                ? 'Staking activated!'
+                : 'Staking activé !');
+        }
+
+        function viewRepHistory() {
+            alert(currentLang === 'tlh'
+                ? 'Historia Famae - tlhIngan maH!'
+                : currentLang === 'en'
+                ? 'Reputation History'
+                : 'Historique de Réputation');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // REALMS
+        // ═══════════════════════════════════════════════════════════
+        function enterRealm(realm) {
+            const messages = {
+                fr: `Entrée dans ${realm}... Chargement du royaume...`,
+                en: `Entering ${realm}... Loading realm...`,
+                tlh: `Ingrediens ${realm}... Qapla'! nuqneH!`
+            };
+            alert(messages[currentLang]);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // WORLD MAP
+        // ═══════════════════════════════════════════════════════════
+        let worldMap;
+        function initWorldMap() {
+            if (worldMap) return;
+            
+            worldMap = L.map('worldMap', { zoomControl: false }).setView([30, 0], 2);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(worldMap);
+            
+            const hotspots = [
+                { lat: 48.8566, lng: 2.3522, name: 'Paris', agents: '125K' },
+                { lat: 50.8503, lng: 4.3517, name: 'Bruxelles', agents: '45K' },
+                { lat: 40.7128, lng: -74.0060, name: 'New York', agents: '230K' },
+                { lat: 35.6762, lng: 139.6503, name: 'Tokyo', agents: '180K' },
+                { lat: -23.5505, lng: -46.6333, name: 'São Paulo', agents: '95K' },
+                { lat: 37.5665, lng: 126.9780, name: 'Seoul', agents: '150K' }
+            ];
+            
+            hotspots.forEach(h => {
+                L.circleMarker([h.lat, h.lng], {
+                    radius: 12,
+                    fillColor: '#f7d354',
+                    color: '#f7d354',
+                    weight: 2,
+                    opacity: 0.8,
+                    fillOpacity: 0.4
+                }).addTo(worldMap).bindPopup(`<b>${h.name}</b><br>Ⓐ ${h.agents} agents`);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // GUILD CHAT
+        // ═══════════════════════════════════════════════════════════
+        function sendGuildMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const chat = document.getElementById('guildChat');
+            chat.innerHTML += `
+                <div class="chat-msg">
+                    <div class="chat-avatar">${STATE.avatar}</div>
+                    <div class="chat-content">
+                        <div class="chat-name">@${STATE.name}</div>
+                        <div class="chat-text">${text}</div>
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+            
+            // Simulated response
+            setTimeout(() => {
+                const responses = {
+                    fr: ['Qapla\'! 🔥', 'Bien dit!', 'Libertas! ⚔️', 'Pour la guilde!'],
+                    en: ['Qapla\'! 🔥', 'Well said!', 'Libertas! ⚔️', 'For the guild!'],
+                    tlh: ['Qapla\'! batlh!', 'maj! 🔥', 'tlhIngan maH!', 'Heghlu\'meH QaQ jajvam!']
+                };
+                const resp = responses[currentLang][Math.floor(Math.random() * 4)];
+                chat.innerHTML += `
+                    <div class="chat-msg">
+                        <div class="chat-avatar">🦅</div>
+                        <div class="chat-content">
+                            <div class="chat-name">@LibertyEagle</div>
+                            <div class="chat-text">${resp}</div>
+                        </div>
+                    </div>
+                `;
+                chat.scrollTop = chat.scrollHeight;
+            }, 1500);
+        }
+
+        document.getElementById('chatInput')?.addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendGuildMessage();
+        });
+
+        // ═══════════════════════════════════════════════════════════
+        // HEADER ACTIONS
+        // ═══════════════════════════════════════════════════════════
+        function showNotifications() {
+            const msgs = {
+                fr: '🔔 3 nouvelles notifications!',
+                en: '🔔 3 new notifications!',
+                tlh: '🔔 wej chu\' notifications - nuqneH!'
+            };
+            alert(msgs[currentLang]);
+        }
+
+        function showSettings() {
+            const msgs = {
+                fr: '⚙️ Paramètres (démo)',
+                en: '⚙️ Settings (demo)',
+                tlh: '⚙️ QIn - Qapla\'!'
+            };
+            alert(msgs[currentLang]);
+        }
+
+        function showProfile() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-avatar').classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-screen="avatar"]').classList.add('active');
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════
+        createFloatingSymbols();
+        animateCount();
+        
+        // Check if returning
+        if (localStorage.getItem('aegis_v7_entered')) {
+            document.getElementById('introOverlay').classList.add('hidden');
+            const savedLang = localStorage.getItem('aegis_lang');
+            if (savedLang) setLanguage(savedLang);
+        }
+        
+        console.log(`
+╔═══════════════════════════════════════════════════════════╗
+║                                                           ║
+║     @ÆGIS V7 METAVERSE - LIBERTAS PER TECHNOLOGIAM       ║
+║                                                           ║
+║     Ⓐ Decentralized  ⚡ Sovereign  ★ Unstoppable         ║
+║                                                           ║
+║     Qapla'! tlhIngan maH! 🖖                              ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
+        `);
+    </script>
+</body>
+</html>

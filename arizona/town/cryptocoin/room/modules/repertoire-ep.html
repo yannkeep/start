@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Répertoire Éducation Permanente — Classement par Piliers</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --pilier-rouge: #e53935;
+            --pilier-orange: #ff9800;
+            --pilier-bleu: #2196f3;
+            --pilier-vert: #4caf50;
+            --pilier-mauve: #9c27b0;
+            --pilier-gris: #607d8b;
+            --bg-dark: #0a0a0f;
+            --bg-panel: #0f0f18;
+            --bg-card: #14141f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-muted: #888;
+        }
+        
+        html, body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        /* === HEADER === */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--pilier-rouge), var(--pilier-orange), var(--pilier-vert), var(--pilier-bleu), var(--pilier-mauve));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .title { font-weight: 700; font-size: 1rem; }
+        .subtitle { font-size: 0.65rem; color: var(--text-muted); }
+        
+        .header-stats {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.1rem; font-weight: 700; color: #6366f1; }
+        .stat-label { font-size: 0.55rem; color: var(--text-muted); }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.4rem;
+            margin-left: auto;
+        }
+        
+        .btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text);
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .btn:hover { background: var(--border); }
+        .btn.primary { background: #6366f1; border-color: #6366f1; }
+        .btn.danger { color: #f87171; }
+        
+        /* === PILIERS DROP ZONES === */
+        .piliers-bar {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+        
+        .pilier-zone {
+            flex: 1;
+            min-width: 120px;
+            max-width: 180px;
+            padding: 0.6rem;
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+            text-align: center;
+            transition: all 0.2s;
+            cursor: default;
+        }
+        
+        .pilier-zone.drag-over {
+            transform: scale(1.02);
+            border-style: solid;
+        }
+        
+        .pilier-zone.rouge { border-color: var(--pilier-rouge); background: rgba(229, 57, 53, 0.1); }
+        .pilier-zone.rouge.drag-over { background: rgba(229, 57, 53, 0.25); }
+        .pilier-zone.orange { border-color: var(--pilier-orange); background: rgba(255, 152, 0, 0.1); }
+        .pilier-zone.orange.drag-over { background: rgba(255, 152, 0, 0.25); }
+        .pilier-zone.bleu { border-color: var(--pilier-bleu); background: rgba(33, 150, 243, 0.1); }
+        .pilier-zone.bleu.drag-over { background: rgba(33, 150, 243, 0.25); }
+        .pilier-zone.vert { border-color: var(--pilier-vert); background: rgba(76, 175, 80, 0.1); }
+        .pilier-zone.vert.drag-over { background: rgba(76, 175, 80, 0.25); }
+        .pilier-zone.mauve { border-color: var(--pilier-mauve); background: rgba(156, 39, 176, 0.1); }
+        .pilier-zone.mauve.drag-over { background: rgba(156, 39, 176, 0.25); }
+        .pilier-zone.gris { border-color: var(--pilier-gris); background: rgba(96, 125, 139, 0.1); }
+        .pilier-zone.gris.drag-over { background: rgba(96, 125, 139, 0.25); }
+        
+        .pilier-icon { font-size: 1.2rem; margin-bottom: 0.2rem; }
+        .pilier-name { font-size: 0.7rem; font-weight: 600; }
+        .pilier-count { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.2rem; }
+        
+        /* === MAIN CONTENT === */
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        /* === SIDEBAR === */
+        .sidebar {
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text);
+            font-size: 0.75rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 0.3rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+        
+        .filter-tab:hover { color: var(--text); }
+        .filter-tab.active { background: #6366f1; border-color: #6366f1; color: white; }
+        
+        .entity-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .entity-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem;
+            margin-bottom: 4px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.15s;
+        }
+        
+        .entity-card:hover { border-color: #6366f1; }
+        .entity-card.dragging { opacity: 0.4; cursor: grabbing; }
+        
+        .entity-card.pilier-rouge { border-left: 4px solid var(--pilier-rouge); }
+        .entity-card.pilier-orange { border-left: 4px solid var(--pilier-orange); }
+        .entity-card.pilier-bleu { border-left: 4px solid var(--pilier-bleu); }
+        .entity-card.pilier-vert { border-left: 4px solid var(--pilier-vert); }
+        .entity-card.pilier-mauve { border-left: 4px solid var(--pilier-mauve); }
+        .entity-card.pilier-gris { border-left: 4px solid var(--pilier-gris); }
+        
+        .entity-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .entity-logo img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .entity-info { flex: 1; min-width: 0; }
+        .entity-name { font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .entity-meta { font-size: 0.55rem; color: var(--text-muted); }
+        
+        .entity-case {
+            font-size: 0.5rem;
+            background: #6366f1;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        /* === GRID AREA === */
+        .grid-area {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .grid-header {
+            padding: 0.5rem 1rem;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .grid-title { font-size: 0.8rem; font-weight: 600; }
+        
+        .grid-controls {
+            display: flex;
+            gap: 0.4rem;
+            margin-left: auto;
+        }
+        
+        .grid-controls select {
+            padding: 0.3rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 0.65rem;
+        }
+        
+        .grid-container {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 3px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        
+        .grid-cell {
+            width: 70px;
+            height: 70px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.12s;
+            overflow: hidden;
+        }
+        
+        .grid-cell:hover { transform: scale(1.04); z-index: 10; border-color: #6366f1; }
+        .grid-cell.empty { opacity: 0.25; }
+        .grid-cell.empty:hover { opacity: 0.6; }
+        .grid-cell.drag-over { border-color: #6366f1 !important; background: rgba(99, 102, 241, 0.2); transform: scale(1.05); }
+        .grid-cell.occupied { cursor: grab; }
+        .grid-cell.occupied.dragging { opacity: 0.4; }
+        
+        .grid-cell.pilier-rouge { border-color: var(--pilier-rouge); }
+        .grid-cell.pilier-orange { border-color: var(--pilier-orange); }
+        .grid-cell.pilier-bleu { border-color: var(--pilier-bleu); }
+        .grid-cell.pilier-vert { border-color: var(--pilier-vert); }
+        .grid-cell.pilier-mauve { border-color: var(--pilier-mauve); }
+        .grid-cell.pilier-gris { border-color: var(--pilier-gris); }
+        
+        .cell-logo {
+            width: 34px;
+            height: 34px;
+            background: var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            overflow: hidden;
+        }
+        
+        .cell-logo img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .cell-name {
+            font-size: 0.45rem;
+            text-align: center;
+            line-height: 1.1;
+            max-height: 2em;
+            overflow: hidden;
+            padding: 0 2px;
+        }
+        
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        /* === MODALS === */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.open { display: flex; }
+        
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 92vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .modal-logo {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .modal-logo:hover::after {
+            content: '📷';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-logo img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .modal-title { flex: 1; }
+        .modal-name { font-size: 0.95rem; font-weight: 600; }
+        .modal-meta { font-size: 0.7rem; color: var(--text-muted); }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .field-group { margin-bottom: 0.75rem; }
+        .field-label { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 0.2rem; display: block; }
+        
+        .field-input, .field-select, .field-textarea {
+            width: 100%;
+            padding: 0.45rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 0.75rem;
+        }
+        
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .field-row-3 { display: grid; grid-template-columns: 80px 1fr 100px; gap: 0.5rem; }
+        
+        /* Pilier selector with drag zones style */
+        .pilier-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        
+        .pilier-btn {
+            padding: 0.4rem 0.6rem;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .pilier-btn:hover { transform: scale(1.02); }
+        .pilier-btn.selected { font-weight: 600; transform: scale(1.02); }
+        
+        .pilier-btn.rouge { border-color: var(--pilier-rouge); }
+        .pilier-btn.rouge.selected { background: rgba(229, 57, 53, 0.2); }
+        .pilier-btn.orange { border-color: var(--pilier-orange); }
+        .pilier-btn.orange.selected { background: rgba(255, 152, 0, 0.2); }
+        .pilier-btn.bleu { border-color: var(--pilier-bleu); }
+        .pilier-btn.bleu.selected { background: rgba(33, 150, 243, 0.2); }
+        .pilier-btn.vert { border-color: var(--pilier-vert); }
+        .pilier-btn.vert.selected { background: rgba(76, 175, 80, 0.2); }
+        .pilier-btn.mauve { border-color: var(--pilier-mauve); }
+        .pilier-btn.mauve.selected { background: rgba(156, 39, 176, 0.2); }
+        .pilier-btn.gris { border-color: var(--pilier-gris); }
+        .pilier-btn.gris.selected { background: rgba(96, 125, 139, 0.2); }
+        
+        .case-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .case-input-row input { width: 80px; text-align: center; }
+        .case-input-row .btn { flex: none; }
+        
+        .logo-input-row {
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+        
+        .logo-input-row .btn { flex: none; padding: 0.45rem 0.6rem; }
+        
+        .modal-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.4rem;
+        }
+        
+        .modal-footer .btn { padding: 0.5rem 1rem; }
+        
+        /* Picker */
+        .picker-list { max-height: 350px; overflow-y: auto; }
+        .picker-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 2px;
+        }
+        .picker-item:hover { background: var(--bg-card); }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: #4caf50;
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            z-index: 2000;
+            display: none;
+        }
+        .toast.show { display: block; animation: fadeInOut 3s ease; }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.7rem; }
+        .empty-state a { color: #6366f1; }
+        
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo">🏛️</div>
+            <div>
+                <div class="title">Répertoire Éducation Permanente</div>
+                <div class="subtitle">Classement par piliers — Glissez-déposez pour classifier</div>
+            </div>
+            
+            <div class="header-stats">
+                <div class="stat">
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">TOTAL</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statClassified">0</div>
+                    <div class="stat-label">CLASSÉES</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statPlaced">0</div>
+                    <div class="stat-label">DANS DAMIER</div>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
+                <button class="btn" onclick="exportJSON()">📤 Export</button>
+                <button class="btn primary" onclick="openAddModal()">+ Nouveau</button>
+                <button class="btn" onclick="showSourcesModal()">📚</button>
+                <button class="btn danger" onclick="clearAllData()">🗑️</button>
+            </div>
+        </header>
+        
+        <!-- PILIERS DROP ZONES -->
+        <div class="piliers-bar">
+            <div class="pilier-zone rouge" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'rouge')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">🔴</div>
+                <div class="pilier-name">Socialiste</div>
+                <div class="pilier-count"><span id="countRouge">0</span> assos</div>
+            </div>
+            <div class="pilier-zone orange" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'orange')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">🟠</div>
+                <div class="pilier-name">Chrétien</div>
+                <div class="pilier-count"><span id="countOrange">0</span> assos</div>
+            </div>
+            <div class="pilier-zone bleu" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'bleu')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">🔵</div>
+                <div class="pilier-name">Libéral</div>
+                <div class="pilier-count"><span id="countBleu">0</span> assos</div>
+            </div>
+            <div class="pilier-zone vert" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'vert')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">🟢</div>
+                <div class="pilier-name">Écologiste</div>
+                <div class="pilier-count"><span id="countVert">0</span> assos</div>
+            </div>
+            <div class="pilier-zone mauve" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'mauve')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">🟣</div>
+                <div class="pilier-name">Communiste</div>
+                <div class="pilier-count"><span id="countMauve">0</span> assos</div>
+            </div>
+            <div class="pilier-zone gris" ondragover="onPilierDragOver(event)" ondrop="onPilierDrop(event, 'gris')" ondragleave="onPilierDragLeave(event)">
+                <div class="pilier-icon">⚪</div>
+                <div class="pilier-name">Neutre</div>
+                <div class="pilier-count"><span id="countGris">0</span> assos</div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <input type="text" class="search-input" placeholder="🔍 Rechercher..." id="searchInput" oninput="renderList()">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="" onclick="setFilter(null)">Tous</button>
+                        <button class="filter-tab" data-filter="unclassified" onclick="setFilter('unclassified')">❓ Non classées</button>
+                        <button class="filter-tab" data-filter="rouge" onclick="setFilter('rouge')">🔴</button>
+                        <button class="filter-tab" data-filter="orange" onclick="setFilter('orange')">🟠</button>
+                        <button class="filter-tab" data-filter="bleu" onclick="setFilter('bleu')">🔵</button>
+                        <button class="filter-tab" data-filter="vert" onclick="setFilter('vert')">🟢</button>
+                        <button class="filter-tab" data-filter="mauve" onclick="setFilter('mauve')">🟣</button>
+                        <button class="filter-tab" data-filter="gris" onclick="setFilter('gris')">⚪</button>
+                    </div>
+                </div>
+                <div class="entity-list" id="entityList"></div>
+            </aside>
+            
+            <!-- GRID AREA -->
+            <main class="grid-area">
+                <div class="grid-header">
+                    <span class="grid-title">Damier 500 cases</span>
+                    <span style="font-size:0.6rem;color:var(--text-muted);">Glissez depuis la liste • Cliquez pour éditer</span>
+                    <div class="grid-controls">
+                        <select id="gridCols" onchange="renderGrid()">
+                            <option value="20" selected>20 colonnes</option>
+                            <option value="25">25 colonnes</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid" id="grid"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-logo" id="modalLogo" onclick="document.getElementById('logoInput').click()">🏛️</div>
+                <div class="modal-title">
+                    <div class="modal-name" id="modalName">Association</div>
+                    <div class="modal-meta" id="modalMeta"></div>
+                </div>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label class="field-label">📍 Position dans le damier</label>
+                    <div class="case-input-row">
+                        <input type="number" class="field-input" id="fieldCase" min="1" max="500" placeholder="N° case">
+                        <button class="btn primary" onclick="placeAtCase()">Placer</button>
+                        <button class="btn" onclick="removeFromGrid()" style="background:var(--bg);border-color:var(--warning);color:var(--warning);">↩️ Retirer du damier</button>
+                    </div>
+                    <div style="font-size:0.6rem;color:var(--text-muted);margin-top:0.3rem;">Retirer = enlève de la case mais garde l'association dans la liste</div>
+                </div>
+                
+                <div class="field-group">
+                    <label class="field-label">Pilier (ou glissez vers une zone ci-dessus)</label>
+                    <div class="pilier-selector">
+                        <button type="button" class="pilier-btn rouge" onclick="selectPilier('rouge')">🔴 Socialiste</button>
+                        <button type="button" class="pilier-btn orange" onclick="selectPilier('orange')">🟠 Chrétien</button>
+                        <button type="button" class="pilier-btn bleu" onclick="selectPilier('bleu')">🔵 Libéral</button>
+                        <button type="button" class="pilier-btn vert" onclick="selectPilier('vert')">🟢 Écolo</button>
+                        <button type="button" class="pilier-btn mauve" onclick="selectPilier('mauve')">🟣 Communiste</button>
+                        <button type="button" class="pilier-btn gris" onclick="selectPilier('gris')">⚪ Neutre</button>
+                    </div>
+                </div>
+                
+                <!-- LOGO -->
+                <div class="field-group">
+                    <label class="field-label">🖼️ Logo (URL ou fichier)</label>
+                    <div class="logo-input-row">
+                        <input type="text" class="field-input" id="fieldLogoUrl" placeholder="https://exemple.com/logo.png" style="flex:1;">
+                        <button class="btn" onclick="applyLogoUrl()">Appliquer URL</button>
+                        <button class="btn" onclick="document.getElementById('logoInput').click()">📁 Fichier</button>
+                        <button class="btn" onclick="clearLogo()">✕</button>
+                    </div>
+                    <div id="logoPreview" style="margin-top:0.5rem;display:none;">
+                        <img id="logoPreviewImg" style="max-height:60px;max-width:150px;border-radius:4px;border:1px solid var(--border);">
+                    </div>
+                </div>
+                
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label">Nom</label>
+                        <input type="text" class="field-input" id="fieldNom">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Sigle</label>
+                        <input type="text" class="field-input" id="fieldSigle">
+                    </div>
+                </div>
+                
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label">N° BCE / KBO</label>
+                        <input type="text" class="field-input" id="fieldBCE" placeholder="0XXX.XXX.XXX">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Forme juridique</label>
+                        <select class="field-select" id="fieldForme">
+                            <option value="">—</option>
+                            <option value="ASBL">ASBL</option>
+                            <option value="AISBL">AISBL</option>
+                            <option value="Fondation">Fondation</option>
+                            <option value="SA">SA</option>
+                            <option value="SRL">SRL</option>
+                            <option value="SC">SC (Coop)</option>
+                            <option value="Public">Organisme public</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <label class="field-label">Adresse</label>
+                    <input type="text" class="field-input" id="fieldAdresse">
+                </div>
+                
+                <div class="field-row-3">
+                    <div class="field-group">
+                        <label class="field-label">CP</label>
+                        <input type="text" class="field-input" id="fieldCP">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Localité</label>
+                        <input type="text" class="field-input" id="fieldLocalite">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Tél</label>
+                        <input type="text" class="field-input" id="fieldTel">
+                    </div>
+                </div>
+                
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label">Email</label>
+                        <input type="email" class="field-input" id="fieldEmail">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Site web</label>
+                        <input type="text" class="field-input" id="fieldWeb">
+                    </div>
+                </div>
+                
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label">Reconnaissance EP</label>
+                        <input type="text" class="field-input" id="fieldReconnaissance" placeholder="Axe 1, Axe 3.1...">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Axes d'action</label>
+                        <input type="text" class="field-input" id="fieldAxes">
+                    </div>
+                </div>
+                
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label">Secteur / Activité</label>
+                        <input type="text" class="field-input" id="fieldSecteur">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Source données</label>
+                        <input type="text" class="field-input" id="fieldSource" placeholder="FWB, BCE, manuel...">
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <label class="field-label">Notes</label>
+                    <textarea class="field-textarea" id="fieldNotes" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;gap:0.5rem;width:100%;">
+                    <button class="btn primary" onclick="saveEntity()" style="flex:1;">💾 Enregistrer</button>
+                    <button class="btn" onclick="closeEditModal()">Annuler</button>
+                </div>
+                <details style="width:100%;background:var(--bg);border-radius:6px;padding:0.5rem;">
+                    <summary style="cursor:pointer;font-size:0.7rem;color:var(--text-muted);">⚠️ Zone dangereuse</summary>
+                    <div style="padding-top:0.5rem;">
+                        <button class="btn danger" onclick="deleteEntityPermanently()" style="width:100%;justify-content:center;">🗑️ Supprimer définitivement de la base</button>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PICKER MODAL -->
+    <div class="modal-overlay" id="pickerModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-name">Placer une association</div>
+                    <div class="modal-meta">Case n°<span id="pickerCaseNum">0</span></div>
+                </div>
+                <button class="modal-close" onclick="closePickerModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="search-input" id="pickerSearch" placeholder="🔍 Rechercher..." oninput="renderPickerList()" style="margin-bottom:0.75rem;">
+                <div class="picker-list" id="pickerList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closePickerModal()">Annuler</button>
+                <button class="btn primary" onclick="openAddModalForCase()">+ Créer nouvelle</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SOURCES MODAL -->
+    <div class="modal-overlay" id="sourcesModal">
+        <div class="modal" style="max-width:450px;">
+            <div class="modal-header">
+                <div class="modal-title"><div class="modal-name">📚 Sources Open Data</div></div>
+                <button class="modal-close" onclick="closeSourcesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label class="field-label">📖 Éducation Permanente FWB</label>
+                    <p style="font-size:0.7rem;margin-bottom:0.4rem;">274 associations reconnues</p>
+                    <a href="https://educationpermanente.cfwb.be/fileadmin/sites/edu_perm/uploads/Document/Listing_associations/RepertoirecoordonneesAEP_SITE_21-10-25.xlsx" target="_blank" class="btn" style="display:inline-flex;width:auto;">Télécharger XLSX</a>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">🏛️ BCE / KBO Open Data</label>
+                    <p style="font-size:0.7rem;margin-bottom:0.4rem;">Toutes les entités belges</p>
+                    <a href="https://kbopub.economie.fgov.be/kbo-open-data/login?lang=fr" target="_blank" class="btn" style="display:inline-flex;width:auto;">Accéder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="importFile(event)">
+    <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload(event)">
+
+<script>
+const STORAGE_KEY = 'repertoire_ep_v3';
+const GRID_SIZE = 500;
+
+let data = { entities: [], gridPositions: {} };
+let currentEntityId = null;
+let currentPilier = null;
+let currentFilter = null;
+let draggedEntityId = null;
+let pickerCaseIndex = null;
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    renderAll();
+});
+
+function loadData() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            data = JSON.parse(saved);
+            if (!data.entities) data.entities = [];
+            if (!data.gridPositions) data.gridPositions = {};
+        }
+    } catch(e) { console.error(e); }
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function generateId() { return 'e' + Date.now() + Math.random().toString(36).substr(2, 5); }
+
+function getEntityCase(id) { return data.gridPositions[id]; }
+function getCaseEntity(idx) {
+    for (const [eid, i] of Object.entries(data.gridPositions)) {
+        if (i === idx) return eid;
+    }
+    return null;
+}
+
+// ============ RENDER ============
+function renderAll() {
+    renderGrid();
+    renderList();
+    updateStats();
+    updateFilterTabs();
+}
+
+function updateStats() {
+    const total = data.entities.length;
+    const classified = data.entities.filter(e => e.pilier).length;
+    const placed = Object.keys(data.gridPositions).length;
+    
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statClassified').textContent = classified;
+    document.getElementById('statPlaced').textContent = placed;
+    
+    const counts = { rouge: 0, orange: 0, bleu: 0, vert: 0, mauve: 0, gris: 0 };
+    data.entities.forEach(e => { if (e.pilier && counts[e.pilier] !== undefined) counts[e.pilier]++; });
+    
+    Object.entries(counts).forEach(([p, c]) => {
+        const el = document.getElementById('count' + p.charAt(0).toUpperCase() + p.slice(1));
+        if (el) el.textContent = c;
+    });
+}
+
+function updateFilterTabs() {
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        const f = tab.dataset.filter;
+        tab.classList.toggle('active', f === (currentFilter || ''));
+    });
+}
+
+function renderGrid() {
+    const cols = parseInt(document.getElementById('gridCols').value);
+    const grid = document.getElementById('grid');
+    grid.style.gridTemplateColumns = `repeat(${cols}, 70px)`;
+    
+    let html = '';
+    for (let i = 0; i < GRID_SIZE; i++) {
+        const entityId = getCaseEntity(i);
+        const entity = entityId ? data.entities.find(e => e.id === entityId) : null;
+        
+        if (entity) {
+            const pc = entity.pilier ? `pilier-${entity.pilier}` : '';
+            const logo = entity.logo ? `<img src="${entity.logo}">` : (entity.sigle || entity.nom.substring(0, 2));
+            
+            html += `<div class="grid-cell occupied ${pc}" data-index="${i}" data-entity="${entity.id}"
+                draggable="true"
+                onclick="openEditModal('${entity.id}')"
+                ondragstart="onDragStart(event, '${entity.id}')"
+                ondragend="onDragEnd(event)"
+                ondragover="onCellDragOver(event)"
+                ondrop="onCellDrop(event, ${i})"
+                ondragleave="onCellDragLeave(event)">
+                <span class="cell-number">${i + 1}</span>
+                <div class="cell-logo">${logo}</div>
+                <div class="cell-name">${entity.sigle || entity.nom.substring(0, 10)}</div>
+            </div>`;
+        } else {
+            html += `<div class="grid-cell empty" data-index="${i}"
+                onclick="onEmptyCellClick(${i})"
+                ondragover="onCellDragOver(event)"
+                ondrop="onCellDrop(event, ${i})"
+                ondragleave="onCellDragLeave(event)">
+                <span class="cell-number">${i + 1}</span>
+            </div>`;
+        }
+    }
+    grid.innerHTML = html;
+}
+
+function renderList() {
+    const container = document.getElementById('entityList');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    
+    let list = [...data.entities];
+    
+    if (search) {
+        list = list.filter(e => e.nom.toLowerCase().includes(search) || (e.sigle && e.sigle.toLowerCase().includes(search)));
+    }
+    
+    if (currentFilter === 'unclassified') {
+        list = list.filter(e => !e.pilier);
+    } else if (currentFilter) {
+        list = list.filter(e => e.pilier === currentFilter);
+    }
+    
+    list.sort((a, b) => {
+        const aPlaced = getEntityCase(a.id) !== undefined;
+        const bPlaced = getEntityCase(b.id) !== undefined;
+        if (aPlaced !== bPlaced) return aPlaced ? 1 : -1;
+        return a.nom.localeCompare(b.nom);
+    });
+    
+    if (list.length === 0) {
+        container.innerHTML = `<div class="empty-state">
+            ${data.entities.length === 0 
+                ? `Importez le fichier EP pour commencer<br><br><a href="https://educationpermanente.cfwb.be/fileadmin/sites/edu_perm/uploads/Document/Listing_associations/RepertoirecoordonneesAEP_SITE_21-10-25.xlsx" target="_blank">📥 Télécharger XLSX officiel</a>`
+                : 'Aucun résultat'}
+        </div>`;
+        return;
+    }
+    
+    container.innerHTML = list.slice(0, 300).map(e => {
+        const pc = e.pilier ? `pilier-${e.pilier}` : '';
+        const caseNum = getEntityCase(e.id);
+        const logo = e.logo ? `<img src="${e.logo}">` : (e.sigle ? e.sigle.substring(0, 2) : '🏛️');
+        
+        return `<div class="entity-card ${pc}" draggable="true" data-entity="${e.id}"
+            onclick="openEditModal('${e.id}')"
+            ondragstart="onDragStart(event, '${e.id}')"
+            ondragend="onDragEnd(event)">
+            <div class="entity-logo">${logo}</div>
+            <div class="entity-info">
+                <div class="entity-name">${e.nom}</div>
+                <div class="entity-meta">${[e.sigle, e.localite].filter(Boolean).join(' • ')}</div>
+            </div>
+            ${caseNum !== undefined ? `<span class="entity-case">#${caseNum + 1}</span>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function setFilter(f) {
+    currentFilter = f;
+    updateFilterTabs();
+    renderList();
+}
+
+// ============ DRAG & DROP ============
+function onDragStart(event, entityId) {
+    draggedEntityId = entityId;
+    event.target.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragEnd(event) {
+    event.target.classList.remove('dragging');
+    draggedEntityId = null;
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+}
+
+// Pilier zones
+function onPilierDragOver(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+}
+
+function onPilierDragLeave(event) {
+    event.currentTarget.classList.remove('drag-over');
+}
+
+function onPilierDrop(event, pilier) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    
+    if (!draggedEntityId) return;
+    
+    const entity = data.entities.find(e => e.id === draggedEntityId);
+    if (entity) {
+        entity.pilier = pilier;
+        saveData();
+        renderAll();
+        showToast(`Classée en pilier ${pilier}`);
+    }
+}
+
+// Grid cells
+function onCellDragOver(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+}
+
+function onCellDragLeave(event) {
+    event.currentTarget.classList.remove('drag-over');
+}
+
+function onCellDrop(event, targetIndex) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    
+    if (!draggedEntityId) return;
+    
+    // Remove existing entity from target
+    const existingId = getCaseEntity(targetIndex);
+    if (existingId && existingId !== draggedEntityId) {
+        delete data.gridPositions[existingId];
+    }
+    
+    // Remove dragged from old position
+    delete data.gridPositions[draggedEntityId];
+    
+    // Place
+    data.gridPositions[draggedEntityId] = targetIndex;
+    
+    saveData();
+    renderAll();
+    showToast('Placée en case ' + (targetIndex + 1));
+}
+
+function onEmptyCellClick(index) {
+    openPickerModal(index);
+}
+
+// ============ EDIT MODAL ============
+function openEditModal(entityId) {
+    currentEntityId = entityId;
+    const e = data.entities.find(x => x.id === entityId);
+    if (!e) return;
+    
+    document.getElementById('modalName').textContent = e.nom;
+    document.getElementById('modalMeta').textContent = [e.sigle, e.localite].filter(Boolean).join(' • ');
+    
+    const logoEl = document.getElementById('modalLogo');
+    logoEl.innerHTML = e.logo ? `<img src="${e.logo}">` : (e.sigle || '🏛️');
+    
+    // Logo field
+    document.getElementById('fieldLogoUrl').value = e.logo && !e.logo.startsWith('data:') ? e.logo : '';
+    if (e.logo) {
+        document.getElementById('logoPreview').style.display = 'block';
+        document.getElementById('logoPreviewImg').src = e.logo;
+    } else {
+        document.getElementById('logoPreview').style.display = 'none';
+    }
+    
+    const caseNum = getEntityCase(entityId);
+    document.getElementById('fieldCase').value = caseNum !== undefined ? caseNum + 1 : '';
+    
+    document.getElementById('fieldNom').value = e.nom || '';
+    document.getElementById('fieldSigle').value = e.sigle || '';
+    document.getElementById('fieldBCE').value = e.bce || '';
+    document.getElementById('fieldForme').value = e.forme || '';
+    document.getElementById('fieldAdresse').value = e.adresse || '';
+    document.getElementById('fieldCP').value = e.cp || '';
+    document.getElementById('fieldLocalite').value = e.localite || '';
+    document.getElementById('fieldTel').value = e.tel || '';
+    document.getElementById('fieldEmail').value = e.email || '';
+    document.getElementById('fieldWeb').value = e.web || '';
+    document.getElementById('fieldReconnaissance').value = e.reconnaissance || '';
+    document.getElementById('fieldAxes').value = e.axes || '';
+    document.getElementById('fieldSecteur').value = e.secteur || '';
+    document.getElementById('fieldSource').value = e.source || '';
+    document.getElementById('fieldNotes').value = e.notes || '';
+    
+    currentPilier = e.pilier || null;
+    updatePilierButtons();
+    
+    document.getElementById('editModal').classList.add('open');
+}
+
+function openAddModal() {
+    currentEntityId = null;
+    currentPilier = null;
+    
+    document.getElementById('modalName').textContent = 'Nouvelle association';
+    document.getElementById('modalMeta').textContent = '';
+    document.getElementById('modalLogo').textContent = '🏛️';
+    document.getElementById('fieldCase').value = '';
+    document.getElementById('fieldLogoUrl').value = '';
+    document.getElementById('logoPreview').style.display = 'none';
+    
+    ['Nom','Sigle','BCE','Adresse','CP','Localite','Tel','Email','Web','Reconnaissance','Axes','Secteur','Source','Notes'].forEach(f => {
+        const el = document.getElementById('field' + f);
+        if (el) el.value = '';
+    });
+    document.getElementById('fieldForme').value = '';
+    
+    updatePilierButtons();
+    document.getElementById('editModal').classList.add('open');
+}
+
+function openAddModalForCase() {
+    closePickerModal();
+    openAddModal();
+    if (pickerCaseIndex !== null) {
+        document.getElementById('fieldCase').value = pickerCaseIndex + 1;
+    }
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('open');
+    currentEntityId = null;
+    currentPilier = null;
+}
+
+function selectPilier(p) {
+    currentPilier = currentPilier === p ? null : p;
+    updatePilierButtons();
+}
+
+function updatePilierButtons() {
+    document.querySelectorAll('.pilier-selector .pilier-btn').forEach(btn => {
+        const cls = [...btn.classList].find(c => ['rouge','orange','bleu','vert','mauve','gris'].includes(c));
+        btn.classList.toggle('selected', cls === currentPilier);
+    });
+}
+
+function placeAtCase() {
+    if (!currentEntityId) { showToast('Enregistrez d\'abord'); return; }
+    
+    const val = parseInt(document.getElementById('fieldCase').value);
+    if (!val || val < 1 || val > GRID_SIZE) { showToast('Case invalide (1-500)'); return; }
+    
+    const idx = val - 1;
+    const existingId = getCaseEntity(idx);
+    if (existingId && existingId !== currentEntityId) delete data.gridPositions[existingId];
+    
+    delete data.gridPositions[currentEntityId];
+    data.gridPositions[currentEntityId] = idx;
+    
+    saveData();
+    renderAll();
+    showToast('Placée en case ' + val);
+}
+
+function removeFromGrid() {
+    if (!currentEntityId) return;
+    
+    const caseNum = getEntityCase(currentEntityId);
+    if (caseNum === undefined) {
+        showToast('Cette association n\'est pas dans le damier');
+        return;
+    }
+    
+    delete data.gridPositions[currentEntityId];
+    document.getElementById('fieldCase').value = '';
+    
+    saveData();
+    renderAll();
+    showToast('Retirée du damier (association conservée dans la liste)');
+}
+
+function saveEntity() {
+    const nom = document.getElementById('fieldNom').value.trim();
+    if (!nom) { alert('Nom requis'); return; }
+    
+    // Get current logo from entity or preview
+    let logo = null;
+    if (currentEntityId) {
+        const existing = data.entities.find(e => e.id === currentEntityId);
+        if (existing) logo = existing.logo;
+    }
+    const urlLogo = document.getElementById('fieldLogoUrl').value.trim();
+    if (urlLogo) logo = urlLogo;
+    
+    const ed = {
+        nom,
+        sigle: document.getElementById('fieldSigle').value.trim() || null,
+        bce: document.getElementById('fieldBCE').value.trim() || null,
+        forme: document.getElementById('fieldForme').value || null,
+        adresse: document.getElementById('fieldAdresse').value.trim() || null,
+        cp: document.getElementById('fieldCP').value.trim() || null,
+        localite: document.getElementById('fieldLocalite').value.trim() || null,
+        tel: document.getElementById('fieldTel').value.trim() || null,
+        email: document.getElementById('fieldEmail').value.trim() || null,
+        web: document.getElementById('fieldWeb').value.trim() || null,
+        reconnaissance: document.getElementById('fieldReconnaissance').value.trim() || null,
+        axes: document.getElementById('fieldAxes').value.trim() || null,
+        secteur: document.getElementById('fieldSecteur').value.trim() || null,
+        source: document.getElementById('fieldSource').value.trim() || null,
+        notes: document.getElementById('fieldNotes').value.trim() || null,
+        pilier: currentPilier,
+        logo: logo
+    };
+    
+    if (currentEntityId) {
+        const idx = data.entities.findIndex(e => e.id === currentEntityId);
+        if (idx !== -1) data.entities[idx] = { ...data.entities[idx], ...ed };
+    } else {
+        ed.id = generateId();
+        data.entities.push(ed);
+        currentEntityId = ed.id;
+        
+        const caseVal = parseInt(document.getElementById('fieldCase').value);
+        if (caseVal >= 1 && caseVal <= GRID_SIZE) {
+            const existingId = getCaseEntity(caseVal - 1);
+            if (existingId) delete data.gridPositions[existingId];
+            data.gridPositions[currentEntityId] = caseVal - 1;
+        }
+    }
+    
+    saveData();
+    closeEditModal();
+    renderAll();
+    showToast('Enregistré');
+}
+
+function deleteEntityPermanently() {
+    if (!currentEntityId) return;
+    
+    const entity = data.entities.find(e => e.id === currentEntityId);
+    const entityName = entity ? entity.nom : 'cette association';
+    
+    if (!confirm(`⚠️ SUPPRESSION DÉFINITIVE ⚠️\n\n"${entityName}" sera supprimée de la base.\n\nPour juste la retirer du damier (sans la supprimer), utilisez "Retirer du damier".\n\nSupprimer définitivement ?`)) return;
+    
+    data.entities = data.entities.filter(e => e.id !== currentEntityId);
+    delete data.gridPositions[currentEntityId];
+    
+    saveData();
+    closeEditModal();
+    renderAll();
+    showToast('Association supprimée définitivement');
+}
+
+function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const logoData = e.target.result;
+        
+        // Update preview
+        document.getElementById('logoPreview').style.display = 'block';
+        document.getElementById('logoPreviewImg').src = logoData;
+        document.getElementById('modalLogo').innerHTML = `<img src="${logoData}">`;
+        document.getElementById('fieldLogoUrl').value = ''; // Clear URL since we have base64
+        
+        // Save to entity if editing
+        if (currentEntityId) {
+            const ent = data.entities.find(x => x.id === currentEntityId);
+            if (ent) {
+                ent.logo = logoData;
+                saveData();
+                renderAll();
+            }
+        }
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+}
+
+function applyLogoUrl() {
+    const url = document.getElementById('fieldLogoUrl').value.trim();
+    if (!url) { showToast('Entrez une URL'); return; }
+    
+    // Show preview
+    document.getElementById('logoPreview').style.display = 'block';
+    document.getElementById('logoPreviewImg').src = url;
+    document.getElementById('modalLogo').innerHTML = `<img src="${url}">`;
+    
+    // Save to entity if editing
+    if (currentEntityId) {
+        const ent = data.entities.find(x => x.id === currentEntityId);
+        if (ent) {
+            ent.logo = url;
+            saveData();
+            renderAll();
+            showToast('Logo appliqué');
+        }
+    } else {
+        showToast('Logo sera enregistré avec l\'association');
+    }
+}
+
+function clearLogo() {
+    document.getElementById('fieldLogoUrl').value = '';
+    document.getElementById('logoPreview').style.display = 'none';
+    document.getElementById('modalLogo').textContent = '🏛️';
+    
+    if (currentEntityId) {
+        const ent = data.entities.find(x => x.id === currentEntityId);
+        if (ent) {
+            ent.logo = null;
+            saveData();
+            renderAll();
+            showToast('Logo supprimé');
+        }
+    }
+}
+
+// ============ PICKER MODAL ============
+function openPickerModal(index) {
+    pickerCaseIndex = index;
+    document.getElementById('pickerCaseNum').textContent = index + 1;
+    document.getElementById('pickerSearch').value = '';
+    renderPickerList();
+    document.getElementById('pickerModal').classList.add('open');
+}
+
+function closePickerModal() {
+    document.getElementById('pickerModal').classList.remove('open');
+    pickerCaseIndex = null;
+}
+
+function renderPickerList() {
+    const container = document.getElementById('pickerList');
+    const search = document.getElementById('pickerSearch').value.toLowerCase();
+    
+    let list = data.entities.filter(e => getEntityCase(e.id) === undefined);
+    if (search) list = list.filter(e => e.nom.toLowerCase().includes(search) || (e.sigle && e.sigle.toLowerCase().includes(search)));
+    list.sort((a, b) => a.nom.localeCompare(b.nom));
+    
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty-state">Aucune association disponible</div>';
+        return;
+    }
+    
+    container.innerHTML = list.slice(0, 100).map(e => {
+        const logo = e.logo ? `<img src="${e.logo}" style="width:24px;height:24px;border-radius:3px;">` : '🏛️';
+        const pc = e.pilier ? `border-left:3px solid var(--pilier-${e.pilier});padding-left:0.5rem;` : '';
+        return `<div class="picker-item" style="${pc}" onclick="pickEntity('${e.id}')">
+            <span>${logo}</span>
+            <span style="flex:1;">${e.nom}</span>
+            ${e.sigle ? `<span style="color:var(--text-muted);font-size:0.6rem;">${e.sigle}</span>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function pickEntity(entityId) {
+    if (pickerCaseIndex === null) return;
+    
+    const existingId = getCaseEntity(pickerCaseIndex);
+    if (existingId) delete data.gridPositions[existingId];
+    
+    delete data.gridPositions[entityId];
+    data.gridPositions[entityId] = pickerCaseIndex;
+    
+    saveData();
+    closePickerModal();
+    renderAll();
+    showToast('Placée en case ' + (pickerCaseIndex + 1));
+}
+
+// ============ SOURCES MODAL ============
+function showSourcesModal() { document.getElementById('sourcesModal').classList.add('open'); }
+function closeSourcesModal() { document.getElementById('sourcesModal').classList.remove('open'); }
+
+// ============ IMPORT / EXPORT ============
+function importFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const fn = file.name.toLowerCase();
+    if (fn.endsWith('.json')) importJSON(file);
+    else if (fn.endsWith('.xlsx') || fn.endsWith('.xls')) importXLSX(file);
+    else if (fn.endsWith('.csv')) importCSV(file);
+    else alert('Format non supporté');
+    event.target.value = '';
+}
+
+function importXLSX(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+            const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+            processImport(json);
+        } catch (err) { alert('Erreur: ' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function importCSV(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            let txt = e.target.result.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n');
+            const lines = txt.split('\n').filter(l => l.trim());
+            const sep = lines[0].includes(';') ? ';' : ',';
+            const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+            const json = [];
+            for (let i = 1; i < lines.length; i++) {
+                const vals = lines[i].split(sep).map(v => v.trim().replace(/^"|"$/g, ''));
+                const row = {};
+                headers.forEach((h, idx) => row[h] = vals[idx] || '');
+                json.push(row);
+            }
+            processImport(json);
+        } catch (err) { alert('Erreur: ' + err.message); }
+    };
+    reader.readAsText(file);
+}
+
+function importJSON(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const imp = JSON.parse(e.target.result);
+            if (imp.entities) {
+                data = imp;
+                if (!data.gridPositions) data.gridPositions = {};
+                saveData();
+                renderAll();
+                showToast(data.entities.length + ' associations chargées');
+            } else alert('Format invalide');
+        } catch (err) { alert('Erreur: ' + err.message); }
+    };
+    reader.readAsText(file);
+}
+
+function processImport(json) {
+    if (!json || !json.length) { alert('Aucune donnée'); return; }
+    
+    let added = 0, skipped = 0;
+    for (const row of json) {
+        const nom = row['NOM_ASSOCIATION'] || row['Nom'] || row['Name'] || row['Denomination'] || '';
+        if (!nom.trim()) { skipped++; continue; }
+        if (data.entities.some(e => e.nom.toLowerCase().trim() === nom.toLowerCase().trim())) { skipped++; continue; }
+        
+        data.entities.push({
+            id: generateId(),
+            nom: nom.trim(),
+            sigle: (row['Sigle'] || row['Abbreviation'] || '').toString().trim() || null,
+            bce: (row['BCE'] || row['KBO'] || row['EnterpriseNumber'] || '').toString().trim() || null,
+            forme: (row['Forme juridique'] || row['JuridicalForm'] || '').toString().trim() || null,
+            adresse: (row['ADRESSE'] || row['Adresse'] || row['StreetAddress'] || '').toString().trim() || null,
+            cp: (row['C.P.'] || row['CP'] || row['Zipcode'] || '').toString().trim() || null,
+            localite: (row['LOCALITE'] || row['Localité'] || row['Municipality'] || '').toString().trim() || null,
+            tel: (row['TEL.'] || row['Tel'] || row['Phone'] || '').toString().trim() || null,
+            email: (row['E.MAIL'] || row['Email'] || row['E-mail'] || '').toString().trim() || null,
+            web: (row['Site Web'] || row['Website'] || row['URL'] || '').toString().trim() || null,
+            reconnaissance: (row['RECONNAISSANCE'] || row['Reconnaissance'] || '').toString().trim() || null,
+            axes: (row['AXES'] || row['Axes'] || '').toString().trim() || null,
+            secteur: (row['Secteur'] || row['Activity'] || '').toString().trim() || null,
+            source: 'Import',
+            pilier: null,
+            logo: null,
+            notes: null
+        });
+        added++;
+    }
+    
+    saveData();
+    renderAll();
+    showToast(added + ' importées' + (skipped ? ` (${skipped} ignorées)` : ''));
+}
+
+function exportJSON() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'repertoire-ep-export.json';
+    a.click();
+    showToast('Export téléchargé');
+}
+
+function clearAllData() {
+    if (!confirm('Supprimer TOUTES les données ?')) return;
+    data = { entities: [], gridPositions: {} };
+    saveData();
+    renderAll();
+    showToast('Données effacées');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+</script>
+</body>
+</html>

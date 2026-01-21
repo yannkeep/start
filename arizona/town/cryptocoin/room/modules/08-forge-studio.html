@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ FORGE — Studio de Création Autonome v2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --bg-dark: #0f0f14;
+            --bg-panel: #16161e;
+            --bg-editor: #1a1a24;
+            --bg-input: #1e1e2a;
+            --border: #2a2a3a;
+            --border-active: #6366f1;
+            --accent: #6366f1;
+            --accent-dim: rgba(99, 102, 241, 0.15);
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --md-color: #22d3ee;
+            --html-color: #fb923c;
+            --font-ui: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-dark);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .logo-icon {
+            font-size: 1.3rem;
+        }
+        
+        .logo span {
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Tabs */
+        .doc-tabs {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-dark);
+            padding: 0.25rem;
+            border-radius: 6px;
+        }
+        
+        .doc-tab {
+            padding: 0.4rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            max-width: 150px;
+        }
+        
+        .doc-tab:hover { background: var(--bg-input); color: var(--text); }
+        .doc-tab.active { background: var(--accent-dim); color: var(--accent); }
+        
+        .doc-tab .type-badge {
+            font-size: 0.5rem;
+            padding: 0.1rem 0.25rem;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+        .doc-tab .type-badge.md { background: var(--md-color); color: #000; }
+        .doc-tab .type-badge.html { background: var(--html-color); color: #000; }
+        
+        .doc-tab-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .doc-tab-close {
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+        
+        .doc-tab-close:hover { opacity: 1; }
+        
+        .new-doc-btn {
+            padding: 0.4rem 0.6rem;
+            background: var(--accent-dim);
+            border: 1px dashed var(--accent);
+            border-radius: 4px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        
+        .new-doc-btn:hover { background: var(--accent); color: var(--bg-dark); }
+        
+        /* Header actions */
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .action-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+        .action-btn.primary:hover { filter: brightness(1.1); }
+        
+        /* Toolbar */
+        .toolbar {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        
+        .toolbar-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .tool-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 0.3rem;
+        }
+        
+        .tool-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .tool-btn:hover {
+            background: var(--bg-input);
+            border-color: var(--border);
+            color: var(--text);
+        }
+        
+        .tool-btn.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .mode-btn {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+        }
+        
+        .mode-indicator {
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .mode-indicator.md { background: rgba(34,211,238,0.2); color: var(--md-color); border: 1px solid var(--md-color); }
+        .mode-indicator.html { background: rgba(251,146,60,0.2); color: var(--html-color); border: 1px solid var(--html-color); }
+        
+        .view-btns {
+            margin-left: auto;
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-dark);
+            padding: 0.2rem;
+            border-radius: 4px;
+        }
+        
+        .view-btn {
+            padding: 0.3rem 0.6rem;
+            background: transparent;
+            border: none;
+            border-radius: 3px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+        }
+        
+        .view-btn:hover { color: var(--text); }
+        .view-btn.active { background: var(--accent-dim); color: var(--accent); }
+        
+        /* Main */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .sidebar-section {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        
+        .project-item {
+            padding: 0.5rem 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+        
+        .project-item:hover { border-color: var(--border); }
+        .project-item.active { border-color: var(--accent); background: var(--accent-dim); }
+        
+        .project-type {
+            font-size: 0.5rem;
+            padding: 0.1rem 0.25rem;
+            border-radius: 2px;
+            font-weight: 700;
+        }
+        .project-type.md { background: var(--md-color); color: #000; }
+        .project-type.html { background: var(--html-color); color: #000; }
+        
+        /* Snippets */
+        .snippets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .snippet-item {
+            padding: 0.4rem 0.5rem;
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .snippet-item:hover { border-color: var(--accent); }
+        .snippet-item code { font-family: var(--font-mono); color: var(--cyan); font-size: 0.6rem; }
+        
+        /* Editor */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .editor-pane, .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .editor-pane {
+            border-right: 1px solid var(--border);
+        }
+        
+        .pane-header {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-editor);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .code-editor {
+            flex: 1;
+            width: 100%;
+            background: var(--bg-editor);
+            border: none;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 1rem;
+            resize: none;
+            outline: none;
+        }
+        
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: white;
+        }
+        
+        /* Status bar */
+        .status-bar {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            padding: 0.3rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+        
+        .status-left, .status-right {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal-overlay.show { display: flex; }
+        
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 { font-size: 1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.3rem; cursor: pointer; }
+        
+        .modal-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: var(--font-ui);
+            outline: none;
+        }
+        
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
+        
+        /* Format selector */
+        .format-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .format-tab {
+            flex: 1;
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .format-tab:hover { border-color: var(--text-dim); }
+        .format-tab.active.md { border-color: var(--md-color); background: rgba(34,211,238,0.1); }
+        .format-tab.active.html { border-color: var(--html-color); background: rgba(251,146,60,0.1); }
+        .format-tab .icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+        .format-tab .name { font-weight: 700; font-size: 0.9rem; }
+        .format-tab.md .name { color: var(--md-color); }
+        .format-tab.html .name { color: var(--html-color); }
+        .format-tab .desc { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.25rem; }
+        
+        /* Template grid */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .template-card {
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .template-card:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .template-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+        
+        .template-card-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+        .template-card-name { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.15rem; }
+        .template-card-desc { font-size: 0.6rem; color: var(--text-dim); }
+        
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        /* Export options */
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .export-option {
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .export-option:hover { border-color: var(--accent); }
+        
+        .export-icon { font-size: 1.5rem; }
+        .export-info { flex: 1; }
+        .export-name { font-size: 0.85rem; font-weight: 500; }
+        .export-desc { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-panel);
+            border: 1px solid var(--accent);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+        /* View modes */
+        .editor-area[data-view="editor"] .preview-pane { display: none; }
+        .editor-area[data-view="preview"] .editor-pane { display: none; }
+        .editor-area[data-view="split"] .editor-pane,
+        .editor-area[data-view="split"] .preview-pane { display: flex; }
+        
+        /* Toolbar visibility by mode */
+        .toolbar-md { display: none; }
+        .toolbar-html { display: none; }
+        body[data-mode="markdown"] .toolbar-md { display: flex; }
+        body[data-mode="html"] .toolbar-html { display: flex; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .template-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+    </style>
+</head>
+<body data-mode="html">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span>FORGE</span>
+            </div>
+            
+            <div class="doc-tabs" id="docTabs"></div>
+            <button class="new-doc-btn" onclick="openNewDocModal()">+</button>
+        </div>
+        
+        <div class="header-actions">
+            <button class="action-btn" onclick="saveProject()">💾 Sauver</button>
+            <button class="action-btn" onclick="openExportModal()">📤 Exporter</button>
+            <button class="action-btn primary" onclick="openPublishModal()">🚀 Publier</button>
+        </div>
+    </header>
+    
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <!-- Mode indicator -->
+        <div class="mode-indicator html" id="modeIndicator">HTML</div>
+        
+        <div class="tool-divider"></div>
+        
+        <!-- MARKDOWN TOOLBAR -->
+        <div class="toolbar-group toolbar-md">
+            <button class="tool-btn" onclick="insertMd('**','**')" title="Gras (Ctrl+B)">𝐁</button>
+            <button class="tool-btn" onclick="insertMd('*','*')" title="Italique (Ctrl+I)">𝐼</button>
+            <button class="tool-btn" onclick="insertMd('~~','~~')" title="Barré">S̶</button>
+            <button class="tool-btn" onclick="insertMd('`','`')" title="Code">`</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertMd('# ','')" title="H1">H1</button>
+            <button class="tool-btn" onclick="insertMd('## ','')" title="H2">H2</button>
+            <button class="tool-btn" onclick="insertMd('### ','')" title="H3">H3</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertMd('- ','')" title="Liste">•</button>
+            <button class="tool-btn" onclick="insertMd('1. ','')" title="Liste num.">1.</button>
+            <button class="tool-btn" onclick="insertMd('> ','')" title="Citation">❝</button>
+            <button class="tool-btn" onclick="insertMd('[','](url)')" title="Lien">🔗</button>
+            <button class="tool-btn" onclick="insertMd('![alt](',')')" title="Image">🖼</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertMd('```\\n','\\n```')" title="Code block">{ }</button>
+            <button class="tool-btn" onclick="insertMd('---\\n','')" title="Ligne">—</button>
+            <button class="tool-btn" onclick="insertMd('- [ ] ','')" title="Checkbox">☐</button>
+        </div>
+        
+        <!-- HTML TOOLBAR -->
+        <div class="toolbar-group toolbar-html">
+            <button class="tool-btn" onclick="insertHtml('&lt;strong&gt;','&lt;/strong&gt;')" title="Gras">𝐁</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;em&gt;','&lt;/em&gt;')" title="Italique">𝐼</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;del&gt;','&lt;/del&gt;')" title="Barré">S̶</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;code&gt;','&lt;/code&gt;')" title="Code">`</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertHtml('&lt;h1&gt;','&lt;/h1&gt;')" title="H1">H1</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;h2&gt;','&lt;/h2&gt;')" title="H2">H2</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;h3&gt;','&lt;/h3&gt;')" title="H3">H3</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertHtml('&lt;p&gt;','&lt;/p&gt;')" title="Paragraphe">¶</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;ul&gt;\\n  &lt;li&gt;','&lt;/li&gt;\\n&lt;/ul&gt;')" title="Liste">•</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;blockquote&gt;','&lt;/blockquote&gt;')" title="Citation">❝</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;a href=&quot;&quot;&gt;','&lt;/a&gt;')" title="Lien">🔗</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;img src=&quot;&quot; alt=&quot;','&quot;/&gt;')" title="Image">🖼</button>
+            <div class="tool-divider"></div>
+            <button class="tool-btn" onclick="insertHtml('&lt;div class=&quot;&quot;&gt;','&lt;/div&gt;')" title="Div">☐</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;span&gt;','&lt;/span&gt;')" title="Span">▭</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;br&gt;','')" title="Saut">↵</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;hr&gt;','')" title="Ligne">—</button>
+            <button class="tool-btn" onclick="insertHtml('&lt;style&gt;\\n','\\n&lt;/style&gt;')" title="Style">🎨</button>
+        </div>
+        
+        <div class="view-btns">
+            <button class="view-btn active" data-view="split" onclick="setView('split')">Split</button>
+            <button class="view-btn" data-view="editor" onclick="setView('editor')">Code</button>
+            <button class="view-btn" data-view="preview" onclick="setView('preview')">Preview</button>
+        </div>
+    </div>
+    
+    <!-- Main -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">📁 Documents</div>
+                <div class="project-list" id="projectsList"></div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">⚡ Snippets rapides</div>
+                <div class="snippets-list" id="snippetsList"></div>
+            </div>
+            
+            <div class="sidebar-section" style="flex:1;border:none;">
+                <div class="sidebar-title">💡 Raccourcis</div>
+                <div style="font-size:0.65rem;color:var(--text-dim);line-height:1.6">
+                    <div><code>Ctrl+S</code> Sauver</div>
+                    <div><code>Ctrl+E</code> Exporter</div>
+                    <div><code>Ctrl+B</code> Gras</div>
+                    <div><code>Ctrl+I</code> Italique</div>
+                    <div><code>Tab</code> Indenter</div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Editor -->
+        <div class="editor-area" id="editorArea" data-view="split">
+            <div class="editor-pane">
+                <div class="pane-header">
+                    <span id="paneLabel">📝 Éditeur</span>
+                </div>
+                <textarea class="code-editor" id="codeEditor" spellcheck="false" placeholder="Commencez à écrire..."></textarea>
+            </div>
+            
+            <div class="preview-pane">
+                <div class="pane-header">
+                    <span>👁️ Aperçu</span>
+                    <button style="margin-left:auto;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.7rem" onclick="refreshPreview()">🔄</button>
+                    <button style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.7rem" onclick="openInNewTab()">↗️</button>
+                </div>
+                <iframe class="preview-frame" id="previewFrame"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span class="status-item" id="statusMode">📝 HTML</span>
+            <span class="status-item" id="statusChars">0 caractères</span>
+            <span class="status-item" id="statusWords">0 mots</span>
+            <span class="status-item" id="statusLines">0 lignes</span>
+        </div>
+        <div class="status-right">
+            <span class="status-item" id="statusSaved">💾 Sauvegardé</span>
+            <span class="status-item" id="statusTime">--:--</span>
+        </div>
+    </div>
+    
+    <!-- New Doc Modal -->
+    <div class="modal-overlay" id="newDocModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📄 Nouveau Document</h3>
+                <button class="modal-close" onclick="closeModal('newDocModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nom du document</label>
+                    <input type="text" class="form-input" id="newDocName" placeholder="Mon document">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Format</label>
+                    <div class="format-tabs">
+                        <div class="format-tab html active" data-format="html" onclick="selectFormat('html')">
+                            <div class="icon">🌐</div>
+                            <div class="name">HTML</div>
+                            <div class="desc">Pages web, styles CSS, contrôle total</div>
+                        </div>
+                        <div class="format-tab md" data-format="markdown" onclick="selectFormat('markdown')">
+                            <div class="icon">📝</div>
+                            <div class="name">MARKDOWN</div>
+                            <div class="desc">Syntaxe simple, articles, notes</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Modèle</label>
+                    <div class="template-grid" id="templateGrid"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn" onclick="closeModal('newDocModal')">Annuler</button>
+                <button class="action-btn primary" onclick="createNewDoc()">Créer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📤 Exporter</h3>
+                <button class="modal-close" onclick="closeModal('exportModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" onclick="exportAs('html')">
+                        <span class="export-icon">🌐</span>
+                        <div class="export-info">
+                            <div class="export-name">HTML standalone</div>
+                            <div class="export-desc">Fichier .html complet, ouvrable partout</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('markdown')">
+                        <span class="export-icon">📝</span>
+                        <div class="export-info">
+                            <div class="export-name">Markdown</div>
+                            <div class="export-desc">Fichier .md pour édition future</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('pdf')">
+                        <span class="export-icon">📑</span>
+                        <div class="export-info">
+                            <div class="export-name">PDF (impression)</div>
+                            <div class="export-desc">Ouvre la boîte de dialogue d'impression</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('json')">
+                        <span class="export-icon">💾</span>
+                        <div class="export-info">
+                            <div class="export-name">Projet JSON</div>
+                            <div class="export-desc">Sauvegarde complète pour import</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Publish Modal -->
+    <div class="modal-overlay" id="publishModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🚀 Publier en ligne</h3>
+                <button class="modal-close" onclick="closeModal('publishModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:1rem;">
+                    Générez un fichier HTML prêt à héberger :
+                </p>
+                <div class="export-options">
+                    <div class="export-option" onclick="publishTo('github')">
+                        <span class="export-icon">💻</span>
+                        <div class="export-info">
+                            <div class="export-name">GitHub Pages</div>
+                            <div class="export-desc">Gratuit, fiable, personnalisable</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="publishTo('netlify')">
+                        <span class="export-icon">🔷</span>
+                        <div class="export-info">
+                            <div class="export-name">Netlify Drop</div>
+                            <div class="export-desc">Glissez-déposez pour publier</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="publishTo('zip')">
+                        <span class="export-icon">📦</span>
+                        <div class="export-info">
+                            <div class="export-name">Télécharger ZIP</div>
+                            <div class="export-desc">Site complet avec assets</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+<script>
+// ==================== STATE ====================
+let projects = [];
+let currentProject = null;
+let selectedFormat = 'html';
+let selectedTemplate = 'blank';
+let hasUnsavedChanges = false;
+
+// ==================== TEMPLATES ====================
+const templates = {
+    html: {
+        blank: { name: 'Vierge', icon: '📄', desc: 'Document vide', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon document</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>Titre</h1>
+    <p>Votre contenu ici...</p>
+</body>
+</html>` },
+
+        tract: { name: 'Tract/Flyer', icon: '📢', desc: 'Format A5', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Action Citoyenne</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 148mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 210mm;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px solid rgba(255,255,255,0.3);
+            margin-bottom: 25px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+        .tagline { font-size: 1.1rem; opacity: 0.9; }
+        .content { padding: 0 20px; }
+        .point {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .point-icon { font-size: 2rem; flex-shrink: 0; }
+        .point-text h3 { font-size: 1rem; margin-bottom: 5px; }
+        .point-text p { font-size: 0.85rem; opacity: 0.9; line-height: 1.4; }
+        .cta {
+            text-align: center;
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+        }
+        .cta h2 { font-size: 1.3rem; margin-bottom: 15px; }
+        .cta-info { font-size: 0.9rem; line-height: 1.6; }
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔥 Agissons Ensemble</h1>
+        <p class="tagline">Pour une commune plus juste et transparente</p>
+    </div>
+    
+    <div class="content">
+        <div class="point">
+            <span class="point-icon">👁️</span>
+            <div class="point-text">
+                <h3>Transparence totale</h3>
+                <p>Accès aux documents publics et aux délibérations du conseil communal.</p>
+            </div>
+        </div>
+        
+        <div class="point">
+            <span class="point-icon">🗣️</span>
+            <div class="point-text">
+                <h3>Participation citoyenne</h3>
+                <p>Droit de parole aux conseils, budgets participatifs, consultations populaires.</p>
+            </div>
+        </div>
+        
+        <div class="point">
+            <span class="point-icon">⚖️</span>
+            <div class="point-text">
+                <h3>Équité fiscale</h3>
+                <p>Des impôts justes et des dépenses au service de tous.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cta">
+        <h2>📅 Prochaine réunion publique</h2>
+        <p class="cta-info">
+            <strong>Mardi 15 janvier à 19h</strong><br>
+            Salle communale - Entrée libre
+        </p>
+    </div>
+    
+    <div class="footer">
+        <p>Collectif Citoyen • contact@exemple.be</p>
+    </div>
+</body>
+</html>` },
+
+        communique: { name: 'Communiqué', icon: '📰', desc: 'Presse', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communiqué de presse</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 40px;
+            line-height: 1.7;
+            color: #1a1a1a;
+        }
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .org-name { font-size: 1.5rem; font-weight: bold; color: #2563eb; }
+        .doc-type {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .meta { font-size: 0.85rem; color: #666; margin-bottom: 25px; }
+        h1 { font-size: 1.8rem; line-height: 1.3; margin-bottom: 25px; }
+        .chapeau {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-left: 4px solid #2563eb;
+        }
+        p { margin-bottom: 15px; }
+        blockquote {
+            font-style: italic;
+            padding: 15px 25px;
+            background: #fafafa;
+            border-left: 3px solid #ddd;
+            margin: 20px 0;
+        }
+        blockquote cite {
+            display: block;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .contact {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.85rem;
+        }
+        .contact h4 { margin-bottom: 10px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="org-name">Collectif Citoyen de [Commune]</div>
+        <div class="doc-type">Communiqué de presse</div>
+    </div>
+    
+    <div class="meta">
+        <strong>Pour diffusion immédiate</strong> — [Ville], le [Date]
+    </div>
+    
+    <h1>[Titre accrocheur qui résume l'information principale]</h1>
+    
+    <p class="chapeau">
+        [Chapeau : résumez l'essentiel en 2-3 lignes. Qui, quoi, quand, où, pourquoi.]
+    </p>
+    
+    <p>[Premier paragraphe : développez l'information principale.]</p>
+    
+    <p>[Deuxième paragraphe : contexte et enjeux.]</p>
+    
+    <blockquote>
+        « [Citation d'un·e représentant·e du collectif] »
+        <cite>— [Prénom Nom], [fonction]</cite>
+    </blockquote>
+    
+    <p>[Troisième paragraphe : demandes concrètes ou prochaines étapes.]</p>
+    
+    <div class="contact">
+        <h4>Contact presse</h4>
+        <p>
+            <strong>[Prénom Nom]</strong><br>
+            📧 presse@exemple.be<br>
+            📱 0400 00 00 00
+        </p>
+    </div>
+</body>
+</html>` },
+
+        lettre: { name: 'Lettre ouverte', icon: '✉️', desc: 'Formelle', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lettre ouverte</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 40px;
+            line-height: 1.8;
+            color: #222;
+        }
+        .header {
+            text-align: right;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .destinataire { margin-bottom: 30px; }
+        .destinataire strong { display: block; font-size: 1.1rem; }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 40px 0;
+            font-style: italic;
+        }
+        .salutation { margin-bottom: 20px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        .signature { margin-top: 40px; text-align: right; }
+        .signataires {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .signataires h4 { margin-bottom: 15px; color: #666; }
+        .signataires ul { columns: 2; list-style: none; padding: 0; }
+        .signataires li { margin-bottom: 8px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p>[Ville], le [Date]</p>
+    </div>
+    
+    <div class="destinataire">
+        <strong>À l'attention de [Titre] [Prénom Nom]</strong>
+        [Fonction]<br>
+        [Institution]
+    </div>
+    
+    <h1>Lettre ouverte : [Sujet]</h1>
+    
+    <p class="salutation">Madame/Monsieur,</p>
+    
+    <p>[Introduction : contexte et raison de cette lettre.]</p>
+    
+    <p>[Développement : faits, problèmes, enjeux.]</p>
+    
+    <p>[Arguments : votre position, données, témoignages.]</p>
+    
+    <p>[Demandes : que souhaitez-vous ?]</p>
+    
+    <p>Dans l'attente de votre réponse, nous vous prions d'agréer l'expression de notre considération citoyenne.</p>
+    
+    <div class="signature">
+        <p><strong>Le Collectif Citoyen</strong></p>
+    </div>
+    
+    <div class="signataires">
+        <h4>Premiers signataires :</h4>
+        <ul>
+            <li>[Prénom Nom]</li>
+            <li>[Prénom Nom]</li>
+            <li>[Prénom Nom]</li>
+        </ul>
+    </div>
+</body>
+</html>` },
+
+        petition: { name: 'Pétition', icon: '✍️', desc: 'Mobilisation', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pétition citoyenne</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .hero p { font-size: 1.2rem; opacity: 0.9; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: #22d3ee; }
+        .stat-label { font-size: 0.9rem; opacity: 0.8; }
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        h2 { font-size: 1.5rem; margin-bottom: 20px; }
+        p { margin-bottom: 15px; }
+        .demands {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .demands h3 { margin-bottom: 20px; color: #1e3a5f; }
+        .demands ul { list-style: none; }
+        .demands li {
+            padding: 12px 0 12px 35px;
+            position: relative;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .demands li:last-child { border: none; }
+        .demands li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .cta-section {
+            background: #1e3a5f;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 16px;
+            margin: 40px 0;
+        }
+        .cta-section h2 { color: white; margin-bottom: 10px; }
+        .cta-btn {
+            display: inline-block;
+            background: #22d3ee;
+            color: #0f172a;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🔥 [Titre de la pétition]</h1>
+        <p>[Sous-titre résumant l'objectif]</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">[X]</div>
+                <div class="stat-label">signatures</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">[Y]</div>
+                <div class="stat-label">objectif</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h2>Pourquoi cette pétition ?</h2>
+        <p>[Contexte et problème...]</p>
+        
+        <div class="demands">
+            <h3>📋 Nos demandes</h3>
+            <ul>
+                <li>[Première demande]</li>
+                <li>[Deuxième demande]</li>
+                <li>[Troisième demande]</li>
+            </ul>
+        </div>
+        
+        <div class="cta-section">
+            <h2>Signez la pétition</h2>
+            <p>Chaque signature compte.</p>
+            <a href="#" class="cta-btn">✍️ Je signe</a>
+        </div>
+    </div>
+</body>
+</html>` },
+
+        landing: { name: 'Site web', icon: '🌐', desc: 'Landing page', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Nom du Collectif]</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-logo { font-weight: 700; font-size: 1.2rem; color: #22d3ee; }
+        .nav-links { display: flex; gap: 25px; list-style: none; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+        .nav-links a:hover { color: #22d3ee; }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            background: radial-gradient(ellipse at top, rgba(34, 211, 238, 0.15), transparent 50%);
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.25rem; color: #94a3b8; margin-bottom: 35px; }
+        .btn {
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn-primary { background: #22d3ee; color: #0f172a; }
+        .btn-secondary { border: 1px solid #475569; color: #e2e8f0; }
+        section { padding: 100px 20px; max-width: 1100px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 15px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .card-icon { font-size: 2.5rem; margin-bottom: 20px; }
+        .card h3 { font-size: 1.25rem; margin-bottom: 10px; }
+        .card p { color: #94a3b8; }
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">⚡ [Collectif]</div>
+        <ul class="nav-links">
+            <li><a href="#mission">Mission</a></li>
+            <li><a href="#actions">Actions</a></li>
+            <li><a href="#rejoindre">Rejoindre</a></li>
+        </ul>
+    </nav>
+    
+    <section class="hero">
+        <div>
+            <h1>[Slogan principal]</h1>
+            <p>[Description de ce que fait le collectif]</p>
+            <a href="#rejoindre" class="btn btn-primary">Rejoindre</a>
+            <a href="#mission" class="btn btn-secondary">En savoir plus</a>
+        </div>
+    </section>
+    
+    <section id="mission">
+        <div class="section-header">
+            <h2>Notre mission</h2>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">👁️</div>
+                <h3>Transparence</h3>
+                <p>Accès aux documents publics et processus de décision.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🗣️</div>
+                <h3>Participation</h3>
+                <p>Espaces pour que chaque citoyen puisse s'exprimer.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚖️</div>
+                <h3>Justice</h3>
+                <p>Répartition équitable des ressources.</p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>[Nom du Collectif] — contact@exemple.be</p>
+    </footer>
+</body>
+</html>` },
+
+        blog: { name: 'Article blog', icon: '📝', desc: 'Publication', content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Titre de l'article]</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            line-height: 1.8;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+        .meta {
+            font-family: system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 20px; }
+        .lead {
+            font-size: 1.25rem;
+            color: #444;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        h2 { font-size: 1.5rem; margin: 40px 0 20px; }
+        p { margin-bottom: 20px; }
+        blockquote {
+            padding: 20px 30px;
+            background: #f0f0f0;
+            border-left: 4px solid #333;
+            margin: 30px 0;
+            font-style: italic;
+        }
+        .tags {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .tags a {
+            display: inline-block;
+            background: #e0e0e0;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-right: 8px;
+        }
+        .author {
+            margin-top: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>[Titre de votre article]</h1>
+    
+    <div class="meta">
+        <span>📅 [Date]</span>
+        <span>✍️ [Auteur]</span>
+        <span>📖 X min</span>
+    </div>
+    
+    <p class="lead">[Chapeau accrocheur en 2-3 phrases.]</p>
+    
+    <p>[Introduction : contexte.]</p>
+    
+    <h2>Première partie</h2>
+    <p>[Développement...]</p>
+    
+    <blockquote>
+        « [Citation pertinente] »
+    </blockquote>
+    
+    <h2>Deuxième partie</h2>
+    <p>[Suite du développement...]</p>
+    
+    <h2>Conclusion</h2>
+    <p>[Résumé et ouverture...]</p>
+    
+    <div class="tags">
+        <strong>Tags :</strong>
+        <a href="#">#politique</a>
+        <a href="#">#citoyenneté</a>
+    </div>
+    
+    <div class="author">
+        <div class="author-avatar">👤</div>
+        <div>
+            <strong>[Prénom Nom]</strong>
+            <p style="margin:0;font-size:0.9rem;color:#666">[Bio courte]</p>
+        </div>
+    </div>
+</body>
+</html>` }
+    },
+    
+    markdown: {
+        blank: { name: 'Vierge', icon: '📄', desc: 'Document vide', content: `# Titre
+
+Votre contenu ici...
+` },
+
+        article: { name: 'Article', icon: '📰', desc: 'Publication', content: `# Titre de l'article
+
+*Publié le [date] par [auteur]*
+
+## Introduction
+
+Votre introduction ici...
+
+## Première partie
+
+Développez votre premier point...
+
+> Une citation pertinente pour illustrer votre propos.
+
+## Deuxième partie
+
+Continuez votre développement...
+
+- Point clé 1
+- Point clé 2
+- Point clé 3
+
+## Conclusion
+
+Résumez et ouvrez sur une perspective...
+
+---
+
+**Tags:** #tag1 #tag2 #tag3
+` },
+
+        notes: { name: 'Notes', icon: '📝', desc: 'Réunion', content: `# Notes de réunion
+
+**Date:** [date]  
+**Participants:** [noms]  
+**Lieu:** [lieu]
+
+---
+
+## Ordre du jour
+
+1. Point 1
+2. Point 2
+3. Point 3
+
+## Discussions
+
+### Point 1 : [Titre]
+
+- Discussion principale...
+- Décision prise...
+
+### Point 2 : [Titre]
+
+- Discussion principale...
+- Décision prise...
+
+## Actions à suivre
+
+- [ ] Action 1 — Responsable — Deadline
+- [ ] Action 2 — Responsable — Deadline
+- [ ] Action 3 — Responsable — Deadline
+
+## Prochaine réunion
+
+**Date:** [date]  
+**Ordre du jour prévu:** [sujets]
+` },
+
+        lettre: { name: 'Lettre', icon: '✉️', desc: 'Correspondance', content: `[Ville], le [date]
+
+**À l'attention de [Destinataire]**  
+[Fonction]  
+[Adresse]
+
+---
+
+## Objet : [Sujet de la lettre]
+
+Madame/Monsieur,
+
+[Introduction : contexte et objet de la lettre]
+
+[Développement : arguments, faits, demandes]
+
+[Conclusion : résumé et attentes]
+
+Dans l'attente de votre réponse, je vous prie d'agréer, Madame/Monsieur, l'expression de mes salutations distinguées.
+
+**[Signature]**  
+[Nom]  
+[Contact]
+` },
+
+        communique: { name: 'Communiqué', icon: '📢', desc: 'Presse', content: `# COMMUNIQUÉ DE PRESSE
+
+**Pour diffusion immédiate**  
+[Ville], le [date]
+
+---
+
+## [Titre accrocheur]
+
+**[Chapeau : résumé en 2-3 lignes]**
+
+[Premier paragraphe : les faits principaux - Qui, Quoi, Quand, Où, Pourquoi]
+
+[Deuxième paragraphe : contexte et enjeux]
+
+> « [Citation d'un porte-parole] »  
+> — [Nom], [fonction]
+
+[Troisième paragraphe : prochaines étapes, demandes]
+
+---
+
+### Contact presse
+
+**[Nom]**  
+📧 [email]  
+📱 [téléphone]
+` },
+
+        checklist: { name: 'Checklist', icon: '✅', desc: 'Todo list', content: `# [Titre du projet]
+
+## À faire
+
+- [ ] Tâche prioritaire 1
+- [ ] Tâche prioritaire 2
+- [ ] Tâche prioritaire 3
+
+## En cours
+
+- [ ] Tâche en progression 1
+- [ ] Tâche en progression 2
+
+## Terminé
+
+- [x] Tâche complétée 1
+- [x] Tâche complétée 2
+
+---
+
+## Notes
+
+Ajoutez vos notes ici...
+` }
+    }
+};
+
+// ==================== SNIPPETS ====================
+const snippets = {
+    html: [
+        { name: 'Section', code: 'section', content: '<section>\n    \n</section>' },
+        { name: 'Div class', code: 'div.', content: '<div class="">\n    \n</div>' },
+        { name: 'Bouton', code: 'btn', content: '<button class="btn">Texte</button>' },
+        { name: 'Image', code: 'img', content: '<img src="" alt="">' },
+        { name: 'Lien', code: 'a', content: '<a href="">Texte</a>' },
+        { name: 'Liste', code: 'ul', content: '<ul>\n    <li></li>\n    <li></li>\n</ul>' },
+        { name: 'Style', code: 'style', content: '<style>\n    \n</style>' }
+    ],
+    markdown: [
+        { name: 'Lien', code: '[]()', content: '[texte](url)' },
+        { name: 'Image', code: '![]()', content: '![alt](url)' },
+        { name: 'Code block', code: '```', content: '```\n\n```' },
+        { name: 'Tableau', code: 'table', content: '| Col 1 | Col 2 |\n|-------|-------|\n| A | B |' },
+        { name: 'Checkbox', code: '- [ ]', content: '- [ ] ' },
+        { name: 'Note', code: '>', content: '> ' }
+    ]
+};
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+    loadProjects();
+    renderProjects();
+    renderTabs();
+    updateTemplateGrid();
+    updateSnippets();
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    const editor = document.getElementById('codeEditor');
+    editor.addEventListener('input', onEditorChange);
+    editor.addEventListener('keydown', handleEditorKeys);
+    
+    if (projects.length === 0) {
+        createProject('Mon premier document', 'html', 'blank');
+    }
+});
+
+// ==================== PROJECTS ====================
+function loadProjects() {
+    const saved = localStorage.getItem('forgeProjects_v2');
+    projects = saved ? JSON.parse(saved) : [];
+}
+
+function saveProjects() {
+    localStorage.setItem('forgeProjects_v2', JSON.stringify(projects));
+}
+
+function createProject(name, format, templateKey) {
+    const tpl = templates[format][templateKey] || templates[format].blank;
+    const project = {
+        id: Date.now().toString(36),
+        name: name || 'Sans titre',
+        format: format,
+        template: templateKey,
+        content: tpl.content,
+        created: new Date().toISOString(),
+        modified: new Date().toISOString()
+    };
+    
+    projects.push(project);
+    saveProjects();
+    
+    currentProject = project;
+    loadProjectInEditor(project);
+    renderProjects();
+    renderTabs();
+    
+    return project;
+}
+
+function loadProjectInEditor(project) {
+    document.getElementById('codeEditor').value = project.content;
+    setEditorFormat(project.format);
+    updatePreview();
+    updateStats();
+    hasUnsavedChanges = false;
+    updateSaveStatus();
+}
+
+function setEditorFormat(format) {
+    document.body.dataset.mode = format;
+    
+    const indicator = document.getElementById('modeIndicator');
+    indicator.className = 'mode-indicator ' + (format === 'markdown' ? 'md' : 'html');
+    indicator.textContent = format === 'markdown' ? 'MARKDOWN' : 'HTML';
+    
+    document.getElementById('paneLabel').textContent = format === 'markdown' ? '📝 Markdown' : '🌐 HTML';
+    document.getElementById('statusMode').textContent = format === 'markdown' ? '📝 Markdown' : '🌐 HTML';
+    
+    updateSnippets();
+}
+
+function renderProjects() {
+    const container = document.getElementById('projectsList');
+    
+    if (projects.length === 0) {
+        container.innerHTML = '<div style="padding:0.5rem;font-size:0.7rem;color:var(--text-dim)">Aucun projet</div>';
+        return;
+    }
+    
+    container.innerHTML = projects.map(p => `
+        <div class="project-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="switchProject('${p.id}')">
+            <span class="project-type ${p.format === 'markdown' ? 'md' : 'html'}">${p.format === 'markdown' ? 'MD' : 'HTML'}</span>
+            <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
+        </div>
+    `).join('');
+}
+
+function renderTabs() {
+    const container = document.getElementById('docTabs');
+    container.innerHTML = projects.slice(0, 5).map(p => `
+        <button class="doc-tab ${currentProject?.id === p.id ? 'active' : ''}" onclick="switchProject('${p.id}')">
+            <span class="type-badge ${p.format === 'markdown' ? 'md' : 'html'}">${p.format === 'markdown' ? 'MD' : 'HTML'}</span>
+            <span class="doc-tab-name">${p.name}</span>
+            <span class="doc-tab-close" onclick="event.stopPropagation();deleteProject('${p.id}')">×</span>
+        </button>
+    `).join('');
+}
+
+function switchProject(id) {
+    if (hasUnsavedChanges && currentProject) {
+        currentProject.content = document.getElementById('codeEditor').value;
+        currentProject.modified = new Date().toISOString();
+        saveProjects();
+    }
+    
+    const project = projects.find(p => p.id === id);
+    if (project) {
+        currentProject = project;
+        loadProjectInEditor(project);
+        renderProjects();
+        renderTabs();
+    }
+}
+
+function deleteProject(id) {
+    if (!confirm('Supprimer ce document ?')) return;
+    projects = projects.filter(p => p.id !== id);
+    saveProjects();
+    
+    if (currentProject?.id === id) {
+        currentProject = projects[0] || null;
+        if (currentProject) loadProjectInEditor(currentProject);
+        else document.getElementById('codeEditor').value = '';
+    }
+    
+    renderProjects();
+    renderTabs();
+    showToast('🗑️ Supprimé');
+}
+
+function saveProject() {
+    if (!currentProject) return;
+    currentProject.content = document.getElementById('codeEditor').value;
+    currentProject.modified = new Date().toISOString();
+    saveProjects();
+    hasUnsavedChanges = false;
+    updateSaveStatus();
+    showToast('💾 Sauvegardé');
+}
+
+// ==================== EDITOR ====================
+function onEditorChange() {
+    hasUnsavedChanges = true;
+    updateSaveStatus();
+    updatePreview();
+    updateStats();
+}
+
+function handleEditorKeys(e) {
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const editor = e.target;
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 4;
+        onEditorChange();
+    }
+    
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        saveProject();
+    }
+    
+    if (e.ctrlKey && e.key === 'e') {
+        e.preventDefault();
+        openExportModal();
+    }
+    
+    if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        if (currentProject?.format === 'markdown') insertMd('**', '**');
+        else insertHtml('<strong>', '</strong>');
+    }
+    
+    if (e.ctrlKey && e.key === 'i') {
+        e.preventDefault();
+        if (currentProject?.format === 'markdown') insertMd('*', '*');
+        else insertHtml('<em>', '</em>');
+    }
+}
+
+function insertMd(before, after) {
+    insertText(before.replace(/\\n/g, '\n'), after.replace(/\\n/g, '\n'));
+}
+
+function insertHtml(before, after) {
+    insertText(
+        before.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\\n/g, '\n'),
+        after.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/\\n/g, '\n')
+    );
+}
+
+function insertText(before, after) {
+    const editor = document.getElementById('codeEditor');
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const selected = editor.value.substring(start, end);
+    
+    editor.value = editor.value.substring(0, start) + before + selected + after + editor.value.substring(end);
+    editor.selectionStart = start + before.length;
+    editor.selectionEnd = start + before.length + selected.length;
+    editor.focus();
+    
+    onEditorChange();
+}
+
+function setView(view) {
+    document.getElementById('editorArea').dataset.view = view;
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+    });
+}
+
+// ==================== SNIPPETS ====================
+function updateSnippets() {
+    const format = currentProject?.format || 'html';
+    const list = snippets[format] || [];
+    const container = document.getElementById('snippetsList');
+    
+    container.innerHTML = list.map(s => `
+        <div class="snippet-item" onclick="insertSnippet('${s.content.replace(/'/g, "\\'")}')">
+            <span>${s.name}</span>
+            <code>${s.code}</code>
+        </div>
+    `).join('');
+}
+
+function insertSnippet(content) {
+    const editor = document.getElementById('codeEditor');
+    const start = editor.selectionStart;
+    const decoded = content.replace(/\\n/g, '\n');
+    
+    editor.value = editor.value.substring(0, start) + decoded + editor.value.substring(start);
+    editor.selectionStart = editor.selectionEnd = start + decoded.length;
+    editor.focus();
+    onEditorChange();
+}
+
+// ==================== PREVIEW ====================
+function updatePreview() {
+    const content = document.getElementById('codeEditor').value;
+    const frame = document.getElementById('previewFrame');
+    
+    if (!currentProject) {
+        frame.srcdoc = '';
+        return;
+    }
+    
+    let html = content;
+    
+    if (currentProject.format === 'markdown') {
+        html = markdownToHtml(content);
+        html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+body { font-family: system-ui, sans-serif; padding: 30px; line-height: 1.7; max-width: 800px; margin: 0 auto; color: #333; }
+h1, h2, h3 { margin-top: 1.5em; margin-bottom: 0.5em; }
+h1 { font-size: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.3em; }
+p { margin-bottom: 1em; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+blockquote { border-left: 4px solid #ddd; margin: 1em 0; padding: 0.5em 1em; color: #666; background: #f9f9f9; }
+ul, ol { margin-bottom: 1em; padding-left: 2em; }
+hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
+img { max-width: 100%; }
+</style></head><body>${html}</body></html>`;
+    } else {
+        if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
+            html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+body { font-family: system-ui, sans-serif; padding: 30px; line-height: 1.6; }
+</style></head><body>${html}</body></html>`;
+        }
+    }
+    
+    frame.srcdoc = html;
+}
+
+function markdownToHtml(md) {
+    return md
+        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/~~(.+?)~~/g, '<del>$1</del>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/^---$/gim, '<hr>')
+        .replace(/^- \[x\] (.*$)/gim, '<li>☑ $1</li>')
+        .replace(/^- \[ \] (.*$)/gim, '<li>☐ $1</li>')
+        .replace(/^- (.*$)/gim, '<li>$1</li>')
+        .replace(/^\* (.*$)/gim, '<li>$1</li>')
+        .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(?!<[hpuolb])/gim, '<p>')
+        .replace(/<\/blockquote>\s*<blockquote>/g, '<br>');
+}
+
+function refreshPreview() {
+    updatePreview();
+    showToast('🔄 Rafraîchi');
+}
+
+function openInNewTab() {
+    const content = document.getElementById('codeEditor').value;
+    let html = content;
+    
+    if (currentProject?.format === 'markdown') {
+        html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+body { font-family: system-ui, sans-serif; padding: 30px; line-height: 1.7; max-width: 800px; margin: 0 auto; }
+</style></head><body>${markdownToHtml(content)}</body></html>`;
+    }
+    
+    const blob = new Blob([html], { type: 'text/html' });
+    window.open(URL.createObjectURL(blob), '_blank');
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const content = document.getElementById('codeEditor').value;
+    document.getElementById('statusChars').textContent = content.length + ' car.';
+    document.getElementById('statusWords').textContent = (content.match(/\S+/g) || []).length + ' mots';
+    document.getElementById('statusLines').textContent = content.split('\n').length + ' lig.';
+}
+
+function updateSaveStatus() {
+    document.getElementById('statusSaved').textContent = hasUnsavedChanges ? '⚠️ Non sauvegardé' : '💾 Sauvegardé';
+}
+
+function updateClock() {
+    document.getElementById('statusTime').textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+
+// ==================== MODALS ====================
+function openNewDocModal() {
+    document.getElementById('newDocName').value = '';
+    selectedFormat = 'html';
+    selectedTemplate = 'blank';
+    
+    document.querySelectorAll('.format-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.format === 'html');
+    });
+    
+    updateTemplateGrid();
+    document.getElementById('newDocModal').classList.add('show');
+}
+
+function selectFormat(format) {
+    selectedFormat = format;
+    selectedTemplate = 'blank';
+    
+    document.querySelectorAll('.format-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.format === format);
+    });
+    
+    updateTemplateGrid();
+}
+
+function updateTemplateGrid() {
+    const grid = document.getElementById('templateGrid');
+    const tpls = templates[selectedFormat];
+    
+    grid.innerHTML = Object.entries(tpls).map(([key, tpl]) => `
+        <div class="template-card ${selectedTemplate === key ? 'selected' : ''}" data-template="${key}" onclick="selectTemplate('${key}')">
+            <div class="template-card-icon">${tpl.icon}</div>
+            <div class="template-card-name">${tpl.name}</div>
+            <div class="template-card-desc">${tpl.desc}</div>
+        </div>
+    `).join('');
+}
+
+function selectTemplate(template) {
+    selectedTemplate = template;
+    document.querySelectorAll('.template-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.template === template);
+    });
+}
+
+function createNewDoc() {
+    const name = document.getElementById('newDocName').value.trim() || 'Sans titre';
+    createProject(name, selectedFormat, selectedTemplate);
+    closeModal('newDocModal');
+    showToast(`📄 Créé (${selectedFormat.toUpperCase()})`);
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+}
+
+function openExportModal() {
+    if (!currentProject) return showToast('❌ Aucun document');
+    document.getElementById('exportModal').classList.add('show');
+}
+
+function openPublishModal() {
+    if (!currentProject) return showToast('❌ Aucun document');
+    document.getElementById('publishModal').classList.add('show');
+}
+
+// ==================== EXPORT ====================
+function exportAs(type) {
+    if (!currentProject) return;
+    
+    const content = document.getElementById('codeEditor').value;
+    let blob, filename;
+    
+    switch(type) {
+        case 'html':
+            let htmlContent = content;
+            if (currentProject.format === 'markdown') {
+                htmlContent = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${currentProject.name}</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.7; }
+        h1, h2, h3 { margin-top: 1.5em; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+        blockquote { border-left: 4px solid #ddd; margin: 1em 0; padding: 0.5em 1em; color: #666; }
+    </style>
+</head>
+<body>
+${markdownToHtml(content)}
+</body>
+</html>`;
+            }
+            blob = new Blob([htmlContent], { type: 'text/html' });
+            filename = `${currentProject.name}.html`;
+            break;
+            
+        case 'markdown':
+            blob = new Blob([content], { type: 'text/plain' });
+            filename = `${currentProject.name}.md`;
+            break;
+            
+        case 'pdf':
+            openInNewTab();
+            setTimeout(() => window.print(), 500);
+            closeModal('exportModal');
+            return;
+            
+        case 'json':
+            blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
+            filename = 'forge-projets.json';
+            break;
+    }
+    
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    
+    closeModal('exportModal');
+    showToast('📥 ' + filename);
+}
+
+function publishTo(platform) {
+    exportAs('html');
+    closeModal('publishModal');
+    
+    setTimeout(() => {
+        if (platform === 'github') {
+            showToast('💡 Uploadez le fichier sur GitHub Pages');
+        } else if (platform === 'netlify') {
+            window.open('https://app.netlify.com/drop', '_blank');
+        }
+    }, 500);
+}
+
+// ==================== UTILS ====================
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

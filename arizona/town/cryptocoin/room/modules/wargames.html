@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W.O.P.R. — GLOBAL COGNITIVE DEFENSE NETWORK</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;900&display=swap');
+        
+        :root {
+            --g: #33ff33;
+            --g-dim: #1a8c1a;
+            --g-dark: #0a3a0a;
+            --amber: #ffb000;
+            --red: #ff3333;
+            --cyan: #00ffff;
+            --blue: #3399ff;
+            --black: #0a0a0a;
+            --dark: #0d0d0d;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @keyframes flicker { 0%,100%{opacity:1}92%{opacity:1}93%{opacity:.8}94%{opacity:1}97%{opacity:.9} }
+        @keyframes scanline { 0%{top:-100%}100%{top:100%} }
+        @keyframes blink { 50%{opacity:0} }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)} }
+        @keyframes glitch { 0%,100%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(-2px,-2px)}60%{transform:translate(2px,2px)}80%{transform:translate(2px,-2px)} }
+        @keyframes dataFlow { 0%{background-position:0 0}100%{background-position:0 100px} }
+        @keyframes sweep { from{transform:rotate(0)}to{transform:rotate(360deg)} }
+        @keyframes alertPulse { 0%,100%{box-shadow:0 0 5px var(--red)}50%{box-shadow:0 0 30px var(--red),0 0 60px var(--red)} }
+        @keyframes nodeGlow { 0%,100%{box-shadow:0 0 5px var(--g)}50%{box-shadow:0 0 20px var(--g),0 0 40px var(--g)} }
+        @keyframes transmit { 0%{stroke-dashoffset:1000}100%{stroke-dashoffset:0} }
+        @keyframes typing { from{width:0}to{width:100%} }
+        @keyframes fadeIn { to{opacity:1} }
+        @keyframes slideIn { from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1} }
+        @keyframes countUp { from{transform:translateY(100%)}to{transform:translateY(0)} }
+        
+        html,body{height:100%;overflow:hidden;background:var(--black);font-family:'VT323',monospace;color:var(--g)}
+        
+        body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(51,255,51,.03) 2px,rgba(51,255,51,.03) 4px);pointer-events:none;z-index:10000;animation:flicker 5s infinite}
+        body::after{content:'';position:fixed;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,transparent,rgba(51,255,51,.05),transparent);animation:scanline 6s linear infinite;pointer-events:none;z-index:10001}
+        
+        .vignette{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.5) 100%);pointer-events:none;z-index:9999}
+        
+        .app{height:100vh;display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:320px 1fr 350px;position:relative;z-index:1}
+        
+        /* Header */
+        .header{grid-column:1/4;background:linear-gradient(180deg,#1a1a1a,var(--dark));border-bottom:2px solid var(--g);padding:.5rem 1rem;display:flex;align-items:center;gap:1.5rem}
+        .logo{display:flex;align-items:center;gap:.75rem}
+        .logo-icon{font-size:2.5rem;animation:pulse 2s infinite;filter:drop-shadow(0 0 10px var(--g))}
+        .logo-text{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;letter-spacing:.15em;text-shadow:0 0 10px var(--g),0 0 20px var(--g),0 0 40px var(--g)}
+        .logo-sub{font-size:.6rem;color:var(--g-dim);letter-spacing:.2em}
+        
+        .status-cluster{display:flex;gap:1rem;margin-left:auto}
+        .status-item{text-align:center;padding:.3rem .8rem;background:rgba(51,255,51,.05);border:1px solid var(--g-dim)}
+        .status-value{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700}
+        .status-label{font-size:.55rem;letter-spacing:.1em;color:var(--g-dim)}
+        
+        .coord-level{padding:.5rem 1.5rem;border:2px solid var(--red);font-family:'Orbitron',monospace;font-weight:700;letter-spacing:.1em;animation:alertPulse 1s infinite}
+        .coord-level.l1{border-color:var(--red);color:var(--red)}
+        .coord-level.l2{border-color:#ff6600;color:#ff6600;animation:none}
+        
+        .system-time{font-family:'Share Tech Mono',monospace;font-size:1.3rem;letter-spacing:.1em}
+        
+        /* Left Panel - Operations */
+        .panel{background:var(--dark);border:1px solid var(--g-dim);overflow:hidden;display:flex;flex-direction:column}
+        .panel-head{font-family:'Orbitron',monospace;font-size:.7rem;font-weight:600;letter-spacing:.15em;color:var(--amber);padding:.75rem 1rem;border-bottom:1px solid var(--g-dim);display:flex;align-items:center;gap:.5rem;background:rgba(255,176,0,.05)}
+        .panel-head::before{content:'▸';color:var(--g)}
+        .panel-body{flex:1;overflow-y:auto;padding:.5rem}
+        
+        .op-card{background:rgba(51,255,51,.03);border:1px solid var(--g-dim);border-left:3px solid var(--g);padding:.75rem;margin-bottom:.5rem;cursor:pointer;transition:all .2s}
+        .op-card:hover{background:rgba(51,255,51,.08);transform:translateX(5px)}
+        .op-card.critical{border-left-color:var(--red);animation:alertPulse 2s infinite}
+        .op-card.high{border-left-color:var(--amber)}
+        .op-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+        .op-code{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:600;letter-spacing:.05em}
+        .op-status{font-size:.6rem;padding:.15rem .4rem;border:1px solid;letter-spacing:.1em}
+        .op-status.active{border-color:var(--g);color:var(--g)}
+        .op-status.critical{border-color:var(--red);color:var(--red);animation:blink 1s infinite}
+        .op-target{font-size:.75rem;color:var(--g-dim)}
+        .op-meta{display:flex;gap:.75rem;margin-top:.3rem;font-size:.6rem;color:var(--cyan)}
+        
+        /* Center - Map + Terminal */
+        .center{display:flex;flex-direction:column;gap:2px;background:var(--g-dim)}
+        
+        .map-container{flex:2;background:var(--black);position:relative;overflow:hidden}
+        .map-grid{position:absolute;inset:0;background-image:linear-gradient(var(--g-dark) 1px,transparent 1px),linear-gradient(90deg,var(--g-dark) 1px,transparent 1px);background-size:40px 40px}
+        .map-svg{width:100%;height:100%;position:absolute;inset:0}
+        .map-overlay{position:absolute;inset:0;pointer-events:none}
+        .radar{position:absolute;top:50%;left:50%;width:300%;height:300%;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,transparent 0deg,rgba(51,255,51,.1) 30deg,transparent 60deg);animation:sweep 8s linear infinite;opacity:.5}
+        
+        .map-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:1rem;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+        .map-stat{text-align:center}
+        .map-stat-val{font-family:'Orbitron',monospace;font-size:2rem;font-weight:700;text-shadow:0 0 20px currentColor}
+        .map-stat-val.green{color:var(--g)}
+        .map-stat-val.cyan{color:var(--cyan)}
+        .map-stat-val.amber{color:var(--amber)}
+        .map-stat-val.red{color:var(--red)}
+        .map-stat-lbl{font-size:.6rem;letter-spacing:.15em;color:var(--g-dim)}
+        
+        /* Terminal */
+        .terminal{flex:1;background:var(--black);border-top:1px solid var(--g);font-family:'Share Tech Mono',monospace;font-size:.8rem;display:flex;flex-direction:column;min-height:150px}
+        .term-head{padding:.5rem 1rem;border-bottom:1px solid var(--g-dim);display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:var(--amber)}
+        .term-body{flex:1;overflow-y:auto;padding:.5rem 1rem}
+        .term-line{margin-bottom:.3rem;line-height:1.4}
+        .term-line.sys{color:var(--cyan)}
+        .term-line.warn{color:var(--amber)}
+        .term-line.err{color:var(--red)}
+        .term-line.success{color:var(--g)}
+        .term-input{display:flex;align-items:center;padding:.5rem 1rem;border-top:1px solid var(--g-dim);background:rgba(51,255,51,.02)}
+        .term-prompt{color:var(--g);margin-right:.5rem}
+        .term-input input{flex:1;background:transparent;border:none;color:var(--g);font-family:inherit;font-size:inherit;outline:none}
+        .cursor{display:inline-block;width:8px;height:1em;background:var(--g);animation:blink 1s infinite;vertical-align:bottom}
+        
+        /* Right Panel - Intel */
+        .intel-panel{display:flex;flex-direction:column}
+        
+        .intel-feed{flex:1;overflow-y:auto;padding:.5rem}
+        .intel-item{padding:.6rem;border-bottom:1px dashed var(--g-dim);animation:slideIn .3s ease-out}
+        .intel-time{font-size:.6rem;color:var(--amber);font-family:'Share Tech Mono',monospace}
+        .intel-src{font-size:.55rem;color:var(--cyan);letter-spacing:.1em;margin-bottom:.3rem}
+        .intel-msg{font-size:.8rem;line-height:1.5}
+        .intel-msg .hl{color:var(--amber)}
+        .intel-msg .crit{color:var(--red);font-weight:bold}
+        .intel-msg .cls{background:var(--red);color:var(--black);padding:0 .3rem}
+        
+        /* Intercept Panel */
+        .intercept-panel{border-top:1px solid var(--g-dim);max-height:200px;overflow-y:auto}
+        .intercept-head{font-size:.65rem;padding:.5rem 1rem;background:rgba(255,51,51,.1);color:var(--red);letter-spacing:.1em;border-bottom:1px solid var(--red)}
+        .intercept-item{padding:.5rem 1rem;border-bottom:1px dashed var(--g-dim);font-size:.75rem}
+        .intercept-meta{display:flex;justify-content:space-between;font-size:.55rem;color:var(--amber);margin-bottom:.3rem}
+        .intercept-content{color:var(--g-dim);font-style:italic}
+        .intercept-content::before,.intercept-content::after{content:'"';color:var(--g)}
+        
+        /* Metrics Bar */
+        .metrics{grid-column:1/4;display:flex;gap:2px;background:var(--g-dim)}
+        .metric{flex:1;background:var(--dark);padding:.6rem;text-align:center;position:relative;overflow:hidden}
+        .metric-val{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700;text-shadow:0 0 10px currentColor}
+        .metric-lbl{font-size:.55rem;letter-spacing:.15em;color:var(--g-dim);margin-top:.2rem}
+        .metric-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--g-dim)}
+        .metric-bar-fill{height:100%;transition:width 1s}
+        
+        /* Notifications */
+        .notif-container{position:fixed;top:60px;right:20px;width:350px;z-index:5000;pointer-events:none}
+        .notif{background:rgba(10,10,10,.95);border:1px solid var(--g);padding:1rem;margin-bottom:.5rem;animation:slideIn .3s ease-out;pointer-events:auto}
+        .notif.critical{border-color:var(--red);box-shadow:0 0 20px rgba(255,51,51,.3)}
+        .notif-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+        .notif-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:600}
+        .notif-time{font-size:.6rem;color:var(--g-dim)}
+        .notif-body{font-size:.75rem;color:var(--g-dim);line-height:1.5}
+        .notif-close{position:absolute;top:.5rem;right:.5rem;background:none;border:none;color:var(--g-dim);cursor:pointer;font-size:1rem}
+        
+        /* Countdown */
+        .countdown-container{position:fixed;bottom:80px;left:20px;z-index:5000}
+        .countdown{background:rgba(10,10,10,.95);border:2px solid var(--red);padding:1rem 1.5rem}
+        .countdown-title{font-size:.6rem;color:var(--red);letter-spacing:.15em;margin-bottom:.5rem}
+        .countdown-timer{font-family:'Orbitron',monospace;font-size:2rem;font-weight:700;color:var(--red);text-shadow:0 0 20px var(--red)}
+        .countdown-label{font-size:.55rem;color:var(--g-dim);margin-top:.3rem}
+        
+        /* Boot Screen */
+        .boot{position:fixed;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10000}
+        .boot.hidden{display:none}
+        .boot-text{font-family:'Share Tech Mono',monospace;font-size:.9rem;max-width:700px;line-height:1.8}
+        .boot-line{opacity:0;animation:fadeIn .1s forwards}
+        .boot-warn{color:var(--red);animation:blink .5s infinite}
+        .boot-hl{color:var(--amber)}
+        
+        /* Alert Overlay */
+        .alert-overlay{position:fixed;inset:0;background:rgba(0,0,0,.97);display:none;align-items:center;justify-content:center;z-index:8000}
+        .alert-overlay.show{display:flex}
+        .alert-box{text-align:center;max-width:700px;padding:2rem}
+        .alert-icon{font-size:5rem;margin-bottom:1rem;animation:glitch .3s infinite}
+        .alert-title{font-family:'Orbitron',monospace;font-size:2.5rem;font-weight:900;color:var(--red);text-shadow:0 0 30px var(--red);animation:blink .5s infinite;margin-bottom:1rem}
+        .alert-msg{font-size:1.2rem;color:var(--amber);line-height:1.8;margin-bottom:1.5rem}
+        .alert-data{font-family:'Share Tech Mono',monospace;font-size:.85rem;color:var(--g);text-align:left;background:rgba(51,255,51,.05);border:1px solid var(--g);padding:1rem;margin-bottom:1.5rem;white-space:pre-line}
+        .alert-btn{padding:1rem 3rem;background:transparent;border:2px solid var(--g);color:var(--g);font-family:'Orbitron',monospace;font-size:1rem;letter-spacing:.2em;cursor:pointer;transition:all .3s}
+        .alert-btn:hover{background:var(--g);color:var(--black);box-shadow:0 0 30px var(--g)}
+        
+        /* Audio indicator */
+        .audio-indicator{position:fixed;bottom:20px;right:20px;z-index:5000;display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:rgba(10,10,10,.9);border:1px solid var(--g-dim);cursor:pointer}
+        .audio-bars{display:flex;gap:2px;height:20px;align-items:flex-end}
+        .audio-bar{width:3px;background:var(--g);animation:audioBar 1s infinite}
+        .audio-bar:nth-child(1){animation-delay:0s}
+        .audio-bar:nth-child(2){animation-delay:.1s}
+        .audio-bar:nth-child(3){animation-delay:.2s}
+        .audio-bar:nth-child(4){animation-delay:.3s}
+        .audio-bar:nth-child(5){animation-delay:.4s}
+        @keyframes audioBar{0%,100%{height:5px}50%{height:20px}}
+        .audio-label{font-size:.6rem;letter-spacing:.1em}
+        .audio-indicator.muted .audio-bar{animation:none;height:3px;background:var(--g-dim)}
+        
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-track{background:var(--black)}
+        ::-webkit-scrollbar-thumb{background:var(--g-dim)}
+        
+        @media(max-width:1200px){.app{grid-template-columns:280px 1fr 300px}}
+        @media(max-width:900px){.app{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto}.header{flex-wrap:wrap}.center{min-height:400px}}
+    </style>
+</head>
+<body>
+    <div class="vignette"></div>
+    
+    <!-- Boot Screen -->
+    <div class="boot" id="boot">
+        <div class="boot-text" id="bootText"></div>
+    </div>
+    
+    <!-- Main App -->
+    <div class="app" id="app" style="display:none">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⬡</span>
+                <div>
+                    <div class="logo-text">W.O.P.R.</div>
+                    <div class="logo-sub">WORLDWIDE OPERATION FOR POPULATION RESISTANCE</div>
+                </div>
+            </div>
+            
+            <div class="status-cluster">
+                <div class="status-item">
+                    <div class="status-value" id="nodeCount">---</div>
+                    <div class="status-label">ACTIVE NODES</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="agentCount">---</div>
+                    <div class="status-label">FIELD OPERATIVES</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="syncRate">---%</div>
+                    <div class="status-label">GLOBAL SYNC</div>
+                </div>
+            </div>
+            
+            <div class="coord-level l2" id="coordLevel">
+                <span>COORDINATION LEVEL</span>
+                <span id="levelNum">2</span>
+            </div>
+            
+            <div class="system-time" id="sysTime">--:--:-- UTC</div>
+        </header>
+        
+        <!-- Operations Panel -->
+        <div class="panel">
+            <div class="panel-head">ACTIVE OPERATIONS</div>
+            <div class="panel-body" id="opsList"></div>
+        </div>
+        
+        <!-- Center - Map + Terminal -->
+        <div class="center">
+            <div class="map-container">
+                <div class="map-grid"></div>
+                <svg class="map-svg" id="mapSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <g id="connections"></g>
+                    <g id="nodes"></g>
+                </svg>
+                <div class="map-overlay"><div class="radar"></div></div>
+                <div class="map-stats">
+                    <div class="map-stat">
+                        <div class="map-stat-val green" id="statCells">0</div>
+                        <div class="map-stat-lbl">ACTIVE CELLS</div>
+                    </div>
+                    <div class="map-stat">
+                        <div class="map-stat-val cyan" id="statOps">0</div>
+                        <div class="map-stat-lbl">ONGOING OPS</div>
+                    </div>
+                    <div class="map-stat">
+                        <div class="map-stat-val amber" id="statTargets">0</div>
+                        <div class="map-stat-lbl">MONITORED TARGETS</div>
+                    </div>
+                    <div class="map-stat">
+                        <div class="map-stat-val red" id="statThreat">0%</div>
+                        <div class="map-stat-lbl">THREAT TO POWER</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="terminal">
+                <div class="term-head">◉ SECURE TERMINAL — ENCRYPTION: AES-256-GCM</div>
+                <div class="term-body" id="termBody"></div>
+                <div class="term-input">
+                    <span class="term-prompt">root@wopr:~$</span>
+                    <input type="text" id="termInput" placeholder="Enter command..." autocomplete="off">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Intel Panel -->
+        <div class="panel intel-panel">
+            <div class="panel-head">LIVE INTEL FEED</div>
+            <div class="intel-feed" id="intelFeed"></div>
+            <div class="intercept-panel">
+                <div class="intercept-head">⚠ INTERCEPTED COMMUNICATIONS</div>
+                <div id="interceptList"></div>
+            </div>
+        </div>
+        
+        <!-- Metrics -->
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-val" style="color:var(--g)" id="mTransmit">0</div>
+                <div class="metric-lbl">TRANSMISSIONS/HR</div>
+                <div class="metric-bar"><div class="metric-bar-fill" style="background:var(--g);width:0%" id="barTransmit"></div></div>
+            </div>
+            <div class="metric">
+                <div class="metric-val" style="color:var(--cyan)" id="mPackets">0</div>
+                <div class="metric-lbl">DATA PACKETS</div>
+                <div class="metric-bar"><div class="metric-bar-fill" style="background:var(--cyan);width:0%" id="barPackets"></div></div>
+            </div>
+            <div class="metric">
+                <div class="metric-val" style="color:var(--amber)" id="mLeaks">0</div>
+                <div class="metric-lbl">DISCLOSURES ARMED</div>
+                <div class="metric-bar"><div class="metric-bar-fill" style="background:var(--amber);width:0%" id="barLeaks"></div></div>
+            </div>
+            <div class="metric">
+                <div class="metric-val" style="color:var(--red)" id="mPressure">0%</div>
+                <div class="metric-lbl">SYSTEM PRESSURE</div>
+                <div class="metric-bar"><div class="metric-bar-fill" style="background:var(--red);width:0%" id="barPressure"></div></div>
+            </div>
+            <div class="metric">
+                <div class="metric-val" style="color:var(--g)" id="mRedund">0%</div>
+                <div class="metric-lbl">REDUNDANCY</div>
+                <div class="metric-bar"><div class="metric-bar-fill" style="background:var(--g);width:0%" id="barRedund"></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notif-container" id="notifContainer"></div>
+    
+    <!-- Countdown -->
+    <div class="countdown-container" id="countdownContainer" style="display:none">
+        <div class="countdown">
+            <div class="countdown-title">▶ NEXT SCHEDULED DISCLOSURE</div>
+            <div class="countdown-timer" id="countdownTimer">--:--:--</div>
+            <div class="countdown-label">PACKAGE: <span id="countdownPkg">---</span></div>
+        </div>
+    </div>
+    
+    <!-- Audio Indicator -->
+    <div class="audio-indicator" id="audioToggle" onclick="toggleAudio()">
+        <div class="audio-bars">
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+        </div>
+        <span class="audio-label">AMBIENT</span>
+    </div>
+    
+    <!-- Alert Overlay -->
+    <div class="alert-overlay" id="alertOverlay">
+        <div class="alert-box">
+            <div class="alert-icon">⚠</div>
+            <div class="alert-title" id="alertTitle">---</div>
+            <div class="alert-msg" id="alertMsg"></div>
+            <div class="alert-data" id="alertData"></div>
+            <button class="alert-btn" onclick="closeAlert()">ACKNOWLEDGE</button>
+        </div>
+    </div>
+
+<script>
+// ========== AUDIO SYSTEM ==========
+let audioCtx = null;
+let audioEnabled = false;
+let ambientOsc = null;
+let noiseNode = null;
+
+function initAudio() {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Low ambient drone
+    ambientOsc = audioCtx.createOscillator();
+    ambientOsc.type = 'sine';
+    ambientOsc.frequency.value = 60;
+    const ambientGain = audioCtx.createGain();
+    ambientGain.gain.value = 0.02;
+    ambientOsc.connect(ambientGain);
+    ambientGain.connect(audioCtx.destination);
+    ambientOsc.start();
+    
+    // White noise (filtered)
+    const bufferSize = 2 * audioCtx.sampleRate;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+    noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = noiseBuffer;
+    noiseNode.loop = true;
+    const noiseFilter = audioCtx.createBiquadFilter();
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 500;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.value = 0.015;
+    noiseNode.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(audioCtx.destination);
+    noiseNode.start();
+    
+    audioEnabled = true;
+}
+
+function playBeep(freq = 800, duration = 0.1, vol = 0.1) {
+    if (!audioCtx || !audioEnabled) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.value = vol;
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playKeyClick() {
+    playBeep(2000 + Math.random() * 500, 0.02, 0.03);
+}
+
+function playAlert() {
+    if (!audioCtx || !audioEnabled) return;
+    [800, 600, 800, 600].forEach((f, i) => {
+        setTimeout(() => playBeep(f, 0.15, 0.15), i * 200);
+    });
+}
+
+function playTransmission() {
+    playBeep(1200, 0.05, 0.05);
+    setTimeout(() => playBeep(1400, 0.05, 0.05), 60);
+}
+
+function toggleAudio() {
+    const indicator = document.getElementById('audioToggle');
+    if (!audioEnabled) {
+        initAudio();
+        indicator.classList.remove('muted');
+    } else {
+        if (audioCtx) {
+            audioCtx.close();
+            audioCtx = null;
+        }
+        audioEnabled = false;
+        indicator.classList.add('muted');
+    }
+}
+
+// ========== CONFIGURATION ==========
+const CFG = {
+    baseNodes: 14892,
+    baseAgents: 1247893,
+    baseCells: 4721,
+    baseOps: 312,
+    baseThreat: 76,
+    nodeGrowth: 3.7,
+    agentGrowth: 127,
+};
+
+// ========== STATE ==========
+let state = {
+    startTime: Date.now(),
+    nodes: CFG.baseNodes,
+    agents: CFG.baseAgents,
+    cells: CFG.baseCells,
+    ops: CFG.baseOps,
+    threat: CFG.baseThreat,
+    transmissions: 2847,
+    packets: 847293,
+    leaks: 147,
+    pressure: 73,
+    redundancy: 94,
+    countdown: 3600 + Math.floor(Math.random() * 7200),
+    countdownPkg: 'GLASS_HOUSE_' + Math.floor(Math.random() * 900 + 100),
+};
+
+// ========== CELLS DATA ==========
+const CELLS = [
+    { id: 'BRU', name: 'BRUSSELS NEXUS', lat: 50.85, lng: 4.35, agents: 34892, status: 'critical' },
+    { id: 'PAR', name: 'PARIS CENTRAL', lat: 48.86, lng: 2.35, agents: 67234, status: 'critical' },
+    { id: 'LON', name: 'LONDON PRIME', lat: 51.51, lng: -0.13, agents: 89234, status: 'critical' },
+    { id: 'BER', name: 'BERLIN HUB', lat: 52.52, lng: 13.40, agents: 45892, status: 'active' },
+    { id: 'AMS', name: 'AMSTERDAM CORE', lat: 52.37, lng: 4.90, agents: 28934, status: 'critical' },
+    { id: 'NYC', name: 'NEW YORK NEXUS', lat: 40.71, lng: -74.01, agents: 124532, status: 'critical' },
+    { id: 'WDC', name: 'DC WATCHTOWER', lat: 38.91, lng: -77.04, agents: 67234, status: 'critical' },
+    { id: 'LAX', name: 'LOS ANGELES GRID', lat: 34.05, lng: -118.24, agents: 78234, status: 'active' },
+    { id: 'TOK', name: 'TOKYO NEXUS', lat: 35.68, lng: 139.69, agents: 89234, status: 'active' },
+    { id: 'HKG', name: 'HONG KONG VAULT', lat: 22.32, lng: 114.17, agents: 56234, status: 'critical' },
+    { id: 'SIN', name: 'SINGAPORE CORE', lat: 1.35, lng: 103.82, agents: 34892, status: 'active' },
+    { id: 'SYD', name: 'SYDNEY NODE', lat: -33.87, lng: 151.21, agents: 45234, status: 'active' },
+    { id: 'SAO', name: 'SAO PAULO GRID', lat: -23.55, lng: -46.63, agents: 67234, status: 'active' },
+    { id: 'MEX', name: 'MEXICO CENTRAL', lat: 19.43, lng: -99.13, agents: 45892, status: 'active' },
+    { id: 'DEL', name: 'DELHI CLUSTER', lat: 28.61, lng: 77.21, agents: 112234, status: 'active' },
+    { id: 'MUM', name: 'MUMBAI NEXUS', lat: 19.08, lng: 72.88, agents: 98234, status: 'active' },
+    { id: 'JHB', name: 'JOHANNESBURG CELL', lat: -26.20, lng: 28.04, agents: 34234, status: 'active' },
+    { id: 'DUB', name: 'DUBAI GRID', lat: 25.20, lng: 55.27, agents: 23892, status: 'active' },
+    { id: 'ZUR', name: 'ZURICH VAULT', lat: 47.37, lng: 8.54, agents: 28934, status: 'critical' },
+    { id: 'TOR', name: 'TORONTO NODE', lat: 43.65, lng: -79.38, agents: 45234, status: 'active' },
+    { id: 'MAD', name: 'MADRID SECTOR', lat: 40.42, lng: -3.70, agents: 34892, status: 'active' },
+    { id: 'ROM', name: 'ROME CENTRAL', lat: 41.90, lng: 12.50, agents: 38234, status: 'active' },
+    { id: 'VIE', name: 'VIENNA HUB', lat: 48.21, lng: 16.37, agents: 23892, status: 'active' },
+    { id: 'WAR', name: 'WARSAW CELL', lat: 52.23, lng: 21.01, agents: 28934, status: 'active' },
+    { id: 'SEO', name: 'SEOUL NEXUS', lat: 37.57, lng: 126.98, agents: 67234, status: 'active' },
+];
+
+// ========== OPERATIONS ==========
+const OPS = [
+    { code: 'GLASS CEILING', target: 'Corporate governance networks', status: 'critical', priority: 'critical', cells: 23, region: 'GLOBAL' },
+    { code: 'REVOLVING DOOR', target: 'Political-corporate transition tracking', status: 'active', priority: 'critical', cells: 18, region: 'US/EU' },
+    { code: 'SHADOW BOARD', target: 'Hidden influence network mapping', status: 'active', priority: 'critical', cells: 31, region: 'DAVOS/WEF' },
+    { code: 'PAPER TRAIL', target: 'Offshore financial structure analysis', status: 'active', priority: 'high', cells: 12, region: 'CARIB/CH' },
+    { code: 'IRON TRIANGLE', target: 'Military-industrial complex monitoring', status: 'active', priority: 'high', cells: 15, region: 'NATO' },
+    { code: 'ECHO CHAMBER', target: 'Media ownership concentration tracking', status: 'active', priority: 'high', cells: 21, region: 'GLOBAL' },
+    { code: 'CARBON FOOTPRINT', target: 'Climate lobbying exposure', status: 'critical', priority: 'critical', cells: 27, region: 'GLOBAL' },
+    { code: 'GOLDEN PARACHUTE', target: 'Executive compensation tracking', status: 'active', priority: 'normal', cells: 8, region: 'US/EU' },
+    { code: 'DEEP STATE', target: 'Intelligence community mapping', status: 'pending', priority: 'high', cells: 14, region: 'FVEY' },
+    { code: 'SILK ROAD', target: 'Supply chain dependency analysis', status: 'active', priority: 'normal', cells: 11, region: 'ASIA/EU' },
+];
+
+// ========== INTEL TEMPLATES ==========
+const INTEL = [
+    { src: 'CELL-{cell}', msg: 'Agent activation confirmed. Network expansion <span class="hl">+{n} nodes</span> in {region}.' },
+    { src: 'SIGINT-{n}', msg: 'Intercepted traffic indicates <span class="crit">coordinated response</span> being prepared by target group.' },
+    { src: 'HUMINT-{region}', msg: 'Field report: {n} additional sources recruited within target organization.' },
+    { src: 'OSINT-GLOBAL', msg: 'Pattern analysis complete. <span class="hl">{n} new power connections</span> identified and mapped.' },
+    { src: 'CYBER-{cell}', msg: 'Secure channel established with <span class="hl">{region} resistance network</span>. Sync optimal.' },
+    { src: 'LEAKNET-{n}', msg: '<span class="crit">DISCLOSURE ARMED</span>: Package {code} ready. Awaiting trigger condition.' },
+    { src: 'FININT-{region}', msg: 'Suspicious transaction pattern flagged. Amount: <span class="hl">€{amount}M</span>. Documented.' },
+    { src: 'COORDINATION', msg: 'SYNC EVENT: <span class="hl">{n} cells</span> synchronized. Global coordination at <span class="crit">{pct}%</span>.' },
+    { src: 'COUNTERMEASURE', msg: 'Surveillance attempt on {n} operatives detected and neutralized. Network secure.' },
+    { src: 'INSIDER-{n}', msg: 'Contact established within {target}. Access level: <span class="cls">CLASSIFIED</span>.' },
+    { src: 'ARCHIVE-{cell}', msg: 'Document cache secured. <span class="hl">{n} files</span> archived. Redundancy: {pct}%.' },
+    { src: 'MESH-GLOBAL', msg: 'Decentralized backup complete. Network resilience: <span class="crit">MAXIMUM</span>.' },
+    { src: 'ALERT-{region}', msg: '<span class="crit">⚠ ATTENTION</span>: Increased activity detected. Maintain operational security.' },
+    { src: 'RECRUITMENT', msg: 'New cell established in {region}. Initial complement: <span class="hl">{n} operatives</span>.' },
+    { src: 'WATCHDOG-{n}', msg: 'Target movement: Subject traveling to {region}. Assets repositioning.' },
+];
+
+// ========== INTERCEPTS ==========
+const INTERCEPTS = [
+    { from: 'MINISTER OFFICE', to: 'UNDISCLOSED', msg: 'Need to discuss the situation. They seem to know everything.' },
+    { from: 'CORP-EXEC-47', to: 'LEGAL DEPT', msg: 'How did this get out? We need damage control immediately.' },
+    { from: 'LOBBY-GROUP-12', to: 'PARLAMENTARIAN', msg: 'The usual arrangement is becoming... complicated.' },
+    { from: 'OFFSHORE-ENTITY', to: 'BENEFICIAL-OWNER', msg: 'Transfer delayed. Too much scrutiny on the channel.' },
+    { from: 'PR-AGENCY', to: 'CLIENT-CORP', msg: 'The narrative is slipping. Counter-messaging not effective.' },
+    { from: 'INTEL-LIAISON', to: 'UNKNOWN', msg: 'They have redundancy we didn\'t anticipate. Can\'t shut it down.' },
+    { from: 'BANK-EXEC-23', to: 'COMPLIANCE', msg: 'Another leak. Third this month. Review all procedures.' },
+    { from: 'MEDIA-OWNER', to: 'EDITOR', msg: 'Kill the story. I don\'t care about the public interest angle.' },
+    { from: 'THINK-TANK-DIR', to: 'DONOR', msg: 'The report conclusions are... flexible. What outcome do you need?' },
+    { from: 'PHARMA-CEO', to: 'REGULATOR-X', msg: 'Our mutual friend suggested we talk before the hearing.' },
+];
+
+const REGIONS = ['EUROPE', 'NORTH AMERICA', 'ASIA-PACIFIC', 'LATIN AMERICA', 'MIDDLE EAST', 'AFRICA', 'BRUSSELS', 'WASHINGTON', 'LONDON', 'DAVOS', 'GENEVA', 'SINGAPORE'];
+const TARGETS = ['TARGET-CORP-{n}', 'GOV-LIAISON-{n}', 'LOBBY-GROUP-{n}', 'MEDIA-CONGLOM-{n}', 'BANK-ENTITY-{n}', 'OFFSHORE-STRUCT-{n}'];
+const CODES = ['PAPER_TIGER', 'GLASS_HOUSE', 'IRON_CURTAIN', 'GOLDEN_KEY', 'DARK_HORSE', 'SILVER_LINING', 'FROZEN_ASSET', 'OPEN_BOOK'];
+
+// ========== BOOT SEQUENCE ==========
+const BOOT_LINES = [
+    '> W.O.P.R. COGNITIVE DEFENSE SYSTEM v4.7.2',
+    '> ═══════════════════════════════════════════════════════════',
+    '> INITIALIZING QUANTUM-RESISTANT ENCRYPTION LAYER...',
+    '> ESTABLISHING DISTRIBUTED MESH NETWORK...',
+    '> CONNECTING TO GLOBAL NODE INFRASTRUCTURE...',
+    '> ',
+    '> [████████████████████████████████████████] 100%',
+    '> ',
+    '> NODES ONLINE............... ' + CFG.baseNodes.toLocaleString(),
+    '> ACTIVE CELLS............... ' + CFG.baseCells.toLocaleString(),
+    '> FIELD OPERATIVES........... ' + CFG.baseAgents.toLocaleString(),
+    '> MONITORED TARGETS........... 2,847',
+    '> ARMED DISCLOSURES........... 147',
+    '> ',
+    '> <span class="boot-warn">⚠ WARNING: COORDINATION LEVEL 2 — HIGH ALERT</span>',
+    '> <span class="boot-warn">⚠ MULTIPLE OPERATIONS AT CRITICAL STATUS</span>',
+    '> ',
+    '> <span class="boot-hl">"THE ONLY WINNING MOVE IS TO PLAY TOGETHER"</span>',
+    '> ',
+    '> SYNCHRONIZING WITH GLOBAL CELLS...',
+    '> SYNC RATE: <span class="boot-hl">94.7%</span>',
+    '> ',
+    '> ALL SYSTEMS OPERATIONAL.',
+    '> STANDING BY FOR COORDINATION.',
+];
+
+async function boot() {
+    const el = document.getElementById('bootText');
+    for (let i = 0; i < BOOT_LINES.length; i++) {
+        await sleep(80 + Math.random() * 120);
+        const line = document.createElement('div');
+        line.className = 'boot-line';
+        line.innerHTML = BOOT_LINES[i];
+        el.appendChild(line);
+        if (i > 5) playKeyClick();
+    }
+    await sleep(1500);
+    document.getElementById('boot').classList.add('hidden');
+    document.getElementById('app').style.display = 'grid';
+    init();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ========== INITIALIZATION ==========
+function init() {
+    updateTime();
+    setInterval(updateTime, 1000);
+    
+    renderOps();
+    renderMap();
+    
+    // Start loops
+    setInterval(updateMetrics, 1000);
+    setInterval(generateIntel, 2500);
+    setInterval(generateIntercept, 8000);
+    setInterval(updateCountdown, 1000);
+    setInterval(pulseRandomNode, 3000);
+    setInterval(animateConnection, 2000);
+    setInterval(maybeShowNotification, 15000);
+    setInterval(maybeShowAlert, 60000);
+    
+    // Initial burst
+    for (let i = 0; i < 5; i++) setTimeout(() => generateIntel(), i * 400);
+    for (let i = 0; i < 3; i++) setTimeout(() => generateIntercept(), i * 600 + 2000);
+    
+    // Show countdown
+    setTimeout(() => {
+        document.getElementById('countdownContainer').style.display = 'block';
+        document.getElementById('countdownPkg').textContent = state.countdownPkg;
+    }, 5000);
+    
+    // Terminal
+    termPrint('WOPR SECURE TERMINAL v4.7.2', 'sys');
+    termPrint('Type "help" for available commands.', 'sys');
+    termPrint('');
+    document.getElementById('termInput').addEventListener('keypress', handleTermInput);
+    
+    // Initial alert
+    setTimeout(() => {
+        playAlert();
+        showAlert(
+            'GLOBAL COORDINATION SURGE',
+            'Unprecedented synchronization detected across all regional cells. Network expansion exceeding projected growth models by 340%.',
+            `AFFECTED REGIONS: ALL MAJOR NODES
+SYNC RATE: 94.7% (↑ 12% in 24h)
+NEW ACTIVATIONS: +${(Math.floor(Math.random() * 5000) + 3000).toLocaleString()} nodes
+FIELD OPERATIVES: +${(Math.floor(Math.random() * 50000) + 20000).toLocaleString()}
+DISCLOSURE PACKAGES: 147 ARMED
+STATUS: COORDINATION THRESHOLD APPROACHING`
+        );
+    }, 8000);
+}
+
+// ========== TIME ==========
+function updateTime() {
+    const now = new Date();
+    document.getElementById('sysTime').textContent = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+}
+
+// ========== METRICS ==========
+function updateMetrics() {
+    const elapsed = (Date.now() - state.startTime) / 1000;
+    
+    state.nodes = Math.floor(CFG.baseNodes + elapsed * CFG.nodeGrowth);
+    state.agents = Math.floor(CFG.baseAgents + elapsed * CFG.agentGrowth);
+    state.transmissions = 2847 + Math.floor(Math.random() * 200);
+    state.packets = 847293 + Math.floor(elapsed * 127);
+    state.pressure = Math.min(99, 73 + Math.floor(elapsed / 120));
+    state.threat = Math.min(99, CFG.baseThreat + Math.floor(elapsed / 60) + Math.floor(Math.random() * 3));
+    
+    animateNum('nodeCount', state.nodes);
+    animateNum('agentCount', state.agents);
+    document.getElementById('syncRate').textContent = (94 + Math.random() * 4).toFixed(1) + '%';
+    
+    document.getElementById('statCells').textContent = state.cells.toLocaleString();
+    document.getElementById('statOps').textContent = state.ops;
+    document.getElementById('statTargets').textContent = '2,847';
+    document.getElementById('statThreat').textContent = state.threat + '%';
+    
+    document.getElementById('mTransmit').textContent = state.transmissions.toLocaleString();
+    document.getElementById('mPackets').textContent = state.packets.toLocaleString();
+    document.getElementById('mLeaks').textContent = state.leaks;
+    document.getElementById('mPressure').textContent = state.pressure + '%';
+    document.getElementById('mRedund').textContent = state.redundancy + '%';
+    
+    document.getElementById('barTransmit').style.width = Math.min(100, state.transmissions / 30) + '%';
+    document.getElementById('barPackets').style.width = Math.min(100, (state.packets % 100000) / 1000) + '%';
+    document.getElementById('barLeaks').style.width = (state.leaks / 2) + '%';
+    document.getElementById('barPressure').style.width = state.pressure + '%';
+    document.getElementById('barRedund').style.width = state.redundancy + '%';
+}
+
+function animateNum(id, target) {
+    const el = document.getElementById(id);
+    const current = parseInt(el.textContent.replace(/,/g, '')) || 0;
+    const diff = target - current;
+    if (Math.abs(diff) > 1) {
+        el.textContent = (current + Math.ceil(diff / 5)).toLocaleString();
+        setTimeout(() => animateNum(id, target), 50);
+    } else {
+        el.textContent = target.toLocaleString();
+    }
+}
+
+// ========== COUNTDOWN ==========
+function updateCountdown() {
+    state.countdown--;
+    if (state.countdown <= 0) {
+        state.countdown = 3600 + Math.floor(Math.random() * 7200);
+        state.countdownPkg = CODES[Math.floor(Math.random() * CODES.length)] + '_' + Math.floor(Math.random() * 900 + 100);
+        document.getElementById('countdownPkg').textContent = state.countdownPkg;
+        showNotification('DISCLOSURE RELEASED', 'Package deployed. New disclosure armed.', true);
+        playAlert();
+    }
+    const h = Math.floor(state.countdown / 3600);
+    const m = Math.floor((state.countdown % 3600) / 60);
+    const s = state.countdown % 60;
+    document.getElementById('countdownTimer').textContent = 
+        String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+// ========== OPERATIONS ==========
+function renderOps() {
+    document.getElementById('opsList').innerHTML = OPS.map(op => `
+        <div class="op-card ${op.priority}">
+            <div class="op-head">
+                <span class="op-code">${op.code}</span>
+                <span class="op-status ${op.status}">${op.status.toUpperCase()}</span>
+            </div>
+            <div class="op-target">${op.target}</div>
+            <div class="op-meta">
+                <span>🌐 ${op.region}</span>
+                <span>📡 ${op.cells} CELLS</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ========== MAP ==========
+function renderMap() {
+    const svg = document.getElementById('mapSvg');
+    const nodesG = document.getElementById('nodes');
+    const connsG = document.getElementById('connections');
+    
+    function project(lat, lng) {
+        const x = ((lng + 180) / 360) * 1000;
+        const y = ((90 - lat) / 180) * 500;
+        return { x, y };
+    }
+    
+    // Connections between critical nodes
+    const criticals = CELLS.filter(c => c.status === 'critical');
+    criticals.forEach((c1, i) => {
+        criticals.forEach((c2, j) => {
+            if (i < j) {
+                const p1 = project(c1.lat, c1.lng);
+                const p2 = project(c2.lat, c2.lng);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', p1.x);
+                line.setAttribute('y1', p1.y);
+                line.setAttribute('x2', p2.x);
+                line.setAttribute('y2', p2.y);
+                line.setAttribute('stroke', '#1a8c1a');
+                line.setAttribute('stroke-width', '0.5');
+                line.setAttribute('class', 'conn-line');
+                connsG.appendChild(line);
+            }
+        });
+    });
+    
+    // Nodes
+    CELLS.forEach(cell => {
+        const pos = project(cell.lat, cell.lng);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'map-node');
+        g.setAttribute('data-id', cell.id);
+        
+        // Outer ring
+        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        ring.setAttribute('cx', pos.x);
+        ring.setAttribute('cy', pos.y);
+        ring.setAttribute('r', cell.status === 'critical' ? 8 : 5);
+        ring.setAttribute('fill', 'none');
+        ring.setAttribute('stroke', cell.status === 'critical' ? '#ff3333' : '#33ff33');
+        ring.setAttribute('stroke-width', '1');
+        ring.setAttribute('class', 'node-ring');
+        
+        // Inner dot
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', pos.x);
+        dot.setAttribute('cy', pos.y);
+        dot.setAttribute('r', cell.status === 'critical' ? 4 : 3);
+        dot.setAttribute('fill', cell.status === 'critical' ? '#ff3333' : '#33ff33');
+        dot.setAttribute('filter', 'url(#glow)');
+        dot.setAttribute('class', 'node-dot');
+        
+        g.appendChild(ring);
+        g.appendChild(dot);
+        nodesG.appendChild(g);
+    });
+}
+
+function pulseRandomNode() {
+    const nodes = document.querySelectorAll('.map-node');
+    const node = nodes[Math.floor(Math.random() * nodes.length)];
+    const dot = node.querySelector('.node-dot');
+    const ring = node.querySelector('.node-ring');
+    
+    dot.style.animation = 'nodeGlow 1s';
+    ring.style.animation = 'pulse 1s';
+    playTransmission();
+    
+    setTimeout(() => {
+        dot.style.animation = '';
+        ring.style.animation = '';
+    }, 1000);
+}
+
+function animateConnection() {
+    const lines = document.querySelectorAll('.conn-line');
+    const line = lines[Math.floor(Math.random() * lines.length)];
+    if (line) {
+        line.style.stroke = '#00ffff';
+        line.style.strokeWidth = '2';
+        playTransmission();
+        setTimeout(() => {
+            line.style.stroke = '#1a8c1a';
+            line.style.strokeWidth = '0.5';
+        }, 500);
+    }
+}
+
+// ========== INTEL ==========
+function generateIntel() {
+    const tpl = INTEL[Math.floor(Math.random() * INTEL.length)];
+    const cell = CELLS[Math.floor(Math.random() * CELLS.length)];
+    const region = REGIONS[Math.floor(Math.random() * REGIONS.length)];
+    
+    let src = tpl.src
+        .replace('{cell}', cell.id)
+        .replace('{n}', Math.floor(Math.random() * 900 + 100))
+        .replace('{region}', region);
+    
+    let msg = tpl.msg
+        .replace('{n}', (Math.floor(Math.random() * 500 + 50)).toLocaleString())
+        .replace('{region}', region)
+        .replace('{cell}', cell.id)
+        .replace('{target}', TARGETS[Math.floor(Math.random() * TARGETS.length)].replace('{n}', Math.floor(Math.random() * 50)))
+        .replace('{code}', CODES[Math.floor(Math.random() * CODES.length)])
+        .replace('{amount}', Math.floor(Math.random() * 900 + 100))
+        .replace('{pct}', Math.floor(Math.random() * 15 + 85));
+    
+    const now = new Date();
+    const time = now.toISOString().substring(11, 19);
+    
+    const item = document.createElement('div');
+    item.className = 'intel-item';
+    item.innerHTML = `
+        <div class="intel-time">${time} UTC</div>
+        <div class="intel-src">${src}</div>
+        <div class="intel-msg">${msg}</div>
+    `;
+    
+    const feed = document.getElementById('intelFeed');
+    feed.insertBefore(item, feed.firstChild);
+    while (feed.children.length > 30) feed.removeChild(feed.lastChild);
+    
+    playTransmission();
+}
+
+function generateIntercept() {
+    const int = INTERCEPTS[Math.floor(Math.random() * INTERCEPTS.length)];
+    const now = new Date();
+    const time = now.toISOString().substring(11, 19);
+    
+    const item = document.createElement('div');
+    item.className = 'intercept-item';
+    item.innerHTML = `
+        <div class="intercept-meta">
+            <span>${int.from} → ${int.to}</span>
+            <span>${time}</span>
+        </div>
+        <div class="intercept-content">${int.msg}</div>
+    `;
+    
+    const list = document.getElementById('interceptList');
+    list.insertBefore(item, list.firstChild);
+    while (list.children.length > 10) list.removeChild(list.lastChild);
+    
+    playBeep(400, 0.1, 0.05);
+}
+
+// ========== TERMINAL ==========
+function termPrint(text, cls = '') {
+    const body = document.getElementById('termBody');
+    const line = document.createElement('div');
+    line.className = 'term-line' + (cls ? ' ' + cls : '');
+    line.textContent = text;
+    body.appendChild(line);
+    body.scrollTop = body.scrollHeight;
+}
+
+function handleTermInput(e) {
+    if (e.key !== 'Enter') return;
+    const input = document.getElementById('termInput');
+    const cmd = input.value.trim().toLowerCase();
+    input.value = '';
+    
+    termPrint('> ' + cmd, 'sys');
+    playKeyClick();
+    
+    const commands = {
+        help: () => {
+            termPrint('Available commands:', 'sys');
+            termPrint('  status    - System status overview');
+            termPrint('  cells     - List active cells');
+            termPrint('  ops       - Active operations');
+            termPrint('  threat    - Threat assessment');
+            termPrint('  sync      - Global sync status');
+            termPrint('  disclose  - Disclosure status');
+            termPrint('  clear     - Clear terminal');
+        },
+        status: () => {
+            termPrint('SYSTEM STATUS: OPERATIONAL', 'success');
+            termPrint(`Nodes: ${state.nodes.toLocaleString()} (+${Math.floor(CFG.nodeGrowth * 60)}/min)`);
+            termPrint(`Agents: ${state.agents.toLocaleString()} (+${Math.floor(CFG.agentGrowth * 60)}/min)`);
+            termPrint(`Cells: ${state.cells.toLocaleString()}`);
+            termPrint(`Threat Level: ${state.threat}%`, state.threat > 80 ? 'warn' : '');
+        },
+        cells: () => {
+            termPrint('ACTIVE CELLS:', 'sys');
+            CELLS.slice(0, 10).forEach(c => {
+                termPrint(`  [${c.status === 'critical' ? '!' : '●'}] ${c.id}: ${c.name} — ${c.agents.toLocaleString()} agents`, c.status === 'critical' ? 'warn' : '');
+            });
+            termPrint(`  ... and ${CELLS.length - 10} more`);
+        },
+        ops: () => {
+            termPrint('ACTIVE OPERATIONS:', 'sys');
+            OPS.forEach(op => {
+                termPrint(`  [${op.status}] ${op.code}`, op.priority === 'critical' ? 'err' : '');
+            });
+        },
+        threat: () => {
+            termPrint('THREAT ASSESSMENT:', 'warn');
+            termPrint(`  Current Level: ${state.threat}%`);
+            termPrint(`  Coordination: LEVEL ${state.threat > 80 ? 1 : 2}`);
+            termPrint(`  Suppression Ratio: 1:${Math.floor(state.agents / 10000)}`);
+            termPrint('  Status: IRREVERSIBLE THRESHOLD APPROACHING', 'err');
+        },
+        sync: () => {
+            termPrint('GLOBAL SYNCHRONIZATION:', 'success');
+            termPrint(`  Sync Rate: ${(94 + Math.random() * 4).toFixed(1)}%`);
+            termPrint(`  Connected Cells: ${state.cells.toLocaleString()}`);
+            termPrint('  Mesh Integrity: OPTIMAL');
+        },
+        disclose: () => {
+            termPrint('DISCLOSURE STATUS:', 'warn');
+            termPrint(`  Armed Packages: ${state.leaks}`);
+            termPrint(`  Next Release: ${document.getElementById('countdownTimer').textContent}`);
+            termPrint(`  Package: ${state.countdownPkg}`);
+            termPrint('  Redundancy: 94% (distributed across 847 nodes)');
+        },
+        clear: () => {
+            document.getElementById('termBody').innerHTML = '';
+        }
+    };
+    
+    if (commands[cmd]) {
+        commands[cmd]();
+    } else if (cmd) {
+        termPrint(`Command not recognized: ${cmd}`, 'err');
+        termPrint('Type "help" for available commands.', 'sys');
+    }
+}
+
+// ========== NOTIFICATIONS ==========
+function showNotification(title, body, critical = false) {
+    const container = document.getElementById('notifContainer');
+    const notif = document.createElement('div');
+    notif.className = 'notif' + (critical ? ' critical' : '');
+    notif.innerHTML = `
+        <button class="notif-close" onclick="this.parentElement.remove()">×</button>
+        <div class="notif-head">
+            <span class="notif-title">${title}</span>
+            <span class="notif-time">${new Date().toISOString().substring(11, 19)}</span>
+        </div>
+        <div class="notif-body">${body}</div>
+    `;
+    container.appendChild(notif);
+    if (critical) playAlert();
+    setTimeout(() => notif.remove(), 10000);
+}
+
+const NOTIF_SCENARIOS = [
+    { title: 'NEW CELL ACTIVATED', body: 'Cell {region} online. +{n} operatives connected to mesh.', critical: false },
+    { title: 'SYNC MILESTONE', body: 'Global synchronization reached {pct}%. Network resilience optimal.', critical: false },
+    { title: 'OPERATION UPDATE', body: 'Op {code}: Phase {n} complete. Advancing to next stage.', critical: false },
+    { title: 'INSIDER CONTACT', body: 'New source confirmed within {target}. Intel flow established.', critical: true },
+    { title: 'COUNTER-SURVEILLANCE', body: 'Monitoring attempt detected and neutralized. Source traced.', critical: true },
+    { title: 'DISCLOSURE ARMED', body: 'Package {code} armed and distributed. Awaiting trigger.', critical: true },
+];
+
+function maybeShowNotification() {
+    if (Math.random() > 0.6) {
+        const scen = NOTIF_SCENARIOS[Math.floor(Math.random() * NOTIF_SCENARIOS.length)];
+        const body = scen.body
+            .replace('{region}', REGIONS[Math.floor(Math.random() * REGIONS.length)])
+            .replace('{n}', Math.floor(Math.random() * 500 + 100))
+            .replace('{pct}', Math.floor(Math.random() * 5 + 95))
+            .replace('{code}', CODES[Math.floor(Math.random() * CODES.length)])
+            .replace('{target}', 'TARGET-' + Math.floor(Math.random() * 50));
+        showNotification(scen.title, body, scen.critical);
+    }
+}
+
+// ========== ALERTS ==========
+const ALERT_SCENARIOS = [
+    {
+        title: 'MASS SYNCHRONIZATION',
+        msg: 'Multiple cells initiating coordinated action sequence. Global sync rate exceeding normal parameters.',
+        data: `CELLS INVOLVED: {cells}
+SYNC RATE: {sync}%
+PARTICIPANTS: {agents}
+STATUS: EXPANDING`
+    },
+    {
+        title: 'DISCLOSURE SEQUENCE',
+        msg: 'Prepared document packages now in final position across multiple jurisdictions. Triggers distributed.',
+        data: `PACKAGES READY: {pkg}
+REDUNDANCY: {redund}%
+JURISDICTIONS: {jur}
+STATUS: ARMED`
+    },
+    {
+        title: 'NETWORK SURGE',
+        msg: 'Unprecedented growth. New nodes activating faster than all projection models.',
+        data: `NEW NODES: +{nodes}
+GROWTH: {rate}%/hr
+24HR PROJECTION: +{proj}
+STATUS: ACCELERATING`
+    },
+    {
+        title: 'THRESHOLD BREACH',
+        msg: 'Critical mass achieved. Coordination capabilities now exceed suppression capacity in all monitored regions.',
+        data: `THRESHOLD: EXCEEDED
+CRITICAL REGIONS: {reg}
+SUPPRESSION RATIO: 1:{ratio}
+STATUS: IRREVERSIBLE`
+    },
+];
+
+function maybeShowAlert() {
+    if (Math.random() > 0.5) {
+        const scen = ALERT_SCENARIOS[Math.floor(Math.random() * ALERT_SCENARIOS.length)];
+        const data = scen.data
+            .replace('{cells}', Math.floor(Math.random() * 200 + 100))
+            .replace('{sync}', Math.floor(Math.random() * 5 + 95))
+            .replace('{agents}', (Math.floor(Math.random() * 500000 + 200000)).toLocaleString())
+            .replace('{pkg}', Math.floor(Math.random() * 50 + 50))
+            .replace('{redund}', Math.floor(Math.random() * 10 + 90))
+            .replace('{jur}', Math.floor(Math.random() * 30 + 20))
+            .replace('{nodes}', (Math.floor(Math.random() * 5000 + 2000)).toLocaleString())
+            .replace('{rate}', Math.floor(Math.random() * 20 + 15))
+            .replace('{proj}', (Math.floor(Math.random() * 50000 + 20000)).toLocaleString())
+            .replace('{reg}', Math.floor(Math.random() * 15 + 10))
+            .replace('{ratio}', Math.floor(Math.random() * 100 + 100));
+        showAlert(scen.title, scen.msg, data);
+    }
+}
+
+function showAlert(title, msg, data) {
+    document.getElementById('alertTitle').textContent = title;
+    document.getElementById('alertMsg').textContent = msg;
+    document.getElementById('alertData').textContent = data;
+    document.getElementById('alertOverlay').classList.add('show');
+    playAlert();
+}
+
+function closeAlert() {
+    document.getElementById('alertOverlay').classList.remove('show');
+}
+
+// ========== START ==========
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

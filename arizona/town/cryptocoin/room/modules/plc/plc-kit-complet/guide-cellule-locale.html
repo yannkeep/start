@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Créer une Cellule Locale - Parti Libre & Conscient</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #1a1a2e;
+        background: #f8f9fa;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'Space Grotesk', sans-serif;
+        line-height: 1.3;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 30px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 60px;
+        padding-bottom: 40px;
+        border-bottom: 3px solid #e94560;
+    }
+
+    .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 20px;
+        font-weight: 800;
+        color: white;
+    }
+
+    .logo-text {
+        font-family: 'Space Grotesk';
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .header h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .header p {
+        font-size: 18px;
+        color: #666;
+    }
+
+    .toc {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 50px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .toc h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #e94560;
+    }
+
+    .toc ol {
+        margin-left: 20px;
+    }
+
+    .toc li {
+        padding: 8px 0;
+    }
+
+    .toc a {
+        color: #1a1a2e;
+        text-decoration: none;
+    }
+
+    .toc a:hover {
+        color: #e94560;
+    }
+
+    .section {
+        margin-bottom: 60px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .section-title .number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        color: white;
+        border-radius: 50%;
+        font-size: 18px;
+        margin-right: 15px;
+    }
+
+    .content-block {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .content-block h4 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #1a1a2e;
+    }
+
+    .content-block p {
+        margin-bottom: 15px;
+        color: #555;
+    }
+
+    .content-block ul, .content-block ol {
+        margin-left: 20px;
+        margin-bottom: 15px;
+    }
+
+    .content-block li {
+        padding: 5px 0;
+        color: #555;
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, rgba(233,69,96,0.1) 0%, rgba(243,156,18,0.1) 100%);
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 4px solid #e94560;
+        margin: 20px 0;
+    }
+
+    .highlight-box p {
+        margin: 0;
+        color: #1a1a2e;
+        font-weight: 500;
+    }
+
+    .warning-box {
+        background: #fff5f5;
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 4px solid #e74c3c;
+        margin: 20px 0;
+    }
+
+    .warning-box::before {
+        content: '⚠️ ';
+    }
+
+    .success-box {
+        background: #f0fff4;
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 4px solid #2ecc71;
+        margin: 20px 0;
+    }
+
+    .success-box::before {
+        content: '✅ ';
+    }
+
+    .checklist {
+        background: #fafafa;
+        padding: 25px;
+        border-radius: 12px;
+    }
+
+    .checklist ul {
+        list-style: none;
+        margin: 0;
+    }
+
+    .checklist li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .checklist li:last-child {
+        border-bottom: none;
+    }
+
+    .checklist li::before {
+        content: '☐';
+        font-size: 18px;
+        color: #e94560;
+    }
+
+    .template-box {
+        background: #1a1a2e;
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .template-box h5 {
+        font-size: 14px;
+        color: #e94560;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .template-box pre {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: rgba(255,255,255,0.8);
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #e94560, #f39c12);
+        border-radius: 3px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 30px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -26px;
+        top: 5px;
+        width: 15px;
+        height: 15px;
+        background: white;
+        border: 3px solid #e94560;
+        border-radius: 50%;
+    }
+
+    .timeline-item h5 {
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: #e94560;
+    }
+
+    .timeline-item p {
+        color: #555;
+        font-size: 14px;
+    }
+
+    .print-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(233,69,96,0.4);
+        z-index: 100;
+    }
+
+    @media print {
+        .print-btn { display: none; }
+        body { background: white; }
+        .container { padding: 20px; }
+    }
+
+    @media (max-width: 768px) {
+        .container { padding: 30px 20px; }
+        .header h1 { font-size: 32px; }
+    }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+
+    <div class="container">
+        
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">PLC</div>
+                <span class="logo-text">Parti Libre & Conscient</span>
+            </div>
+            <h1>Créer une Cellule Locale</h1>
+            <p>Guide complet pour lancer un groupe PLC dans ta commune</p>
+        </div>
+
+        <div class="toc">
+            <h3>📑 Sommaire</h3>
+            <ol>
+                <li><a href="#principes">Principes fondamentaux</a></li>
+                <li><a href="#prerequis">Prérequis pour démarrer</a></li>
+                <li><a href="#etapes">Les 5 étapes de création</a></li>
+                <li><a href="#premiere-reunion">Organiser sa première réunion</a></li>
+                <li><a href="#activites">Idées d'activités</a></li>
+                <li><a href="#communication">Communication et recrutement</a></li>
+                <li><a href="#pieges">Pièges à éviter</a></li>
+                <li><a href="#ressources">Ressources et contacts</a></li>
+            </ol>
+        </div>
+
+        <!-- PRINCIPES -->
+        <div class="section" id="principes">
+            <h2 class="section-title"><span class="number">1</span> Principes fondamentaux</h2>
+            
+            <div class="content-block">
+                <h4>Ce qu'est une cellule locale</h4>
+                <p>Une cellule locale PLC est un groupe de citoyens d'une même zone géographique (commune, quartier, région) qui se réunissent pour :</p>
+                <ul>
+                    <li>Décrypter l'actualité politique locale et nationale</li>
+                    <li>Organiser des ateliers d'éducation citoyenne</li>
+                    <li>Mener des actions de veille sur l'action publique</li>
+                    <li>Former de nouveaux membres</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>Autonomie totale :</strong> Tu n'as besoin de l'autorisation de personne pour créer une cellule. Tu respectes la charte, tu utilises le nom et les ressources du PLC, et tu agis de façon autonome.</p>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <h4>Les 7 engagements d'une cellule</h4>
+                <ol>
+                    <li><strong>Transparence</strong> — Décisions et comptes publics</li>
+                    <li><strong>Inclusion</strong> — Ouvert à tous, langage accessible</li>
+                    <li><strong>Co-création</strong> — Décisions collectives</li>
+                    <li><strong>Non-lucrativité</strong> — Pas de commerce</li>
+                    <li><strong>Licence libre</strong> — Contenus sous CC BY-NC</li>
+                    <li><strong>Respect</strong> — Bienveillance et pluralité</li>
+                    <li><strong>Documentation</strong> — Tout est tracé</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PRÉREQUIS -->
+        <div class="section" id="prerequis">
+            <h2 class="section-title"><span class="number">2</span> Prérequis pour démarrer</h2>
+            
+            <div class="content-block">
+                <h4>Ce qu'il te faut</h4>
+                <div class="checklist">
+                    <ul>
+                        <li>2-3 personnes motivées minimum (toi + 1-2 autres)</li>
+                        <li>Avoir lu et accepté la charte CCPLC</li>
+                        <li>Un lieu de réunion (café, maison de quartier, chez quelqu'un...)</li>
+                        <li>Un moyen de communication (groupe Signal, WhatsApp, Discord...)</li>
+                        <li>Du temps : 2-4h par mois minimum</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <strong>Bonne nouvelle :</strong> Pas besoin de budget, pas besoin de statut juridique, pas besoin d'être expert en politique. Juste de la motivation et de la régularité.
+                </div>
+            </div>
+        </div>
+
+        <!-- ÉTAPES -->
+        <div class="section" id="etapes">
+            <h2 class="section-title"><span class="number">3</span> Les 5 étapes de création</h2>
+            
+            <div class="content-block">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h5>Étape 1 : Constituer le noyau</h5>
+                        <p>Trouve 1-2 personnes de confiance qui partagent les valeurs du PLC. Pas besoin d'être nombreux au départ — mieux vaut 3 personnes motivées que 10 passives.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>Étape 2 : Définir le périmètre</h5>
+                        <p>Quelle zone géographique ? (commune, quartier, bassin de vie). Quel rythme de réunion ? Quel premier objectif concret ?</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>Étape 3 : Créer les outils de base</h5>
+                        <p>Groupe de discussion (Signal recommandé), dossier partagé pour les documents, page ou compte pour communiquer.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>Étape 4 : S'inscrire dans le réseau</h5>
+                        <p>Contacter le PLC central pour être référencé, rejoindre le Discord inter-cellules, accéder aux ressources partagées.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h5>Étape 5 : Lancer la première réunion publique</h5>
+                        <p>Organiser un premier événement ouvert : atelier, projection-débat, apéro citoyen... L'objectif : faire connaître la cellule et recruter.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREMIÈRE RÉUNION -->
+        <div class="section" id="premiere-reunion">
+            <h2 class="section-title"><span class="number">4</span> Organiser sa première réunion</h2>
+            
+            <div class="content-block">
+                <h4>Format suggéré (2h)</h4>
+                <ol>
+                    <li><strong>Accueil</strong> (15 min) — Café, présentation rapide des présents</li>
+                    <li><strong>Présentation du PLC</strong> (20 min) — Qui on est, ce qu'on fait, comment ça marche</li>
+                    <li><strong>Activité participative</strong> (45 min) — Décryptage d'une actu, quiz citoyen, débat...</li>
+                    <li><strong>Discussion ouverte</strong> (30 min) — Questions, idées, envies</li>
+                    <li><strong>Conclusion</strong> (10 min) — Prochains RDV, comment rejoindre</li>
+                </ol>
+
+                <div class="template-box">
+                    <h5>Template d'invitation</h5>
+                    <pre>🗳️ APÉRO CITOYEN — Cellule PLC [Nom de ta commune]
+
+Marre de la politique spectacle ?
+Envie de comprendre comment ça marche vraiment ?
+
+Le Parti Libre & Conscient lance sa cellule locale !
+
+📅 [Date]
+📍 [Lieu]
+🕖 [Heure]
+
+Au programme :
+→ Présentation du mouvement
+→ Atelier de décryptage
+→ Discussion libre
+
+Gratuit, ouvert à tous, sans engagement.
+Viens comme tu es ! 🍻</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITÉS -->
+        <div class="section" id="activites">
+            <h2 class="section-title"><span class="number">5</span> Idées d'activités</h2>
+            
+            <div class="content-block">
+                <h4>Activités régulières</h4>
+                <ul>
+                    <li><strong>Revue de presse citoyenne</strong> — Décrypter l'actu de la semaine ensemble</li>
+                    <li><strong>Atelier fact-checking</strong> — Apprendre à vérifier une info</li>
+                    <li><strong>Analyse de programme</strong> — Décortiquer un programme électoral</li>
+                    <li><strong>Projection-débat</strong> — Film/docu suivi d'une discussion</li>
+                    <li><strong>Veille conseil communal</strong> — Suivre et documenter les décisions locales</li>
+                </ul>
+
+                <h4>Actions ponctuelles</h4>
+                <ul>
+                    <li><strong>Interpellation d'un élu</strong> — Courrier collectif sur un sujet précis</li>
+                    <li><strong>Stand citoyen</strong> — Sur un marché, une fête de quartier</li>
+                    <li><strong>Formation grand public</strong> — "Comprendre le budget communal"</li>
+                    <li><strong>Rencontre inter-cellules</strong> — Échanger avec d'autres groupes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- COMMUNICATION -->
+        <div class="section" id="communication">
+            <h2 class="section-title"><span class="number">6</span> Communication et recrutement</h2>
+            
+            <div class="content-block">
+                <h4>Canaux recommandés</h4>
+                <ul>
+                    <li><strong>Bouche-à-oreille</strong> — Le plus efficace, de loin</li>
+                    <li><strong>Réseaux sociaux</strong> — Page Facebook locale, compte Insta</li>
+                    <li><strong>Groupes locaux</strong> — Groupes Facebook de ta commune, forums</li>
+                    <li><strong>Affichage</strong> — Bibliothèques, maisons de quartier, commerces amis</li>
+                    <li><strong>Partenariats</strong> — Assos locales, maisons de jeunes, CPAS...</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p><strong>Règle d'or :</strong> Ne jamais spammer. Préfère 3 messages pertinents et bien ciblés à 30 posts copiés-collés partout.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIÈGES -->
+        <div class="section" id="pieges">
+            <h2 class="section-title"><span class="number">7</span> Pièges à éviter</h2>
+            
+            <div class="content-block">
+                <div class="warning-box">
+                    <strong>Récupération partisane</strong> — Ne laisse pas un parti ou un candidat utiliser ta cellule comme réservoir de militants.
+                </div>
+
+                <div class="warning-box">
+                    <strong>Concentration du pouvoir</strong> — Évite qu'une seule personne prenne toutes les décisions. Tourne les rôles.
+                </div>
+
+                <div class="warning-box">
+                    <strong>Entre-soi</strong> — Si le groupe reste toujours les 5 mêmes têtes, c'est un signe d'alerte. Recrute, ouvre, diversifie.
+                </div>
+
+                <div class="warning-box">
+                    <strong>Burnout</strong> — Ne prends pas tout sur toi. Délègue, fais des pauses, fixe des limites.
+                </div>
+
+                <div class="warning-box">
+                    <strong>Trop d'ambition trop vite</strong> — Mieux vaut 1 atelier bien fait que 10 projets abandonnés.
+                </div>
+            </div>
+        </div>
+
+        <!-- RESSOURCES -->
+        <div class="section" id="ressources">
+            <h2 class="section-title"><span class="number">8</span> Ressources et contacts</h2>
+            
+            <div class="content-block">
+                <h4>Liens utiles</h4>
+                <ul>
+                    <li><strong>Documentation CCPLC</strong> — ouaisfieu.github.io/tech/ccplc/</li>
+                    <li><strong>DOCTech (dossiers)</strong> — ouaisfieu.github.io/tech/</li>
+                    <li><strong>Kit flyers</strong> — À télécharger sur le site</li>
+                    <li><strong>Kit réseaux sociaux</strong> — Templates prêts à l'emploi</li>
+                    <li><strong>Kit militant</strong> — Argumentaire et FAQ</li>
+                </ul>
+
+                <h4>Contact</h4>
+                <ul>
+                    <li><strong>Email</strong> — [à définir]</li>
+                    <li><strong>Discord</strong> — [à définir]</li>
+                    <li><strong>Bluesky</strong> — @ouaisfieu.bsky.social</li>
+                </ul>
+
+                <div class="success-box">
+                    <strong>Tu es prêt !</strong> Lance-toi, teste, apprends en faisant. On est là pour t'aider si tu bloques.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

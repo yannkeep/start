@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕸️ Network Map — Cartographie du réseau</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --bleu: #74b9ff;
+            --rouge: #ff6b6b;
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .app-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            height: 100%;
+        }
+        
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--vert);
+            margin-bottom: 1rem;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .section-title:first-child { margin-top: 0; }
+        
+        /* Contact list */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+        
+        .contact-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .contact-item.selected {
+            background: var(--vert-dim);
+            border: 1px solid var(--vert);
+        }
+        
+        .contact-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .contact-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .contact-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .contact-type {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 100px;
+        }
+        
+        .type-person { background: var(--vert-dim); color: var(--vert); }
+        .type-org { background: var(--lilas-dim); color: var(--lilas); }
+        .type-media { background: rgba(116, 185, 255, 0.2); color: var(--bleu); }
+        .type-institution { background: rgba(255, 179, 71, 0.2); color: var(--orange); }
+        
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover { background: #7ed87e; }
+        
+        /* Main content - Graph */
+        .main-content {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .graph-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+        
+        .graph-canvas:active { cursor: grabbing; }
+        
+        /* Graph controls */
+        .graph-controls {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            padding: 0.5rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+        
+        .graph-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .graph-btn:hover {
+            background: var(--vert-dim);
+            color: var(--vert);
+        }
+        
+        /* Legend */
+        .graph-legend {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+        
+        .legend-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        /* Node tooltip */
+        .node-tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            max-width: 280px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .node-tooltip.show { opacity: 1; }
+        
+        .tooltip-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tooltip-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .tooltip-name {
+            font-weight: 600;
+        }
+        
+        .tooltip-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .tooltip-connections {
+            font-size: 0.8rem;
+            color: var(--vert);
+            margin-top: 0.5rem;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        
+        .modal-overlay.show { display: flex; }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body { padding: 1.5rem; }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .type-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .type-option {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .type-option:hover { background: rgba(255,255,255,0.05); }
+        
+        .type-option.active.person { background: var(--vert-dim); border-color: var(--vert); color: var(--vert); }
+        .type-option.active.org { background: var(--lilas-dim); border-color: var(--lilas); color: var(--lilas); }
+        .type-option.active.media { background: rgba(116, 185, 255, 0.2); border-color: var(--bleu); color: var(--bleu); }
+        .type-option.active.institution { background: rgba(255, 179, 71, 0.2); border-color: var(--orange); color: var(--orange); }
+        
+        /* Connections selector */
+        .connections-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        
+        .connection-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .connection-option:hover { background: rgba(255,255,255,0.05); }
+        
+        .connection-option.selected { background: var(--vert-dim); }
+        
+        .connection-option input { display: none; }
+        
+        .connection-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .connection-option.selected .connection-checkbox {
+            background: var(--vert);
+            border-color: var(--vert);
+            color: var(--bg);
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .stat-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .stat-chip .value {
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        /* Empty state */
+        .empty-graph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--text-muted);
+        }
+        
+        .empty-graph-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--vert);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 300;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🕸️ Network Map</div>
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Rechercher..." oninput="handleSearch()">
+            </div>
+            
+            <div class="sidebar-content" id="contactList">
+                <!-- Contacts rendered here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="btn" onclick="exportNetwork()">📤</button>
+                <button class="btn" onclick="importNetwork()">📥</button>
+                <button class="btn btn-primary" onclick="openAddModal()">+ Ajouter</button>
+            </div>
+        </aside>
+        
+        <!-- Main Graph -->
+        <main class="main-content">
+            <canvas class="graph-canvas" id="graphCanvas"></canvas>
+            
+            <div class="stats-bar">
+                <div class="stat-chip">
+                    <span>👥</span>
+                    <span class="value" id="nodeCount">0</span>
+                    <span>contacts</span>
+                </div>
+                <div class="stat-chip">
+                    <span>🔗</span>
+                    <span class="value" id="edgeCount">0</span>
+                    <span>connexions</span>
+                </div>
+            </div>
+            
+            <div class="graph-legend">
+                <div class="legend-title">Types</div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--vert);"></div>
+                    <span>Personne</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--lilas);"></div>
+                    <span>Organisation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--bleu);"></div>
+                    <span>Média</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--orange);"></div>
+                    <span>Institution</span>
+                </div>
+            </div>
+            
+            <div class="graph-controls">
+                <button class="graph-btn" onclick="zoomIn()" title="Zoom +">+</button>
+                <button class="graph-btn" onclick="zoomOut()" title="Zoom -">−</button>
+                <button class="graph-btn" onclick="resetView()" title="Réinitialiser">⟲</button>
+            </div>
+            
+            <div class="empty-graph" id="emptyState">
+                <div class="empty-graph-icon">🕸️</div>
+                <h3>Réseau vide</h3>
+                <p>Ajoutez votre premier contact</p>
+            </div>
+            
+            <div class="node-tooltip" id="tooltip"></div>
+        </main>
+    </div>
+    
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouveau contact</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <div class="type-selector">
+                        <button class="type-option person active" data-type="person" onclick="setContactType('person')">👤 Personne</button>
+                        <button class="type-option org" data-type="org" onclick="setContactType('org')">🏢 Organisation</button>
+                        <button class="type-option media" data-type="media" onclick="setContactType('media')">📰 Média</button>
+                        <button class="type-option institution" data-type="institution" onclick="setContactType('institution')">🏛️ Institution</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-input" id="contactName" placeholder="Nom du contact">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Rôle / Description</label>
+                        <input type="text" class="form-input" id="contactRole" placeholder="Ex: Journaliste">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priorité (1-5)</label>
+                        <input type="number" class="form-input" id="contactPriority" value="3" min="1" max="5">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Contact (email, tel, etc.)</label>
+                    <input type="text" class="form-input" id="contactInfo" placeholder="email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-input" id="contactNotes" rows="2" placeholder="Notes..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Connexions</label>
+                    <div class="connections-list" id="connectionsList">
+                        <!-- Generated -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="deleteContact()" id="deleteBtn" style="color: var(--rouge); display: none;">Supprimer</button>
+                <button class="btn" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="saveContact()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import Modal -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Importer un réseau</h3>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="file" class="form-input" id="importFile" accept=".json" style="margin-bottom:1rem;">
+                <textarea class="form-input" id="importJson" rows="4" placeholder="Ou collez le JSON..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeImportModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="processImport()">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Type colors
+        const typeColors = {
+            person: '#90EE90',
+            org: '#DDA0DD',
+            media: '#74b9ff',
+            institution: '#ffb347'
+        };
+        
+        // State
+        let nodes = [];
+        let selectedNodeId = null;
+        let editingId = null;
+        let selectedType = 'person';
+        let selectedConnections = [];
+        let searchQuery = '';
+        
+        // Canvas state
+        let canvas, ctx;
+        let zoom = 1;
+        let panX = 0, panY = 0;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let draggedNode = null;
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            canvas = document.getElementById('graphCanvas');
+            ctx = canvas.getContext('2d');
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            setupCanvasEvents();
+            loadData();
+        });
+        
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            render();
+        }
+        
+        // Canvas events
+        function setupCanvasEvents() {
+            canvas.addEventListener('mousedown', (e) => {
+                const pos = getMousePos(e);
+                const node = getNodeAtPos(pos);
+                
+                if (node) {
+                    draggedNode = node;
+                    selectedNodeId = node.id;
+                } else {
+                    isDragging = true;
+                    dragStart = { x: e.clientX - panX, y: e.clientY - panY };
+                }
+                render();
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const pos = getMousePos(e);
+                
+                if (draggedNode) {
+                    draggedNode.x = (pos.x - panX) / zoom;
+                    draggedNode.y = (pos.y - panY) / zoom;
+                    render();
+                } else if (isDragging) {
+                    panX = e.clientX - dragStart.x;
+                    panY = e.clientY - dragStart.y;
+                    render();
+                } else {
+                    // Hover tooltip
+                    const node = getNodeAtPos(pos);
+                    updateTooltip(node, e);
+                }
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                if (draggedNode) {
+                    saveData();
+                }
+                draggedNode = null;
+                isDragging = false;
+            });
+            
+            canvas.addEventListener('dblclick', (e) => {
+                const pos = getMousePos(e);
+                const node = getNodeAtPos(pos);
+                if (node) {
+                    openEditModal(node.id);
+                }
+            });
+            
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                zoom = Math.max(0.3, Math.min(3, zoom * delta));
+                render();
+            });
+        }
+        
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+        
+        function getNodeAtPos(pos) {
+            const x = (pos.x - panX) / zoom;
+            const y = (pos.y - panY) / zoom;
+            
+            for (const node of nodes) {
+                const dx = node.x - x;
+                const dy = node.y - y;
+                const radius = 20 + (node.priority || 3) * 4;
+                if (dx * dx + dy * dy < radius * radius) {
+                    return node;
+                }
+            }
+            return null;
+        }
+        
+        // Tooltip
+        function updateTooltip(node, e) {
+            const tooltip = document.getElementById('tooltip');
+            if (node) {
+                const connections = getConnections(node.id);
+                tooltip.innerHTML = `
+                    <div class="tooltip-header">
+                        <div class="tooltip-avatar" style="background: ${typeColors[node.type]}20; color: ${typeColors[node.type]};">
+                            ${node.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div class="tooltip-name">${escapeHtml(node.name)}</div>
+                            <div class="tooltip-role">${escapeHtml(node.role || node.type)}</div>
+                        </div>
+                    </div>
+                    ${node.notes ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(node.notes)}</div>` : ''}
+                    <div class="tooltip-connections">🔗 ${connections.length} connexion(s)</div>
+                `;
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltip.classList.add('show');
+            } else {
+                tooltip.classList.remove('show');
+            }
+        }
+        
+        // Data
+        function loadData() {
+            const saved = localStorage.getItem('networkMap');
+            if (saved) {
+                nodes = JSON.parse(saved);
+            }
+            
+            // Init positions if needed
+            nodes.forEach((node, i) => {
+                if (node.x === undefined) {
+                    const angle = (i / nodes.length) * Math.PI * 2;
+                    const radius = 150;
+                    node.x = 400 + Math.cos(angle) * radius;
+                    node.y = 300 + Math.sin(angle) * radius;
+                }
+            });
+            
+            render();
+        }
+        
+        function saveData() {
+            localStorage.setItem('networkMap', JSON.stringify(nodes));
+            render();
+        }
+        
+        // Get connections for a node
+        function getConnections(nodeId) {
+            return nodes.filter(n => 
+                n.id !== nodeId && 
+                (n.connections?.includes(nodeId) || 
+                 nodes.find(x => x.id === nodeId)?.connections?.includes(n.id))
+            );
+        }
+        
+        // Render
+        function render() {
+            renderGraph();
+            renderContactList();
+            renderStats();
+        }
+        
+        function renderGraph() {
+            const width = canvas.width / window.devicePixelRatio;
+            const height = canvas.height / window.devicePixelRatio;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            document.getElementById('emptyState').style.display = nodes.length === 0 ? 'block' : 'none';
+            
+            if (nodes.length === 0) return;
+            
+            ctx.save();
+            ctx.translate(panX, panY);
+            ctx.scale(zoom, zoom);
+            
+            // Draw edges
+            ctx.strokeStyle = 'rgba(144, 238, 144, 0.2)';
+            ctx.lineWidth = 1 / zoom;
+            
+            nodes.forEach(node => {
+                if (!node.connections) return;
+                node.connections.forEach(connId => {
+                    const target = nodes.find(n => n.id === connId);
+                    if (target) {
+                        ctx.beginPath();
+                        ctx.moveTo(node.x, node.y);
+                        ctx.lineTo(target.x, target.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            
+            // Draw nodes
+            nodes.forEach(node => {
+                const radius = 20 + (node.priority || 3) * 4;
+                const color = typeColors[node.type] || typeColors.person;
+                const isSelected = node.id === selectedNodeId;
+                
+                // Glow for selected
+                if (isSelected) {
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, radius + 8, 0, Math.PI * 2);
+                    ctx.fillStyle = color + '40';
+                    ctx.fill();
+                }
+                
+                // Node circle
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = color + '30';
+                ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2 / zoom;
+                ctx.stroke();
+                
+                // Initial
+                ctx.fillStyle = color;
+                ctx.font = `bold ${14 / zoom}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.name.charAt(0).toUpperCase(), node.x, node.y);
+                
+                // Name below
+                ctx.fillStyle = '#e8e8ec';
+                ctx.font = `${10 / zoom}px sans-serif`;
+                ctx.fillText(node.name.substring(0, 15), node.x, node.y + radius + 12);
+            });
+            
+            ctx.restore();
+        }
+        
+        function renderContactList() {
+            const list = document.getElementById('contactList');
+            
+            let filtered = nodes;
+            if (searchQuery) {
+                filtered = nodes.filter(n => 
+                    n.name.toLowerCase().includes(searchQuery) ||
+                    (n.role && n.role.toLowerCase().includes(searchQuery))
+                );
+            }
+            
+            // Group by type
+            const grouped = {
+                person: filtered.filter(n => n.type === 'person'),
+                org: filtered.filter(n => n.type === 'org'),
+                media: filtered.filter(n => n.type === 'media'),
+                institution: filtered.filter(n => n.type === 'institution')
+            };
+            
+            const typeLabels = {
+                person: '👤 Personnes',
+                org: '🏢 Organisations',
+                media: '📰 Médias',
+                institution: '🏛️ Institutions'
+            };
+            
+            list.innerHTML = Object.entries(grouped)
+                .filter(([_, items]) => items.length > 0)
+                .map(([type, items]) => `
+                    <div class="section-title">${typeLabels[type]}</div>
+                    ${items.map(n => `
+                        <div class="contact-item ${n.id === selectedNodeId ? 'selected' : ''}"
+                             onclick="selectNode('${n.id}')"
+                             ondblclick="openEditModal('${n.id}')">
+                            <div class="contact-avatar" style="background: ${typeColors[n.type]}30; color: ${typeColors[n.type]};">
+                                ${n.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-name">${escapeHtml(n.name)}</div>
+                                <div class="contact-role">${escapeHtml(n.role || '')}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `).join('');
+        }
+        
+        function renderStats() {
+            document.getElementById('nodeCount').textContent = nodes.length;
+            
+            let edgeCount = 0;
+            nodes.forEach(n => {
+                if (n.connections) edgeCount += n.connections.length;
+            });
+            document.getElementById('edgeCount').textContent = Math.floor(edgeCount / 2);
+        }
+        
+        // Node selection
+        function selectNode(id) {
+            selectedNodeId = id;
+            const node = nodes.find(n => n.id === id);
+            if (node) {
+                // Center view on node
+                const rect = canvas.getBoundingClientRect();
+                panX = rect.width / 2 - node.x * zoom;
+                panY = rect.height / 2 - node.y * zoom;
+            }
+            render();
+        }
+        
+        // Search
+        function handleSearch() {
+            searchQuery = document.getElementById('searchBox').value.toLowerCase();
+            renderContactList();
+        }
+        
+        // Modal
+        function openAddModal() {
+            editingId = null;
+            selectedType = 'person';
+            selectedConnections = [];
+            
+            document.getElementById('modalTitle').textContent = 'Nouveau contact';
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactRole').value = '';
+            document.getElementById('contactPriority').value = '3';
+            document.getElementById('contactInfo').value = '';
+            document.getElementById('contactNotes').value = '';
+            document.getElementById('deleteBtn').style.display = 'none';
+            
+            updateTypeButtons();
+            renderConnectionsList();
+            
+            document.getElementById('contactModal').classList.add('show');
+        }
+        
+        function openEditModal(id) {
+            const node = nodes.find(n => n.id === id);
+            if (!node) return;
+            
+            editingId = id;
+            selectedType = node.type;
+            selectedConnections = node.connections ? [...node.connections] : [];
+            
+            document.getElementById('modalTitle').textContent = 'Modifier le contact';
+            document.getElementById('contactName').value = node.name;
+            document.getElementById('contactRole').value = node.role || '';
+            document.getElementById('contactPriority').value = node.priority || 3;
+            document.getElementById('contactInfo').value = node.contact || '';
+            document.getElementById('contactNotes').value = node.notes || '';
+            document.getElementById('deleteBtn').style.display = 'block';
+            
+            updateTypeButtons();
+            renderConnectionsList();
+            
+            document.getElementById('contactModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('contactModal').classList.remove('show');
+        }
+        
+        function setContactType(type) {
+            selectedType = type;
+            updateTypeButtons();
+        }
+        
+        function updateTypeButtons() {
+            document.querySelectorAll('.type-option').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === selectedType);
+            });
+        }
+        
+        function renderConnectionsList() {
+            const list = document.getElementById('connectionsList');
+            const otherNodes = nodes.filter(n => n.id !== editingId);
+            
+            list.innerHTML = otherNodes.map(n => `
+                <div class="connection-option ${selectedConnections.includes(n.id) ? 'selected' : ''}"
+                     onclick="toggleConnection('${n.id}')">
+                    <div class="connection-checkbox">${selectedConnections.includes(n.id) ? '✓' : ''}</div>
+                    <span>${escapeHtml(n.name)}</span>
+                </div>
+            `).join('') || '<div style="padding: 1rem; color: var(--text-muted); text-align: center;">Aucun contact disponible</div>';
+        }
+        
+        function toggleConnection(id) {
+            const idx = selectedConnections.indexOf(id);
+            if (idx === -1) {
+                selectedConnections.push(id);
+            } else {
+                selectedConnections.splice(idx, 1);
+            }
+            renderConnectionsList();
+        }
+        
+        // Save
+        function saveContact() {
+            const name = document.getElementById('contactName').value.trim();
+            if (!name) {
+                showToast('Le nom est requis');
+                return;
+            }
+            
+            const contact = {
+                id: editingId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                type: selectedType,
+                name,
+                role: document.getElementById('contactRole').value.trim(),
+                priority: parseInt(document.getElementById('contactPriority').value) || 3,
+                contact: document.getElementById('contactInfo').value.trim(),
+                notes: document.getElementById('contactNotes').value.trim(),
+                connections: selectedConnections,
+                createdAt: editingId ? nodes.find(n => n.id === editingId)?.createdAt : new Date().toISOString()
+            };
+            
+            if (editingId) {
+                const existing = nodes.find(n => n.id === editingId);
+                contact.x = existing?.x;
+                contact.y = existing?.y;
+                const idx = nodes.findIndex(n => n.id === editingId);
+                nodes[idx] = contact;
+            } else {
+                // Position new node
+                const rect = canvas.getBoundingClientRect();
+                contact.x = (rect.width / 2 - panX) / zoom + (Math.random() - 0.5) * 100;
+                contact.y = (rect.height / 2 - panY) / zoom + (Math.random() - 0.5) * 100;
+                nodes.push(contact);
+            }
+            
+            // Update bidirectional connections
+            selectedConnections.forEach(connId => {
+                const target = nodes.find(n => n.id === connId);
+                if (target) {
+                    if (!target.connections) target.connections = [];
+                    if (!target.connections.includes(contact.id)) {
+                        target.connections.push(contact.id);
+                    }
+                }
+            });
+            
+            saveData();
+            closeModal();
+            showToast(editingId ? 'Contact mis à jour' : 'Contact ajouté');
+        }
+        
+        function deleteContact() {
+            if (!editingId || !confirm('Supprimer ce contact ?')) return;
+            
+            // Remove from others' connections
+            nodes.forEach(n => {
+                if (n.connections) {
+                    n.connections = n.connections.filter(id => id !== editingId);
+                }
+            });
+            
+            nodes = nodes.filter(n => n.id !== editingId);
+            saveData();
+            closeModal();
+            showToast('Contact supprimé');
+        }
+        
+        // Zoom controls
+        function zoomIn() {
+            zoom = Math.min(3, zoom * 1.2);
+            render();
+        }
+        
+        function zoomOut() {
+            zoom = Math.max(0.3, zoom / 1.2);
+            render();
+        }
+        
+        function resetView() {
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            render();
+        }
+        
+        // Export/Import
+        function exportNetwork() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                nodes
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `network_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Réseau exporté');
+        }
+        
+        function importNetwork() {
+            document.getElementById('importModal').classList.add('show');
+        }
+        
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+        }
+        
+        function processImport() {
+            const fileInput = document.getElementById('importFile');
+            const jsonInput = document.getElementById('importJson').value.trim();
+            
+            const process = (data) => {
+                if (data.nodes) {
+                    nodes = [...nodes, ...data.nodes];
+                    saveData();
+                    closeImportModal();
+                    showToast(`${data.nodes.length} contacts importés`);
+                }
+            };
+            
+            if (fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try { process(JSON.parse(e.target.result)); }
+                    catch { showToast('Fichier invalide'); }
+                };
+                reader.readAsText(fileInput.files[0]);
+            } else if (jsonInput) {
+                try { process(JSON.parse(jsonInput)); }
+                catch { showToast('JSON invalide'); }
+            }
+        }
+        
+        // Utilities
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

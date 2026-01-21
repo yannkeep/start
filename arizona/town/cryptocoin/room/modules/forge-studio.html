@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ FORGE — Studio de Création Autonome</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --bg-dark: #0f0f14;
+            --bg-panel: #16161e;
+            --bg-editor: #1a1a24;
+            --bg-input: #1e1e2a;
+            --border: #2a2a3a;
+            --border-active: #6366f1;
+            --accent: #6366f1;
+            --accent-dim: rgba(99, 102, 241, 0.15);
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --font-ui: 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-dark);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .logo-icon {
+            font-size: 1.3rem;
+        }
+        
+        .logo span {
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Tabs */
+        .doc-tabs {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-dark);
+            padding: 0.25rem;
+            border-radius: 6px;
+        }
+        
+        .doc-tab {
+            padding: 0.4rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            max-width: 150px;
+        }
+        
+        .doc-tab:hover { background: var(--bg-input); color: var(--text); }
+        .doc-tab.active { background: var(--accent-dim); color: var(--accent); }
+        
+        .doc-tab-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .doc-tab-close {
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+        
+        .doc-tab-close:hover { opacity: 1; }
+        
+        .new-doc-btn {
+            padding: 0.4rem 0.6rem;
+            background: var(--accent-dim);
+            border: 1px dashed var(--accent);
+            border-radius: 4px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        
+        .new-doc-btn:hover { background: var(--accent); color: var(--bg-dark); }
+        
+        /* Header actions */
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .action-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+        .action-btn.primary:hover { background: var(--cyan); border-color: var(--cyan); }
+        
+        /* Toolbar */
+        .toolbar {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .toolbar-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .tool-btn {
+            width: 32px;
+            height: 28px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tool-btn:hover { background: var(--bg-input); border-color: var(--border); color: var(--text); }
+        .tool-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+        
+        .tool-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 0.5rem;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            padding: 0.2rem;
+        }
+        
+        .mode-btn {
+            padding: 0.3rem 0.6rem;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            font-family: var(--font-ui);
+            cursor: pointer;
+        }
+        
+        .mode-btn:hover { color: var(--text); }
+        .mode-btn.active { background: var(--accent); color: white; }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-section {
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-header {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .sidebar-header:hover { background: var(--bg-input); }
+        
+        .sidebar-content {
+            padding: 0.5rem;
+        }
+        
+        .template-item {
+            padding: 0.5rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .template-item:hover { background: var(--bg-input); }
+        
+        .template-icon { font-size: 1rem; }
+        
+        .template-info { flex: 1; min-width: 0; }
+        .template-name { font-size: 0.75rem; font-weight: 500; }
+        .template-desc { font-size: 0.6rem; color: var(--text-dim); }
+        
+        /* Projects list */
+        .project-item {
+            padding: 0.5rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+            border: 1px solid transparent;
+        }
+        
+        .project-item:hover { background: var(--bg-input); border-color: var(--border); }
+        .project-item.active { background: var(--accent-dim); border-color: var(--accent); }
+        
+        .project-icon { font-size: 0.9rem; }
+        .project-name { font-size: 0.75rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .project-type { font-size: 0.55rem; color: var(--text-dim); padding: 0.1rem 0.3rem; background: var(--bg-dark); border-radius: 3px; }
+        
+        /* Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .editor-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Split view */
+        .split-view {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .editor-pane, .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+        
+        .editor-pane {
+            border-right: 1px solid var(--border);
+        }
+        
+        .pane-header {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pane-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .pane-btn {
+            padding: 0.2rem 0.4rem;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .pane-btn:hover { background: var(--bg-input); color: var(--text); }
+        
+        /* Code editor */
+        .code-editor {
+            flex: 1;
+            background: var(--bg-editor);
+            overflow: auto;
+            position: relative;
+        }
+        
+        .code-textarea {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 1rem;
+            resize: none;
+            outline: none;
+            tab-size: 2;
+        }
+        
+        .code-textarea::placeholder { color: var(--text-dim); }
+        
+        /* Preview */
+        .preview-content {
+            flex: 1;
+            background: white;
+            overflow: auto;
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Status bar */
+        .status-bar {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            padding: 0.3rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+        
+        .status-left, .status-right {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal-overlay.show { display: flex; }
+        
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 { font-size: 1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.3rem; cursor: pointer; }
+        
+        .modal-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-family: var(--font-ui);
+            outline: none;
+        }
+        
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        /* Template cards in modal */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .template-card {
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .template-card:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .template-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+        
+        .template-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .template-card-name { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .template-card-desc { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* Export options */
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .export-option {
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .export-option:hover { border-color: var(--accent); }
+        
+        .export-icon { font-size: 1.5rem; }
+        .export-info { flex: 1; }
+        .export-name { font-size: 0.85rem; font-weight: 500; }
+        .export-desc { font-size: 0.7rem; color: var(--text-dim); }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-panel);
+            border: 1px solid var(--accent);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+        /* View modes */
+        .editor-area[data-view="editor"] .preview-pane { display: none; }
+        .editor-area[data-view="preview"] .editor-pane { display: none; }
+        .editor-area[data-view="split"] .editor-pane,
+        .editor-area[data-view="split"] .preview-pane { display: flex; }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span>FORGE</span>
+            </div>
+            
+            <div class="doc-tabs" id="docTabs">
+                <!-- Dynamic tabs -->
+            </div>
+            <button class="new-doc-btn" onclick="openNewDocModal()">+</button>
+        </div>
+        
+        <div class="header-actions">
+            <button class="action-btn" onclick="saveProject()">💾 Sauver</button>
+            <button class="action-btn" onclick="openExportModal()">📤 Exporter</button>
+            <button class="action-btn primary" onclick="openPublishModal()">🚀 Publier</button>
+        </div>
+    </header>
+    
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-group">
+            <button class="tool-btn" onclick="insertMd('**', '**')" title="Gras">𝐁</button>
+            <button class="tool-btn" onclick="insertMd('*', '*')" title="Italique">𝐼</button>
+            <button class="tool-btn" onclick="insertMd('~~', '~~')" title="Barré">S̶</button>
+            <button class="tool-btn" onclick="insertMd('`', '`')" title="Code">&lt;/&gt;</button>
+            
+            <div class="tool-divider"></div>
+            
+            <button class="tool-btn" onclick="insertMd('# ', '')" title="Titre 1">H1</button>
+            <button class="tool-btn" onclick="insertMd('## ', '')" title="Titre 2">H2</button>
+            <button class="tool-btn" onclick="insertMd('### ', '')" title="Titre 3">H3</button>
+            
+            <div class="tool-divider"></div>
+            
+            <button class="tool-btn" onclick="insertMd('- ', '')" title="Liste">☰</button>
+            <button class="tool-btn" onclick="insertMd('1. ', '')" title="Liste numérotée">1.</button>
+            <button class="tool-btn" onclick="insertMd('> ', '')" title="Citation">❝</button>
+            <button class="tool-btn" onclick="insertMd('[', '](url)')" title="Lien">🔗</button>
+            <button class="tool-btn" onclick="insertMd('![alt](', ')')" title="Image">🖼️</button>
+            
+            <div class="tool-divider"></div>
+            
+            <button class="tool-btn" onclick="insertMd('\n---\n', '')" title="Séparateur">―</button>
+            <button class="tool-btn" onclick="insertMd('\n```\n', '\n```')" title="Bloc code">{ }</button>
+            <button class="tool-btn" onclick="insertMd('\n| Col1 | Col2 |\n|------|------|\n| ', ' |  |')" title="Tableau">▦</button>
+        </div>
+        
+        <div class="toolbar-group">
+            <div class="mode-toggle">
+                <button class="mode-btn" data-mode="markdown" onclick="setEditorMode('markdown')">Markdown</button>
+                <button class="mode-btn active" data-mode="html" onclick="setEditorMode('html')">HTML</button>
+            </div>
+            
+            <div class="tool-divider"></div>
+            
+            <div class="mode-toggle">
+                <button class="mode-btn" data-view="editor" onclick="setView('editor')">Code</button>
+                <button class="mode-btn active" data-view="split" onclick="setView('split')">Split</button>
+                <button class="mode-btn" data-view="preview" onclick="setView('preview')">Preview</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    <span>📁 MES PROJETS</span>
+                    <span>▼</span>
+                </div>
+                <div class="sidebar-content" id="projectsList">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-header">
+                    <span>📋 TEMPLATES</span>
+                    <span>▼</span>
+                </div>
+                <div class="sidebar-content">
+                    <div class="template-item" onclick="loadTemplate('tract')">
+                        <span class="template-icon">📄</span>
+                        <div class="template-info">
+                            <div class="template-name">Tract / Flyer</div>
+                            <div class="template-desc">Distribution terrain</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('communique')">
+                        <span class="template-icon">📰</span>
+                        <div class="template-info">
+                            <div class="template-name">Communiqué</div>
+                            <div class="template-desc">Presse & médias</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('lettre')">
+                        <span class="template-icon">✉️</span>
+                        <div class="template-info">
+                            <div class="template-name">Lettre ouverte</div>
+                            <div class="template-desc">Interpellation publique</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('petition')">
+                        <span class="template-icon">✍️</span>
+                        <div class="template-info">
+                            <div class="template-name">Pétition</div>
+                            <div class="template-desc">Collecte signatures</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('landing')">
+                        <span class="template-icon">🌐</span>
+                        <div class="template-info">
+                            <div class="template-name">Page web</div>
+                            <div class="template-desc">Site one-page</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('blog')">
+                        <span class="template-icon">📝</span>
+                        <div class="template-info">
+                            <div class="template-name">Article blog</div>
+                            <div class="template-desc">Publication longue</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section" style="flex:1;">
+                <div class="sidebar-header">
+                    <span>💡 AIDE RAPIDE</span>
+                </div>
+                <div class="sidebar-content" style="font-size:0.7rem; color:var(--text-dim); line-height:1.5;">
+                    <p><strong>Markdown :</strong></p>
+                    <p>**gras** → <strong>gras</strong></p>
+                    <p>*italique* → <em>italique</em></p>
+                    <p># Titre → Titre H1</p>
+                    <p>[lien](url) → lien</p>
+                    <p style="margin-top:0.5rem;"><strong>Raccourcis :</strong></p>
+                    <p>Ctrl+S → Sauver</p>
+                    <p>Ctrl+E → Exporter</p>
+                    <p>Ctrl+P → Preview</p>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Editor -->
+        <div class="editor-area" id="editorArea" data-view="split">
+            <div class="split-view">
+                <div class="editor-pane">
+                    <div class="pane-header">
+                        <span>✏️ ÉDITEUR</span>
+                        <div class="pane-actions">
+                            <button class="pane-btn" onclick="formatCode()">🧹 Format</button>
+                            <button class="pane-btn" onclick="copyCode()">📋 Copier</button>
+                        </div>
+                    </div>
+                    <div class="code-editor">
+                        <textarea class="code-textarea" id="codeEditor" placeholder="Commencez à écrire...
+
+# Mon Document
+
+Écrivez en **Markdown** ou en HTML.
+
+Le preview se met à jour automatiquement."></textarea>
+                    </div>
+                </div>
+                
+                <div class="preview-pane">
+                    <div class="pane-header">
+                        <span>👁️ APERÇU</span>
+                        <div class="pane-actions">
+                            <button class="pane-btn" onclick="refreshPreview()">🔄 Refresh</button>
+                            <button class="pane-btn" onclick="openInNewTab()">↗️ Ouvrir</button>
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <iframe class="preview-frame" id="previewFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span class="status-item" id="statusMode">📝 HTML</span>
+            <span class="status-item" id="statusChars">0 caractères</span>
+            <span class="status-item" id="statusWords">0 mots</span>
+            <span class="status-item" id="statusLines">0 lignes</span>
+        </div>
+        <div class="status-right">
+            <span class="status-item" id="statusSaved">💾 Non sauvegardé</span>
+            <span class="status-item" id="statusTime"></span>
+        </div>
+    </div>
+    
+    <!-- New Doc Modal -->
+    <div class="modal-overlay" id="newDocModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📄 Nouveau document</h3>
+                <button class="modal-close" onclick="closeModal('newDocModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nom du document</label>
+                    <input type="text" class="form-input" id="newDocName" placeholder="Mon document">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                </div>
+                <div class="template-grid" id="templateSelector">
+                    <div class="template-card" data-template="blank" onclick="selectTemplate('blank')">
+                        <div class="template-card-icon">📄</div>
+                        <div class="template-card-name">Vierge</div>
+                        <div class="template-card-desc">Page blanche</div>
+                    </div>
+                    <div class="template-card" data-template="tract" onclick="selectTemplate('tract')">
+                        <div class="template-card-icon">📢</div>
+                        <div class="template-card-name">Tract</div>
+                        <div class="template-card-desc">Flyer A5</div>
+                    </div>
+                    <div class="template-card" data-template="landing" onclick="selectTemplate('landing')">
+                        <div class="template-card-icon">🌐</div>
+                        <div class="template-card-name">Site web</div>
+                        <div class="template-card-desc">Landing page</div>
+                    </div>
+                    <div class="template-card" data-template="communique" onclick="selectTemplate('communique')">
+                        <div class="template-card-icon">📰</div>
+                        <div class="template-card-name">Communiqué</div>
+                        <div class="template-card-desc">Pour la presse</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn" onclick="closeModal('newDocModal')">Annuler</button>
+                <button class="action-btn primary" onclick="createNewDoc()">Créer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📤 Exporter</h3>
+                <button class="modal-close" onclick="closeModal('exportModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" onclick="exportAs('html')">
+                        <span class="export-icon">🌐</span>
+                        <div class="export-info">
+                            <div class="export-name">HTML standalone</div>
+                            <div class="export-desc">Fichier .html complet, ouvrable partout</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('markdown')">
+                        <span class="export-icon">📝</span>
+                        <div class="export-info">
+                            <div class="export-name">Markdown</div>
+                            <div class="export-desc">Fichier .md pour édition future</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('pdf')">
+                        <span class="export-icon">📑</span>
+                        <div class="export-info">
+                            <div class="export-name">PDF (impression)</div>
+                            <div class="export-desc">Ouvre la boîte de dialogue d'impression</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="exportAs('json')">
+                        <span class="export-icon">💾</span>
+                        <div class="export-info">
+                            <div class="export-name">Projet JSON</div>
+                            <div class="export-desc">Sauvegarde complète pour import</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Publish Modal -->
+    <div class="modal-overlay" id="publishModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🚀 Publier en ligne</h3>
+                <button class="modal-close" onclick="closeModal('publishModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">
+                    Générez un fichier HTML prêt à héberger sur n'importe quel service gratuit :
+                </p>
+                <div class="export-options">
+                    <div class="export-option" onclick="publishTo('github')">
+                        <span class="export-icon">💻</span>
+                        <div class="export-info">
+                            <div class="export-name">GitHub Pages</div>
+                            <div class="export-desc">Gratuit, fiable, personnalisable</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="publishTo('netlify')">
+                        <span class="export-icon">🔷</span>
+                        <div class="export-info">
+                            <div class="export-name">Netlify Drop</div>
+                            <div class="export-desc">Glissez-déposez pour publier</div>
+                        </div>
+                    </div>
+                    <div class="export-option" onclick="publishTo('zip')">
+                        <span class="export-icon">📦</span>
+                        <div class="export-info">
+                            <div class="export-name">Télécharger ZIP</div>
+                            <div class="export-desc">Site complet avec assets</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-dim); margin-top:1rem;">
+                    💡 Conseil : GitHub Pages est idéal pour un site permanent et gratuit.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==================== STATE ====================
+        let projects = [];
+        let currentProject = null;
+        let currentDoc = null;
+        let editorMode = 'html'; // 'html' or 'markdown'
+        let selectedTemplate = 'blank';
+        let hasUnsavedChanges = false;
+        
+        // ==================== TEMPLATES ====================
+        const templates = {
+            blank: {
+                name: 'Document vierge',
+                content: ''
+            },
+            tract: {
+                name: 'Tract / Flyer',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Action Citoyenne</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 148mm; /* A5 */
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 210mm;
+            color: white;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 3px solid rgba(255,255,255,0.3);
+            margin-bottom: 25px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 0 20px;
+        }
+        .point {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .point-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        .point-text h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        .point-text p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        .cta {
+            text-align: center;
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+        }
+        .cta h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .cta-info {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔥 Agissons Ensemble</h1>
+        <p class="tagline">Pour une commune plus juste et transparente</p>
+    </div>
+    
+    <div class="content">
+        <div class="point">
+            <span class="point-icon">👁️</span>
+            <div class="point-text">
+                <h3>Transparence totale</h3>
+                <p>Accès aux documents publics et aux délibérations du conseil communal.</p>
+            </div>
+        </div>
+        
+        <div class="point">
+            <span class="point-icon">🗣️</span>
+            <div class="point-text">
+                <h3>Participation citoyenne</h3>
+                <p>Droit de parole aux conseils, budgets participatifs, consultations populaires.</p>
+            </div>
+        </div>
+        
+        <div class="point">
+            <span class="point-icon">⚖️</span>
+            <div class="point-text">
+                <h3>Équité fiscale</h3>
+                <p>Des impôts justes et des dépenses au service de tous.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cta">
+        <h2>📅 Prochaine réunion publique</h2>
+        <p class="cta-info">
+            <strong>Mardi 15 janvier à 19h</strong><br>
+            Salle communale - Entrée libre<br>
+            Venez nombreux·ses !
+        </p>
+    </div>
+    
+    <div class="footer">
+        <p>Collectif Citoyen • contact@exemple.be • www.exemple.be</p>
+    </div>
+</body>
+</html>`
+            },
+            communique: {
+                name: 'Communiqué de presse',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communiqué de presse</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 40px;
+            line-height: 1.7;
+            color: #1a1a1a;
+        }
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .org-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .doc-type {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            line-height: 1.3;
+            margin-bottom: 25px;
+        }
+        .chapeau {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-left: 4px solid #2563eb;
+        }
+        p { margin-bottom: 15px; }
+        blockquote {
+            font-style: italic;
+            padding: 15px 25px;
+            background: #fafafa;
+            border-left: 3px solid #ddd;
+            margin: 20px 0;
+        }
+        blockquote cite {
+            display: block;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .contact {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.85rem;
+        }
+        .contact h4 {
+            margin-bottom: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="org-name">Collectif Citoyen de [Commune]</div>
+        <div class="doc-type">Communiqué de presse</div>
+    </div>
+    
+    <div class="meta">
+        <strong>Pour diffusion immédiate</strong> — [Ville], le [Date]
+    </div>
+    
+    <h1>[Titre accrocheur qui résume l'information principale]</h1>
+    
+    <p class="chapeau">
+        [Chapeau : résumez l'essentiel en 2-3 lignes. Qui, quoi, quand, où, pourquoi.]
+    </p>
+    
+    <p>
+        [Premier paragraphe : développez l'information principale. Donnez les détails 
+        les plus importants. Restez factuel.]
+    </p>
+    
+    <p>
+        [Deuxième paragraphe : contexte et enjeux. Pourquoi c'est important ? 
+        Quelle est la situation actuelle ?]
+    </p>
+    
+    <blockquote>
+        « [Citation d'un·e représentant·e du collectif qui exprime une position 
+        ou une réaction.] »
+        <cite>— [Prénom Nom], [fonction]</cite>
+    </blockquote>
+    
+    <p>
+        [Troisième paragraphe : les demandes concrètes ou les prochaines étapes. 
+        Que demandez-vous ? Que va-t-il se passer ensuite ?]
+    </p>
+    
+    <p>
+        [Conclusion : rappel de la position du collectif et invitation à suivre l'actualité.]
+    </p>
+    
+    <div class="contact">
+        <h4>Contact presse</h4>
+        <p>
+            <strong>[Prénom Nom]</strong><br>
+            Porte-parole du Collectif Citoyen<br>
+            📧 presse@exemple.be<br>
+            📱 0400 00 00 00
+        </p>
+    </div>
+</body>
+</html>`
+            },
+            lettre: {
+                name: 'Lettre ouverte',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lettre ouverte</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 40px;
+            line-height: 1.8;
+            color: #222;
+        }
+        .header {
+            text-align: right;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .destinataire {
+            margin-bottom: 30px;
+        }
+        .destinataire strong {
+            display: block;
+            font-size: 1.1rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 40px 0;
+            font-style: italic;
+        }
+        .salutation {
+            margin-bottom: 20px;
+        }
+        p { margin-bottom: 15px; text-align: justify; }
+        .signature {
+            margin-top: 40px;
+            text-align: right;
+        }
+        .signataires {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .signataires h4 {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        .signataires ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+        }
+        .signataires li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p>[Ville], le [Date]</p>
+    </div>
+    
+    <div class="destinataire">
+        <strong>À l'attention de [Titre] [Prénom Nom]</strong>
+        [Fonction]<br>
+        [Institution]<br>
+        [Adresse]
+    </div>
+    
+    <h1>Lettre ouverte : [Sujet de l'interpellation]</h1>
+    
+    <p class="salutation">Madame/Monsieur [Titre],</p>
+    
+    <p>
+        [Introduction : exposez le contexte et la raison de cette lettre ouverte. 
+        Pourquoi vous adressez-vous publiquement à cette personne ?]
+    </p>
+    
+    <p>
+        [Développement : présentez les faits, les problèmes constatés, les enjeux. 
+        Soyez précis, factuel, documenté.]
+    </p>
+    
+    <p>
+        [Arguments : développez votre position. Quels sont vos arguments ? 
+        Appuyez-vous sur des données, des témoignages, des précédents.]
+    </p>
+    
+    <p>
+        [Demandes : formulez clairement vos demandes ou vos questions. 
+        Que souhaitez-vous que le/la destinataire fasse ?]
+    </p>
+    
+    <p>
+        [Conclusion : réaffirmez votre engagement et votre vigilance. 
+        Annoncez éventuellement les suites que vous donnerez.]
+    </p>
+    
+    <p>
+        Dans l'attente de votre réponse, nous vous prions d'agréer, 
+        [Titre], l'expression de notre considération citoyenne.
+    </p>
+    
+    <div class="signature">
+        <p>
+            <strong>Le Collectif Citoyen de [Commune]</strong><br>
+            <em>[Nombre] signataires</em>
+        </p>
+    </div>
+    
+    <div class="signataires">
+        <h4>Premiers signataires :</h4>
+        <ul>
+            <li>[Prénom Nom]</li>
+            <li>[Prénom Nom]</li>
+            <li>[Prénom Nom]</li>
+            <li>[Prénom Nom]</li>
+            <li>...</li>
+        </ul>
+    </div>
+</body>
+</html>`
+            },
+            petition: {
+                name: 'Pétition',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pétition citoyenne</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #22d3ee;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+        p { margin-bottom: 15px; }
+        .demands {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .demands h3 {
+            margin-bottom: 20px;
+            color: #1e3a5f;
+        }
+        .demands ul {
+            list-style: none;
+        }
+        .demands li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .demands li:last-child { border: none; }
+        .demands li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .cta-section {
+            background: #1e3a5f;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 16px;
+            margin: 40px 0;
+        }
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .cta-section p {
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: #22d3ee;
+            color: #0f172a;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .cta-btn:hover { transform: scale(1.05); }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🔥 [Titre de la pétition]</h1>
+        <p>[Sous-titre qui résume l'objectif en une phrase]</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">[X]</div>
+                <div class="stat-label">signatures</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">[Y]</div>
+                <div class="stat-label">objectif</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h2>Pourquoi cette pétition ?</h2>
+        <p>
+            [Expliquez le contexte et le problème. Qu'est-ce qui vous a poussé 
+            à lancer cette pétition ? Quels sont les enjeux ?]
+        </p>
+        <p>
+            [Développez avec des faits, des chiffres, des exemples concrets. 
+            Rendez le problème tangible et urgent.]
+        </p>
+        
+        <div class="demands">
+            <h3>📋 Nos demandes</h3>
+            <ul>
+                <li>[Première demande concrète et réalisable]</li>
+                <li>[Deuxième demande]</li>
+                <li>[Troisième demande]</li>
+                <li>[Quatrième demande]</li>
+            </ul>
+        </div>
+        
+        <h2>Qui sommes-nous ?</h2>
+        <p>
+            [Présentez brièvement le collectif ou les personnes à l'origine 
+            de cette pétition. Pourquoi êtes-vous légitimes sur ce sujet ?]
+        </p>
+        
+        <div class="cta-section">
+            <h2>Signez la pétition</h2>
+            <p>Chaque signature compte. Ensemble, nous pouvons faire bouger les choses.</p>
+            <a href="#" class="cta-btn">✍️ Je signe</a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Pétition lancée par [Nom du collectif] • Contact : [email]</p>
+    </div>
+</body>
+</html>`
+            },
+            landing: {
+                name: 'Page web / Landing',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Nom du Collectif] — Citoyens engagés</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #22d3ee;
+        }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #22d3ee; }
+        
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            background: 
+                radial-gradient(ellipse at top, rgba(34, 211, 238, 0.15), transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.1), transparent 50%);
+        }
+        .hero-content { max-width: 800px; }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-bottom: 35px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #22d3ee;
+            color: #0f172a;
+        }
+        .btn-primary:hover { background: #06b6d4; transform: translateY(-2px); }
+        .btn-secondary {
+            background: transparent;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+        }
+        .btn-secondary:hover { border-color: #22d3ee; color: #22d3ee; }
+        
+        /* Section */
+        section {
+            padding: 100px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .section-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: rgba(34, 211, 238, 0.3);
+            transform: translateY(-5px);
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+        .card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        
+        /* CTA */
+        .cta {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 20px;
+            padding: 60px 30px;
+            margin: 50px 0;
+        }
+        .cta h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .cta p {
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        footer a { color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">⚡ [Collectif]</div>
+        <ul class="nav-links">
+            <li><a href="#mission">Notre mission</a></li>
+            <li><a href="#actions">Nos actions</a></li>
+            <li><a href="#rejoindre">Nous rejoindre</a></li>
+        </ul>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>[Slogan principal accrocheur]</h1>
+            <p>[Description en une ou deux phrases de ce que fait le collectif et pourquoi c'est important]</p>
+            <div class="hero-buttons">
+                <a href="#rejoindre" class="btn btn-primary">Rejoindre le mouvement</a>
+                <a href="#mission" class="btn btn-secondary">En savoir plus</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="mission">
+        <div class="section-header">
+            <h2>Notre mission</h2>
+            <p>Ce pour quoi nous nous battons au quotidien</p>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">👁️</div>
+                <h3>Transparence</h3>
+                <p>Nous exigeons un accès complet aux documents publics et aux processus de décision.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🗣️</div>
+                <h3>Participation</h3>
+                <p>Nous créons des espaces pour que chaque citoyen puisse s'exprimer et être entendu.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚖️</div>
+                <h3>Justice</h3>
+                <p>Nous défendons une répartition équitable des ressources et des opportunités.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="actions">
+        <div class="section-header">
+            <h2>Nos actions</h2>
+            <p>Ce que nous faisons concrètement</p>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>Veille citoyenne</h3>
+                <p>Suivi des conseils communaux, analyse des budgets, monitoring des promesses.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📢</div>
+                <h3>Mobilisation</h3>
+                <p>Organisation de réunions publiques, pétitions, actions de sensibilisation.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3>Mise en réseau</h3>
+                <p>Connexion des citoyens engagés, partage d'expériences et de ressources.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="rejoindre">
+        <div class="cta">
+            <h2>Rejoignez le mouvement</h2>
+            <p>Ensemble, nous pouvons faire la différence. Chaque voix compte.</p>
+            <a href="mailto:contact@exemple.be" class="btn btn-primary">Nous contacter</a>
+        </div>
+    </section>
+    
+    <footer>
+        <p>[Nom du Collectif] — Citoyens de [Commune]</p>
+        <p>Contact : <a href="mailto:contact@exemple.be">contact@exemple.be</a></p>
+    </footer>
+</body>
+</html>`
+            },
+            blog: {
+                name: 'Article de blog',
+                content: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Titre de l'article]</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            line-height: 1.8;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+        .meta {
+            font-family: system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .lead {
+            font-size: 1.25rem;
+            color: #444;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin: 40px 0 20px;
+        }
+        p { margin-bottom: 20px; }
+        blockquote {
+            padding: 20px 30px;
+            background: #f0f0f0;
+            border-left: 4px solid #333;
+            margin: 30px 0;
+            font-style: italic;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .tags {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-family: system-ui, sans-serif;
+            font-size: 0.85rem;
+        }
+        .tags a {
+            display: inline-block;
+            background: #e0e0e0;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .author {
+            margin-top: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .author-info h4 { margin-bottom: 5px; }
+        .author-info p { margin: 0; font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+<body>
+    <article>
+        <h1>[Titre de votre article]</h1>
+        
+        <div class="meta">
+            <span>📅 [Date]</span>
+            <span>✍️ [Auteur·ice]</span>
+            <span>📖 X min de lecture</span>
+        </div>
+        
+        <p class="lead">
+            [Chapeau : résumez l'essentiel de l'article en 2-3 phrases accrocheuses. 
+            Donnez envie de lire la suite.]
+        </p>
+        
+        <p>
+            [Introduction : posez le contexte. De quoi allez-vous parler ? 
+            Pourquoi c'est important ? Pourquoi maintenant ?]
+        </p>
+        
+        <h2>Première partie : [Sous-titre]</h2>
+        
+        <p>
+            [Développez votre premier point. Utilisez des exemples concrets, 
+            des chiffres, des anecdotes pour rendre votre propos vivant.]
+        </p>
+        
+        <p>
+            [Continuez à développer. N'hésitez pas à structurer avec des paragraphes 
+            courts pour faciliter la lecture.]
+        </p>
+        
+        <blockquote>
+            « [Une citation pertinente qui illustre votre propos ou apporte 
+            une perspective différente.] »
+        </blockquote>
+        
+        <h2>Deuxième partie : [Sous-titre]</h2>
+        
+        <p>
+            [Développez votre deuxième point. Faites des liens avec la partie 
+            précédente pour créer une progression logique.]
+        </p>
+        
+        <p>
+            [Appuyez votre argumentation sur des faits vérifiables, des sources 
+            fiables, des témoignages.]
+        </p>
+        
+        <h2>Conclusion</h2>
+        
+        <p>
+            [Résumez les points clés. Ouvrez sur une perspective, une question, 
+            un appel à l'action. Laissez le lecteur avec quelque chose à penser.]
+        </p>
+        
+        <div class="tags">
+            <strong>Tags :</strong>
+            <a href="#">#politique</a>
+            <a href="#">#citoyenneté</a>
+            <a href="#">#démocratie</a>
+        </div>
+        
+        <div class="author">
+            <div class="author-avatar">👤</div>
+            <div class="author-info">
+                <h4>[Prénom Nom]</h4>
+                <p>[Courte bio de l'auteur·ice en une ligne]</p>
+            </div>
+        </div>
+    </article>
+</body>
+</html>`
+            }
+        };
+        
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProjects();
+            renderProjects();
+            renderTabs();
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Editor events
+            const editor = document.getElementById('codeEditor');
+            editor.addEventListener('input', onEditorChange);
+            editor.addEventListener('keydown', handleEditorKeys);
+            
+            // Create default doc if none
+            if (projects.length === 0) {
+                createProject('Mon premier document', 'landing');
+            }
+        });
+        
+        // ==================== PROJECTS ====================
+        function loadProjects() {
+            const saved = localStorage.getItem('forgeProjects');
+            projects = saved ? JSON.parse(saved) : [];
+        }
+        
+        function saveProjects() {
+            localStorage.setItem('forgeProjects', JSON.stringify(projects));
+        }
+        
+        function createProject(name, templateKey) {
+            const template = templates[templateKey] || templates.blank;
+            const project = {
+                id: Date.now().toString(36),
+                name: name || 'Sans titre',
+                type: templateKey,
+                content: template.content,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            };
+            
+            projects.push(project);
+            saveProjects();
+            
+            currentProject = project;
+            loadProjectInEditor(project);
+            renderProjects();
+            renderTabs();
+            
+            return project;
+        }
+        
+        function loadProjectInEditor(project) {
+            document.getElementById('codeEditor').value = project.content;
+            updatePreview();
+            updateStats();
+            hasUnsavedChanges = false;
+            updateSaveStatus();
+        }
+        
+        function renderProjects() {
+            const container = document.getElementById('projectsList');
+            
+            if (projects.length === 0) {
+                container.innerHTML = '<div style="padding:0.5rem;font-size:0.75rem;color:var(--text-dim)">Aucun projet</div>';
+                return;
+            }
+            
+            container.innerHTML = projects.map(p => `
+                <div class="project-item ${currentProject?.id === p.id ? 'active' : ''}" onclick="openProject('${p.id}')">
+                    <span class="project-icon">${getTypeIcon(p.type)}</span>
+                    <span class="project-name">${escapeHtml(p.name)}</span>
+                    <span class="project-type">${p.type}</span>
+                </div>
+            `).join('');
+        }
+        
+        function renderTabs() {
+            const container = document.getElementById('docTabs');
+            
+            // Show only current project as tab for now
+            if (!currentProject) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <button class="doc-tab active">
+                    <span>${getTypeIcon(currentProject.type)}</span>
+                    <span class="doc-tab-name">${escapeHtml(currentProject.name)}</span>
+                </button>
+            `;
+        }
+        
+        function openProject(id) {
+            const project = projects.find(p => p.id === id);
+            if (!project) return;
+            
+            // Save current first
+            if (currentProject && hasUnsavedChanges) {
+                saveProject();
+            }
+            
+            currentProject = project;
+            loadProjectInEditor(project);
+            renderProjects();
+            renderTabs();
+        }
+        
+        function saveProject() {
+            if (!currentProject) return;
+            
+            currentProject.content = document.getElementById('codeEditor').value;
+            currentProject.modified = new Date().toISOString();
+            saveProjects();
+            
+            hasUnsavedChanges = false;
+            updateSaveStatus();
+            showToast('💾 Sauvegardé');
+        }
+        
+        function getTypeIcon(type) {
+            const icons = {
+                blank: '📄',
+                tract: '📢',
+                communique: '📰',
+                lettre: '✉️',
+                petition: '✍️',
+                landing: '🌐',
+                blog: '📝'
+            };
+            return icons[type] || '📄';
+        }
+        
+        // ==================== EDITOR ====================
+        function onEditorChange() {
+            hasUnsavedChanges = true;
+            updateSaveStatus();
+            updatePreview();
+            updateStats();
+        }
+        
+        function handleEditorKeys(e) {
+            // Tab handling
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const editor = e.target;
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 2;
+                onEditorChange();
+            }
+            
+            // Ctrl+S
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveProject();
+            }
+            
+            // Ctrl+E
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                openExportModal();
+            }
+        }
+        
+        function insertMd(before, after) {
+            const editor = document.getElementById('codeEditor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selected = editor.value.substring(start, end);
+            
+            editor.value = editor.value.substring(0, start) + before + selected + after + editor.value.substring(end);
+            editor.selectionStart = start + before.length;
+            editor.selectionEnd = start + before.length + selected.length;
+            editor.focus();
+            
+            onEditorChange();
+        }
+        
+        function setEditorMode(mode) {
+            editorMode = mode;
+            document.querySelectorAll('.mode-btn[data-mode]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            document.getElementById('statusMode').textContent = mode === 'html' ? '📝 HTML' : '📝 Markdown';
+            updatePreview();
+        }
+        
+        function setView(view) {
+            document.getElementById('editorArea').dataset.view = view;
+            document.querySelectorAll('.mode-btn[data-view]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === view);
+            });
+        }
+        
+        // ==================== PREVIEW ====================
+        function updatePreview() {
+            const content = document.getElementById('codeEditor').value;
+            const frame = document.getElementById('previewFrame');
+            
+            let html = content;
+            
+            // If markdown mode, convert (basic)
+            if (editorMode === 'markdown') {
+                html = markdownToHtml(content);
+            }
+            
+            // Wrap in basic HTML if not a full document
+            if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
+                html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+body { font-family: system-ui, sans-serif; padding: 30px; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+h1, h2, h3 { margin-top: 1.5em; margin-bottom: 0.5em; }
+p { margin-bottom: 1em; }
+code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+pre { background: #f0f0f0; padding: 15px; border-radius: 5px; overflow-x: auto; }
+blockquote { border-left: 3px solid #ddd; margin: 1em 0; padding-left: 1em; color: #666; }
+</style></head><body>${html}</body></html>`;
+            }
+            
+            frame.srcdoc = html;
+        }
+        
+        function markdownToHtml(md) {
+            // Basic markdown conversion
+            let html = md
+                // Headers
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                // Bold & Italic
+                .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                // Strikethrough
+                .replace(/~~(.+?)~~/g, '<del>$1</del>')
+                // Code
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                // Links
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+                // Images
+                .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+                // Blockquotes
+                .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+                // HR
+                .replace(/^---$/gim, '<hr>')
+                // Lists
+                .replace(/^\- (.*$)/gim, '<li>$1</li>')
+                .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+                // Paragraphs
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph
+            html = '<p>' + html + '</p>';
+            
+            // Fix multiple blockquotes
+            html = html.replace(/<\/blockquote><br><blockquote>/g, '<br>');
+            
+            return html;
+        }
+        
+        function refreshPreview() {
+            updatePreview();
+            showToast('🔄 Preview rafraîchi');
+        }
+        
+        function openInNewTab() {
+            const content = document.getElementById('codeEditor').value;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }
+        
+        // ==================== STATS ====================
+        function updateStats() {
+            const content = document.getElementById('codeEditor').value;
+            document.getElementById('statusChars').textContent = content.length + ' caractères';
+            document.getElementById('statusWords').textContent = (content.match(/\S+/g) || []).length + ' mots';
+            document.getElementById('statusLines').textContent = content.split('\n').length + ' lignes';
+        }
+        
+        function updateSaveStatus() {
+            document.getElementById('statusSaved').textContent = hasUnsavedChanges ? '⚠️ Non sauvegardé' : '💾 Sauvegardé';
+        }
+        
+        function updateClock() {
+            document.getElementById('statusTime').textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // ==================== MODALS ====================
+        function openNewDocModal() {
+            document.getElementById('newDocName').value = '';
+            selectedTemplate = 'blank';
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector('.template-card[data-template="blank"]').classList.add('selected');
+            document.getElementById('newDocModal').classList.add('show');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        
+        function selectTemplate(template) {
+            selectedTemplate = template;
+            document.querySelectorAll('.template-card').forEach(c => {
+                c.classList.toggle('selected', c.dataset.template === template);
+            });
+        }
+        
+        function createNewDoc() {
+            const name = document.getElementById('newDocName').value.trim() || 'Sans titre';
+            createProject(name, selectedTemplate);
+            closeModal('newDocModal');
+            showToast('📄 Document créé');
+        }
+        
+        function loadTemplate(templateKey) {
+            if (currentProject) {
+                if (!confirm('Remplacer le contenu actuel par ce template ?')) return;
+            }
+            
+            const template = templates[templateKey];
+            if (!template) return;
+            
+            document.getElementById('codeEditor').value = template.content;
+            if (currentProject) {
+                currentProject.type = templateKey;
+            }
+            onEditorChange();
+            renderTabs();
+            showToast(`📋 Template "${template.name}" chargé`);
+        }
+        
+        function openExportModal() {
+            document.getElementById('exportModal').classList.add('show');
+        }
+        
+        function openPublishModal() {
+            document.getElementById('publishModal').classList.add('show');
+        }
+        
+        // ==================== EXPORT ====================
+        function exportAs(format) {
+            const content = document.getElementById('codeEditor').value;
+            const name = currentProject?.name || 'document';
+            
+            switch (format) {
+                case 'html':
+                    downloadFile(content, `${name}.html`, 'text/html');
+                    break;
+                case 'markdown':
+                    downloadFile(content, `${name}.md`, 'text/markdown');
+                    break;
+                case 'pdf':
+                    openInNewTab();
+                    setTimeout(() => window.print(), 500);
+                    break;
+                case 'json':
+                    const projectData = JSON.stringify(currentProject, null, 2);
+                    downloadFile(projectData, `${name}.json`, 'application/json');
+                    break;
+            }
+            
+            closeModal('exportModal');
+            showToast(`📤 Exporté en ${format.toUpperCase()}`);
+        }
+        
+        function publishTo(platform) {
+            const content = document.getElementById('codeEditor').value;
+            const name = currentProject?.name || 'site';
+            
+            switch (platform) {
+                case 'github':
+                    downloadFile(content, 'index.html', 'text/html');
+                    window.open('https://pages.github.com/', '_blank');
+                    showToast('📄 index.html téléchargé. Suivez le guide GitHub Pages.');
+                    break;
+                case 'netlify':
+                    downloadFile(content, 'index.html', 'text/html');
+                    window.open('https://app.netlify.com/drop', '_blank');
+                    showToast('📄 Glissez le fichier sur Netlify Drop');
+                    break;
+                case 'zip':
+                    // For simplicity, just download html
+                    downloadFile(content, 'index.html', 'text/html');
+                    showToast('📦 index.html téléchargé');
+                    break;
+            }
+            
+            closeModal('publishModal');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // ==================== UTILS ====================
+        function copyCode() {
+            navigator.clipboard.writeText(document.getElementById('codeEditor').value);
+            showToast('📋 Copié !');
+        }
+        
+        function formatCode() {
+            // Basic HTML formatting
+            const editor = document.getElementById('codeEditor');
+            let html = editor.value;
+            
+            // Simple indentation
+            let formatted = '';
+            let indent = 0;
+            const lines = html.split('\n');
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.match(/^<\/(div|section|article|header|footer|nav|main|aside|ul|ol|li|p|h[1-6])/i)) {
+                    indent = Math.max(0, indent - 1);
+                }
+                formatted += '  '.repeat(indent) + trimmed + '\n';
+                if (trimmed.match(/^<(div|section|article|header|footer|nav|main|aside|ul|ol)[^/]*>$/i)) {
+                    indent++;
+                }
+            });
+            
+            editor.value = formatted.trim();
+            onEditorChange();
+            showToast('🧹 Code formaté');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        // Click outside modal to close
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

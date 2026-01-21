@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISBL@EGIS | Sanctuarium Digitalis — Espace Membre</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;500;600;700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#080810;--bg2:#0d1117;--bg3:#161b22;--bg4:#1c2128;
+            --mint:#7fefbd;--mint-dim:#4a9e7a;--mint-glow:#7fefbd60;
+            --lilac:#c4b5fd;--lilac-dim:#8b7dcf;--lilac-glow:#c4b5fd40;
+            --gold:#fcd34d;--red:#f87171;--blue:#60a5fa;--pink:#f472b6;
+            --text:#e6edf3;--dim:#7d8590;--line:#30363d;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        
+        @keyframes glitch{0%,100%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(2px,-2px)}60%{transform:translate(-1px,-1px)}80%{transform:translate(1px,1px)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+        @keyframes scan{0%{top:-100%}100%{top:100%}}
+        @keyframes rainbow{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+        @keyframes neon{0%,100%{text-shadow:0 0 5px var(--mint),0 0 10px var(--mint),0 0 20px var(--mint)}50%{text-shadow:0 0 2px var(--mint),0 0 5px var(--mint)}}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+        @keyframes explode{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
+        @keyframes matrix{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+        @keyframes spinIn{from{transform:rotate(0deg) scale(0);opacity:0}to{transform:rotate(720deg) scale(1);opacity:1}}
+        @keyframes disco{0%{background:var(--red)}14%{background:var(--gold)}28%{background:var(--mint)}42%{background:var(--blue)}56%{background:var(--lilac)}70%{background:var(--pink)}84%{background:var(--mint)}100%{background:var(--red)}}
+        
+        body{font-family:'Fira Code',monospace;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+        body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);pointer-events:none;z-index:9999;}
+        body.party-mode{animation:disco 2s linear infinite;}
+        body.party-mode *{animation:shake 0.1s linear infinite;}
+        .scanline{position:fixed;width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--mint-glow),transparent);opacity:0.1;animation:scan 6s linear infinite;pointer-events:none;z-index:9998;}
+        
+        /* KONAMI OVERLAY */
+        .konami-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:10000;align-items:center;justify-content:center;flex-direction:column;}
+        .konami-overlay.active{display:flex;}
+        .konami-text{font-family:'VT323',monospace;font-size:4rem;color:var(--gold);text-shadow:0 0 20px var(--gold);animation:neon 1s infinite;margin-bottom:2rem;}
+        .konami-sub{color:var(--mint);font-size:1.2rem;margin-bottom:3rem;}
+        .konami-close{padding:1rem 2rem;background:var(--mint);border:none;color:#000;font-family:'VT323',monospace;font-size:1.5rem;cursor:pointer;border-radius:8px;}
+        
+        /* MATRIX RAIN */
+        .matrix-container{display:none;position:fixed;inset:0;z-index:9000;pointer-events:none;overflow:hidden;}
+        .matrix-container.active{display:block;}
+        .matrix-char{position:absolute;color:var(--mint);font-family:'VT323',monospace;font-size:20px;text-shadow:0 0 10px var(--mint);animation:matrix 5s linear infinite;}
+        
+        /* NYAN CAT */
+        .nyan{display:none;position:fixed;z-index:10001;font-size:3rem;animation:float 0.5s infinite;}
+        .nyan.active{display:block;}
+        .nyan-trail{position:fixed;font-size:2rem;pointer-events:none;z-index:10000;}
+        
+        /* LAYOUT */
+        .app{display:flex;flex-direction:column;min-height:100vh;}
+        
+        /* HEADER */
+        .header{background:var(--bg2);border-bottom:1px solid var(--line);padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+        .logo{display:flex;align-items:center;gap:.75rem;cursor:pointer;}
+        .logo:hover .logo-icon{animation:spinIn 1s ease;}
+        .logo-icon{width:36px;height:36px;}
+        .logo-text{font-family:'VT323',monospace;font-size:1.5rem;}
+        .logo-text .a{color:var(--mint);}
+        .logo-text .e{color:var(--lilac);}
+        .header-center{display:flex;align-items:center;gap:1rem;}
+        .search{display:flex;align-items:center;gap:.5rem;background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:.4rem .8rem;transition:all .3s;}
+        .search:focus-within{border-color:var(--mint);box-shadow:0 0 15px var(--mint-glow);}
+        .search input{background:transparent;border:none;color:var(--text);font-family:inherit;font-size:.8rem;width:250px;outline:none;}
+        .header-right{display:flex;align-items:center;gap:1rem;}
+        .notif{position:relative;cursor:pointer;padding:.5rem;font-size:1.2rem;transition:transform .2s;}
+        .notif:hover{transform:scale(1.2);}
+        .notif-badge{position:absolute;top:0;right:0;width:18px;height:18px;background:var(--red);border-radius:50%;font-size:.6rem;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite;}
+        .user-menu{display:flex;align-items:center;gap:.75rem;cursor:pointer;padding:.4rem .8rem;border-radius:6px;transition:all .2s;}
+        .user-menu:hover{background:var(--bg3);}
+        .avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--mint);display:flex;align-items:center;justify-content:center;font-size:.9rem;background:var(--bg3);}
+        .user-info{text-align:left;}
+        .user-name{font-size:.85rem;color:var(--text);}
+        .user-title{font-size:.6rem;color:var(--gold);}
+        
+        /* MAIN TABS */
+        .main-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--line);overflow-x:auto;}
+        .main-tab{padding:.75rem 1.5rem;color:var(--dim);font-size:.8rem;cursor:pointer;border:none;background:transparent;font-family:inherit;white-space:nowrap;transition:all .2s;position:relative;display:flex;align-items:center;gap:.5rem;}
+        .main-tab:hover{color:var(--text);background:var(--bg3);}
+        .main-tab.active{color:var(--mint);}
+        .main-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--mint);box-shadow:0 0 10px var(--mint);}
+        .tab-badge{background:var(--red);color:#fff;font-size:.6rem;padding:.1rem .4rem;border-radius:10px;}
+        .tab-badge.new{background:var(--gold);color:#000;}
+        .tab-icon{font-size:1rem;}
+        
+        /* CONTENT AREA */
+        .content-wrapper{display:flex;flex:1;overflow:hidden;}
+        
+        /* SIDEBAR */
+        .sidebar{width:260px;background:var(--bg2);border-right:1px solid var(--line);padding:1rem;overflow-y:auto;flex-shrink:0;}
+        .sidebar-section{margin-bottom:1.5rem;}
+        .sidebar-title{font-size:.65rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;padding-left:.5rem;}
+        .sidebar-item{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:6px;color:var(--dim);cursor:pointer;transition:all .2s;margin-bottom:.25rem;}
+        .sidebar-item:hover{background:var(--bg3);color:var(--text);}
+        .sidebar-item.active{background:rgba(127,239,189,0.1);color:var(--mint);border-left:3px solid var(--mint);}
+        .sidebar-icon{font-size:1.1rem;}
+        .sidebar-label{font-size:.8rem;flex:1;}
+        .sidebar-badge{background:var(--mint);color:var(--bg);font-size:.6rem;padding:.15rem .4rem;border-radius:10px;}
+        .sidebar-badge.hot{background:var(--red);}
+        
+        .online-users{background:var(--bg3);border-radius:8px;padding:.75rem;margin-top:1rem;}
+        .online-title{font-size:.7rem;color:var(--mint);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+        .online-dot{width:8px;height:8px;background:var(--mint);border-radius:50%;animation:pulse 2s infinite;}
+        .online-list{display:flex;flex-wrap:wrap;gap:.3rem;}
+        .online-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);cursor:pointer;transition:all .2s;font-size:.7rem;display:flex;align-items:center;justify-content:center;background:var(--bg);}
+        .online-avatar:hover{transform:scale(1.2);border-color:var(--mint);z-index:10;}
+        
+        /* MAIN CONTENT */
+        .main-content{flex:1;overflow-y:auto;padding:1.5rem;}
+        
+        /* TAB PANELS */
+        .tab-panel{display:none;}
+        .tab-panel.active{display:block;}
+        
+        /* FORUM STYLES */
+        .forum-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+        .forum-title{font-family:'VT323',monospace;font-size:2rem;color:var(--mint);text-shadow:0 0 10px var(--mint-glow);}
+        .forum-subtitle{color:var(--dim);font-size:.8rem;font-style:italic;}
+        
+        .btn{padding:.5rem 1rem;background:linear-gradient(135deg,var(--mint),var(--lilac));border:none;border-radius:6px;color:#000;font-family:inherit;font-weight:600;cursor:pointer;transition:all .2s;font-size:.8rem;}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px var(--mint-glow);}
+        .btn.secondary{background:var(--bg3);border:1px solid var(--line);color:var(--text);}
+        .btn.secondary:hover{border-color:var(--mint);color:var(--mint);}
+        .btn.small{padding:.3rem .6rem;font-size:.7rem;}
+        
+        /* CATEGORIES */
+        .category{background:var(--bg2);border:1px solid var(--line);border-radius:8px;margin-bottom:1rem;overflow:hidden;transition:all .3s;}
+        .category:hover{border-color:var(--mint-dim);}
+        .category-header{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--bg3);cursor:pointer;transition:background .2s;}
+        .category-header:hover{background:var(--bg4);}
+        .category-icon{font-size:2rem;animation:float 3s ease-in-out infinite;}
+        .category-info{flex:1;}
+        .category-name{font-family:'VT323',monospace;font-size:1.3rem;color:var(--mint);margin-bottom:.25rem;}
+        .category-desc{font-size:.75rem;color:var(--dim);}
+        .category-stats{text-align:right;font-size:.7rem;color:var(--dim);}
+        .category-stat span{color:var(--lilac);font-weight:600;}
+        .category-toggle{color:var(--dim);font-size:1.2rem;transition:transform .3s;}
+        .category.open .category-toggle{transform:rotate(180deg);}
+        
+        .threads{display:none;border-top:1px solid var(--line);}
+        .category.open .threads{display:block;}
+        
+        .thread{display:grid;grid-template-columns:50px 1fr 80px 120px;gap:1rem;align-items:center;padding:1rem;border-bottom:1px solid var(--line);transition:background .2s;cursor:pointer;}
+        .thread:hover{background:rgba(127,239,189,0.03);}
+        .thread:last-child{border-bottom:none;}
+        .thread-avatar{width:45px;height:45px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--bg);transition:all .2s;}
+        .thread:hover .thread-avatar{border-color:var(--mint);}
+        .thread-avatar.legendary{border-color:var(--gold);box-shadow:0 0 10px rgba(252,211,77,0.3);}
+        .thread-avatar.epic{border-color:var(--lilac);box-shadow:0 0 10px var(--lilac-glow);}
+        .thread-avatar.rare{border-color:var(--blue);}
+        .thread-title{font-size:.9rem;margin-bottom:.3rem;color:var(--text);transition:color .2s;}
+        .thread:hover .thread-title{color:var(--mint);}
+        .thread-meta{font-size:.7rem;color:var(--dim);}
+        .thread-meta a{color:var(--lilac);text-decoration:none;}
+        .thread-meta a:hover{text-decoration:underline;}
+        .thread-stats{text-align:center;}
+        .thread-stat-value{font-family:'VT323',monospace;font-size:1.3rem;color:var(--mint);}
+        .thread-stat-label{font-size:.6rem;color:var(--dim);}
+        .thread-last{text-align:right;font-size:.7rem;}
+        .thread-last-user{color:var(--lilac);margin-bottom:.2rem;}
+        .thread-last-time{color:var(--dim);}
+        
+        .tag{display:inline-block;padding:.15rem .4rem;border-radius:3px;font-size:.6rem;font-weight:600;margin-left:.3rem;vertical-align:middle;}
+        .tag.pinned{background:rgba(252,211,77,0.2);color:var(--gold);}
+        .tag.hot{background:rgba(248,113,113,0.2);color:var(--red);}
+        .tag.solved{background:rgba(127,239,189,0.2);color:var(--mint);}
+        .tag.epic{background:rgba(196,181,253,0.2);color:var(--lilac);}
+        .tag.sacred{background:linear-gradient(90deg,var(--gold),var(--mint));color:#000;}
+        
+        /* THREAD VIEW */
+        .thread-view{display:none;}
+        .thread-view.active{display:block;}
+        .back-btn{display:inline-flex;align-items:center;gap:.5rem;color:var(--dim);font-size:.8rem;cursor:pointer;margin-bottom:1rem;padding:.5rem;border-radius:4px;transition:all .2s;}
+        .back-btn:hover{color:var(--mint);background:var(--bg3);}
+        
+        .post{background:var(--bg2);border:1px solid var(--line);border-radius:8px;margin-bottom:1rem;overflow:hidden;transition:all .3s;}
+        .post:hover{border-color:var(--line);}
+        .post.op{border-color:var(--mint);border-width:2px;}
+        .post-header{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--bg3);border-bottom:1px solid var(--line);}
+        .post-avatar{width:50px;height:50px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--bg);cursor:pointer;transition:all .2s;}
+        .post-avatar:hover{transform:scale(1.1);border-color:var(--mint);}
+        .post-user-info{flex:1;}
+        .post-username{font-weight:600;color:var(--mint);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+        .post-usertitle{font-size:.7rem;color:var(--gold);font-style:italic;margin-top:.2rem;}
+        .post-userstats{font-size:.65rem;color:var(--dim);margin-top:.25rem;}
+        .post-date{font-size:.7rem;color:var(--dim);}
+        .post-body{padding:1.5rem;line-height:1.8;font-size:.9rem;}
+        .post-body p{margin-bottom:1rem;}
+        .post-body .quote{background:var(--bg3);border-left:3px solid var(--lilac);padding:1rem;margin:1rem 0;font-style:italic;color:var(--dim);border-radius:0 6px 6px 0;}
+        .post-body .quote cite{display:block;margin-top:.5rem;color:var(--lilac);font-size:.8rem;}
+        .post-body .runic{font-family:'Uncial Antiqua',serif;color:var(--gold);font-size:1.1rem;text-shadow:0 0 5px var(--gold);}
+        .post-body .klingon{font-family:'Space Mono',monospace;color:var(--red);text-transform:uppercase;letter-spacing:.1em;}
+        .post-body .elvish{font-style:italic;color:var(--lilac);letter-spacing:.05em;}
+        .post-body code{background:var(--bg);padding:.2rem .4rem;border-radius:3px;color:var(--mint);font-size:.85rem;}
+        .post-footer{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;background:var(--bg3);border-top:1px solid var(--line);flex-wrap:wrap;gap:.5rem;}
+        .post-actions{display:flex;gap:.5rem;}
+        .post-action{display:flex;align-items:center;gap:.3rem;color:var(--dim);font-size:.75rem;cursor:pointer;padding:.3rem .5rem;border-radius:4px;transition:all .2s;}
+        .post-action:hover{color:var(--mint);background:var(--bg);}
+        .post-reactions{display:flex;gap:.4rem;flex-wrap:wrap;}
+        .reaction{padding:.25rem .5rem;background:var(--bg);border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+        .reaction:hover{border-color:var(--mint);transform:scale(1.1);}
+        
+        .signature{margin-top:1.5rem;padding-top:1rem;border-top:1px dashed var(--line);font-size:.75rem;color:var(--dim);font-style:italic;}
+        .signature pre{font-family:'VT323',monospace;white-space:pre;color:var(--mint);opacity:0.5;font-size:.55rem;margin-top:.5rem;}
+        
+        .reply-box{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:1.5rem;margin-top:1.5rem;}
+        .reply-title{font-family:'VT323',monospace;font-size:1.2rem;color:var(--lilac);margin-bottom:1rem;}
+        .reply-toolbar{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+        .toolbar-btn{padding:.4rem .6rem;background:var(--bg3);border:1px solid var(--line);border-radius:4px;color:var(--dim);cursor:pointer;font-size:.75rem;font-family:inherit;transition:all .2s;}
+        .toolbar-btn:hover{border-color:var(--mint);color:var(--mint);}
+        .reply-textarea{width:100%;min-height:150px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1rem;color:var(--text);font-family:inherit;font-size:.85rem;resize:vertical;outline:none;transition:all .3s;}
+        .reply-textarea:focus{border-color:var(--mint);box-shadow:0 0 15px var(--mint-glow);}
+        .reply-footer{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:.5rem;}
+        .char-count{font-size:.7rem;color:var(--dim);}
+        
+        /* LOREM IPSUM PAGES */
+        .lorem-page{max-width:900px;}
+        .lorem-page h1{font-family:'VT323',monospace;font-size:2.5rem;color:var(--mint);margin-bottom:1rem;text-shadow:0 0 10px var(--mint-glow);}
+        .lorem-page h2{font-family:'VT323',monospace;font-size:1.5rem;color:var(--lilac);margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--line);}
+        .lorem-page p{color:var(--dim);line-height:1.8;margin-bottom:1rem;}
+        .lorem-page .placeholder{background:var(--bg2);border:2px dashed var(--line);border-radius:8px;padding:2rem;text-align:center;color:var(--dim);margin:1rem 0;}
+        .lorem-page .placeholder-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5;}
+        .lorem-page ul{margin:1rem 0 1rem 2rem;color:var(--dim);}
+        .lorem-page li{margin-bottom:.5rem;}
+        .lorem-card{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:1.5rem;margin-bottom:1rem;}
+        .lorem-card h3{color:var(--mint);font-size:1rem;margin-bottom:.5rem;}
+        .lorem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:1rem 0;}
+        
+        /* PROFILE MODAL */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+        .modal-overlay.active{display:flex;}
+        .modal{background:var(--bg2);border:1px solid var(--line);border-radius:12px;width:95%;max-width:500px;max-height:90vh;overflow:hidden;animation:spinIn .5s ease;}
+        .modal-header{padding:1rem;background:var(--bg3);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+        .modal-title{font-family:'VT323',monospace;font-size:1.3rem;color:var(--mint);}
+        .modal-close{background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer;transition:all .2s;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+        .modal-close:hover{color:var(--red);background:rgba(248,113,113,0.1);}
+        .modal-body{padding:1.5rem;overflow-y:auto;max-height:calc(90vh - 60px);}
+        
+        .profile-header{display:flex;gap:1.5rem;margin-bottom:1.5rem;}
+        .profile-avatar{width:80px;height:80px;border-radius:50%;border:3px solid var(--mint);display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:var(--bg);flex-shrink:0;}
+        .profile-avatar.legendary{border-color:var(--gold);box-shadow:0 0 20px rgba(252,211,77,0.4);}
+        .profile-avatar.epic{border-color:var(--lilac);box-shadow:0 0 20px var(--lilac-glow);}
+        .profile-info{flex:1;min-width:0;}
+        .profile-name{font-family:'VT323',monospace;font-size:1.5rem;color:var(--mint);word-break:break-word;}
+        .profile-title{color:var(--gold);font-size:.85rem;font-style:italic;margin-top:.25rem;}
+        .profile-badges{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap;}
+        .badge{padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;}
+        .badge.founder{background:linear-gradient(135deg,var(--gold),var(--mint));color:#000;}
+        .badge.elder{background:var(--lilac);color:#000;}
+        .badge.warrior{background:var(--red);color:#fff;}
+        .badge.sage{background:var(--blue);color:#fff;}
+        .badge.meme{background:var(--pink);color:#fff;}
+        .profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;padding:1rem;background:var(--bg3);border-radius:8px;margin-bottom:1rem;}
+        .profile-stat{text-align:center;}
+        .profile-stat-value{font-family:'VT323',monospace;font-size:1.2rem;color:var(--mint);}
+        .profile-stat-label{font-size:.6rem;color:var(--dim);}
+        .profile-bio{font-size:.85rem;color:var(--dim);line-height:1.6;}
+        .profile-location{margin-bottom:.75rem;font-size:.8rem;}
+        .profile-location span{color:var(--mint);}
+        
+        /* NOTIFICATION PANEL */
+        .notif-panel{display:none;position:absolute;top:100%;right:0;width:350px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.5);margin-top:.5rem;overflow:hidden;z-index:200;}
+        .notif-panel.active{display:block;}
+        .notif-panel-header{padding:.75rem 1rem;background:var(--bg3);border-bottom:1px solid var(--line);font-size:.8rem;color:var(--mint);}
+        .notif-item{padding:.75rem 1rem;border-bottom:1px solid var(--line);cursor:pointer;transition:background .2s;}
+        .notif-item:hover{background:var(--bg3);}
+        .notif-item:last-child{border-bottom:none;}
+        .notif-item-title{font-size:.8rem;margin-bottom:.25rem;}
+        .notif-item-time{font-size:.65rem;color:var(--dim);}
+        
+        /* RESPONSIVE */
+        @media(max-width:1024px){
+            .sidebar{display:none;}
+            .content-wrapper{display:block;}
+        }
+        @media(max-width:768px){
+            .header-center{display:none;}
+            .forum-header{flex-direction:column;text-align:center;}
+            .thread{grid-template-columns:40px 1fr;gap:.5rem;}
+            .thread-stats,.thread-last{display:none;}
+            .main-tab{padding:.75rem 1rem;}
+            .main-tab span:not(.tab-icon):not(.tab-badge){display:none;}
+        }
+        
+        /* SECRET STYLES */
+        .secret-found{animation:explode 1s forwards;}
+        .rainbow-mode *{animation:rainbow 1s linear infinite !important;}
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar{width:8px;height:8px;}
+        ::-webkit-scrollbar-track{background:var(--bg);}
+        ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+        ::-webkit-scrollbar-thumb:hover{background:var(--mint-dim);}
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    
+    <!-- KONAMI CODE OVERLAY -->
+    <div class="konami-overlay" id="konami-overlay">
+        <div class="konami-text">🎮 KONAMI CODE ACTIVÉ! 🎮</div>
+        <div class="konami-sub">Tu as débloqué le MODE LÉGENDE!</div>
+        <div style="font-size:4rem;margin-bottom:2rem;">🧙🖖🧝‍♂️💍⚔️👽🦅🧹💊🐉</div>
+        <p style="color:var(--dim);margin-bottom:2rem;text-align:center;">
+            <span class="runic" style="color:var(--gold);font-family:'Uncial Antiqua',serif;">ᚠᛟᚱ ᚦᛖ ᛈᛖᛟᛈᛚᛖ</span><br>
+            <span style="color:var(--red);">Qapla'! Heghlu'meH QaQ jajvam!</span><br>
+            <span style="color:var(--lilac);font-style:italic;">Mae govannen, mellon!</span>
+        </p>
+        <button class="konami-close" onclick="closeKonami()">ENTRER DANS LA LÉGENDE</button>
+    </div>
+    
+    <!-- MATRIX RAIN CONTAINER -->
+    <div class="matrix-container" id="matrix-container"></div>
+    
+    <!-- NYAN CAT -->
+    <div class="nyan" id="nyan">🌈🐱</div>
+    
+    <div class="app">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo" onclick="triggerEasterEgg('logo')" title="Clique 7 fois pour une surprise...">
+                <svg class="logo-icon" viewBox="0 0 100 100">
+                    <path d="M50 5 L90 25 L90 55 Q90 85 50 95 Q10 85 10 55 L10 25 Z" fill="none" stroke="url(#grad)" stroke-width="2"/>
+                    <polygon points="50,20 75,35 75,65 50,80 25,65 25,35" fill="none" stroke="#c4b5fd" stroke-width="1.5"/>
+                    <circle cx="50" cy="50" r="8" fill="#7fefbd"/>
+                    <defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7fefbd"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient></defs>
+                </svg>
+                <div class="logo-text"><span class="a">AISBL</span>@<span class="e">EGIS</span></div>
+            </div>
+            
+            <div class="header-center">
+                <div class="search">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" placeholder="Quaerere in foro... (rechercher)" onkeyup="checkSecretSearch(event)">
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="notif" onclick="toggleNotifications()" style="position:relative;">
+                    🔔
+                    <span class="notif-badge">3</span>
+                    <div class="notif-panel" id="notif-panel">
+                        <div class="notif-panel-header">📬 Notifications</div>
+                        <div class="notif-item" onclick="openProfile('yoda_syntaxerror')">
+                            <div class="notif-item-title">🧪 <strong>Yoda_SyntaxError</strong> a répondu à ton post</div>
+                            <div class="notif-item-time">Il y a 5 minutes</div>
+                        </div>
+                        <div class="notif-item" onclick="openProfile('gandalf_le_gris_404')">
+                            <div class="notif-item-title">⭐ <strong>Gandalf_le_Gris_404</strong> t'a donné +50 rep</div>
+                            <div class="notif-item-time">Il y a 23 minutes</div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-item-title">🏆 Tu as débloqué: "Premier Post"!</div>
+                            <div class="notif-item-time">Il y a 1 heure</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-menu" onclick="openProfile('current_user')">
+                    <div class="avatar">🧙</div>
+                    <div class="user-info">
+                        <div class="user-name">Gandalf_le_Gris_404</div>
+                        <div class="user-title">Archimage du Réseau</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- MAIN TABS -->
+        <nav class="main-tabs">
+            <button class="main-tab active" data-tab="forum" onclick="switchTab('forum')">
+                <span class="tab-icon">🏛️</span>
+                <span>Forum</span>
+                <span class="tab-badge hot">47</span>
+            </button>
+            <button class="main-tab" data-tab="dashboard" onclick="switchTab('dashboard')">
+                <span class="tab-icon">📊</span>
+                <span>Dashboard</span>
+            </button>
+            <button class="main-tab" data-tab="bibliotheque" onclick="switchTab('bibliotheque')">
+                <span class="tab-icon">📚</span>
+                <span>Bibliotheca</span>
+                <span class="tab-badge new">5</span>
+            </button>
+            <button class="main-tab" data-tab="formations" onclick="switchTab('formations')">
+                <span class="tab-icon">🎓</span>
+                <span>Formationes</span>
+            </button>
+            <button class="main-tab" data-tab="projets" onclick="switchTab('projets')">
+                <span class="tab-icon">🚀</span>
+                <span>Projecti</span>
+            </button>
+            <button class="main-tab" data-tab="calendar" onclick="switchTab('calendar')">
+                <span class="tab-icon">📅</span>
+                <span>Calendarium</span>
+            </button>
+            <button class="main-tab" data-tab="membres" onclick="switchTab('membres')">
+                <span class="tab-icon">👥</span>
+                <span>Membra</span>
+            </button>
+            <button class="main-tab" data-tab="parametres" onclick="switchTab('parametres')">
+                <span class="tab-icon">⚙️</span>
+                <span>Parametra</span>
+            </button>
+        </nav>
+        
+        <div class="content-wrapper">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Categoriae Fori</div>
+                    <div class="sidebar-item active" onclick="filterCategory('all')">
+                        <span class="sidebar-icon">📜</span>
+                        <span class="sidebar-label">Omnia</span>
+                        <span class="sidebar-badge">274</span>
+                    </div>
+                    <div class="sidebar-item" onclick="filterCategory('strategy')">
+                        <span class="sidebar-icon">⚔️</span>
+                        <span class="sidebar-label">Consilium Bellicum</span>
+                        <span class="sidebar-badge hot">47</span>
+                    </div>
+                    <div class="sidebar-item" onclick="filterCategory('culture')">
+                        <span class="sidebar-icon">🎭</span>
+                        <span class="sidebar-label">Ars & Cultura</span>
+                        <span class="sidebar-badge">12</span>
+                    </div>
+                    <div class="sidebar-item" onclick="filterCategory('prophecy')">
+                        <span class="sidebar-icon">🔮</span>
+                        <span class="sidebar-label">Prophetiae</span>
+                        <span class="sidebar-badge">8</span>
+                    </div>
+                    <div class="sidebar-item" onclick="filterCategory('tavern')">
+                        <span class="sidebar-icon">🍺</span>
+                        <span class="sidebar-label">Taverna</span>
+                        <span class="sidebar-badge hot">156</span>
+                    </div>
+                    <div class="sidebar-item" onclick="filterCategory('bugs')">
+                        <span class="sidebar-icon">🐛</span>
+                        <span class="sidebar-label">Bug Hunters</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Guildes</div>
+                    <div class="sidebar-item" onclick="alert('🧝 Bienvenue au Conseil Elfique!\n\nMae govannen, mellon!')">
+                        <span class="sidebar-icon">🧝</span>
+                        <span class="sidebar-label">Conseil Elfique</span>
+                    </div>
+                    <div class="sidebar-item" onclick="alert('🖖 Qapla\'! Bienvenue à la Maison Klingon!\n\nHeghlu\'meH QaQ jajvam!')">
+                        <span class="sidebar-icon">🖖</span>
+                        <span class="sidebar-label">Maison Klingon</span>
+                    </div>
+                    <div class="sidebar-item" onclick="alert('🦅 SPQR! Bienvenue à la Légion!\n\nCivis Romanus sum!')">
+                        <span class="sidebar-icon">🦅</span>
+                        <span class="sidebar-label">Légion Romaine</span>
+                    </div>
+                    <div class="sidebar-item" onclick="alert('🧹 Bienvenue à Poudlard Permanent!\n\nWingardium Leviosa!')">
+                        <span class="sidebar-icon">🧹</span>
+                        <span class="sidebar-label">Poudlard EP</span>
+                    </div>
+                </div>
+                
+                <div class="online-users">
+                    <div class="online-title">
+                        <span class="online-dot"></span>
+                        <span id="online-count">42</span> Membres en ligne
+                    </div>
+                    <div class="online-list" id="online-list"></div>
+                </div>
+                
+                <div style="margin-top:1rem;padding:.75rem;background:var(--bg3);border-radius:8px;font-size:.65rem;color:var(--dim);text-align:center;">
+                    <div style="margin-bottom:.5rem;">🎮 Easter Eggs cachés: <span id="eggs-found">0</span>/7</div>
+                    <div style="font-size:.55rem;">Indice: ↑↑↓↓←→←→BA</div>
+                </div>
+            </aside>
+            
+            <!-- MAIN CONTENT -->
+            <main class="main-content">
+                <!-- FORUM TAB -->
+                <div class="tab-panel active" id="panel-forum">
+                    <div id="forum-list">
+                        <div class="forum-header">
+                            <div>
+                                <h1 class="forum-title">📜 Sanctuarium Digitalis</h1>
+                                <p class="forum-subtitle">"Qapla'! Mae govannen! In varietate concordia." — Motto Sacré</p>
+                            </div>
+                            <div style="display:flex;gap:.5rem;">
+                                <button class="btn secondary" onclick="toggleMatrixMode()">🔮 Matrix</button>
+                                <button class="btn" onclick="openNewThread()">+ Novum Filum</button>
+                            </div>
+                        </div>
+                        
+                        <div id="categories-container"></div>
+                    </div>
+                    
+                    <div id="thread-view" class="thread-view">
+                        <div class="back-btn" onclick="backToForum()">← Retro ad Forum</div>
+                        <div class="forum-header">
+                            <div>
+                                <h1 class="forum-title" id="current-thread-title"></h1>
+                                <p class="forum-subtitle" id="current-thread-subtitle"></p>
+                            </div>
+                        </div>
+                        <div id="posts-container"></div>
+                        
+                        <div class="reply-box">
+                            <div class="reply-title">✍️ Scribe Responsum Tuum</div>
+                            <div class="reply-toolbar">
+                                <button class="toolbar-btn" onclick="insertText('[runic]', '[/runic]')">ᚱ Runic</button>
+                                <button class="toolbar-btn" onclick="insertText('[elvish]', '[/elvish]')">🧝 Sindarin</button>
+                                <button class="toolbar-btn" onclick="insertText('[klingon]', '[/klingon]')">🖖 tlhIngan</button>
+                                <button class="toolbar-btn" onclick="insertText('[quote]', '[/quote]')">❝ Cita</button>
+                                <button class="toolbar-btn" onclick="insertText('[code]', '[/code]')">&lt;/&gt; Code</button>
+                                <button class="toolbar-btn" onclick="insertRandomMeme()">🎭 Meme</button>
+                            </div>
+                            <textarea class="reply-textarea" id="reply-textarea" placeholder="Scribe hic... (Linguas mixtas acceptamus! Qapla'! Mae govannen!)" oninput="updateCharCount()"></textarea>
+                            <div class="reply-footer">
+                                <div class="char-count"><span id="char-count">0</span> / 10,000 characteres</div>
+                                <button class="btn" onclick="submitReply()">📤 Mittere Responsum</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DASHBOARD TAB -->
+                <div class="tab-panel" id="panel-dashboard">
+                    <div class="lorem-page">
+                        <h1>📊 Dashboard Personalis</h1>
+                        <p>Salve, <strong style="color:var(--mint);">Gandalf_le_Gris_404</strong>! Haec est tua pagina principalis.</p>
+                        
+                        <div class="lorem-grid">
+                            <div class="lorem-card">
+                                <h3>📝 Tua Statistica</h3>
+                                <p style="color:var(--dim);font-size:.85rem;">
+                                    Posts: <span style="color:var(--mint);">4,521</span><br>
+                                    Reputation: <span style="color:var(--gold);">98,765</span><br>
+                                    Rank: <span style="color:var(--lilac);">Legendary</span>
+                                </p>
+                            </div>
+                            <div class="lorem-card">
+                                <h3>🏆 Achievements</h3>
+                                <p style="color:var(--dim);font-size:.85rem;">
+                                    Débloqués: <span style="color:var(--mint);">23/50</span><br>
+                                    Prochain: "Centurion"<br>
+                                    Progress: 89%
+                                </p>
+                            </div>
+                            <div class="lorem-card">
+                                <h3>🔔 Activitas Recens</h3>
+                                <p style="color:var(--dim);font-size:.85rem;">
+                                    Nouveaux messages: <span style="color:var(--red);">12</span><br>
+                                    Mentions: <span style="color:var(--lilac);">5</span><br>
+                                    Réactions: <span style="color:var(--gold);">47</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <h2>📈 Lorem Ipsum Progressus</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">📊</div>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- BIBLIOTHEQUE TAB -->
+                <div class="tab-panel" id="panel-bibliotheque">
+                    <div class="lorem-page">
+                        <h1>📚 Bibliotheca Magna</h1>
+                        <p>Collectio documentorum sacratorum educationis permanentis. Hic invenies omnia!</p>
+                        
+                        <h2>📖 Documenta Recentia</h2>
+                        <div class="lorem-grid">
+                            <div class="lorem-card" onclick="alert('📜 Downloading: Manifesto_AEGIS_v4.pdf\n\nQapla\'!')">
+                                <h3>📜 Manifesto ÆGIS</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel nisi at eros ullamcorper facilisis.</p>
+                                <span class="tag new" style="margin-top:.5rem;display:inline-block;">NOVUM</span>
+                            </div>
+                            <div class="lorem-card">
+                                <h3>📋 Guide du Citoyen</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+                            </div>
+                            <div class="lorem-card">
+                                <h3>🎓 Formation 101</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>🗂️ Categoriae</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">📁</div>
+                            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                        
+                        <h2>🔍 Recherche Avancée</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🔎</div>
+                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FORMATIONS TAB -->
+                <div class="tab-panel" id="panel-formations">
+                    <div class="lorem-page">
+                        <h1>🎓 Universitas Popularis</h1>
+                        <p>Formationes pro civibus activis. Discere, crescere, agere!</p>
+                        
+                        <h2>📅 Formationes Proxime</h2>
+                        <div class="lorem-card">
+                            <h3>🗣️ "Ars Rhetorica in Era Digitali"</h3>
+                            <p style="color:var(--dim);font-size:.8rem;">Dies: XV Kalendas Februarias MMXXV<br>Hora: XIV:00 - XVII:00<br>Locus: Aula Magna, Bruxelles</p>
+                            <button class="btn small" style="margin-top:.75rem;">Inscribere</button>
+                        </div>
+                        <div class="lorem-card">
+                            <h3>🖥️ "Participatio Civica Online"</h3>
+                            <p style="color:var(--dim);font-size:.8rem;">Dies: XXII Kalendas Februarias MMXXV<br>Hora: X:00 - XII:00<br>Modus: Visioconferentia</p>
+                            <button class="btn small" style="margin-top:.75rem;">Inscribere</button>
+                        </div>
+                        
+                        <h2>📜 Curricula</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🎓</div>
+                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.</p>
+                            <ul>
+                                <li>Lorem ipsum dolor sit amet</li>
+                                <li>Consectetur adipiscing elit</li>
+                                <li>Sed do eiusmod tempor</li>
+                                <li>Incididunt ut labore</li>
+                            </ul>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PROJETS TAB -->
+                <div class="tab-panel" id="panel-projets">
+                    <div class="lorem-page">
+                        <h1>🚀 Projecti Activi</h1>
+                        <p>Collaboratio inter membra pro mundo meliore!</p>
+                        
+                        <h2>🔥 Projecti in Progressu</h2>
+                        <div class="lorem-grid">
+                            <div class="lorem-card" style="border-left:3px solid var(--mint);">
+                                <h3>🌱 Projectum Viridis</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Status: <span style="color:var(--mint);">Activum</span><br>Membra: 23<br>Progressus: 67%</p>
+                            </div>
+                            <div class="lorem-card" style="border-left:3px solid var(--gold);">
+                                <h3>📢 Campania Civica</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Status: <span style="color:var(--gold);">Planning</span><br>Membra: 8<br>Progressus: 25%</p>
+                            </div>
+                            <div class="lorem-card" style="border-left:3px solid var(--lilac);">
+                                <h3>🎭 Festival Artium</h3>
+                                <p style="color:var(--dim);font-size:.8rem;">Status: <span style="color:var(--lilac);">Idea</span><br>Membra: 5<br>Progressus: 10%</p>
+                            </div>
+                        </div>
+                        
+                        <h2>💡 Propone Projectum</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">💡</div>
+                            <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CALENDAR TAB -->
+                <div class="tab-panel" id="panel-calendar">
+                    <div class="lorem-page">
+                        <h1>📅 Calendarium MMXXV</h1>
+                        <p>Omnia eventa et conventus importantia!</p>
+                        
+                        <h2>📌 Eventa Proxima</h2>
+                        <div class="lorem-card">
+                            <h3>🏛️ Assemblea Generalis</h3>
+                            <p style="color:var(--dim);font-size:.8rem;">Dies: III Idus Martias MMXXV<br>Hora: X:00<br>Locus: Forum Magnum</p>
+                        </div>
+                        <div class="lorem-card">
+                            <h3>🎉 Dies Festus ÆGIS</h3>
+                            <p style="color:var(--dim);font-size:.8rem;">Dies: Kalendas Maias MMXXV<br>Hora: Tota die<br>Locus: Ubique!</p>
+                        </div>
+                        
+                        <h2>📆 Mensis Currentis</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">📆</div>
+                            <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser - Calendrier interactif ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MEMBRES TAB -->
+                <div class="tab-panel" id="panel-membres">
+                    <div class="lorem-page">
+                        <h1>👥 Collegium Membrorum</h1>
+                        <p>Omnes heroes nostrae communitatis!</p>
+                        
+                        <h2>🏆 Top Contributores</h2>
+                        <div class="lorem-grid" id="top-members"></div>
+                        
+                        <h2>🔍 Quaerere Membrum</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🔎</div>
+                            <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser - Recherche de membres ]</p>
+                        </div>
+                        
+                        <h2>📊 Statisticae</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">📈</div>
+                            <p>Omnis voluptas assumenda est, omnis dolor repellendus. Itaque earum rerum hic tenetur a sapiente delectus.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PARAMETRES TAB -->
+                <div class="tab-panel" id="panel-parametres">
+                    <div class="lorem-page">
+                        <h1>⚙️ Parametra</h1>
+                        <p>Configura tuam experientiam!</p>
+                        
+                        <h2>👤 Profil</h2>
+                        <div class="lorem-card">
+                            <h3>Informationes Personales</h3>
+                            <p style="color:var(--dim);font-size:.8rem;">
+                                Nomen: Gandalf_le_Gris_404<br>
+                                Email: gandalf@aegis.be<br>
+                                Lingua: Latin-Klingon-Sindarin Mix
+                            </p>
+                            <button class="btn small secondary" style="margin-top:.75rem;">Modificare</button>
+                        </div>
+                        
+                        <h2>🎨 Apparentia</h2>
+                        <div class="lorem-card">
+                            <h3>Thema</h3>
+                            <div style="display:flex;gap:.5rem;margin-top:.5rem;">
+                                <button class="btn small" onclick="alert('🌙 Dark Mode Activé!')">🌙 Dark</button>
+                                <button class="btn small secondary" onclick="alert('☀️ Light Mode? Really? 🤮')">☀️ Light</button>
+                                <button class="btn small secondary" onclick="document.body.classList.toggle('party-mode')">🎉 Party</button>
+                            </div>
+                        </div>
+                        
+                        <h2>🔔 Notificationes</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🔔</div>
+                            <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                        
+                        <h2>🔐 Securitas</h2>
+                        <div class="placeholder">
+                            <div class="placeholder-icon">🔐</div>
+                            <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
+                            <p style="font-size:.75rem;margin-top:1rem;">[ Zone à personnaliser ]</p>
+                        </div>
+                        
+                        <h2>🎮 Easter Eggs</h2>
+                        <div class="lorem-card" style="background:var(--bg3);">
+                            <h3 style="color:var(--gold);">🥚 Secrets Découverts</h3>
+                            <p style="color:var(--dim);font-size:.8rem;" id="secrets-list">
+                                Aucun secret découvert... pour l'instant!<br>
+                                <span style="font-size:.7rem;">Indice: Konami Code, recherche secrète, 7 clics...</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- PROFILE MODAL -->
+    <div class="modal-overlay" id="profile-modal" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">📜 Codex Membri</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="profile-content"></div>
+        </div>
+    </div>
+    
+    <!-- NEW THREAD MODAL -->
+    <div class="modal-overlay" id="thread-modal" onclick="if(event.target===this)closeThreadModal()">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <span class="modal-title">✍️ Novum Filum Creare</span>
+                <button class="modal-close" onclick="closeThreadModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-size:.75rem;color:var(--dim);margin-bottom:.5rem;">Titulus</label>
+                    <input type="text" id="new-thread-title" style="width:100%;padding:.75rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:inherit;" placeholder="[EPIC] Qapla'! Mae govannen!">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-size:.75rem;color:var(--dim);margin-bottom:.5rem;">Categoria</label>
+                    <select id="new-thread-category" style="width:100%;padding:.75rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:inherit;">
+                        <option value="strategy">⚔️ Consilium Bellicum</option>
+                        <option value="culture">🎭 Ars & Cultura</option>
+                        <option value="prophecy">🔮 Prophetiae</option>
+                        <option value="tavern">🍺 Taverna</option>
+                        <option value="bugs">🐛 Bug Hunters</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block;font-size:.75rem;color:var(--dim);margin-bottom:.5rem;">Contentum</label>
+                    <textarea id="new-thread-content" style="width:100%;min-height:150px;padding:.75rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:inherit;resize:vertical;" placeholder="Scribe hic tuam sapientiam..."></textarea>
+                </div>
+                <button class="btn" onclick="createThread()" style="width:100%;">📤 Publicare Filum</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// DATA
+// ============================================
+const USERS = {
+    'gandalf_le_gris_404': { name: 'Gandalf_le_Gris_404', avatar: '🧙', title: 'Archimage du Réseau', badges: ['founder', 'elder', 'sage'], posts: 4521, reputation: 98765, joined: '2019-03-15', location: 'Valinor-sur-Meuse, Belgique', bio: 'Un magicien n\'est jamais en retard. Il poste précisément quand il le décide. <span style="color:var(--gold);">ᚠᛟᚱ ᛏᚺᛖ ᛈᛖᛟᛈᛚᛖ</span>', rank: 'legendary' },
+    'spock_logicus': { name: 'Spock_Logicus', avatar: '🖖', title: 'Officier Scientifique de la Démocratie', badges: ['elder', 'sage'], posts: 2847, reputation: 45678, joined: '2020-01-07', location: 'Vulcain (Embassy Brussels)', bio: 'La logique est le début de la sagesse. La participation citoyenne est... fascinante. Live long and participate.', rank: 'epic' },
+    'xX_Aragorn_2003_Xx': { name: 'xX_Aragorn_2003_Xx', avatar: '🗡️', title: 'Rôdeur des Politiques Publiques', badges: ['warrior', 'sage'], posts: 1567, reputation: 23456, joined: '2021-06-23', location: 'Somewhere in Wallonie', bio: 'Si par ma vie ou ma mort je peux vous aider à comprendre l\'éducation permanente, je le ferai.', rank: 'rare' },
+    'légolas_du_93': { name: 'Légolas_du_93', avatar: '🏹', title: 'Archer de la Formation Continue', badges: ['warrior'], posts: 892, reputation: 12345, joined: '2022-02-14', location: 'Forêt de Soignes', bio: 'Ils arrivent. Les inégalités. Je peux les sentir.', rank: 'rare' },
+    'yoda_syntaxerror': { name: 'Yoda_SyntaxError', avatar: '👽', title: 'Grand Maître du Code Social', badges: ['founder', 'sage', 'meme'], posts: 3456, reputation: 67890, joined: '2019-05-04', location: 'Dagobah Data Center', bio: 'Faire ou ne pas faire. Il n\'y a pas d\'essai. Strong in the Force of citoyenneté, this one is.', rank: 'legendary' },
+    'frodo_2_la_comté': { name: 'Frodo_2_la_Comté', avatar: '💍', title: 'Porteur du Fardeau Administratif', badges: ['warrior', 'meme'], posts: 678, reputation: 8901, joined: '2022-09-22', location: 'Cul-de-Sac, Brabant Wallon', bio: 'On ne choisit pas les décrets qu\'on doit appliquer.', rank: 'common' },
+    'darth_citoyennus': { name: 'Darth_Citoyennus', avatar: '⚫', title: 'Seigneur Sith de la Participation', badges: ['warrior'], posts: 1234, reputation: 15678, joined: '2021-10-31', location: 'Death Star Brussels', bio: 'Je trouve ton manque de participation... dérangeant.', rank: 'epic' },
+    'cicero_ipsum': { name: 'Cicero_Ipsum', avatar: '📜', title: 'Consul Honoraire du Lorem', badges: ['elder', 'sage'], posts: 2345, reputation: 34567, joined: '2020-03-15', location: 'Forum Romanum, Liège', bio: 'O tempora, o mores! Civis Romanus sum!', rank: 'epic' },
+    'dumbledore_xp': { name: 'Dumbledore_XP', avatar: '🧹', title: 'Directeur de Poudlard Permanent', badges: ['founder', 'elder', 'sage'], posts: 5678, reputation: 123456, joined: '2018-07-31', location: 'Bureau du Directeur, Tour Nord', bio: 'Le bonheur peut être trouvé même dans les moments les plus sombres.', rank: 'legendary' },
+    'neo_democratia': { name: 'Neo_Democratia', avatar: '💊', title: 'L\'Élu des Processus Participatifs', badges: ['sage'], posts: 987, reputation: 19876, joined: '2021-03-31', location: 'Zion, sous Bruxelles', bio: 'Tu prends la pilule rouge, je te montre la vraie démocratie participative.', rank: 'rare' },
+    'worf_educatus': { name: 'Worf_Educatus', avatar: '⚔️', title: 'Guerrier de l\'Éducation Permanente', badges: ['warrior'], posts: 1789, reputation: 27890, joined: '2020-08-14', location: 'Qo\'noS Embassy, Charleroi', bio: 'Aujourd\'hui est un bon jour pour apprendre! Qapla\'!', rank: 'epic' },
+    'current_user': { name: 'Gandalf_le_Gris_404', avatar: '🧙', title: 'Archimage du Réseau', badges: ['founder', 'elder', 'sage'], posts: 4521, reputation: 98765, joined: '2019-03-15', location: 'Valinor-sur-Meuse', bio: 'C\'est toi!', rank: 'legendary' }
+};
+
+const CATEGORIES = [
+    { id: 'strategy', icon: '⚔️', name: 'CONSILIUM BELLICUM STRATEGIAE', desc: 'Ubi strategos de futura civis actione disputant. tlhIngan maH!', threads: 1247, posts: 15893 },
+    { id: 'culture', icon: '🎭', name: 'ARS & CULTURA', desc: 'Elen síla lúmenn\' omentielvo. De artibus et spectaculis.', threads: 456, posts: 5678 },
+    { id: 'prophecy', icon: '🔮', name: 'PROPHETIAE & VISIONES', desc: 'yIDoghQo\'! Le futur de la démocratie et visions 2030.', threads: 234, posts: 3456 },
+    { id: 'tavern', icon: '🍺', name: 'TAVERNA PRANCING PONY', desc: 'Hic relaxamus! nuqDaq \'oH puchpa\'\'e\'? Shitposts welcome!', threads: 3891, posts: 89234 },
+    { id: 'bugs', icon: '🐛', name: 'BUG HUNTERS GUILD', desc: 'Reporta problemata et suggere meliorationes. Qapla\'!', threads: 123, posts: 890 }
+];
+
+const THREADS_DATA = [
+    { id: 1, category: 'strategy', title: '[SACRUM] Qatlh Democratia permanens Qap?! — Manifesto Novus Ordo', user: 'gandalf_le_gris_404', replies: 847, tags: ['pinned', 'sacred'], lastUser: 'yoda_syntaxerror', lastTime: 'hodie, 15:42' },
+    { id: 2, category: 'strategy', title: 'Logice, participation civium est... FASCINANS', user: 'spock_logicus', replies: 234, tags: ['hot'], lastUser: 'worf_educatus', lastTime: 'hodie, 16:18' },
+    { id: 3, category: 'strategy', title: 'Mellon! I amar prestar aen — Guide Sindarin pour l\'action sociale', user: 'xX_Aragorn_2003_Xx', replies: 156, tags: ['epic'], lastUser: 'légolas_du_93', lastTime: 'hodie, 14:07' },
+    { id: 4, category: 'tavern', title: '[SHITPOST] Cur Balrog non habet alas? FIGHT ME. Heghlu\'meH QaQ jajvam!', user: 'frodo_2_la_comté', replies: 2341, tags: ['hot'], lastUser: 'darth_citoyennus', lastTime: 'nunc!' },
+    { id: 5, category: 'tavern', title: 'Responsum, tu quaeris? In CSS, responsum est! Hmmmm.', user: 'yoda_syntaxerror', replies: 89, tags: ['solved'], lastUser: 'neo_democratia', lastTime: 'hodie, 11:33' },
+    { id: 6, category: 'tavern', title: 'SPQR meets ÆGIS — Quid Romani nobis docent?', user: 'cicero_ipsum', replies: 67, tags: [], lastUser: 'worf_educatus', lastTime: 'heri, 23:45' },
+    { id: 7, category: 'prophecy', title: '[VISIO 2030] Ithil natha galadh — IA et educatio permanens', user: 'dumbledore_xp', replies: 445, tags: ['epic'], lastUser: 'neo_democratia', lastTime: 'hodie, 09:17' },
+    { id: 8, category: 'prophecy', title: 'Pillula rubra vel caerulea? — De Matrix Socialis', user: 'neo_democratia', replies: 198, tags: [], lastUser: 'spock_logicus', lastTime: 'heri, 20:11' },
+    { id: 9, category: 'culture', title: 'Theatre of the Oppressed: Qapla\' Edition', user: 'darth_citoyennus', replies: 78, tags: [], lastUser: 'légolas_du_93', lastTime: 'heri, 18:30' },
+    { id: 10, category: 'bugs', title: '[BUG] Konami code non functio in mobile', user: 'neo_democratia', replies: 12, tags: ['solved'], lastUser: 'yoda_syntaxerror', lastTime: 'hodie, 08:00' }
+];
+
+const POSTS_DATA = {
+    1: [
+        { user: 'gandalf_le_gris_404', date: 'Dies Saturni, XV Kal. Mart. MMXXV', content: `<p><span class="runic">ᚠᛟᚱ ᛏᚺᛖ ᛈᛖᛟᛈᛚᛖ, ᛒᚤ ᛏᚺᛖ ᛈᛖᛟᛈᛚᛖ</span></p><p>Fratres et Sorores in Civitatem,</p><p><span class="klingon">Qapla'!</span> <span class="elvish">Mae govannen!</span> Salvete omnes!</p><p>Hodie, novum caput aperimus. <span class="elvish">Elen síla lúmenn' omentielvo</span> — Une étoile brille sur notre rencontre.</p><div class="quote"><span class="klingon">bIlujDI' yIchegh()Qo'!</span> — Quand tu échoues, n'abandonne pas!<cite>— Ancien Proverbe Klingon de Charleroi</cite></div>`, isOp: true, reactions: ['🔥 234', '🧝 189', '🖖 156', '💎 98'] },
+        { user: 'spock_logicus', date: 'Dies Saturni, hora XIV', content: `<p><span class="elvish">Mae govannen</span>, Gandalf.</p><p>Logice loquendo, propositio tua continet <code>0.03%</code> errorem. Quod est... acceptabile.</p><p><span class="klingon">Qapla'!</span> Live long and participate. 🖖</p>`, reactions: ['🖖 345', '🧠 123'] },
+        { user: 'yoda_syntaxerror', date: 'Dies Solis, hora VIII', content: `<p>Hmmmm. Sapienter tu loqueris.</p><p><span class="elvish">Cuio i Pheriain anann!</span></p><p>In the Force of democratia, strong we are. Multa est via: <code>npm install --save democratia</code></p>`, reactions: ['👽 456', '😂 234', '🔥 189'] },
+        { user: 'worf_educatus', date: 'Dies Solis, hora XII', content: `<p><span class="klingon">QAPLA'!</span></p><p>Gloria et honor! <span class="klingon">Heghlu'meH QaQ jajvam!</span> — Hodie bonum diem ad discendum!</p><p>Klingones non habent "bureaucratia". Nos: <span class="klingon">"QI'yaH!"</span></p><p><span class="elvish">A Elbereth Gilthoniel!</span> ⚔️</p>`, reactions: ['⚔️ 567', '🖖 234', '💪 178'] },
+        { user: 'frodo_2_la_comté', date: 'Dies Lunae, hora X', content: `<p><span class="elvish">Elen síla lúmenn' omentielvo!</span> 💍</p><p>Ego sum parvus Hobbit, sed magnum pondus porto (formularium Cerfa-2042-B).</p><div class="quote"><span class="klingon">nuqDaq 'oH puchpa''e'?</span> — Ubi est latrina?<cite>— Frodo, post sessionem de 4 horis</cite></div><p>Sed cum vobis, <span class="runic">ᚠᛟᚱᚹᚨᚱᛞ ᚹᛖ ᚷᛟ</span>!</p>`, reactions: ['💍 345', '🥺 234', '🍺 189'] }
+    ]
+};
+
+// ============================================
+// STATE
+// ============================================
+let currentTab = 'forum';
+let currentThread = null;
+let logoClicks = 0;
+let eggsFound = new Set();
+let konamiProgress = 0;
+const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    renderCategories();
+    renderOnlineUsers();
+    renderTopMembers();
+    setupKonamiCode();
+});
+
+// ============================================
+// TABS
+// ============================================
+function switchTab(tabId) {
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    document.getElementById(`panel-${tabId}`).classList.add('active');
+    currentTab = tabId;
+    if (tabId === 'forum') backToForum();
+}
+
+// ============================================
+// FORUM
+// ============================================
+function renderCategories() {
+    const container = document.getElementById('categories-container');
+    container.innerHTML = CATEGORIES.map(cat => {
+        const threads = THREADS_DATA.filter(t => t.category === cat.id);
+        return `
+            <div class="category open" data-category="${cat.id}">
+                <div class="category-header" onclick="toggleCategory('${cat.id}')">
+                    <div class="category-icon">${cat.icon}</div>
+                    <div class="category-info">
+                        <div class="category-name">${cat.name}</div>
+                        <div class="category-desc">${cat.desc}</div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="category-stat"><span>${cat.threads.toLocaleString()}</span> fila</div>
+                        <div class="category-stat"><span>${cat.posts.toLocaleString()}</span> responsa</div>
+                    </div>
+                    <div class="category-toggle">▼</div>
+                </div>
+                <div class="threads">
+                    ${threads.map(t => renderThread(t)).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderThread(t) {
+    const user = USERS[t.user];
+    const tags = t.tags.map(tag => `<span class="tag ${tag}">${getTagLabel(tag)}</span>`).join('');
+    return `
+        <div class="thread" onclick="openThread(${t.id})">
+            <div class="thread-avatar ${user.rank}">${user.avatar}</div>
+            <div class="thread-content">
+                <div class="thread-title">${t.title}${tags}</div>
+                <div class="thread-meta">Initiatum per <a href="#" onclick="event.stopPropagation();openProfile('${t.user}')">${user.name}</a></div>
+            </div>
+            <div class="thread-stats">
+                <div class="thread-stat-value">${t.replies}</div>
+                <div class="thread-stat-label">responsa</div>
+            </div>
+            <div class="thread-last">
+                <div class="thread-last-user">${USERS[t.lastUser]?.name || t.lastUser}</div>
+                <div class="thread-last-time">${t.lastTime}</div>
+            </div>
+        </div>
+    `;
+}
+
+function getTagLabel(tag) {
+    const labels = { pinned: '📌', hot: '🔥', solved: '✓', epic: '✨', sacred: '🌟' };
+    return labels[tag] || tag;
+}
+
+function toggleCategory(catId) {
+    const cat = document.querySelector(`[data-category="${catId}"]`);
+    cat.classList.toggle('open');
+}
+
+function filterCategory(catId) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    event.target.closest('.sidebar-item').classList.add('active');
+    
+    document.querySelectorAll('.category').forEach(cat => {
+        if (catId === 'all' || cat.dataset.category === catId) {
+            cat.style.display = 'block';
+            cat.classList.add('open');
+        } else {
+            cat.style.display = 'none';
+        }
+    });
+}
+
+function openThread(threadId) {
+    currentThread = THREADS_DATA.find(t => t.id === threadId);
+    if (!currentThread) return;
+    
+    document.getElementById('forum-list').style.display = 'none';
+    document.getElementById('thread-view').classList.add('active');
+    document.getElementById('current-thread-title').textContent = currentThread.title;
+    document.getElementById('current-thread-subtitle').textContent = `${currentThread.replies} réponses · Categoria: ${currentThread.category}`;
+    
+    const posts = POSTS_DATA[threadId] || POSTS_DATA[1];
+    renderPosts(posts);
+}
+
+function renderPosts(posts) {
+    const container = document.getElementById('posts-container');
+    container.innerHTML = posts.map((post, idx) => {
+        const user = USERS[post.user];
+        const badges = user.badges.map(b => `<span class="badge ${b}">${getBadgeName(b)}</span>`).join('');
+        return `
+            <div class="post ${post.isOp ? 'op' : ''}">
+                <div class="post-header">
+                    <div class="post-avatar ${user.rank}" onclick="openProfile('${post.user}')">${user.avatar}</div>
+                    <div class="post-user-info">
+                        <div class="post-username">${user.name} ${badges}</div>
+                        <div class="post-usertitle">${user.title}</div>
+                        <div class="post-userstats">📝 ${user.posts.toLocaleString()} · ⭐ ${user.reputation.toLocaleString()}</div>
+                    </div>
+                    <div class="post-date">${post.date}</div>
+                </div>
+                <div class="post-body">
+                    ${post.content}
+                    <div class="signature">
+                        <pre>╔════════════════════════════════════╗
+║  ${user.name.substring(0,32).padEnd(32)}  ║
+║  "${user.title.substring(0,30).padEnd(30)}"  ║
+╚════════════════════════════════════╝</pre>
+                    </div>
+                </div>
+                <div class="post-footer">
+                    <div class="post-actions">
+                        <div class="post-action" onclick="likePost(this)">👍 Like</div>
+                        <div class="post-action">💬 Cita</div>
+                        <div class="post-action">🚩 Report</div>
+                    </div>
+                    <div class="post-reactions">${post.reactions.map(r => `<span class="reaction" onclick="addReaction(this)">${r}</span>`).join('')}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function backToForum() {
+    document.getElementById('forum-list').style.display = 'block';
+    document.getElementById('thread-view').classList.remove('active');
+    currentThread = null;
+}
+
+function getBadgeName(b) {
+    return { founder: '👑 Fondateur', elder: '🏛️ Ancien', warrior: '⚔️ Guerrier', sage: '📚 Sage', meme: '🎭 Memelord' }[b] || b;
+}
+
+// ============================================
+// INTERACTIONS
+// ============================================
+function likePost(el) {
+    el.innerHTML = '👍 Liked!';
+    el.style.color = 'var(--mint)';
+}
+
+function addReaction(el) {
+    const num = parseInt(el.textContent.match(/\d+/)?.[0] || 0) + 1;
+    const emoji = el.textContent.match(/^[^\d]+/)[0];
+    el.textContent = emoji + num;
+    el.style.borderColor = 'var(--mint)';
+}
+
+function updateCharCount() {
+    const count = document.getElementById('reply-textarea').value.length;
+    document.getElementById('char-count').textContent = count.toLocaleString();
+}
+
+function insertText(before, after) {
+    const ta = document.getElementById('reply-textarea');
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const text = ta.value;
+    ta.value = text.slice(0, start) + before + text.slice(start, end) + after + text.slice(end);
+    ta.focus();
+}
+
+function insertRandomMeme() {
+    const memes = ['( ͡° ͜ʖ ͡°)', '¯\\_(ツ)_/¯', '(╯°□°)╯︵ ┻━┻', '┬─┬ノ( º _ ºノ)', '(ノಠ益ಠ)ノ彡┻━┻', '(☞ﾟヮﾟ)☞', '༼ つ ◕_◕ ༽つ', '(•_•) ( •_•)>⌐■-■ (⌐■_■)'];
+    insertText(memes[Math.floor(Math.random() * memes.length)], '');
+}
+
+function submitReply() {
+    const content = document.getElementById('reply-textarea').value;
+    if (!content.trim()) return alert('Scribe aliquid!');
+    alert('📤 Responsum tuum missum est!\n\nQapla\'! Mae govannen!');
+    document.getElementById('reply-textarea').value = '';
+    updateCharCount();
+}
+
+function openNewThread() {
+    document.getElementById('thread-modal').classList.add('active');
+}
+
+function closeThreadModal() {
+    document.getElementById('thread-modal').classList.remove('active');
+}
+
+function createThread() {
+    const title = document.getElementById('new-thread-title').value;
+    const content = document.getElementById('new-thread-content').value;
+    if (!title.trim() || !content.trim()) return alert('Imple omnia!');
+    alert('📜 Filum novum creatum!\n\n' + title + '\n\nQapla\'!');
+    closeThreadModal();
+}
+
+// ============================================
+// PROFILE
+// ============================================
+function openProfile(userId) {
+    const user = USERS[userId];
+    if (!user) return;
+    
+    const badges = user.badges.map(b => `<span class="badge ${b}">${getBadgeName(b)}</span>`).join('');
+    document.getElementById('profile-content').innerHTML = `
+        <div class="profile-header">
+            <div class="profile-avatar ${user.rank}">${user.avatar}</div>
+            <div class="profile-info">
+                <div class="profile-name">${user.name}</div>
+                <div class="profile-title">${user.title}</div>
+                <div class="profile-badges">${badges}</div>
+            </div>
+        </div>
+        <div class="profile-stats">
+            <div class="profile-stat"><div class="profile-stat-value">${user.posts.toLocaleString()}</div><div class="profile-stat-label">Posts</div></div>
+            <div class="profile-stat"><div class="profile-stat-value">${user.reputation.toLocaleString()}</div><div class="profile-stat-label">Rep</div></div>
+            <div class="profile-stat"><div class="profile-stat-value">${new Date(user.joined).getFullYear()}</div><div class="profile-stat-label">Depuis</div></div>
+            <div class="profile-stat"><div class="profile-stat-value" style="font-size:.8rem;color:var(--mint);">En ligne</div><div class="profile-stat-label">Status</div></div>
+        </div>
+        <div class="profile-location">📍 <span>${user.location}</span></div>
+        <div class="profile-bio">"${user.bio}"</div>
+    `;
+    document.getElementById('profile-modal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('profile-modal').classList.remove('active');
+}
+
+// ============================================
+// ONLINE USERS
+// ============================================
+function renderOnlineUsers() {
+    const onlineIds = Object.keys(USERS).filter(id => id !== 'current_user').slice(0, 12);
+    document.getElementById('online-list').innerHTML = onlineIds.map(id => {
+        const u = USERS[id];
+        return `<div class="online-avatar" onclick="openProfile('${id}')" title="${u.name}">${u.avatar}</div>`;
+    }).join('');
+}
+
+// ============================================
+// TOP MEMBERS
+// ============================================
+function renderTopMembers() {
+    const sorted = Object.entries(USERS).filter(([k]) => k !== 'current_user').sort((a, b) => b[1].reputation - a[1].reputation).slice(0, 6);
+    document.getElementById('top-members').innerHTML = sorted.map(([id, u]) => `
+        <div class="lorem-card" onclick="openProfile('${id}')" style="cursor:pointer;">
+            <div style="display:flex;align-items:center;gap:.75rem;">
+                <div style="font-size:2rem;">${u.avatar}</div>
+                <div>
+                    <h3 style="font-size:.9rem;">${u.name}</h3>
+                    <p style="color:var(--gold);font-size:.7rem;">${u.title}</p>
+                    <p style="color:var(--dim);font-size:.7rem;">⭐ ${u.reputation.toLocaleString()}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+function toggleNotifications() {
+    document.getElementById('notif-panel').classList.toggle('active');
+    event.stopPropagation();
+}
+document.addEventListener('click', () => document.getElementById('notif-panel').classList.remove('active'));
+
+// ============================================
+// EASTER EGGS
+// ============================================
+function triggerEasterEgg(type) {
+    if (type === 'logo') {
+        logoClicks++;
+        if (logoClicks >= 7) {
+            logoClicks = 0;
+            if (!eggsFound.has('logo')) {
+                eggsFound.add('logo');
+                updateEggsFound();
+                document.body.classList.add('rainbow-mode');
+                setTimeout(() => document.body.classList.remove('rainbow-mode'), 5000);
+                alert('🌈 RAINBOW MODE ACTIVÉ!\n\nTu as trouvé l\'Easter Egg #1!');
+            }
+        }
+    }
+}
+
+function checkSecretSearch(e) {
+    const val = e.target.value.toLowerCase();
+    if (val === 'xyzzy' && !eggsFound.has('xyzzy')) {
+        eggsFound.add('xyzzy');
+        updateEggsFound();
+        alert('✨ XYZZY! Nothing happens... ou peut-être que si?\n\nEaster Egg #2 trouvé!');
+        e.target.value = '';
+    }
+    if (val === 'there is no spoon' && !eggsFound.has('spoon')) {
+        eggsFound.add('spoon');
+        updateEggsFound();
+        alert('🥄 "There is no spoon." — Neo\n\nEaster Egg #3 trouvé!');
+        e.target.value = '';
+    }
+    if (val === '42' && !eggsFound.has('42')) {
+        eggsFound.add('42');
+        updateEggsFound();
+        alert('🌌 La réponse à la grande question sur la vie, l\'univers et le reste!\n\nEaster Egg #4 trouvé!');
+        e.target.value = '';
+    }
+    if (val === 'mellon' && !eggsFound.has('mellon')) {
+        eggsFound.add('mellon');
+        updateEggsFound();
+        alert('🚪 Les portes de la Moria s\'ouvrent!\n\n"Speak friend and enter"\n\nEaster Egg #5 trouvé!');
+        e.target.value = '';
+    }
+}
+
+function updateEggsFound() {
+    document.getElementById('eggs-found').textContent = eggsFound.size;
+    const list = Array.from(eggsFound).map(e => `✓ ${e}`).join('<br>');
+    document.getElementById('secrets-list').innerHTML = list || 'Aucun secret découvert...';
+}
+
+// ============================================
+// KONAMI CODE
+// ============================================
+function setupKonamiCode() {
+    document.addEventListener('keydown', (e) => {
+        if (e.keyCode === konamiCode[konamiProgress]) {
+            konamiProgress++;
+            if (konamiProgress === konamiCode.length) {
+                konamiProgress = 0;
+                activateKonamiCode();
+            }
+        } else {
+            konamiProgress = 0;
+        }
+    });
+}
+
+function activateKonamiCode() {
+    if (!eggsFound.has('konami')) {
+        eggsFound.add('konami');
+        updateEggsFound();
+    }
+    document.getElementById('konami-overlay').classList.add('active');
+}
+
+function closeKonami() {
+    document.getElementById('konami-overlay').classList.remove('active');
+    // Activate legendary mode
+    document.querySelectorAll('.thread-avatar').forEach(a => a.classList.add('legendary'));
+}
+
+// ============================================
+// MATRIX MODE
+// ============================================
+function toggleMatrixMode() {
+    const container = document.getElementById('matrix-container');
+    if (container.classList.contains('active')) {
+        container.classList.remove('active');
+        container.innerHTML = '';
+        return;
+    }
+    
+    if (!eggsFound.has('matrix')) {
+        eggsFound.add('matrix');
+        updateEggsFound();
+    }
+    
+    container.classList.add('active');
+    const chars = 'AEGIS@01アイウエオカキクケコᚠᚱᛏᚺᛖ';
+    for (let i = 0; i < 50; i++) {
+        const span = document.createElement('span');
+        span.className = 'matrix-char';
+        span.textContent = chars[Math.floor(Math.random() * chars.length)];
+        span.style.left = Math.random() * 100 + '%';
+        span.style.animationDelay = Math.random() * 5 + 's';
+        span.style.animationDuration = (3 + Math.random() * 4) + 's';
+        container.appendChild(span);
+    }
+    
+    setTimeout(() => {
+        container.classList.remove('active');
+        container.innerHTML = '';
+    }, 10000);
+}
+
+// Nyan cat on triple click
+document.addEventListener('click', (e) => {
+    if (e.detail === 3) {
+        const nyan = document.getElementById('nyan');
+        nyan.classList.add('active');
+        nyan.style.left = e.clientX + 'px';
+        nyan.style.top = e.clientY + 'px';
+        
+        let pos = e.clientX;
+        const interval = setInterval(() => {
+            pos += 10;
+            nyan.style.left = pos + 'px';
+            if (pos > window.innerWidth) {
+                clearInterval(interval);
+                nyan.classList.remove('active');
+            }
+        }, 50);
+    }
+});
+</script>
+</body>
+</html>

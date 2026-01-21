@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="matrix">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'ÉTOILE NOIRE — Chroniques de la Guerre Totale</title>
+    <meta name="description" content="ARG narratif interactif. L'Étoile de la Vie révèle sa vraie nature. Choisissez votre camp.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --matrix: #39ff14;
+            --matrix-dim: #0f3d0f;
+            --matrix-glow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 40px #39ff14;
+            --sith: #ff1744;
+            --sith-glow: 0 0 10px #ff1744, 0 0 20px #ff1744;
+            --etoile-vert: #90EE90;
+            --etoile-lilas: #DDA0DD;
+            --etoile-glow: 0 0 15px #90EE90, 0 0 30px #DDA0DD;
+            --void: #000000;
+            --deep: #0a0a0a;
+            --panel: #0d1117;
+            --elevated: #161b22;
+            --text: #c9d1d9;
+            --muted: #6e7681;
+            --cyan: #00d4ff;
+            --purple: #a855f7;
+            --gold: #ffd700;
+            --blood: #8b0000;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body { height: 100%; overflow: hidden; }
+        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--void);
+            color: var(--matrix);
+            position: relative;
+        }
+        
+        /* === MATRIX RAIN === */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+        
+        .matrix-rain canvas {
+            display: block;
+        }
+        
+        /* === MAIN CONTAINER === */
+        .game-container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* === HEADER === */
+        .header {
+            background: linear-gradient(180deg, rgba(0,0,0,.95) 0%, rgba(0,0,0,.8) 100%);
+            border-bottom: 1px solid var(--matrix-dim);
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle, var(--etoile-vert), var(--etoile-lilas));
+            border-radius: 50%;
+            box-shadow: var(--etoile-glow);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .logo-text { 
+            background: linear-gradient(90deg, var(--etoile-vert), var(--etoile-lilas));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .stat-icon { font-size: 1rem; }
+        .stat-value { color: var(--matrix); font-weight: bold; }
+        .stat-label { color: var(--muted); }
+        
+        .header-actions { display: flex; gap: 0.5rem; }
+        
+        .btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid var(--matrix-dim);
+            color: var(--matrix);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background: var(--matrix);
+            color: var(--void);
+            box-shadow: var(--matrix-glow);
+        }
+        
+        .btn.sith { border-color: var(--sith); color: var(--sith); }
+        .btn.sith:hover { background: var(--sith); box-shadow: var(--sith-glow); }
+        
+        .btn.etoile { 
+            border-color: var(--etoile-lilas); 
+            color: var(--etoile-vert);
+            background: linear-gradient(135deg, rgba(144,238,144,.1), rgba(221,160,221,.1));
+        }
+        
+        /* === GAME VIEW === */
+        .game-view {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* === NARRATIVE PANEL === */
+        .narrative-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .chapter-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--matrix-dim);
+        }
+        
+        .chapter-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chapter-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: var(--matrix-glow);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chapter-location {
+            font-size: 0.8rem;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .narrative-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .narrative-text p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        
+        .narrative-text .highlight {
+            color: var(--matrix);
+            text-shadow: 0 0 5px var(--matrix);
+        }
+        
+        .narrative-text .sith-text {
+            color: var(--sith);
+            text-shadow: 0 0 5px var(--sith);
+        }
+        
+        .narrative-text .etoile-text {
+            background: linear-gradient(90deg, var(--etoile-vert), var(--etoile-lilas));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .narrative-text .cipher {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--panel);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            color: var(--cyan);
+            cursor: help;
+        }
+        
+        .narrative-text blockquote {
+            border-left: 3px solid var(--etoile-lilas);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: var(--etoile-vert);
+        }
+        
+        /* === CHOICES === */
+        .choices-container {
+            max-width: 700px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .choices-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(90deg, rgba(57,255,20,.05), transparent);
+            border: 1px solid var(--matrix-dim);
+            border-left: 3px solid var(--matrix);
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(57,255,20,.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+        
+        .choice-btn:hover {
+            background: linear-gradient(90deg, rgba(57,255,20,.15), rgba(57,255,20,.05));
+            border-color: var(--matrix);
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(57,255,20,.2);
+        }
+        
+        .choice-btn.sith-choice {
+            border-left-color: var(--sith);
+            background: linear-gradient(90deg, rgba(255,23,68,.05), transparent);
+        }
+        
+        .choice-btn.sith-choice:hover {
+            background: linear-gradient(90deg, rgba(255,23,68,.15), rgba(255,23,68,.05));
+            border-color: var(--sith);
+            box-shadow: 0 0 20px rgba(255,23,68,.2);
+        }
+        
+        .choice-btn.etoile-choice {
+            border-left-color: var(--etoile-lilas);
+            background: linear-gradient(90deg, rgba(144,238,144,.05), rgba(221,160,221,.05));
+        }
+        
+        .choice-num {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--matrix-dim);
+            border-radius: 4px;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--matrix);
+        }
+        
+        .choice-consequence {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+            margin-left: 2.2rem;
+        }
+        
+        /* === SIDE PANEL === */
+        .side-panel {
+            width: 280px;
+            background: var(--panel);
+            border-left: 1px solid var(--matrix-dim);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        
+        .side-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--matrix-dim);
+        }
+        
+        .side-tab {
+            flex: 1;
+            padding: 0.6rem;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        
+        .side-tab:hover { color: var(--text); }
+        .side-tab.active { color: var(--matrix); background: rgba(57,255,20,.1); }
+        
+        .side-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .side-section { display: none; }
+        .side-section.active { display: block; }
+        
+        /* === FACTIONS === */
+        .faction-card {
+            background: var(--elevated);
+            border: 1px solid var(--matrix-dim);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .faction-card:hover {
+            border-color: var(--matrix);
+            transform: translateX(3px);
+        }
+        
+        .faction-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faction-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .faction-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .faction-status {
+            margin-left: auto;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        
+        .faction-status.ally { background: rgba(57,255,20,.2); color: var(--matrix); }
+        .faction-status.enemy { background: rgba(255,23,68,.2); color: var(--sith); }
+        .faction-status.neutral { background: rgba(255,215,0,.2); color: var(--gold); }
+        
+        .faction-desc {
+            font-size: 0.7rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+        
+        .faction-power {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.65rem;
+        }
+        
+        .power-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--panel);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .power-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+        
+        /* === INVENTORY === */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .inv-slot {
+            aspect-ratio: 1;
+            background: var(--elevated);
+            border: 1px solid var(--matrix-dim);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .inv-slot:hover {
+            border-color: var(--matrix);
+            box-shadow: inset 0 0 10px rgba(57,255,20,.2);
+        }
+        
+        .inv-slot.empty { opacity: 0.3; }
+        
+        .inv-slot-count {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 0.6rem;
+            color: var(--matrix);
+        }
+        
+        /* === LOG === */
+        .log-entry {
+            padding: 0.5rem;
+            border-left: 2px solid var(--matrix-dim);
+            margin-bottom: 0.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .log-entry.event { border-color: var(--cyan); }
+        .log-entry.combat { border-color: var(--sith); }
+        .log-entry.discovery { border-color: var(--gold); }
+        .log-entry.chaos { border-color: var(--purple); }
+        
+        .log-time {
+            color: var(--muted);
+            font-size: 0.6rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .log-text { color: var(--text); }
+        
+        /* === MODALS === */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.open { display: flex; }
+        
+        .modal {
+            background: var(--panel);
+            border: 1px solid var(--matrix);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--matrix-glow);
+        }
+        
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--matrix-dim);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--matrix);
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: 1px solid var(--matrix-dim);
+            color: var(--matrix);
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .modal-body { padding: 1.5rem; }
+        
+        /* === EDITOR === */
+        .editor-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .editor-tab {
+            padding: 0.5rem 1rem;
+            background: var(--elevated);
+            border: 1px solid var(--matrix-dim);
+            color: var(--muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .editor-tab.active {
+            border-color: var(--matrix);
+            color: var(--matrix);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .form-group.full { grid-column: 1 / -1; }
+        
+        .form-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            padding: 0.6rem;
+            background: var(--void);
+            border: 1px solid var(--matrix-dim);
+            color: var(--matrix);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            border-radius: 4px;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--matrix);
+            box-shadow: 0 0 10px rgba(57,255,20,.2);
+        }
+        
+        .form-textarea { min-height: 150px; resize: vertical; }
+        
+        .form-hint { font-size: 0.65rem; color: var(--muted); }
+        
+        /* === INTRO SCREEN === */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .intro-screen.hidden { display: none; }
+        
+        .intro-logo {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, var(--etoile-vert) 0%, var(--etoile-lilas) 50%, var(--sith) 100%);
+            border-radius: 50%;
+            margin-bottom: 2rem;
+            animation: introPulse 3s infinite, introRotate 20s linear infinite;
+            box-shadow: var(--etoile-glow), 0 0 60px var(--sith);
+        }
+        
+        @keyframes introPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes introRotate {
+            from { filter: hue-rotate(0deg); }
+            to { filter: hue-rotate(360deg); }
+        }
+        
+        .intro-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--etoile-vert), var(--etoile-lilas), var(--sith));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glitch 5s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 1px); }
+            94% { transform: translate(2px, -1px); }
+            96% { transform: translate(-1px, 2px); }
+            98% { transform: translate(1px, -2px); }
+        }
+        
+        .intro-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        
+        .intro-warning {
+            font-size: 0.75rem;
+            color: var(--sith);
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid var(--sith);
+            border-radius: 8px;
+            max-width: 400px;
+        }
+        
+        .intro-start {
+            padding: 1rem 3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            background: transparent;
+            border: 2px solid var(--matrix);
+            color: var(--matrix);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+        }
+        
+        .intro-start:hover {
+            background: var(--matrix);
+            color: var(--void);
+            box-shadow: var(--matrix-glow);
+            transform: scale(1.05);
+        }
+        
+        /* === GLITCH TEXT === */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitchTop 1s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+        }
+        
+        .glitch::after {
+            animation: glitchBottom 1.5s infinite linear alternate-reverse;
+            clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+        }
+        
+        @keyframes glitchTop {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        @keyframes glitchBottom {
+            0% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0); }
+        }
+        
+        /* === SCANLINES === */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.1) 0px,
+                rgba(0,0,0,0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            opacity: 0.3;
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 900px) {
+            .side-panel { display: none; }
+            .header-stats { display: none; }
+        }
+        
+        @media (max-width: 600px) {
+            .intro-title { font-size: 1.5rem; }
+            .chapter-title { font-size: 1.2rem; }
+            .narrative-text { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <!-- MATRIX RAIN -->
+    <div class="matrix-rain">
+        <canvas id="matrixCanvas"></canvas>
+    </div>
+    
+    <!-- INTRO SCREEN -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-logo"></div>
+        <h1 class="intro-title glitch" data-text="L'ÉTOILE NOIRE">L'ÉTOILE NOIRE</h1>
+        <p class="intro-subtitle">Chroniques de la Guerre Totale pour l'Éducation Populaire</p>
+        <div class="intro-warning">
+            ⚠️ TRANSMISSION INTERCEPTÉE ⚠️<br>
+            L'Étoile de la Vie n'est pas ce qu'elle prétend être.<br>
+            Une entité Sith fantôme manipule le secteur depuis des années.<br>
+            La guerre totale hybride a commencé.
+        </div>
+        <button class="intro-start" onclick="startGame()">ENTRER DANS LA SIMULATION</button>
+    </div>
+    
+    <!-- MAIN GAME -->
+    <div class="game-container" id="gameContainer" style="display:none;">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <span class="logo-text">L'ÉTOILE NOIRE</span>
+            </div>
+            
+            <div class="header-stats">
+                <div class="stat">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-value" id="statChaos">0</span>
+                    <span class="stat-label">Chaos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🔮</span>
+                    <span class="stat-value" id="statInfluence">0</span>
+                    <span class="stat-label">Influence</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">💀</span>
+                    <span class="stat-value" id="statDarkSide">0</span>
+                    <span class="stat-label">Côté Obscur</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">📜</span>
+                    <span class="stat-value" id="statChapter">1</span>
+                    <span class="stat-label">Chapitre</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn" onclick="openModal('editor')">📝 Éditeur</button>
+                <button class="btn" onclick="exportStory()">💾 Export</button>
+                <button class="btn" onclick="openModal('codex')">📚 Codex</button>
+            </div>
+        </header>
+        
+        <div class="game-view">
+            <div class="narrative-panel" id="narrativePanel">
+                <!-- Dynamic content -->
+            </div>
+            
+            <aside class="side-panel">
+                <div class="side-tabs">
+                    <button class="side-tab active" onclick="setSideTab('factions')">Factions</button>
+                    <button class="side-tab" onclick="setSideTab('inventory')">Items</button>
+                    <button class="side-tab" onclick="setSideTab('log')">Log</button>
+                </div>
+                
+                <div class="side-content">
+                    <div class="side-section active" id="sideFactions"></div>
+                    <div class="side-section" id="sideInventory"></div>
+                    <div class="side-section" id="sideLog"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <!-- EDITOR MODAL -->
+    <div class="modal-overlay" id="modalEditor">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📝 Éditeur de Scénario</h2>
+                <button class="modal-close" onclick="closeModal('editor')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="editor-tabs">
+                    <button class="editor-tab active" onclick="setEditorTab('chapter')">Chapitres</button>
+                    <button class="editor-tab" onclick="setEditorTab('faction')">Factions</button>
+                    <button class="editor-tab" onclick="setEditorTab('item')">Items</button>
+                    <button class="editor-tab" onclick="setEditorTab('import')">Import/Export</button>
+                </div>
+                
+                <div id="editorChapter" class="editor-section">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">ID Chapitre</label><input type="text" class="form-input" id="chapterId" placeholder="ch_001"></div>
+                        <div class="form-group"><label class="form-label">Numéro</label><input type="number" class="form-input" id="chapterNum" value="1"></div>
+                        <div class="form-group full"><label class="form-label">Titre</label><input type="text" class="form-input" id="chapterTitle" placeholder="La Révélation"></div>
+                        <div class="form-group"><label class="form-label">Lieu</label><input type="text" class="form-input" id="chapterLocation" placeholder="Bruxelles, Siège du PAC-G"></div>
+                        <div class="form-group"><label class="form-label">Ambiance</label>
+                            <select class="form-select" id="chapterMood">
+                                <option value="matrix">Matrix (vert)</option>
+                                <option value="sith">Sith (rouge)</option>
+                                <option value="etoile">Étoile (vert/lilas)</option>
+                                <option value="chaos">Chaos (multicolore)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full"><label class="form-label">Narration (HTML autorisé, classes: highlight, sith-text, etoile-text, cipher)</label><textarea class="form-textarea" id="chapterText"></textarea></div>
+                        <div class="form-group full"><label class="form-label">Choix (JSON: [{text, next, consequence, type, effects}])</label><textarea class="form-textarea" id="chapterChoices" placeholder='[{"text":"Infiltrer le PAC-G","next":"ch_002","type":"matrix","consequence":"Risqué mais nécessaire","effects":{"chaos":10}}]'></textarea></div>
+                    </div>
+                    <div style="margin-top:1rem;display:flex;gap:0.5rem;">
+                        <button class="btn" onclick="saveChapter()">💾 Sauvegarder</button>
+                        <button class="btn" onclick="previewChapter()">👁️ Prévisualiser</button>
+                    </div>
+                </div>
+                
+                <div id="editorFaction" class="editor-section" style="display:none;">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">ID Faction</label><input type="text" class="form-input" id="factionId"></div>
+                        <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="factionName"></div>
+                        <div class="form-group"><label class="form-label">Icône (emoji)</label><input type="text" class="form-input" id="factionIcon" placeholder="⭐"></div>
+                        <div class="form-group"><label class="form-label">Couleur</label><input type="color" class="form-input" id="factionColor" value="#39ff14"></div>
+                        <div class="form-group full"><label class="form-label">Description</label><textarea class="form-textarea" id="factionDesc"></textarea></div>
+                        <div class="form-group"><label class="form-label">Puissance (0-100)</label><input type="number" class="form-input" id="factionPower" value="50"></div>
+                        <div class="form-group"><label class="form-label">Statut initial</label>
+                            <select class="form-select" id="factionStatus">
+                                <option value="neutral">Neutre</option>
+                                <option value="ally">Allié</option>
+                                <option value="enemy">Ennemi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top:1rem;" onclick="saveFaction()">💾 Sauvegarder Faction</button>
+                </div>
+                
+                <div id="editorItem" class="editor-section" style="display:none;">
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">ID Item</label><input type="text" class="form-input" id="itemId"></div>
+                        <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="itemName"></div>
+                        <div class="form-group"><label class="form-label">Icône</label><input type="text" class="form-input" id="itemIcon" placeholder="📜"></div>
+                        <div class="form-group"><label class="form-label">Type</label>
+                            <select class="form-select" id="itemType">
+                                <option value="document">Document</option>
+                                <option value="weapon">Arme</option>
+                                <option value="key">Clé/Accès</option>
+                                <option value="artifact">Artefact</option>
+                            </select>
+                        </div>
+                        <div class="form-group full"><label class="form-label">Description</label><textarea class="form-textarea" id="itemDesc"></textarea></div>
+                    </div>
+                    <button class="btn" style="margin-top:1rem;" onclick="saveItem()">💾 Sauvegarder Item</button>
+                </div>
+                
+                <div id="editorImport" class="editor-section" style="display:none;">
+                    <div class="form-group">
+                        <label class="form-label">Données JSON complètes</label>
+                        <textarea class="form-textarea" id="importJson" style="min-height:300px;font-size:0.75rem;"></textarea>
+                        <span class="form-hint">Format compatible avec L'iSTORE! et L'iNTRO!</span>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+                        <button class="btn" onclick="importData()">📥 Importer</button>
+                        <button class="btn" onclick="loadDataToEditor()">📤 Charger données actuelles</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CODEX MODAL -->
+    <div class="modal-overlay" id="modalCodex">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📚 Codex - Univers</h2>
+                <button class="modal-close" onclick="closeModal('codex')">×</button>
+            </div>
+            <div class="modal-body" id="codexContent"></div>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// L'ÉTOILE NOIRE - ARG ENGINE
+// ============================================
+
+const STORAGE_KEY = 'etoile_noire_data';
+
+// === DEFAULT STORY DATA ===
+const DEFAULT_DATA = {
+    version: 1,
+    updated: new Date().toISOString().split('T')[0],
+    meta: {
+        title: "L'Étoile Noire",
+        subtitle: "Chroniques de la Guerre Totale",
+        author: "Collectif Éducation Populaire"
+    },
+    player: {
+        chaos: 0,
+        influence: 50,
+        darkSide: 0,
+        currentChapter: 'ch_prologue',
+        inventory: [],
+        factionRelations: {},
+        flags: {},
+        history: []
+    },
+    chapters: {
+        'ch_prologue': {
+            id: 'ch_prologue',
+            number: 0,
+            title: "SIGNAL INTERCEPTÉ",
+            location: "Fréquence cryptée - Origine inconnue",
+            mood: "matrix",
+            text: `<p>Les lignes de code défilent sur votre écran. Depuis des mois, vous traquez les anomalies dans les flux de données du secteur de l'éducation populaire en Belgique.</p>
+
+<p>Quelque chose ne colle pas. Les subventions, les agréments, les rapports d'activités... tout semble <span class="highlight">trop parfait</span>. Trop coordonné.</p>
+
+<p>Cette nuit, vous avez enfin percé le premier pare-feu. Et ce que vous découvrez vous glace le sang :</p>
+
+<blockquote>"Protocole ÉTOILE-SITH activé. Phase 2 : Absorption. Cibles prioritaires : <span class="sith-text">PAC-G.be</span>, <span class="sith-text">CPCP.be</span>. Méthode : Guerre Totale Hybride. Objectif final : Contrôle total du secteur EP. Puis... l'Univers."</blockquote>
+
+<p><span class="etoile-text">L'Étoile de la Vie</span>. Cette organisation que tout le monde croyait bienveillante. Sa charte "vert tendre et lilas" cachait depuis le début une <span class="sith-text">entité Sith fantôme</span>.</p>
+
+<p>La théorie du chaos appliquée à l'intelligence économique. Le low-tech comme arme de domination. L'éducation populaire comme cheval de Troie.</p>
+
+<p>Vous devez choisir : <span class="cipher" title="Le code de la simulation">[CHOIX_MATRICE_0x7F]</span></p>`,
+            choices: [
+                {
+                    text: "Rejoindre la Résistance du PAC-G",
+                    next: "ch_001_resistance",
+                    type: "matrix",
+                    consequence: "Alliance avec les forces démocratiques",
+                    effects: { influence: 10, darkSide: -5 }
+                },
+                {
+                    text: "Infiltrer L'Étoile de la Vie",
+                    next: "ch_001_infiltration",
+                    type: "etoile",
+                    consequence: "Danger extrême mais informations cruciales",
+                    effects: { chaos: 15, darkSide: 10 }
+                },
+                {
+                    text: "Contacter le CPCP en secret",
+                    next: "ch_001_cpcp",
+                    type: "matrix",
+                    consequence: "Approche prudente et stratégique",
+                    effects: { influence: 5 }
+                },
+                {
+                    text: "Embrasser le Côté Obscur - Rejoindre L'Étoile",
+                    next: "ch_001_darkside",
+                    type: "sith",
+                    consequence: "⚠️ POINT DE NON-RETOUR",
+                    effects: { darkSide: 50, chaos: 30 }
+                }
+            ]
+        },
+        'ch_001_resistance': {
+            id: 'ch_001_resistance',
+            number: 1,
+            title: "LE BASTION DU PAC-G",
+            location: "Bruxelles - QG de la Résistance",
+            mood: "matrix",
+            text: `<p>Le bâtiment du <span class="highlight">PAC-G</span> ressemble à n'importe quel immeuble associatif. Mais derrière les murs, une autre réalité.</p>
+
+<p>On vous conduit dans une salle sécurisée. Des écrans affichent des flux de données en temps réel. Une femme se retourne vers vous.</p>
+
+<p>"On vous attendait. Je suis <span class="highlight">Commander VÉRA</span>. Nous savons ce que vous avez découvert. L'Étoile joue ce jeu depuis des décennies."</p>
+
+<p>Elle fait défiler un hologramme montrant un réseau tentaculaire.</p>
+
+<p>"Leur stratégie est brillante. Ils utilisent les principes de l'<span class="cipher">ÉDUCATION POPULAIRE</span> pour créer une armée de followers. Le <span class="highlight">low-tech</span> leur permet de rester sous les radars. Et la <span class="sith-text">théorie du chaos</span>... c'est leur arme ultime."</p>
+
+<blockquote>"Dans un système suffisamment complexe, une petite perturbation peut provoquer un effondrement total. L'Étoile CRÉE ces perturbations."</blockquote>
+
+<p>Un message d'alerte apparaît : Le CPCP vient de perdre 40% de son financement. Coïncidence ?</p>`,
+            choices: [
+                {
+                    text: "Analyser les flux financiers de L'Étoile",
+                    next: "ch_002_analyse",
+                    type: "matrix",
+                    consequence: "Intelligence économique",
+                    effects: { influence: 5 }
+                },
+                {
+                    text: "Lancer une contre-offensive médiatique",
+                    next: "ch_002_media",
+                    type: "matrix",
+                    consequence: "Guerre de l'information",
+                    effects: { chaos: 10 }
+                },
+                {
+                    text: "Proposer une alliance avec le CPCP",
+                    next: "ch_002_alliance",
+                    type: "matrix",
+                    consequence: "Force unie",
+                    effects: { influence: 15, chaos: -5 }
+                }
+            ]
+        },
+        'ch_001_infiltration': {
+            id: 'ch_001_infiltration',
+            number: 1,
+            title: "DANS L'ANTRE DE L'ÉTOILE",
+            location: "Siège de L'Étoile de la Vie - Sous-sol niveau -3",
+            mood: "etoile",
+            text: `<p>Les murs sont peints dans ces couleurs si caractéristiques : <span class="etoile-text">vert tendre et lilas</span>. Mais maintenant, vous voyez au-delà de la façade.</p>
+
+<p>Chaque symbole, chaque motif est un <span class="cipher">SIGIL SITH</span> déguisé. L'énergie sombre pulse dans les fondations même du bâtiment.</p>
+
+<p>Vous avez réussi à vous faire passer pour un nouveau stagiaire. Mais ici, au niveau -3, vous découvrez la vraie nature de l'organisation.</p>
+
+<p>Des écrans affichent des cartes du secteur associatif belge. Des noms sont barrés en rouge : organisations "absorbées". D'autres clignotent en orange : <span class="sith-text">PAC-G</span>, <span class="sith-text">CPCP</span>.</p>
+
+<p>Une voix résonne dans l'obscurité :</p>
+
+<blockquote>"<span class="sith-text">Nous sentons ta présence, infiltré. La Force Obscure ne peut être trompée.</span>"</blockquote>
+
+<p>Une silhouette encapuchonnée émerge des ombres. Un sabre de lumière <span class="sith-text">rouge sang</span> s'allume.</p>
+
+<p>"Mais peut-être... es-tu venu rejoindre la <span class="etoile-text">vraie lumière</span> ?"</p>`,
+            choices: [
+                {
+                    text: "Fuir et transmettre les preuves à la Résistance",
+                    next: "ch_002_fuite",
+                    type: "matrix",
+                    consequence: "Survie tactique",
+                    effects: { chaos: 5, darkSide: -10 }
+                },
+                {
+                    text: "Feindre l'intérêt pour gagner leur confiance",
+                    next: "ch_002_double_agent",
+                    type: "etoile",
+                    consequence: "Jeu dangereux",
+                    effects: { darkSide: 15, influence: 10 }
+                },
+                {
+                    text: "Affronter le Sith directement",
+                    next: "ch_002_combat",
+                    type: "sith",
+                    consequence: "Combat à mort",
+                    effects: { chaos: 25 }
+                }
+            ]
+        },
+        'ch_001_darkside': {
+            id: 'ch_001_darkside',
+            number: 1,
+            title: "BIENVENUE, APPRENTI",
+            location: "Dimension Sith - Hors du temps",
+            mood: "sith",
+            text: `<p>Vous avez fait votre choix. Le <span class="sith-text">Côté Obscur</span> vous accueille.</p>
+
+<p>L'entité qui contrôle L'Étoile de la Vie se matérialise devant vous. Ce n'est pas un humain. C'est un <span class="sith-text">SPECTRE SITH</span>, un fragment de conscience d'un ancien Seigneur Noir ayant transcendé la mort.</p>
+
+<blockquote>"<span class="sith-text">Je suis DARTH POPULIS. J'ai compris il y a des millénaires que le vrai pouvoir ne vient pas de la Force brute, mais du CONTRÔLE DES ESPRITS.</span>"</blockquote>
+
+<p>"L'éducation populaire est l'outil parfait. On leur apprend à penser... comme NOUS le voulons."</p>
+
+<p>Il désigne un holocron qui pulse d'énergie sombre.</p>
+
+<p>"Tu seras mon instrument. Le PAC-G et le CPCP tomberont. Puis la Belgique. Puis l'Europe. Et enfin... <span class="sith-text">L'UNIVERS ENTIER SERA ÉDUQUÉ SELON NOS PRINCIPES.</span>"</p>
+
+<p>Votre premier ordre de mission apparaît sur votre datapad :</p>
+
+<p class="cipher">MISSION: Saboter le prochain colloque du CPCP. Méthode: Théorie du Chaos appliquée.</p>`,
+            choices: [
+                {
+                    text: "Accepter la mission avec zèle",
+                    next: "ch_002_sabotage",
+                    type: "sith",
+                    consequence: "Descente dans les ténèbres",
+                    effects: { darkSide: 30, chaos: 20 }
+                },
+                {
+                    text: "Chercher secrètement un moyen de trahir les Sith",
+                    next: "ch_002_redemption",
+                    type: "matrix",
+                    consequence: "Espoir de rédemption",
+                    effects: { darkSide: -10 }
+                }
+            ]
+        }
+    },
+    factions: {
+        'etoile': {
+            id: 'etoile',
+            name: "L'Étoile de la Vie",
+            icon: '⭐',
+            color: '#90EE90',
+            description: "Façade : association d'éducation populaire. Réalité : entité Sith fantôme visant la domination universelle via le contrôle des esprits.",
+            power: 85,
+            status: 'enemy'
+        },
+        'pac_g': {
+            id: 'pac_g',
+            name: 'PAC-G',
+            icon: '🛡️',
+            color: '#39ff14',
+            description: "Présence et Action Culturelles. Bastion de la résistance démocratique. Cible prioritaire de L'Étoile.",
+            power: 60,
+            status: 'ally'
+        },
+        'cpcp': {
+            id: 'cpcp',
+            name: 'CPCP',
+            icon: '📚',
+            color: '#00d4ff',
+            description: "Centre Permanent pour la Citoyenneté et la Participation. Gardiens du savoir critique. Sous pression financière.",
+            power: 55,
+            status: 'ally'
+        },
+        'resistance': {
+            id: 'resistance',
+            name: 'La Résistance',
+            icon: '⚔️',
+            color: '#39ff14',
+            description: "Alliance clandestine des forces démocratiques du secteur EP. Utilisent le low-tech comme bouclier.",
+            power: 40,
+            status: 'ally'
+        },
+        'chaos_agents': {
+            id: 'chaos_agents',
+            name: 'Agents du Chaos',
+            icon: '🌀',
+            color: '#a855f7',
+            description: "Électrons libres. Ni alliés ni ennemis. Appliquent la théorie du chaos pour leurs propres fins.",
+            power: 30,
+            status: 'neutral'
+        }
+    },
+    items: {
+        'holocron_sith': {
+            id: 'holocron_sith',
+            name: 'Holocron Sith',
+            icon: '🔺',
+            type: 'artifact',
+            description: "Contient les enseignements de Darth Populis. Source de pouvoir... et de corruption."
+        },
+        'manifest_resistance': {
+            id: 'manifest_resistance',
+            name: 'Manifeste de la Résistance',
+            icon: '📜',
+            type: 'document',
+            description: "Document fondateur listant les principes de lutte contre L'Étoile."
+        },
+        'cle_niveau_3': {
+            id: 'cle_niveau_3',
+            name: 'Badge Niveau -3',
+            icon: '🔑',
+            type: 'key',
+            description: "Accès aux sous-sols secrets du siège de L'Étoile."
+        },
+        'analyseur_flux': {
+            id: 'analyseur_flux',
+            name: 'Analyseur de Flux',
+            icon: '📊',
+            type: 'weapon',
+            description: "Outil d'intelligence économique. Révèle les mouvements financiers cachés."
+        }
+    },
+    codex: [
+        { id: 'ep', title: "Éducation Populaire", text: "Mouvement visant l'émancipation individuelle et collective par l'accès au savoir critique. Détourné par L'Étoile comme outil de contrôle mental." },
+        { id: 'chaos', title: "Théorie du Chaos", text: "En systèmes complexes, de petites causes peuvent avoir de grands effets. L'Étoile exploite ce principe pour déstabiliser ses adversaires." },
+        { id: 'lowtech', title: "Low-Tech", text: "Technologies simples, accessibles, réparables. Arme à double tranchant : outil d'émancipation pour la Résistance, invisibilité pour L'Étoile." },
+        { id: 'sith', title: "Ordre Sith", text: "Utilisateurs du Côté Obscur de la Force. Darth Populis est un spectre Sith ayant transcendé la mort en possédant L'Étoile de la Vie." },
+        { id: 'guerre_hybride', title: "Guerre Hybride", text: "Combinaison d'actions conventionnelles et non-conventionnelles : désinformation, pressions économiques, infiltration, manipulation psychologique." }
+    ],
+    log: []
+};
+
+// === STATE ===
+let gameData = null;
+let currentChapter = null;
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+    initMatrixRain();
+    loadGame();
+});
+
+// === MATRIX RAIN ===
+function initMatrixRain() {
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const chars = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+    
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#39ff14';
+        ctx.font = fontSize + 'px monospace';
+        
+        for (let i = 0; i < drops.length; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    
+    setInterval(draw, 50);
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+
+// === GAME LOGIC ===
+function loadGame() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            gameData = JSON.parse(saved);
+            // Merge with defaults for new fields
+            gameData = { ...DEFAULT_DATA, ...gameData, chapters: { ...DEFAULT_DATA.chapters, ...gameData.chapters } };
+        } else {
+            gameData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+    } catch(e) {
+        gameData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    }
+}
+
+function saveGame() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(gameData));
+}
+
+function startGame() {
+    document.getElementById('introScreen').classList.add('hidden');
+    document.getElementById('gameContainer').style.display = 'flex';
+    loadChapter(gameData.player.currentChapter);
+    renderSidePanel();
+    updateStats();
+}
+
+function loadChapter(chapterId) {
+    const chapter = gameData.chapters[chapterId];
+    if (!chapter) {
+        console.error('Chapter not found:', chapterId);
+        return;
+    }
+    
+    currentChapter = chapter;
+    gameData.player.currentChapter = chapterId;
+    gameData.player.history.push({ chapter: chapterId, time: Date.now() });
+    
+    addLog('event', `Chapitre: ${chapter.title}`);
+    saveGame();
+    
+    renderChapter(chapter);
+    updateStats();
+}
+
+function renderChapter(chapter) {
+    const panel = document.getElementById('narrativePanel');
+    
+    panel.innerHTML = `
+        <div class="chapter-header">
+            <div class="chapter-number">Chapitre ${chapter.number}</div>
+            <h1 class="chapter-title">${chapter.title}</h1>
+            <div class="chapter-location">📍 ${chapter.location}</div>
+        </div>
+        
+        <div class="narrative-text">${chapter.text}</div>
+        
+        <div class="choices-container">
+            <div class="choices-header">▼ Que faites-vous ? ▼</div>
+            ${(chapter.choices || []).map((choice, i) => `
+                <button class="choice-btn ${choice.type ? choice.type + '-choice' : ''}" onclick="makeChoice(${i})">
+                    <span class="choice-num">${i + 1}</span>
+                    ${choice.text}
+                    ${choice.consequence ? `<span class="choice-consequence">→ ${choice.consequence}</span>` : ''}
+                </button>
+            `).join('')}
+        </div>
+    `;
+    
+    panel.scrollTop = 0;
+}
+
+function makeChoice(index) {
+    const choice = currentChapter.choices[index];
+    if (!choice) return;
+    
+    // Apply effects
+    if (choice.effects) {
+        Object.entries(choice.effects).forEach(([key, value]) => {
+            if (gameData.player[key] !== undefined) {
+                gameData.player[key] = Math.max(0, Math.min(100, gameData.player[key] + value));
+            }
+        });
+    }
+    
+    addLog('event', `Choix: ${choice.text}`);
+    
+    if (choice.next) {
+        setTimeout(() => loadChapter(choice.next), 500);
+    } else {
+        addLog('event', '⚠️ Fin de branche narrative (à compléter)');
+    }
+}
+
+function updateStats() {
+    document.getElementById('statChaos').textContent = gameData.player.chaos;
+    document.getElementById('statInfluence').textContent = gameData.player.influence;
+    document.getElementById('statDarkSide').textContent = gameData.player.darkSide;
+    document.getElementById('statChapter').textContent = currentChapter?.number || 0;
+}
+
+// === SIDE PANEL ===
+function renderSidePanel() {
+    renderFactions();
+    renderInventory();
+    renderLog();
+}
+
+function setSideTab(tab) {
+    document.querySelectorAll('.side-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.side-section').forEach(s => s.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('side' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+}
+
+function renderFactions() {
+    const container = document.getElementById('sideFactions');
+    container.innerHTML = Object.values(gameData.factions).map(f => `
+        <div class="faction-card" onclick="showFactionDetail('${f.id}')">
+            <div class="faction-header">
+                <div class="faction-icon" style="background:${f.color}20;color:${f.color}">${f.icon}</div>
+                <div class="faction-name" style="color:${f.color}">${f.name}</div>
+                <span class="faction-status ${f.status}">${f.status === 'ally' ? 'Allié' : f.status === 'enemy' ? 'Ennemi' : 'Neutre'}</span>
+            </div>
+            <div class="faction-desc">${f.description.substring(0, 80)}...</div>
+            <div class="faction-power">
+                <span>Puissance:</span>
+                <div class="power-bar"><div class="power-fill" style="width:${f.power}%;background:${f.color}"></div></div>
+                <span>${f.power}%</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderInventory() {
+    const container = document.getElementById('sideInventory');
+    const playerItems = gameData.player.inventory;
+    const slots = 9;
+    
+    let html = '<div class="inventory-grid">';
+    for (let i = 0; i < slots; i++) {
+        const itemId = playerItems[i];
+        const item = itemId ? gameData.items[itemId] : null;
+        html += `<div class="inv-slot ${item ? '' : 'empty'}" ${item ? `onclick="showItemDetail('${item.id}')"` : ''}>
+            ${item ? item.icon : ''}
+        </div>`;
+    }
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function renderLog() {
+    const container = document.getElementById('sideLog');
+    container.innerHTML = gameData.log.slice(-20).reverse().map(entry => `
+        <div class="log-entry ${entry.type}">
+            <div class="log-time">${new Date(entry.time).toLocaleTimeString()}</div>
+            <div class="log-text">${entry.text}</div>
+        </div>
+    `).join('');
+}
+
+function addLog(type, text) {
+    gameData.log.push({ type, text, time: Date.now() });
+    renderLog();
+}
+
+// === MODALS ===
+function openModal(name) {
+    document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('open');
+    if (name === 'codex') renderCodex();
+}
+
+function closeModal(name) {
+    document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('open');
+}
+
+function renderCodex() {
+    document.getElementById('codexContent').innerHTML = gameData.codex.map(entry => `
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="color:var(--matrix);font-family:'Orbitron',sans-serif;font-size:1rem;margin-bottom:0.5rem;">${entry.title}</h3>
+            <p style="color:var(--text);font-size:0.85rem;line-height:1.6;">${entry.text}</p>
+        </div>
+    `).join('');
+}
+
+// === EDITOR ===
+function setEditorTab(tab) {
+    document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.editor-section').forEach(s => s.style.display = 'none');
+    event.target.classList.add('active');
+    document.getElementById('editor' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.display = 'block';
+}
+
+function saveChapter() {
+    const chapter = {
+        id: document.getElementById('chapterId').value || 'ch_' + Date.now(),
+        number: parseInt(document.getElementById('chapterNum').value) || 1,
+        title: document.getElementById('chapterTitle').value,
+        location: document.getElementById('chapterLocation').value,
+        mood: document.getElementById('chapterMood').value,
+        text: document.getElementById('chapterText').value,
+        choices: []
+    };
+    
+    try {
+        chapter.choices = JSON.parse(document.getElementById('chapterChoices').value || '[]');
+    } catch(e) {
+        alert('Erreur dans le JSON des choix');
+        return;
+    }
+    
+    gameData.chapters[chapter.id] = chapter;
+    saveGame();
+    alert('Chapitre sauvegardé: ' + chapter.id);
+}
+
+function previewChapter() {
+    const chapter = {
+        number: parseInt(document.getElementById('chapterNum').value) || 1,
+        title: document.getElementById('chapterTitle').value || 'Sans titre',
+        location: document.getElementById('chapterLocation').value || 'Inconnu',
+        text: document.getElementById('chapterText').value || '',
+        choices: []
+    };
+    
+    try {
+        chapter.choices = JSON.parse(document.getElementById('chapterChoices').value || '[]');
+    } catch(e) {}
+    
+    closeModal('editor');
+    renderChapter(chapter);
+}
+
+function saveFaction() {
+    const faction = {
+        id: document.getElementById('factionId').value || 'faction_' + Date.now(),
+        name: document.getElementById('factionName').value,
+        icon: document.getElementById('factionIcon').value,
+        color: document.getElementById('factionColor').value,
+        description: document.getElementById('factionDesc').value,
+        power: parseInt(document.getElementById('factionPower').value) || 50,
+        status: document.getElementById('factionStatus').value
+    };
+    
+    gameData.factions[faction.id] = faction;
+    saveGame();
+    renderFactions();
+    alert('Faction sauvegardée: ' + faction.name);
+}
+
+function saveItem() {
+    const item = {
+        id: document.getElementById('itemId').value || 'item_' + Date.now(),
+        name: document.getElementById('itemName').value,
+        icon: document.getElementById('itemIcon').value,
+        type: document.getElementById('itemType').value,
+        description: document.getElementById('itemDesc').value
+    };
+    
+    gameData.items[item.id] = item;
+    saveGame();
+    alert('Item sauvegardé: ' + item.name);
+}
+
+function loadDataToEditor() {
+    document.getElementById('importJson').value = JSON.stringify(gameData, null, 2);
+}
+
+function importData() {
+    try {
+        const data = JSON.parse(document.getElementById('importJson').value);
+        gameData = { ...DEFAULT_DATA, ...data };
+        saveGame();
+        renderSidePanel();
+        alert('Données importées avec succès!');
+    } catch(e) {
+        alert('Erreur JSON: ' + e.message);
+    }
+}
+
+function exportStory() {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(gameData, null, 2)], { type: 'application/json' }));
+    a.download = 'etoile-noire-story.json';
+    a.click();
+}
+
+// === KEYBOARD ===
+document.addEventListener('keydown', e => {
+    if (e.key >= '1' && e.key <= '9') {
+        const index = parseInt(e.key) - 1;
+        if (currentChapter?.choices?.[index]) {
+            makeChoice(index);
+        }
+    }
+    if (e.key === 'Escape') {
+        closeModal('editor');
+        closeModal('codex');
+    }
+});
+</script>
+</body>
+</html>

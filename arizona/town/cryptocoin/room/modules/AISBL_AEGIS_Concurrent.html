@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AISBL@EGIS | Action · Innovation · Solidarité · Citoyenneté</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#0a0d0f;
+            --bg2:#0f1419;
+            --bg3:#141d24;
+            --mint:#7fefbd;
+            --mint-dim:#4a9e7a;
+            --mint-glow:#7fefbd80;
+            --lilac:#c4b5fd;
+            --lilac-dim:#8b7dcf;
+            --lilac-glow:#c4b5fd60;
+            --text:#e8f0e8;
+            --dim:#607068;
+            --line:#2a3830;
+            --node-1:#7fefbd;
+            --node-2:#c4b5fd;
+            --node-3:#fde68a;
+            --node-4:#fca5a5;
+            --node-5:#93c5fd;
+        }
+        
+        *{margin:0;padding:0;box-sizing:border-box;}
+        
+        /* GLITCH ANIMATIONS */
+        @keyframes glitch{
+            0%,100%{transform:translate(0)}
+            20%{transform:translate(-2px,2px)}
+            40%{transform:translate(2px,-2px)}
+            60%{transform:translate(-1px,-1px)}
+            80%{transform:translate(1px,1px)}
+        }
+        @keyframes glitch-skew{
+            0%,100%{transform:skew(0deg)}
+            20%{transform:skew(2deg)}
+            40%{transform:skew(-1deg)}
+            60%{transform:skew(1deg)}
+            80%{transform:skew(-2deg)}
+        }
+        @keyframes text-glitch{
+            0%,100%{text-shadow:2px 0 var(--lilac),-2px 0 var(--mint)}
+            25%{text-shadow:-2px 0 var(--lilac),2px 0 var(--mint)}
+            50%{text-shadow:2px 2px var(--lilac),-2px -2px var(--mint)}
+            75%{text-shadow:-2px 2px var(--lilac),2px -2px var(--mint)}
+        }
+        @keyframes scan{
+            0%{top:-100%}
+            100%{top:100%}
+        }
+        @keyframes flicker{
+            0%,100%{opacity:1}
+            92%{opacity:1}
+            93%{opacity:.8}
+            94%{opacity:1}
+            95%{opacity:.9}
+            96%{opacity:1}
+        }
+        @keyframes pulse-glow{
+            0%,100%{box-shadow:0 0 5px var(--mint-glow),0 0 10px var(--mint-glow)}
+            50%{box-shadow:0 0 20px var(--mint-glow),0 0 40px var(--mint-glow)}
+        }
+        @keyframes typing{
+            from{width:0}
+            to{width:100%}
+        }
+        @keyframes blink-caret{
+            50%{border-color:transparent}
+        }
+        @keyframes float{
+            0%,100%{transform:translateY(0)}
+            50%{transform:translateY(-15px)}
+        }
+        @keyframes rotate-slow{
+            from{transform:rotate(0deg)}
+            to{transform:rotate(360deg)}
+        }
+        @keyframes dash{
+            to{stroke-dashoffset:0}
+        }
+        @keyframes neon-pulse{
+            0%,100%{filter:drop-shadow(0 0 2px var(--mint)) drop-shadow(0 0 5px var(--mint))}
+            50%{filter:drop-shadow(0 0 5px var(--mint)) drop-shadow(0 0 15px var(--mint)) drop-shadow(0 0 25px var(--lilac))}
+        }
+        @keyframes matrix-rain{
+            0%{transform:translateY(-100%);opacity:1}
+            100%{transform:translateY(1000%);opacity:0}
+        }
+        @keyframes rgb-shift{
+            0%{filter:hue-rotate(0deg)}
+            100%{filter:hue-rotate(360deg)}
+        }
+        @keyframes static-noise{
+            0%,100%{background-position:0 0}
+            10%{background-position:-5% -10%}
+            20%{background-position:-15% 5%}
+            30%{background-position:7% -25%}
+            40%{background-position:20% 25%}
+            50%{background-position:-25% 10%}
+            60%{background-position:15% 5%}
+            70%{background-position:0% 15%}
+            80%{background-position:25% 35%}
+            90%{background-position:-10% 10%}
+        }
+        
+        body{
+            font-family:'Fira Code',monospace;
+            background:var(--bg);
+            color:var(--text);
+            min-height:100vh;
+            overflow-x:hidden;
+            position:relative;
+        }
+        
+        /* CRT EFFECT */
+        body::before{
+            content:'';
+            position:fixed;
+            inset:0;
+            background:repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.1) 2px,
+                rgba(0,0,0,0.1) 4px
+            );
+            pointer-events:none;
+            z-index:9999;
+        }
+        
+        body::after{
+            content:'';
+            position:fixed;
+            inset:0;
+            background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,0.3) 100%);
+            pointer-events:none;
+            z-index:9998;
+        }
+        
+        /* SCAN LINE */
+        .scanline{
+            position:fixed;
+            width:100%;
+            height:4px;
+            background:linear-gradient(90deg,transparent,var(--mint-glow),transparent);
+            opacity:0.1;
+            animation:scan 8s linear infinite;
+            pointer-events:none;
+            z-index:9997;
+        }
+        
+        /* MATRIX RAIN BACKGROUND */
+        .matrix-bg{
+            position:fixed;
+            inset:0;
+            overflow:hidden;
+            z-index:-1;
+            opacity:0.03;
+        }
+        .matrix-char{
+            position:absolute;
+            color:var(--mint);
+            font-family:'VT323',monospace;
+            font-size:14px;
+            animation:matrix-rain 10s linear infinite;
+            text-shadow:0 0 5px var(--mint);
+        }
+        
+        /* HEADER */
+        .header{
+            background:linear-gradient(180deg,var(--bg2),transparent);
+            border-bottom:1px solid var(--line);
+            padding:1rem 2rem;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            backdrop-filter:blur(10px);
+        }
+        
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:1rem;
+        }
+        
+        .logo-icon{
+            width:50px;
+            height:50px;
+            position:relative;
+            animation:neon-pulse 3s ease-in-out infinite;
+        }
+        
+        .logo-icon svg{
+            width:100%;
+            height:100%;
+        }
+        
+        .logo-text{
+            font-family:'VT323',monospace;
+            font-size:2.5rem;
+            letter-spacing:0.1em;
+            position:relative;
+        }
+        
+        .logo-text .main{
+            color:var(--mint);
+            text-shadow:0 0 10px var(--mint-glow),0 0 20px var(--mint-glow);
+            animation:text-glitch 5s infinite;
+        }
+        
+        .logo-text .at{
+            color:var(--lilac);
+            text-shadow:0 0 10px var(--lilac-glow);
+        }
+        
+        .logo-text .sub{
+            color:var(--lilac);
+            text-shadow:0 0 10px var(--lilac-glow),0 0 20px var(--lilac-glow);
+        }
+        
+        .tagline{
+            font-size:0.65rem;
+            color:var(--dim);
+            letter-spacing:0.3em;
+            text-transform:uppercase;
+            margin-top:0.25rem;
+        }
+        
+        .nav{
+            display:flex;
+            gap:0.5rem;
+        }
+        
+        .nav-item{
+            padding:0.5rem 1rem;
+            color:var(--dim);
+            text-decoration:none;
+            font-size:0.8rem;
+            border:1px solid transparent;
+            border-radius:4px;
+            transition:all 0.3s;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .nav-item::before{
+            content:'>';
+            margin-right:0.5rem;
+            color:var(--mint);
+            opacity:0;
+            transition:opacity 0.3s;
+        }
+        
+        .nav-item:hover{
+            color:var(--mint);
+            border-color:var(--mint);
+            background:rgba(127,239,189,0.05);
+            text-shadow:0 0 10px var(--mint-glow);
+        }
+        
+        .nav-item:hover::before{
+            opacity:1;
+        }
+        
+        .nav-item.active{
+            color:var(--lilac);
+            border-color:var(--lilac);
+            background:rgba(196,181,253,0.1);
+        }
+        
+        .status-bar{
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            font-size:0.75rem;
+            font-family:'VT323',monospace;
+        }
+        
+        .status-item{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+        }
+        
+        .status-dot{
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:var(--mint);
+            animation:pulse-glow 2s infinite;
+        }
+        
+        .status-dot.lilac{background:var(--lilac);}
+        
+        /* HERO */
+        .hero{
+            min-height:70vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .hero-content{
+            text-align:center;
+            z-index:10;
+            padding:2rem;
+        }
+        
+        .hero-title{
+            font-family:'VT323',monospace;
+            font-size:4rem;
+            margin-bottom:1rem;
+            animation:flicker 4s infinite;
+        }
+        
+        .hero-title .line1{
+            display:block;
+            color:var(--mint);
+            text-shadow:0 0 20px var(--mint-glow),0 0 40px var(--mint-glow);
+        }
+        
+        .hero-title .line2{
+            display:block;
+            color:var(--lilac);
+            text-shadow:0 0 20px var(--lilac-glow),0 0 40px var(--lilac-glow);
+            font-size:2.5rem;
+        }
+        
+        .hero-subtitle{
+            font-size:1rem;
+            color:var(--dim);
+            max-width:700px;
+            margin:0 auto 2rem;
+            line-height:1.8;
+        }
+        
+        .terminal-box{
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:8px;
+            padding:1.5rem;
+            max-width:600px;
+            margin:0 auto;
+            text-align:left;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .terminal-box::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:30px;
+            background:var(--bg3);
+            border-bottom:1px solid var(--line);
+        }
+        
+        .terminal-dots{
+            position:absolute;
+            top:10px;
+            left:10px;
+            display:flex;
+            gap:6px;
+        }
+        
+        .terminal-dot{
+            width:10px;
+            height:10px;
+            border-radius:50%;
+        }
+        
+        .terminal-dot.red{background:#ff5f56;}
+        .terminal-dot.yellow{background:#ffbd2e;}
+        .terminal-dot.green{background:#27ca40;}
+        
+        .terminal-content{
+            margin-top:30px;
+            font-family:'Fira Code',monospace;
+            font-size:0.85rem;
+        }
+        
+        .terminal-line{
+            margin-bottom:0.5rem;
+            opacity:0;
+            animation:slideIn 0.5s forwards;
+        }
+        
+        @keyframes slideIn{
+            to{opacity:1;transform:translateX(0)}
+            from{opacity:0;transform:translateX(-20px)}
+        }
+        
+        .terminal-line:nth-child(1){animation-delay:0.5s}
+        .terminal-line:nth-child(2){animation-delay:1s}
+        .terminal-line:nth-child(3){animation-delay:1.5s}
+        .terminal-line:nth-child(4){animation-delay:2s}
+        .terminal-line:nth-child(5){animation-delay:2.5s}
+        
+        .terminal-prompt{color:var(--mint);}
+        .terminal-cmd{color:var(--lilac);}
+        .terminal-output{color:var(--dim);}
+        .terminal-success{color:var(--mint);}
+        .terminal-highlight{color:var(--node-3);}
+        
+        /* GRAPH SECTION */
+        .graph-section{
+            padding:4rem 2rem;
+            position:relative;
+        }
+        
+        .section-header{
+            text-align:center;
+            margin-bottom:3rem;
+        }
+        
+        .section-title{
+            font-family:'VT323',monospace;
+            font-size:2.5rem;
+            color:var(--mint);
+            text-shadow:0 0 10px var(--mint-glow);
+            margin-bottom:0.5rem;
+        }
+        
+        .section-subtitle{
+            color:var(--dim);
+            font-size:0.85rem;
+        }
+        
+        .graph-container{
+            width:100%;
+            height:600px;
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:12px;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .graph-container::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:
+                radial-gradient(circle at 20% 30%,var(--mint-glow) 0%,transparent 25%),
+                radial-gradient(circle at 80% 70%,var(--lilac-glow) 0%,transparent 25%);
+            opacity:0.1;
+            pointer-events:none;
+        }
+        
+        #network-canvas{
+            width:100%;
+            height:100%;
+        }
+        
+        /* CARDS */
+        .cards-section{
+            padding:4rem 2rem;
+            background:linear-gradient(180deg,transparent,var(--bg2),transparent);
+        }
+        
+        .cards-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:1.5rem;
+            max-width:1400px;
+            margin:0 auto;
+        }
+        
+        .card{
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:12px;
+            padding:1.5rem;
+            position:relative;
+            overflow:hidden;
+            transition:all 0.4s;
+            cursor:pointer;
+        }
+        
+        .card::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:3px;
+            background:linear-gradient(90deg,var(--mint),var(--lilac));
+            transform:scaleX(0);
+            transform-origin:left;
+            transition:transform 0.4s;
+        }
+        
+        .card:hover{
+            transform:translateY(-5px);
+            border-color:var(--mint);
+            box-shadow:0 10px 40px rgba(127,239,189,0.1);
+        }
+        
+        .card:hover::before{
+            transform:scaleX(1);
+        }
+        
+        .card-icon{
+            width:60px;
+            height:60px;
+            background:linear-gradient(135deg,var(--mint),var(--lilac));
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.5rem;
+            margin-bottom:1rem;
+            position:relative;
+        }
+        
+        .card-icon::after{
+            content:'';
+            position:absolute;
+            inset:-3px;
+            border-radius:14px;
+            background:linear-gradient(135deg,var(--mint),var(--lilac));
+            opacity:0.3;
+            filter:blur(10px);
+            z-index:-1;
+        }
+        
+        .card-title{
+            font-family:'VT323',monospace;
+            font-size:1.5rem;
+            color:var(--mint);
+            margin-bottom:0.5rem;
+        }
+        
+        .card-desc{
+            color:var(--dim);
+            font-size:0.85rem;
+            line-height:1.6;
+            margin-bottom:1rem;
+        }
+        
+        .card-tags{
+            display:flex;
+            gap:0.5rem;
+            flex-wrap:wrap;
+        }
+        
+        .tag{
+            font-size:0.65rem;
+            padding:0.25rem 0.5rem;
+            background:rgba(127,239,189,0.1);
+            border:1px solid var(--mint);
+            border-radius:20px;
+            color:var(--mint);
+        }
+        
+        .tag.lilac{
+            background:rgba(196,181,253,0.1);
+            border-color:var(--lilac);
+            color:var(--lilac);
+        }
+        
+        /* STATS */
+        .stats-section{
+            padding:4rem 2rem;
+        }
+        
+        .stats-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:2rem;
+            max-width:1200px;
+            margin:0 auto;
+        }
+        
+        .stat-card{
+            text-align:center;
+            padding:2rem;
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:12px;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .stat-card::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(180deg,transparent,rgba(127,239,189,0.05));
+            opacity:0;
+            transition:opacity 0.3s;
+        }
+        
+        .stat-card:hover::before{opacity:1;}
+        
+        .stat-value{
+            font-family:'VT323',monospace;
+            font-size:4rem;
+            background:linear-gradient(180deg,var(--mint),var(--lilac));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            background-clip:text;
+            line-height:1;
+            margin-bottom:0.5rem;
+        }
+        
+        .stat-label{
+            color:var(--dim);
+            font-size:0.8rem;
+            text-transform:uppercase;
+            letter-spacing:0.1em;
+        }
+        
+        .stat-bar{
+            margin-top:1rem;
+            height:4px;
+            background:var(--bg);
+            border-radius:2px;
+            overflow:hidden;
+        }
+        
+        .stat-fill{
+            height:100%;
+            background:linear-gradient(90deg,var(--mint),var(--lilac));
+            border-radius:2px;
+            animation:pulse-glow 2s infinite;
+        }
+        
+        /* TIMELINE */
+        .timeline-section{
+            padding:4rem 2rem;
+            background:var(--bg2);
+        }
+        
+        .timeline{
+            max-width:800px;
+            margin:0 auto;
+            position:relative;
+        }
+        
+        .timeline::before{
+            content:'';
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+            width:2px;
+            height:100%;
+            background:linear-gradient(180deg,var(--mint),var(--lilac),var(--mint));
+        }
+        
+        .timeline-item{
+            display:flex;
+            justify-content:flex-end;
+            padding-right:50%;
+            position:relative;
+            margin-bottom:3rem;
+        }
+        
+        .timeline-item:nth-child(even){
+            justify-content:flex-start;
+            padding-right:0;
+            padding-left:50%;
+        }
+        
+        .timeline-content{
+            background:var(--bg);
+            border:1px solid var(--line);
+            border-radius:8px;
+            padding:1.5rem;
+            max-width:350px;
+            position:relative;
+        }
+        
+        .timeline-content::before{
+            content:'';
+            position:absolute;
+            width:15px;
+            height:15px;
+            background:var(--mint);
+            border-radius:50%;
+            top:20px;
+            box-shadow:0 0 10px var(--mint-glow);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content::before{
+            right:-38px;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content::before{
+            left:-38px;
+        }
+        
+        .timeline-year{
+            font-family:'VT323',monospace;
+            font-size:1.5rem;
+            color:var(--lilac);
+            margin-bottom:0.5rem;
+        }
+        
+        .timeline-title{
+            color:var(--mint);
+            font-weight:600;
+            margin-bottom:0.5rem;
+        }
+        
+        .timeline-desc{
+            color:var(--dim);
+            font-size:0.8rem;
+        }
+        
+        /* CONSOLE SECTION */
+        .console-section{
+            padding:4rem 2rem;
+        }
+        
+        .console-container{
+            max-width:900px;
+            margin:0 auto;
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:12px;
+            overflow:hidden;
+        }
+        
+        .console-header{
+            background:var(--bg3);
+            padding:0.75rem 1rem;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            border-bottom:1px solid var(--line);
+        }
+        
+        .console-tabs{
+            display:flex;
+            gap:0.5rem;
+        }
+        
+        .console-tab{
+            padding:0.4rem 0.8rem;
+            font-size:0.75rem;
+            color:var(--dim);
+            background:transparent;
+            border:1px solid transparent;
+            border-radius:4px;
+            cursor:pointer;
+            transition:all 0.3s;
+        }
+        
+        .console-tab:hover{color:var(--text);}
+        .console-tab.active{
+            color:var(--mint);
+            border-color:var(--mint);
+            background:rgba(127,239,189,0.1);
+        }
+        
+        .console-body{
+            padding:1.5rem;
+            min-height:300px;
+            font-family:'Fira Code',monospace;
+            font-size:0.85rem;
+        }
+        
+        .console-output{
+            margin-bottom:1rem;
+        }
+        
+        .console-line{
+            padding:0.25rem 0;
+            border-left:2px solid transparent;
+            padding-left:0.5rem;
+            transition:all 0.2s;
+        }
+        
+        .console-line:hover{
+            background:rgba(127,239,189,0.05);
+            border-left-color:var(--mint);
+        }
+        
+        .console-input{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            margin-top:1rem;
+            padding-top:1rem;
+            border-top:1px solid var(--line);
+        }
+        
+        .console-prompt{
+            color:var(--mint);
+            font-weight:bold;
+        }
+        
+        .console-input input{
+            flex:1;
+            background:transparent;
+            border:none;
+            color:var(--text);
+            font-family:'Fira Code',monospace;
+            font-size:0.85rem;
+            outline:none;
+        }
+        
+        .console-input input::placeholder{color:var(--dim);}
+        
+        /* CONTACT */
+        .contact-section{
+            padding:4rem 2rem;
+            background:linear-gradient(180deg,var(--bg2),var(--bg));
+        }
+        
+        .contact-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:3rem;
+            max-width:1000px;
+            margin:0 auto;
+        }
+        
+        .contact-info h3{
+            font-family:'VT323',monospace;
+            font-size:2rem;
+            color:var(--mint);
+            margin-bottom:1rem;
+        }
+        
+        .contact-item{
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            padding:1rem;
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:8px;
+            margin-bottom:1rem;
+            transition:all 0.3s;
+        }
+        
+        .contact-item:hover{
+            border-color:var(--mint);
+            transform:translateX(5px);
+        }
+        
+        .contact-icon{
+            width:40px;
+            height:40px;
+            background:linear-gradient(135deg,var(--mint),var(--lilac));
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        
+        .contact-form{
+            background:var(--bg2);
+            border:1px solid var(--line);
+            border-radius:12px;
+            padding:2rem;
+        }
+        
+        .form-group{
+            margin-bottom:1.5rem;
+        }
+        
+        .form-label{
+            display:block;
+            font-size:0.75rem;
+            color:var(--dim);
+            margin-bottom:0.5rem;
+            text-transform:uppercase;
+            letter-spacing:0.1em;
+        }
+        
+        .form-input,.form-textarea{
+            width:100%;
+            padding:0.75rem 1rem;
+            background:var(--bg);
+            border:1px solid var(--line);
+            border-radius:6px;
+            color:var(--text);
+            font-family:'Fira Code',monospace;
+            font-size:0.85rem;
+            transition:all 0.3s;
+        }
+        
+        .form-input:focus,.form-textarea:focus{
+            outline:none;
+            border-color:var(--mint);
+            box-shadow:0 0 15px rgba(127,239,189,0.2);
+        }
+        
+        .form-textarea{
+            min-height:120px;
+            resize:vertical;
+        }
+        
+        .btn{
+            padding:0.75rem 2rem;
+            background:linear-gradient(135deg,var(--mint),var(--lilac));
+            border:none;
+            border-radius:6px;
+            color:var(--bg);
+            font-family:'Fira Code',monospace;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.3s;
+            position:relative;
+            overflow:hidden;
+        }
+        
+        .btn::before{
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(135deg,var(--lilac),var(--mint));
+            opacity:0;
+            transition:opacity 0.3s;
+        }
+        
+        .btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 5px 20px rgba(127,239,189,0.3);
+        }
+        
+        .btn:hover::before{opacity:1;}
+        
+        .btn span{position:relative;z-index:1;}
+        
+        /* FOOTER */
+        .footer{
+            background:var(--bg2);
+            border-top:1px solid var(--line);
+            padding:2rem;
+            text-align:center;
+        }
+        
+        .footer-links{
+            display:flex;
+            justify-content:center;
+            gap:2rem;
+            margin-bottom:1rem;
+        }
+        
+        .footer-link{
+            color:var(--dim);
+            text-decoration:none;
+            font-size:0.8rem;
+            transition:color 0.3s;
+        }
+        
+        .footer-link:hover{color:var(--mint);}
+        
+        .footer-copy{
+            color:var(--dim);
+            font-size:0.7rem;
+        }
+        
+        .footer-ascii{
+            font-family:'VT323',monospace;
+            color:var(--mint);
+            opacity:0.3;
+            font-size:0.6rem;
+            white-space:pre;
+            margin-top:1rem;
+        }
+        
+        /* GLITCH TEXT */
+        .glitch{
+            position:relative;
+        }
+        
+        .glitch::before,.glitch::after{
+            content:attr(data-text);
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+        }
+        
+        .glitch::before{
+            left:2px;
+            text-shadow:-2px 0 var(--lilac);
+            clip:rect(24px,550px,90px,0);
+            animation:glitch-anim 3s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after{
+            left:-2px;
+            text-shadow:2px 0 var(--mint);
+            clip:rect(85px,550px,140px,0);
+            animation:glitch-anim2 2s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim{
+            0%{clip:rect(51px,9999px,28px,0)}
+            5%{clip:rect(70px,9999px,63px,0)}
+            10%{clip:rect(92px,9999px,98px,0)}
+            15%{clip:rect(43px,9999px,78px,0)}
+            20%{clip:rect(17px,9999px,45px,0)}
+            25%{clip:rect(67px,9999px,89px,0)}
+            30%{clip:rect(21px,9999px,56px,0)}
+            35%{clip:rect(89px,9999px,34px,0)}
+            40%{clip:rect(12px,9999px,67px,0)}
+            45%{clip:rect(45px,9999px,23px,0)}
+            50%{clip:rect(78px,9999px,90px,0)}
+            55%{clip:rect(34px,9999px,12px,0)}
+            60%{clip:rect(56px,9999px,78px,0)}
+            65%{clip:rect(23px,9999px,45px,0)}
+            70%{clip:rect(90px,9999px,67px,0)}
+            75%{clip:rect(12px,9999px,34px,0)}
+            80%{clip:rect(67px,9999px,56px,0)}
+            85%{clip:rect(45px,9999px,89px,0)}
+            90%{clip:rect(78px,9999px,21px,0)}
+            95%{clip:rect(34px,9999px,43px,0)}
+            100%{clip:rect(56px,9999px,70px,0)}
+        }
+        
+        @keyframes glitch-anim2{
+            0%{clip:rect(65px,9999px,100px,0)}
+            5%{clip:rect(15px,9999px,75px,0)}
+            10%{clip:rect(85px,9999px,25px,0)}
+            15%{clip:rect(35px,9999px,95px,0)}
+            20%{clip:rect(55px,9999px,45px,0)}
+            25%{clip:rect(75px,9999px,65px,0)}
+            30%{clip:rect(25px,9999px,85px,0)}
+            35%{clip:rect(95px,9999px,15px,0)}
+            40%{clip:rect(45px,9999px,55px,0)}
+            45%{clip:rect(5px,9999px,35px,0)}
+            50%{clip:rect(85px,9999px,75px,0)}
+            55%{clip:rect(35px,9999px,5px,0)}
+            60%{clip:rect(55px,9999px,95px,0)}
+            65%{clip:rect(15px,9999px,45px,0)}
+            70%{clip:rect(75px,9999px,25px,0)}
+            75%{clip:rect(45px,9999px,85px,0)}
+            80%{clip:rect(95px,9999px,55px,0)}
+            85%{clip:rect(25px,9999px,15px,0)}
+            90%{clip:rect(65px,9999px,65px,0)}
+            95%{clip:rect(5px,9999px,35px,0)}
+            100%{clip:rect(85px,9999px,95px,0)}
+        }
+        
+        /* RESPONSIVE */
+        @media(max-width:1024px){
+            .stats-grid{grid-template-columns:repeat(2,1fr);}
+            .contact-grid{grid-template-columns:1fr;}
+        }
+        
+        @media(max-width:768px){
+            .header{flex-direction:column;gap:1rem;}
+            .nav{flex-wrap:wrap;justify-content:center;}
+            .hero-title{font-size:2.5rem;}
+            .hero-title .line2{font-size:1.5rem;}
+            .stats-grid{grid-template-columns:1fr;}
+            .timeline::before{left:20px;}
+            .timeline-item,.timeline-item:nth-child(even){
+                justify-content:flex-start;
+                padding-left:50px;
+                padding-right:0;
+            }
+            .timeline-content::before,.timeline-item:nth-child(odd) .timeline-content::before,.timeline-item:nth-child(even) .timeline-content::before{
+                left:-38px;
+                right:auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SCAN LINE EFFECT -->
+    <div class="scanline"></div>
+    
+    <!-- MATRIX RAIN -->
+    <div class="matrix-bg" id="matrix-bg"></div>
+    
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 100 100">
+                    <!-- Shield base -->
+                    <path d="M50 5 L90 25 L90 55 Q90 85 50 95 Q10 85 10 55 L10 25 Z" 
+                          fill="none" stroke="url(#grad1)" stroke-width="2"/>
+                    <!-- Inner hexagon -->
+                    <polygon points="50,20 75,35 75,65 50,80 25,65 25,35" 
+                             fill="none" stroke="url(#grad2)" stroke-width="1.5"/>
+                    <!-- Central node -->
+                    <circle cx="50" cy="50" r="8" fill="#7fefbd"/>
+                    <!-- Connection lines -->
+                    <line x1="50" y1="50" x2="50" y2="20" stroke="#c4b5fd" stroke-width="1"/>
+                    <line x1="50" y1="50" x2="75" y2="35" stroke="#c4b5fd" stroke-width="1"/>
+                    <line x1="50" y1="50" x2="75" y2="65" stroke="#c4b5fd" stroke-width="1"/>
+                    <line x1="50" y1="50" x2="50" y2="80" stroke="#c4b5fd" stroke-width="1"/>
+                    <line x1="50" y1="50" x2="25" y2="65" stroke="#c4b5fd" stroke-width="1"/>
+                    <line x1="50" y1="50" x2="25" y2="35" stroke="#c4b5fd" stroke-width="1"/>
+                    <!-- Satellite nodes -->
+                    <circle cx="50" cy="20" r="4" fill="#c4b5fd"/>
+                    <circle cx="75" cy="35" r="4" fill="#fde68a"/>
+                    <circle cx="75" cy="65" r="4" fill="#fca5a5"/>
+                    <circle cx="50" cy="80" r="4" fill="#93c5fd"/>
+                    <circle cx="25" cy="65" r="4" fill="#c4b5fd"/>
+                    <circle cx="25" cy="35" r="4" fill="#7fefbd"/>
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#7fefbd"/>
+                            <stop offset="100%" style="stop-color:#c4b5fd"/>
+                        </linearGradient>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#c4b5fd"/>
+                            <stop offset="100%" style="stop-color:#7fefbd"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div>
+                <div class="logo-text">
+                    <span class="main">AISBL</span><span class="at">@</span><span class="sub">EGIS</span>
+                </div>
+                <div class="tagline">Action · Innovation · Solidarité · Citoyenneté</div>
+            </div>
+        </div>
+        
+        <nav class="nav">
+            <a href="#mission" class="nav-item active">Mission</a>
+            <a href="#reseau" class="nav-item">Réseau</a>
+            <a href="#poles" class="nav-item">Pôles</a>
+            <a href="#histoire" class="nav-item">Histoire</a>
+            <a href="#console" class="nav-item">Console</a>
+            <a href="#contact" class="nav-item">Contact</a>
+        </nav>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>SYSTÈME ACTIF</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot lilac"></span>
+                <span id="clock">00:00:00</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="line1 glitch" data-text="ALLIANCE FOR INTEGRATED SOLIDARITY">ALLIANCE FOR INTEGRATED SOLIDARITY</span>
+                <span class="line2">Bright Leadership @ Empowered Governance</span>
+            </h1>
+            <p class="hero-subtitle">
+                Née de la fusion stratégique des plus grandes forces d'éducation permanente en Belgique francophone, 
+                AISBL@EGIS représente une nouvelle ère de citoyenneté active, d'innovation sociale et de transformation démocratique.
+            </p>
+            
+            <div class="terminal-box">
+                <div class="terminal-dots">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                </div>
+                <div class="terminal-content">
+                    <div class="terminal-line"><span class="terminal-prompt">aegis@root:</span><span class="terminal-cmd">~$ ./init_citoyennete.sh</span></div>
+                    <div class="terminal-line"><span class="terminal-output">[████████████████████████] 100%</span></div>
+                    <div class="terminal-line"><span class="terminal-success">✓ 263 sections locales connectées</span></div>
+                    <div class="terminal-line"><span class="terminal-success">✓ 93 collaborateur·rice·s mobilisé·e·s</span></div>
+                    <div class="terminal-line"><span class="terminal-highlight">> Bienvenue dans l'écosystème ÆGIS_</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- GRAPH NETWORK -->
+    <section class="graph-section" id="reseau">
+        <div class="section-header">
+            <h2 class="section-title">> GRAPH_VIEW: Réseau d'Intelligence Collective</h2>
+            <p class="section-subtitle">Visualisation interactive de notre écosystème de partenaires et d'actions</p>
+        </div>
+        <div class="graph-container">
+            <canvas id="network-canvas"></canvas>
+        </div>
+    </section>
+    
+    <!-- PÔLES -->
+    <section class="cards-section" id="poles">
+        <div class="section-header">
+            <h2 class="section-title">> MODULES: Pôles Opérationnels</h2>
+            <p class="section-subtitle">Architecture modulaire pour une action transversale et intégrée</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🎓</div>
+                <h3 class="card-title">Pôle Éducation Permanente</h3>
+                <p class="card-desc">
+                    Accompagnement des publics adultes vers une compréhension critique des mécanismes sociaux. 
+                    Ateliers, animations et projets participatifs pour une citoyenneté éclairée.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Analyse Critique</span>
+                    <span class="tag lilac">Émancipation</span>
+                    <span class="tag">Actions Collectives</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h3 class="card-title">Pôle Formation</h3>
+                <p class="card-desc">
+                    Université Populaire et programmes de formation continue. 
+                    Formation de formateur·rice·s, animateur·rice·s, écrivain·e·s public·que·s.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Montée en compétences</span>
+                    <span class="tag lilac">Intelligence Collective</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🗳️</div>
+                <h3 class="card-title">Pôle Participation</h3>
+                <p class="card-desc">
+                    Facilitation et accompagnement de processus participatifs. 
+                    Gouvernance ouverte, transparence et innovation démocratique.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Démocratie Directe</span>
+                    <span class="tag lilac">Co-construction</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🔬</div>
+                <h3 class="card-title">Pôle Recherche & Plaidoyer</h3>
+                <p class="card-desc">
+                    Production d'analyses, études et recommandations. 
+                    Influence sur les politiques publiques et sensibilisation aux enjeux de société.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Publications</span>
+                    <span class="tag lilac">Advocacy</span>
+                    <span class="tag">Impact</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🎭</div>
+                <h3 class="card-title">Pôle Action Culturelle</h3>
+                <p class="card-desc">
+                    Agir par la Culture comme levier de transformation sociale. 
+                    Expositions, débats, créations collectives et diffusion artistique engagée.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Démocratie Culturelle</span>
+                    <span class="tag lilac">Création</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🏛️</div>
+                <h3 class="card-title">Centre d'Archives</h3>
+                <p class="card-desc">
+                    30 ans de mémoire collective. Conservation et valorisation du patrimoine 
+                    de l'éducation populaire et des mouvements citoyens belges.
+                </p>
+                <div class="card-tags">
+                    <span class="tag">Patrimoine</span>
+                    <span class="tag lilac">Documentation</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- STATS -->
+    <section class="stats-section">
+        <div class="section-header">
+            <h2 class="section-title">> METRICS: Impact Mesurable</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">263</div>
+                <div class="stat-label">Sections Locales</div>
+                <div class="stat-bar"><div class="stat-fill" style="width:95%"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">93</div>
+                <div class="stat-label">Collaborateur·rice·s</div>
+                <div class="stat-bar"><div class="stat-fill" style="width:80%"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">55+</div>
+                <div class="stat-label">Années d'Expérience</div>
+                <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Possibilités</div>
+                <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- TIMELINE -->
+    <section class="timeline-section" id="histoire">
+        <div class="section-header">
+            <h2 class="section-title">> HISTORY: Chronologie de l'Innovation Sociale</h2>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">1969</div>
+                    <div class="timeline-title">Naissance de PAC</div>
+                    <div class="timeline-desc">Création de Présence et Action Culturelles, héritier des Cercles d'Éducation Ouvrière du début du 20ème siècle.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2010</div>
+                    <div class="timeline-title">Reconnaissance CPCP</div>
+                    <div class="timeline-desc">Le Centre Permanent pour la Citoyenneté et la Participation obtient sa reconnaissance comme institution d'éducation permanente.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-title">Convergence Stratégique</div>
+                    <div class="timeline-desc">Début des discussions pour une alliance historique entre les deux géants de l'éducation permanente.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-title">Fusion AISBL@EGIS</div>
+                    <div class="timeline-desc">Naissance officielle de l'Alliance for Integrated Solidarity, nouvelle force majeure de l'éducation permanente en FWB.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CONSOLE -->
+    <section class="console-section" id="console">
+        <div class="section-header">
+            <h2 class="section-title">> TERMINAL: Interface de Commande</h2>
+        </div>
+        <div class="console-container">
+            <div class="console-header">
+                <div class="console-tabs">
+                    <button class="console-tab active">terminal</button>
+                    <button class="console-tab">logs</button>
+                    <button class="console-tab">network</button>
+                </div>
+                <div style="color:var(--dim);font-size:0.7rem;">aegis@fwb-node-01</div>
+            </div>
+            <div class="console-body">
+                <div class="console-output" id="console-output">
+                    <div class="console-line"><span style="color:var(--dim)">[system]</span> Initialisation ÆGIS v4.2.1...</div>
+                    <div class="console-line"><span style="color:var(--mint)">✓</span> Modules chargés: education_permanente, formation, participation, culture</div>
+                    <div class="console-line"><span style="color:var(--mint)">✓</span> Connexion réseau: 263 nodes actifs</div>
+                    <div class="console-line"><span style="color:var(--lilac)">></span> En attente de commandes...</div>
+                </div>
+                <div class="console-input">
+                    <span class="console-prompt">aegis@root:~$</span>
+                    <input type="text" id="console-input" placeholder="Tapez une commande (help, status, mission, contact, easter)..." onkeypress="handleConsole(event)">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="section-header">
+            <h2 class="section-title">> CONNECT: Rejoignez le Réseau</h2>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h3>// Coordonnées</h3>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <div style="font-weight:600;">Siège Central</div>
+                        <div style="color:var(--dim);font-size:0.85rem;">Avenue des Arts 50, 1000 Bruxelles</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div>
+                        <div style="font-weight:600;">Email</div>
+                        <div style="color:var(--mint);font-size:0.85rem;">contact@aegis.be</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <div style="font-weight:600;">Téléphone</div>
+                        <div style="color:var(--dim);font-size:0.85rem;">+32 2 238 01 00</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🌐</div>
+                    <div>
+                        <div style="font-weight:600;">Antennes Régionales</div>
+                        <div style="color:var(--dim);font-size:0.85rem;">12 bureaux en Wallonie et Bruxelles</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <div class="form-group">
+                    <label class="form-label">Nom / Organisation</label>
+                    <input type="text" class="form-input" placeholder="Votre nom ou organisation...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="email@exemple.be">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" placeholder="Comment pouvons-nous vous accompagner ?"></textarea>
+                </div>
+                <button class="btn"><span>>> Envoyer</span></button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#" class="footer-link">Mentions Légales</a>
+            <a href="#" class="footer-link">Politique de Confidentialité</a>
+            <a href="#" class="footer-link">Rapports d'Activité</a>
+            <a href="#" class="footer-link">Espace Presse</a>
+        </div>
+        <div class="footer-copy">
+            © 2025 AISBL@EGIS — Reconnu par la Fédération Wallonie-Bruxelles | Décret Éducation Permanente 2003
+        </div>
+        <pre class="footer-ascii">
+    ╔═══════════════════════════════════════════════════════════╗
+    ║  █████╗ ██╗███████╗██████╗ ██╗      ██████╗ ███████╗ ██╗███████╗  ║
+    ║ ██╔══██╗██║██╔════╝██╔══██╗██║     ██╔════╝ ██╔════╝██╔╝██╔════╝  ║
+    ║ ███████║██║███████╗██████╔╝██║     ██║  ███╗█████╗ ██╔╝ ███████╗  ║
+    ║ ██╔══██║██║╚════██║██╔══██╗██║     ██║   ██║██╔══╝██╔╝  ╚════██║  ║
+    ║ ██║  ██║██║███████║██████╔╝███████╗╚██████╔╝███████║    ███████║  ║
+    ║ ╚═╝  ╚═╝╚═╝╚══════╝╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝    ╚══════╝  ║
+    ╚═══════════════════════════════════════════════════════════╝
+        </pre>
+    </footer>
+
+<script>
+// ============================================
+// MATRIX RAIN BACKGROUND
+// ============================================
+function initMatrix() {
+    const bg = document.getElementById('matrix-bg');
+    const chars = 'AEGIS01アイウエオカキクケコ@#$%^&*(){}[]|;:,.<>?/~`░▒▓█';
+    
+    for (let i = 0; i < 50; i++) {
+        const char = document.createElement('span');
+        char.className = 'matrix-char';
+        char.textContent = chars[Math.floor(Math.random() * chars.length)];
+        char.style.left = Math.random() * 100 + '%';
+        char.style.animationDelay = Math.random() * 10 + 's';
+        char.style.animationDuration = (8 + Math.random() * 10) + 's';
+        bg.appendChild(char);
+    }
+}
+
+// ============================================
+// CLOCK
+// ============================================
+function updateClock() {
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-BE');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============================================
+// NETWORK GRAPH (OBSIDIAN STYLE)
+// ============================================
+function initGraph() {
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    const nodes = [
+        // Centre
+        { id: 'aegis', x: 0.5, y: 0.5, r: 25, color: '#7fefbd', label: 'ÆGIS', fixed: true },
+        
+        // Pôles principaux
+        { id: 'ep', x: 0.3, y: 0.3, r: 18, color: '#c4b5fd', label: 'Éducation Permanente' },
+        { id: 'form', x: 0.7, y: 0.3, r: 16, color: '#fde68a', label: 'Formation' },
+        { id: 'part', x: 0.7, y: 0.7, r: 16, color: '#fca5a5', label: 'Participation' },
+        { id: 'culture', x: 0.3, y: 0.7, r: 16, color: '#93c5fd', label: 'Culture' },
+        { id: 'recherche', x: 0.5, y: 0.2, r: 14, color: '#c4b5fd', label: 'Recherche' },
+        { id: 'archives', x: 0.5, y: 0.8, r: 12, color: '#7fefbd', label: 'Archives' },
+        
+        // Sous-nodes
+        { id: 'bxl', x: 0.15, y: 0.4, r: 10, color: '#7fefbd', label: 'Bruxelles' },
+        { id: 'liege', x: 0.2, y: 0.55, r: 9, color: '#7fefbd', label: 'Liège' },
+        { id: 'namur', x: 0.25, y: 0.85, r: 9, color: '#7fefbd', label: 'Namur' },
+        { id: 'charleroi', x: 0.4, y: 0.9, r: 9, color: '#7fefbd', label: 'Charleroi' },
+        { id: 'mons', x: 0.6, y: 0.9, r: 8, color: '#7fefbd', label: 'Mons' },
+        { id: 'hainaut', x: 0.75, y: 0.85, r: 8, color: '#7fefbd', label: 'Hainaut' },
+        { id: 'brabant', x: 0.85, y: 0.55, r: 8, color: '#7fefbd', label: 'Brabant' },
+        { id: 'lux', x: 0.85, y: 0.4, r: 7, color: '#7fefbd', label: 'Luxembourg' },
+        
+        // Thématiques
+        { id: 'justice', x: 0.15, y: 0.2, r: 8, color: '#fca5a5', label: 'Justice Sociale' },
+        { id: 'demo', x: 0.35, y: 0.15, r: 8, color: '#c4b5fd', label: 'Démocratie' },
+        { id: 'ecolo', x: 0.65, y: 0.15, r: 8, color: '#7fefbd', label: 'Écologie' },
+        { id: 'solidar', x: 0.85, y: 0.2, r: 8, color: '#fde68a', label: 'Solidarité' },
+    ];
+    
+    const links = [
+        // Centre vers pôles
+        { source: 'aegis', target: 'ep' },
+        { source: 'aegis', target: 'form' },
+        { source: 'aegis', target: 'part' },
+        { source: 'aegis', target: 'culture' },
+        { source: 'aegis', target: 'recherche' },
+        { source: 'aegis', target: 'archives' },
+        
+        // Inter-pôles
+        { source: 'ep', target: 'form' },
+        { source: 'form', target: 'part' },
+        { source: 'part', target: 'culture' },
+        { source: 'culture', target: 'ep' },
+        { source: 'recherche', target: 'ep' },
+        { source: 'recherche', target: 'part' },
+        
+        // Régionales
+        { source: 'ep', target: 'bxl' },
+        { source: 'ep', target: 'liege' },
+        { source: 'culture', target: 'namur' },
+        { source: 'culture', target: 'charleroi' },
+        { source: 'part', target: 'mons' },
+        { source: 'part', target: 'hainaut' },
+        { source: 'form', target: 'brabant' },
+        { source: 'form', target: 'lux' },
+        
+        // Thématiques
+        { source: 'ep', target: 'justice' },
+        { source: 'recherche', target: 'demo' },
+        { source: 'culture', target: 'ecolo' },
+        { source: 'form', target: 'solidar' },
+        { source: 'justice', target: 'demo' },
+        { source: 'ecolo', target: 'solidar' },
+    ];
+    
+    let mouseX = 0, mouseY = 0;
+    let hoveredNode = null;
+    
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+        
+        hoveredNode = null;
+        nodes.forEach(node => {
+            const nx = node.x * canvas.width;
+            const ny = node.y * canvas.height;
+            const dist = Math.sqrt((mouseX - nx) ** 2 + (mouseY - ny) ** 2);
+            if (dist < node.r + 10) hoveredNode = node;
+        });
+        
+        canvas.style.cursor = hoveredNode ? 'pointer' : 'default';
+    });
+    
+    let time = 0;
+    function animate() {
+        time += 0.01;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Animate nodes (subtle floating)
+        nodes.forEach(node => {
+            if (!node.fixed) {
+                node.displayX = node.x + Math.sin(time + node.x * 10) * 0.005;
+                node.displayY = node.y + Math.cos(time + node.y * 10) * 0.005;
+            } else {
+                node.displayX = node.x;
+                node.displayY = node.y;
+            }
+        });
+        
+        // Draw links
+        links.forEach(link => {
+            const source = nodes.find(n => n.id === link.source);
+            const target = nodes.find(n => n.id === link.target);
+            
+            const sx = source.displayX * canvas.width;
+            const sy = source.displayY * canvas.height;
+            const tx = target.displayX * canvas.width;
+            const ty = target.displayY * canvas.height;
+            
+            const gradient = ctx.createLinearGradient(sx, sy, tx, ty);
+            gradient.addColorStop(0, source.color + '60');
+            gradient.addColorStop(1, target.color + '60');
+            
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(tx, ty);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = hoveredNode && (hoveredNode.id === link.source || hoveredNode.id === link.target) ? 2 : 1;
+            ctx.stroke();
+        });
+        
+        // Draw nodes
+        nodes.forEach(node => {
+            const x = node.displayX * canvas.width;
+            const y = node.displayY * canvas.height;
+            const isHovered = hoveredNode === node;
+            const r = isHovered ? node.r * 1.3 : node.r;
+            
+            // Glow
+            const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 2);
+            glow.addColorStop(0, node.color + '40');
+            glow.addColorStop(1, 'transparent');
+            ctx.beginPath();
+            ctx.arc(x, y, r * 2, 0, Math.PI * 2);
+            ctx.fillStyle = glow;
+            ctx.fill();
+            
+            // Node
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = isHovered ? node.color : node.color + 'cc';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = isHovered ? 2 : 1;
+            ctx.stroke();
+            
+            // Label
+            if (isHovered || node.r > 12) {
+                ctx.font = `${isHovered ? '12px' : '10px'} 'Fira Code', monospace`;
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.fillText(node.label, x, y + r + 15);
+            }
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+}
+
+// ============================================
+// CONSOLE
+// ============================================
+const consoleCommands = {
+    help: () => `Commandes disponibles:
+  <span style="color:var(--mint)">help</span>     - Afficher cette aide
+  <span style="color:var(--mint)">status</span>   - Statut du système
+  <span style="color:var(--mint)">mission</span>  - Notre mission
+  <span style="color:var(--mint)">poles</span>    - Voir les pôles
+  <span style="color:var(--mint)">contact</span>  - Informations de contact
+  <span style="color:var(--mint)">clear</span>    - Effacer la console
+  <span style="color:var(--mint)">easter</span>   - ???`,
+    
+    status: () => `<span style="color:var(--mint)">━━━ SYSTÈME ÆGIS v4.2.1 ━━━</span>
+Uptime: ${Math.floor(Math.random() * 365)} jours
+Nodes actifs: 263
+Collaborateurs: 93
+Processus en cours: ∞
+État: <span style="color:var(--mint)">■ OPÉRATIONNEL</span>`,
+    
+    mission: () => `<span style="color:var(--lilac)">// MISSION AISBL@EGIS</span>
+
+Alimenter, accompagner et consolider les processus
+qui favorisent l'émergence d'une citoyenneté:
+  • <span style="color:var(--mint)">EFFECTIVE</span> - Actions concrètes
+  • <span style="color:var(--mint)">INFORMÉE</span> - Éducation permanente
+  • <span style="color:var(--mint)">CRITIQUE</span> - Analyse de société
+  • <span style="color:var(--mint)">RÉSILIENTE</span> - Solidarité durable`,
+    
+    poles: () => `<span style="color:var(--lilac)">// PÔLES OPÉRATIONNELS</span>
+
+[1] Éducation Permanente
+[2] Formation
+[3] Participation Citoyenne
+[4] Recherche & Plaidoyer
+[5] Action Culturelle
+[6] Centre d'Archives`,
+    
+    contact: () => `<span style="color:var(--lilac)">// CONTACT</span>
+
+📍 Avenue des Arts 50, 1000 Bruxelles
+📧 contact@aegis.be
+📞 +32 2 238 01 00
+🌐 www.aegis.be`,
+    
+    clear: () => 'CLEAR',
+    
+    easter: () => `<span style="color:var(--node-3)">
+    🥚 EASTER EGG TROUVÉ! 🥚
+    
+    "La citoyenneté n'est pas un état,
+     c'est un mouvement perpétuel."
+    
+         — Manifeste ÆGIS, 2025
+</span>`,
+};
+
+function handleConsole(e) {
+    if (e.key !== 'Enter') return;
+    
+    const input = document.getElementById('console-input');
+    const output = document.getElementById('console-output');
+    const cmd = input.value.trim().toLowerCase();
+    input.value = '';
+    
+    const line = document.createElement('div');
+    line.className = 'console-line';
+    line.innerHTML = `<span style="color:var(--mint)">aegis@root:~$</span> ${cmd}`;
+    output.appendChild(line);
+    
+    const result = document.createElement('div');
+    result.className = 'console-line';
+    
+    if (consoleCommands[cmd]) {
+        const response = consoleCommands[cmd]();
+        if (response === 'CLEAR') {
+            output.innerHTML = '';
+            return;
+        }
+        result.innerHTML = response;
+    } else if (cmd) {
+        result.innerHTML = `<span style="color:var(--fca5a5)">Commande non reconnue: ${cmd}</span>\nTapez <span style="color:var(--mint)">help</span> pour voir les commandes disponibles.`;
+    }
+    
+    output.appendChild(result);
+    output.scrollTop = output.scrollHeight;
+}
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    initMatrix();
+    initGraph();
+    
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+    // Nav active state
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+</script>
+</body>
+</html>

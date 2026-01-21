@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ PROTOCOLE_INSURRECTION — Manuel de Piratage Citoyen</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-dark: #0d1117;
+            --bg-panel: #161b22;
+            --bg-card: #1a1f26;
+            --green-matrix: #00ff41;
+            --green-dim: #00aa2a;
+            --green-glow: rgba(0, 255, 65, 0.3);
+            --purple: #a855f7;
+            --purple-dim: #7c3aed;
+            --cyan: #22d3ee;
+            --red: #f87171;
+            --amber: #fbbf24;
+            --text: #e0e0e0;
+            --text-dim: #6b7280;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Matrix rain effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.05;
+            background: 
+                linear-gradient(180deg, transparent 0%, var(--bg-void) 100%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 65, 0.03) 2px,
+                    rgba(0, 255, 65, 0.03) 4px
+                );
+        }
+        
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1),
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, transparent 100%);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--green-dim);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { opacity: 1; transform: translate(0); }
+            92% { opacity: 0.8; transform: translate(-2px, 1px); }
+            94% { opacity: 0.9; transform: translate(2px, -1px); }
+            96% { opacity: 0.7; transform: translate(-1px, 2px); }
+        }
+        
+        .logo-text {
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+            color: var(--green-matrix);
+            text-shadow: 0 0 10px var(--green-glow);
+            letter-spacing: 2px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--green-dim);
+            color: var(--green-matrix);
+            text-decoration: none;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: var(--green-matrix);
+            color: var(--bg-void);
+        }
+        
+        /* Main container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
+            margin-bottom: 3rem;
+            border: 1px solid var(--green-dim);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green-matrix), transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(400px); opacity: 0; }
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--green-matrix);
+            text-shadow: 0 0 30px var(--green-glow);
+            margin-bottom: 1rem;
+            letter-spacing: 4px;
+        }
+        
+        .hero-subtitle {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--green-dim);
+        }
+        
+        .status-label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        
+        .status-value {
+            color: var(--green-matrix);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--green-dim);
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: var(--green-matrix);
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .tab.active {
+            color: var(--green-matrix);
+            background: rgba(0, 255, 65, 0.1);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--green-matrix);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mission cards */
+        .missions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .mission-card {
+            background: var(--bg-panel);
+            border: 2px solid var(--green-dim);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--green-matrix);
+            box-shadow: 0 10px 40px var(--green-glow);
+        }
+        
+        .mission-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .mission-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .mission-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), transparent);
+            border-bottom: 1px solid var(--green-dim);
+        }
+        
+        .mission-type {
+            font-family: 'VT323', monospace;
+            font-size: 0.9rem;
+            color: var(--cyan);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .mission-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--green-matrix);
+            margin-bottom: 0.5rem;
+        }
+        
+        .mission-body {
+            padding: 1.5rem;
+        }
+        
+        .mission-target {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--purple);
+        }
+        
+        .target-icon {
+            font-size: 2rem;
+        }
+        
+        .target-info h4 {
+            color: var(--purple);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .target-info p {
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .mission-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            color: var(--amber);
+        }
+        
+        .difficulty-bar {
+            height: 6px;
+            background: var(--bg-void);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .difficulty-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green-matrix), var(--amber), var(--red));
+            transition: width 0.5s;
+        }
+        
+        /* Phases section */
+        .phases-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        @media (max-width: 900px) {
+            .phases-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .phase-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--green-dim);
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .phase-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--bg-void);
+            padding: 0.25rem 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+        }
+        
+        .phase-title {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            color: var(--green-matrix);
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .phase-steps {
+            list-style: none;
+        }
+        
+        .phase-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        
+        .phase-step:last-child {
+            border-bottom: none;
+        }
+        
+        .step-icon {
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+        
+        .phase-step.completed {
+            color: var(--green-matrix);
+        }
+        
+        .phase-step.completed .step-icon::after {
+            content: '✓';
+            color: var(--green-matrix);
+        }
+        
+        /* Level progression */
+        .levels-section {
+            margin-bottom: 3rem;
+        }
+        
+        .levels-track {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem;
+            background: var(--bg-panel);
+            border: 1px solid var(--green-dim);
+            position: relative;
+        }
+        
+        .levels-track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: var(--bg-void);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        
+        .levels-track::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: var(--progress, 0%);
+            max-width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green-matrix), var(--purple));
+            transform: translateY(-50%);
+            z-index: 1;
+            transition: width 0.5s;
+        }
+        
+        .level-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 2;
+        }
+        
+        .level-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--bg-void);
+            border: 3px solid var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .level-node.active .level-icon {
+            border-color: var(--green-matrix);
+            box-shadow: 0 0 20px var(--green-glow);
+            animation: pulse 2s infinite;
+        }
+        
+        .level-node.completed .level-icon {
+            border-color: var(--purple);
+            background: rgba(168, 85, 247, 0.2);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--green-glow); }
+            50% { box-shadow: 0 0 40px var(--green-glow); }
+        }
+        
+        .level-label {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: var(--text-dim);
+            text-align: center;
+        }
+        
+        .level-node.active .level-label {
+            color: var(--green-matrix);
+        }
+        
+        /* Quiz section */
+        .quiz-container {
+            background: var(--bg-panel);
+            border: 2px solid var(--purple);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .quiz-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--purple);
+            font-size: 1.2rem;
+        }
+        
+        .quiz-progress {
+            font-family: 'VT323', monospace;
+            color: var(--text-dim);
+        }
+        
+        .quiz-question {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .quiz-answers {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .quiz-answer {
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--text-dim);
+            color: var(--text);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .quiz-answer:hover {
+            border-color: var(--purple);
+            background: rgba(168, 85, 247, 0.1);
+        }
+        
+        .quiz-answer.correct {
+            border-color: var(--green-matrix);
+            background: rgba(0, 255, 65, 0.2);
+        }
+        
+        .quiz-answer.wrong {
+            border-color: var(--red);
+            background: rgba(248, 113, 113, 0.2);
+        }
+        
+        .quiz-feedback {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .quiz-feedback.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        .quiz-feedback.success {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--green-matrix);
+            color: var(--green-matrix);
+        }
+        
+        .quiz-feedback.error {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        
+        /* Tools section */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tool-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--text-dim);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tool-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-3px);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tool-name {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cyan);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        
+        /* Threats section */
+        .threats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .threat-card {
+            background: rgba(248, 113, 113, 0.05);
+            border: 1px solid var(--red);
+            padding: 1.5rem;
+        }
+        
+        .threat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .threat-icon {
+            font-size: 2rem;
+        }
+        
+        .threat-name {
+            font-family: 'VT323', monospace;
+            color: var(--red);
+            font-size: 1.2rem;
+        }
+        
+        .threat-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .threat-parade {
+            padding: 0.75rem;
+            background: rgba(0, 255, 65, 0.1);
+            border-left: 3px solid var(--green-matrix);
+        }
+        
+        .parade-label {
+            font-size: 0.7rem;
+            color: var(--green-matrix);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        
+        .parade-text {
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-panel);
+            border: 2px solid var(--green-matrix);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), transparent);
+            border-bottom: 1px solid var(--green-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--green-matrix);
+            font-size: 1.3rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-close:hover {
+            color: var(--red);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--green-matrix);
+            color: var(--bg-void);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 20px var(--green-glow);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--green-dim);
+            color: var(--green-matrix);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-panel);
+            border: 1px solid var(--green-matrix);
+            color: var(--green-matrix);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        /* Section titles */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--green-matrix);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--green-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-title .icon {
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    <div class="scanlines"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <a href="00-kern-nexus.html" class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">PROTOCOLE_INSURRECTION</span>
+            </a>
+            <div class="nav-links">
+                <a href="00-kern-nexus.html" class="nav-link">← NEXUS</a>
+                <a href="02-mission-creator.html" class="nav-link">MISSIONS</a>
+                <a href="wiki.html" class="nav-link">WIKI</a>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>PROTOCOLE_INSURRECTION</h1>
+            <p class="hero-subtitle">Manuel de piratage des systèmes de pouvoir</p>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">CLEARANCE</span>
+                    <span class="status-value" id="agentClearance">OPÉRATEUR</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">MISSIONS</span>
+                    <span class="status-value"><span id="completedMissions">0</span>/8</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">XP PROTOCOLE</span>
+                    <span class="status-value" id="protocolXP">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">QUIZ</span>
+                    <span class="status-value"><span id="quizScore">0</span>/<span id="quizTotal">50</span></span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="missions">📋 MISSIONS</button>
+            <button class="tab" data-tab="training">🎓 FORMATION</button>
+            <button class="tab" data-tab="arsenal">🛠️ ARSENAL</button>
+            <button class="tab" data-tab="threats">⚠️ CONTRE-ATTAQUES</button>
+        </div>
+        
+        <!-- MISSIONS TAB -->
+        <div class="tab-content active" id="missions">
+            <!-- Level Progression -->
+            <section class="levels-section">
+                <h2 class="section-title"><span class="icon">📊</span> PROGRESSION</h2>
+                <div class="levels-track" style="--progress: 33%;">
+                    <div class="level-node completed">
+                        <div class="level-icon">🖥️</div>
+                        <span class="level-label">Niveau 1<br>OPÉRATEUR<br>(Solo)</span>
+                    </div>
+                    <div class="level-node active">
+                        <div class="level-icon">👥</div>
+                        <span class="level-label">Niveau 2<br>GUILDE<br>(Multiplayer)</span>
+                    </div>
+                    <div class="level-node">
+                        <div class="level-icon">🌍</div>
+                        <span class="level-label">Niveau 3<br>RAID MONDIAL<br>(Endgame)</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Missions Grid -->
+            <h2 class="section-title"><span class="icon">🎯</span> CHOISIR SA QUÊTE</h2>
+            <div class="missions-grid">
+                <!-- Mission 01: Tutorial -->
+                <div class="mission-card" onclick="openMission('tutorial')">
+                    <div class="mission-header">
+                        <div class="mission-type">[TUTORIEL]</div>
+                        <h3 class="mission-title">MISSION 01: LA MÉGA-CORPORATION</h3>
+                    </div>
+                    <div class="mission-body">
+                        <div class="mission-target">
+                            <span class="target-icon">🏢</span>
+                            <div class="target-info">
+                                <h4>CIBLE: COLRUYT GROUP</h4>
+                                <p>Infiltrer une structure privée via un projet-pilote</p>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
+                            Apprenez les algorithmes d'approche sur une cible "Tutoriel". Les règles sont prévisibles, l'environnement contrôlé.
+                        </p>
+                        <div class="mission-stats">
+                            <div class="stat">
+                                <div class="stat-label">Difficulté</div>
+                                <div class="stat-value">60%</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Phases</div>
+                                <div class="stat-value">4</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">XP</div>
+                                <div class="stat-value">+500</div>
+                            </div>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div class="difficulty-fill" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mission 02: Campaign -->
+                <div class="mission-card" onclick="openMission('campaign')">
+                    <div class="mission-header" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), transparent);">
+                        <div class="mission-type" style="color: var(--purple);">[CAMPAGNE]</div>
+                        <h3 class="mission-title">MISSION 02: LA MATRICE POLITIQUE</h3>
+                    </div>
+                    <div class="mission-body">
+                        <div class="mission-target" style="border-color: var(--amber);">
+                            <span class="target-icon">🏛️</span>
+                            <div class="target-info">
+                                <h4 style="color: var(--amber);">CIBLE: LE SYSTÈME DÉMOCRATIQUE</h4>
+                                <p>Influencer la décision publique du micro au macro</p>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
+                            La cible ultime. Règles complexes et dynamiques. L'objectif n'est plus un projet-pilote, mais la reprogrammation des règles collectives.
+                        </p>
+                        <div class="mission-stats">
+                            <div class="stat">
+                                <div class="stat-label">Difficulté</div>
+                                <div class="stat-value">90%</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Niveaux</div>
+                                <div class="stat-value">3</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">XP</div>
+                                <div class="stat-value">+2000</div>
+                            </div>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div class="difficulty-fill" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phases -->
+            <h2 class="section-title"><span class="icon">🔄</span> PHASES D'INFILTRATION</h2>
+            <div class="phases-container">
+                <div class="phase-card">
+                    <div class="phase-number">PHASE 1</div>
+                    <h3 class="phase-title">🔍 SCAN</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Cartographier le Labyrinthe</p>
+                    <ul class="phase-steps">
+                        <li class="phase-step completed">
+                            <span class="step-icon">🗺️</span>
+                            <span>Identifier l'architecture du système</span>
+                        </li>
+                        <li class="phase-step completed">
+                            <span class="step-icon">🚪</span>
+                            <span>Trouver la porte dérobée (backdoor)</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">🗣️</span>
+                            <span>Parler leur langage</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="phase-card">
+                    <div class="phase-number">PHASE 2</div>
+                    <h3 class="phase-title">🚀 DEPLOY</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Lancer l'Exploit</p>
+                    <ul class="phase-steps">
+                        <li class="phase-step">
+                            <span class="step-icon">🦎</span>
+                            <span>Mimétisme : S'aligner sur leurs formats</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">🧫</span>
+                            <span>Quarantaine : Pilote "petit, propre, mesurable"</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">🔌</span>
+                            <span>Requête minimale : Sponsoring pilote</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">📦</span>
+                            <span>Réplication : Planifier le scaling</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="phase-card">
+                    <div class="phase-number">PHASE 3</div>
+                    <h3 class="phase-title">🛡️ ANTIVIRUS</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Déjouer les Pièges du Système</p>
+                    <ul class="phase-steps">
+                        <li class="phase-step">
+                            <span class="step-icon">🔥</span>
+                            <span>Éviter "trop gros, trop tôt"</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">🚨</span>
+                            <span>Éviter le langage "politique"</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">📊</span>
+                            <span>Toujours avoir des KPIs</span>
+                        </li>
+                        <li class="phase-step">
+                            <span class="step-icon">🎯</span>
+                            <span>Définir INPUT/OUTPUT clairement</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TRAINING TAB -->
+        <div class="tab-content" id="training">
+            <h2 class="section-title"><span class="icon">🎓</span> CENTRE DE FORMATION</h2>
+            
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h3 class="quiz-title">📚 FLASHCARDS — Action Citoyenne</h3>
+                    <div class="quiz-progress">Question <span id="currentQ">1</span>/<span id="totalQ">10</span></div>
+                </div>
+                
+                <div id="quizContent">
+                    <p class="quiz-question" id="questionText">Chargement des questions...</p>
+                    <div class="quiz-answers" id="answersContainer">
+                        <!-- Answers will be populated by JS -->
+                    </div>
+                    <div class="quiz-feedback" id="quizFeedback"></div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" onclick="prevQuestion()">← Précédent</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()">Suivant →</button>
+                    <button class="btn btn-secondary" onclick="shuffleQuiz()" style="margin-left: auto;">🔀 Mélanger</button>
+                </div>
+            </div>
+            
+            <!-- Knowledge modules -->
+            <h2 class="section-title" style="margin-top: 2rem;"><span class="icon">📖</span> MODULES DE CONNAISSANCE</h2>
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openKnowledge('droits')">
+                    <div class="tool-icon">⚖️</div>
+                    <h4 class="tool-name">Droits Civiques</h4>
+                    <p class="tool-desc">Pétitions, ICE, commissions délibératives, enquêtes publiques...</p>
+                </div>
+                <div class="tool-card" onclick="openKnowledge('plaidoyer')">
+                    <div class="tool-icon">📢</div>
+                    <h4 class="tool-name">Méthodologie du Plaidoyer</h4>
+                    <p class="tool-desc">Voir-Juger-Agir, objectifs SMART, storytelling...</p>
+                </div>
+                <div class="tool-card" onclick="openKnowledge('niveaux')">
+                    <div class="tool-icon">📈</div>
+                    <h4 class="tool-name">Les 3 Niveaux d'Action</h4>
+                    <p class="tool-desc">Micro (individuel), Méso (local), Macro (systémique)</p>
+                </div>
+                <div class="tool-card" onclick="openKnowledge('partenariat')">
+                    <div class="tool-icon">🤝</div>
+                    <h4 class="tool-name">Stratégies de Partenariat</h4>
+                    <p class="tool-desc">Portes d'entrée, approche win-win, pilotes mesurables...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ARSENAL TAB -->
+        <div class="tab-content" id="arsenal">
+            <h2 class="section-title"><span class="icon">🛠️</span> L'ARSENAL STRATÉGIQUE</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Une bonne insurrection est planifiée. L'improvisation mène à l'échec. Utilisez le framework "Voir-Juger-Agir".
+            </p>
+            
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openTool('swot')">
+                    <div class="tool-icon">🎯</div>
+                    <h4 class="tool-name">Analyse SWOT</h4>
+                    <p class="tool-desc">Forces, Faiblesses, Opportunités, Menaces. Évaluez votre position stratégique.</p>
+                </div>
+                <div class="tool-card" onclick="openTool('pestel')">
+                    <div class="tool-icon">🌐</div>
+                    <h4 class="tool-name">Analyse PESTEL</h4>
+                    <p class="tool-desc">Politique, Économique, Social, Technologique, Écologique, Légal. Scanner l'environnement.</p>
+                </div>
+                <div class="tool-card" onclick="openTool('powermap')">
+                    <div class="tool-icon">🕸️</div>
+                    <h4 class="tool-name">Power Mapping</h4>
+                    <p class="tool-desc">Cartographiez les acteurs : alliés, adversaires, cibles, influenceurs.</p>
+                </div>
+                <div class="tool-card" onclick="openTool('arbre')">
+                    <div class="tool-icon">🌳</div>
+                    <h4 class="tool-name">Arbre à Problèmes</h4>
+                    <p class="tool-desc">Analysez les causes racines et les conséquences d'un problème.</p>
+                </div>
+                <div class="tool-card" onclick="openTool('smart')">
+                    <div class="tool-icon">✅</div>
+                    <h4 class="tool-name">Objectifs SMART</h4>
+                    <p class="tool-desc">Spécifique, Mesurable, Atteignable, Réaliste, Temporellement défini.</p>
+                </div>
+                <div class="tool-card" onclick="openTool('storytelling')">
+                    <div class="tool-icon">📖</div>
+                    <h4 class="tool-name">Storytelling</h4>
+                    <p class="tool-desc">Combinez faits rationnels et histoires humaines émotionnelles.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- THREATS TAB -->
+        <div class="tab-content" id="threats">
+            <h2 class="section-title"><span class="icon">⚠️</span> LE SYSTÈME CONTRE-ATTAQUE</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">
+                Attendez-vous à une forte résistance. Le Système se défend activement contre toute tentative de modification.
+            </p>
+            
+            <div class="threats-grid">
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">☠️</span>
+                        <h4 class="threat-name">DÉSINFORMATION</h4>
+                    </div>
+                    <p class="threat-desc">Corrompt les données à la source. Vous empêche d'avoir une vision claire de la réalité.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Vérification des faits, culture INFOSEC, sources multiples.</p>
+                    </div>
+                </div>
+                
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">⚔️</span>
+                        <h4 class="threat-name">POLARISATION</h4>
+                    </div>
+                    <p class="threat-desc">Divise les collectifs, monte les opérateurs les uns contre les autres.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Dialogue, respect, focus sur les objectifs communs.</p>
+                    </div>
+                </div>
+                
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">🔋</span>
+                        <h4 class="threat-name">BURN-OUT</h4>
+                    </div>
+                    <p class="threat-desc">Un 'debuff' qui draine votre énergie sur la durée. Le système compte sur votre épuisement.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Marathon, pas sprint. Célébrer les petites victoires. Déléguer.</p>
+                    </div>
+                </div>
+                
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">🎭</span>
+                        <h4 class="threat-name">ILLUSION PARTICIPATIVE</h4>
+                    </div>
+                    <p class="threat-desc">Le système simule une écoute pour démobiliser. Participation sans pouvoir réel.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Exiger un impact réel et contraignant, pas seulement consultatif.</p>
+                    </div>
+                </div>
+                
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">🧱</span>
+                        <h4 class="threat-name">PARE-FEU</h4>
+                    </div>
+                    <p class="threat-desc">"Trop gros, trop tôt". Le système rejette ce qu'il ne comprend pas.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Pilotes "petits, propres, mesurables". Quarantaine territoriale.</p>
+                    </div>
+                </div>
+                
+                <div class="threat-card">
+                    <div class="threat-header">
+                        <span class="threat-icon">📛</span>
+                        <h4 class="threat-name">ALERTE "MENACE"</h4>
+                    </div>
+                    <p class="threat-desc">"Trop politique". Le système flagge les payloads idéologiques.</p>
+                    <div class="threat-parade">
+                        <div class="parade-label">PARADE</div>
+                        <p class="parade-text">Utiliser un langage neutre : "droits", "autonomie", "compétences".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Détails</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script src="kern-core.js"></script>
+    <script>
+        // ============================================
+        // FLASHCARDS DATA
+        // ============================================
+        const flashcards = [
+            {
+                q: "Quelle est la meilleure 'porte d'entrée' pour collaborer avec une grande entreprise sur un projet social ?",
+                a: "Leur Academy/programme de formation — c'est déjà leur outil dédié à l'apprentissage et à la connexion.",
+                wrong: ["Le département juridique", "Le service client", "La direction générale directement"]
+            },
+            {
+                q: "Un projet pilote 'compatible' avec une corporation doit être :",
+                a: "Petit, propre et mesurable",
+                wrong: ["Grand et ambitieux", "Politique et visible", "Rapide et disruptif"]
+            },
+            {
+                q: "Combien de signatures une pétition fédérale doit-elle recueillir en Belgique pour garantir une audition au Parlement ?",
+                a: "Au moins 25 000 signatures réparties entre les Régions",
+                wrong: ["10 000 signatures", "50 000 signatures", "100 000 signatures"]
+            },
+            {
+                q: "Quelle méthode en trois temps est recommandée pour structurer un plaidoyer efficace ?",
+                a: "Voir – Juger – Agir",
+                wrong: ["Plan – Do – Check", "Écouter – Comprendre – Agir", "Analyser – Décider – Exécuter"]
+            },
+            {
+                q: "Qu'est-ce qu'un objectif SMART ?",
+                a: "Spécifique, Mesurable, Atteignable, Réaliste et Temporellement défini",
+                wrong: ["Simple, Moyen, Accessible, Rapide, Transparent", "Stratégique, Mesuré, Ambitieux, Révolutionnaire, Transformateur", "Social, Militant, Activiste, Radical, Transversal"]
+            },
+            {
+                q: "Le 'Power Mapping' est un outil qui permet de :",
+                a: "Positionner les acteurs clés selon leur influence et leur degré de soutien/opposition",
+                wrong: ["Mesurer la consommation électrique", "Cartographier les réseaux informatiques", "Évaluer les performances individuelles"]
+            },
+            {
+                q: "Quelle est la meilleure protection contre le burn-out militant ?",
+                a: "L'action collective et voir l'engagement comme un marathon, pas un sprint",
+                wrong: ["Travailler seul pour éviter les conflits", "Intensifier l'action pour finir plus vite", "Éviter tout engagement émotionnel"]
+            },
+            {
+                q: "Qu'est-ce que le piège de l''illusion participative' ?",
+                a: "Quand des institutions organisent une participation citoyenne symbolique, sans réel pouvoir de décision",
+                wrong: ["Quand les citoyens refusent de participer", "Quand la participation est trop intense", "Quand les décisions sont prises trop vite"]
+            },
+            {
+                q: "À Bruxelles, combien de signatures sont nécessaires pour obliger le Parlement régional à tenir une audition ?",
+                a: "1 000 signatures de résidents",
+                wrong: ["5 000 signatures", "10 000 signatures", "500 signatures"]
+            },
+            {
+                q: "L'analyse PESTEL examine quels six aspects de l'environnement ?",
+                a: "Politique, Économique, Social, Technologique, Écologique et Légal",
+                wrong: ["Personnel, Émotionnel, Stratégique, Tactique, Éthique, Logistique", "Public, Entreprise, Société, Technologie, État, Local", "Processus, Efficacité, Structure, Temps, Espace, Logique"]
+            },
+            {
+                q: "Quel est le premier piège à éviter lors d'une proposition à une grande entreprise ?",
+                a: "Proposer un projet trop gros, trop tôt — ils préfèrent les tests maîtrisés",
+                wrong: ["Être trop modeste dans ses ambitions", "Demander trop peu de budget", "Avoir trop de partenaires"]
+            },
+            {
+                q: "Pourquoi une proposition sans métriques (KPIs) est-elle vouée à l'échec ?",
+                a: "Sans KPIs, ils ne peuvent pas justifier l'investissement en interne",
+                wrong: ["Les entreprises détestent les chiffres", "Les KPIs sont trop chers à calculer", "Seuls les gouvernements utilisent des KPIs"]
+            },
+            {
+                q: "Quelle innovation participative le Parlement bruxellois a-t-il mise en place ?",
+                a: "Des commissions délibératives mixtes avec citoyens tirés au sort (75%) et députés (25%)",
+                wrong: ["Un vote électronique permanent", "Des référendums mensuels", "Un parlement entièrement tiré au sort"]
+            },
+            {
+                q: "Le passage du niveau micro au niveau méso de l'engagement citoyen implique de passer du :",
+                a: "'je' au 'nous'",
+                wrong: ["'local' au 'national'", "'simple' au 'complexe'", "'privé' au 'public'"]
+            },
+            {
+                q: "Pourquoi le storytelling est-il efficace en plaidoyer ?",
+                a: "Il combine des faits rationnels et des histoires humaines émotionnelles, ce qui le rend plus persuasif",
+                wrong: ["Il permet de mentir plus facilement", "Les décideurs n'aiment pas les chiffres", "C'est plus rapide que l'analyse"]
+            },
+            {
+                q: "Qu'est-ce que la 'convergence des luttes' ?",
+                a: "Une stratégie où plusieurs mouvements citoyens collaborent sur un front commun pour mutualiser leurs forces",
+                wrong: ["Quand toutes les luttes échouent en même temps", "La fusion de plusieurs associations en une seule", "L'abandon des revendications spécifiques"]
+            },
+            {
+                q: "Quel avantage y a-t-il à partager ses productions militantes en 'open source' ?",
+                a: "Cela permet à d'autres de les réutiliser et de les adapter, démultipliant l'impact",
+                wrong: ["On peut les vendre plus cher", "Ça empêche les autres de les copier", "C'est obligatoire légalement"]
+            },
+            {
+                q: "L'Initiative Citoyenne Européenne (ICE) permet aux citoyens de :",
+                a: "Proposer une loi à la Commission européenne",
+                wrong: ["Élire directement le président de la Commission", "Bloquer une directive européenne", "Révoquer un député européen"]
+            },
+            {
+                q: "Quelle est la première étape cruciale avant de passer à l'action citoyenne ?",
+                a: "Comprendre l'organisation du système politique et les droits civiques dont on dispose",
+                wrong: ["Créer une page Facebook", "Organiser une manifestation", "Contacter les médias"]
+            },
+            {
+                q: "Le lobbying citoyen consiste à :",
+                a: "Entrer en contact direct avec les responsables publics pour tenter de les convaincre",
+                wrong: ["Corrompre des élus", "Organiser des manifestations violentes", "Boycotter les élections"]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let quizAnswered = new Set();
+        let correctAnswers = 0;
+        
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            loadQuiz();
+            loadProgress();
+            
+            // KERN-CORE integration
+            if (typeof KERN !== 'undefined') {
+                KERN.ready(() => {
+                    const agent = KERN.getAgent();
+                    document.getElementById('agentClearance').textContent = getClearanceName(agent.clearance);
+                });
+            }
+        });
+        
+        function getClearanceName(level) {
+            const names = ['INITIÉ', 'AGENT', 'OPÉRATEUR', 'ANALYSTE', 'COORDINATEUR', 'STRATÈGE', 'ARCHITECTE', 'MAÎTRE'];
+            return names[level] || 'OPÉRATEUR';
+        }
+        
+        // ============================================
+        // TABS
+        // ============================================
+        function initTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+        }
+        
+        // ============================================
+        // QUIZ
+        // ============================================
+        function loadQuiz() {
+            document.getElementById('totalQ').textContent = flashcards.length;
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = flashcards[currentQuestion];
+            document.getElementById('currentQ').textContent = currentQuestion + 1;
+            document.getElementById('questionText').textContent = q.q;
+            
+            // Shuffle answers
+            const answers = [q.a, ...q.wrong].sort(() => Math.random() - 0.5);
+            
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = answers.map((a, i) => `
+                <button class="quiz-answer" onclick="checkAnswer(this, '${a === q.a}')" ${quizAnswered.has(currentQuestion) ? 'disabled' : ''}>
+                    ${a}
+                </button>
+            `).join('');
+            
+            document.getElementById('quizFeedback').classList.remove('show');
+        }
+        
+        function checkAnswer(btn, isCorrect) {
+            if (quizAnswered.has(currentQuestion)) return;
+            
+            quizAnswered.add(currentQuestion);
+            
+            const feedback = document.getElementById('quizFeedback');
+            
+            if (isCorrect === 'true') {
+                btn.classList.add('correct');
+                feedback.className = 'quiz-feedback show success';
+                feedback.textContent = '✓ Correct ! +10 XP';
+                correctAnswers++;
+                
+                // Award XP
+                if (typeof KERN !== 'undefined') {
+                    KERN.awardXP(10, 'Quiz Protocole Insurrection');
+                    KERN.trainSkill('documentation', 5);
+                }
+                
+                showToast('+10 XP — Bonne réponse !');
+            } else {
+                btn.classList.add('wrong');
+                feedback.className = 'quiz-feedback show error';
+                feedback.textContent = '✗ Incorrect. La bonne réponse était : ' + flashcards[currentQuestion].a;
+            }
+            
+            // Disable all buttons
+            document.querySelectorAll('.quiz-answer').forEach(b => b.disabled = true);
+            
+            // Highlight correct answer
+            document.querySelectorAll('.quiz-answer').forEach(b => {
+                if (b.textContent.trim() === flashcards[currentQuestion].a) {
+                    b.classList.add('correct');
+                }
+            });
+            
+            updateQuizScore();
+            saveProgress();
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < flashcards.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            }
+        }
+        
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+        
+        function shuffleQuiz() {
+            flashcards.sort(() => Math.random() - 0.5);
+            currentQuestion = 0;
+            quizAnswered.clear();
+            correctAnswers = 0;
+            updateQuizScore();
+            showQuestion();
+            showToast('Questions mélangées !');
+        }
+        
+        function updateQuizScore() {
+            document.getElementById('quizScore').textContent = correctAnswers;
+        }
+        
+        // ============================================
+        // MISSIONS
+        // ============================================
+        function openMission(missionId) {
+            const missions = {
+                tutorial: {
+                    title: 'MISSION 01: LA MÉGA-CORPORATION',
+                    content: `
+                        <h4 style="color: var(--cyan); margin-bottom: 1rem;">📋 BRIEFING</h4>
+                        <p style="margin-bottom: 1.5rem;">Votre objectif : infiltrer Colruyt Group via un projet-pilote "Ateliers Budget & Droits". Les mêmes algorithmes d'approche s'appliquent à toute structure privée.</p>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">PHASE 1: TROUVER LA BACKDOOR</h4>
+                        <div style="background: rgba(0,0,0,0.3); padding: 1rem; margin-bottom: 1rem; border-left: 3px solid var(--green-matrix);">
+                            <p><strong>Route A [Accès Optimal]:</strong> L'Academy — Interface publique "apprendre/connecter"</p>
+                            <p><strong>Route B [Accès Sécurisé]:</strong> La Fondation (RSE) — Requiert des KPIs solides</p>
+                            <p><strong>Route C [Accès Haut Niveau]:</strong> B2B/RH — Accès restreint, privilèges élevés</p>
+                        </div>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">PHASE 2: FORGER L'EXPLOIT</h4>
+                        <p style="margin-bottom: 0.5rem;">Votre "produit d'approche" = payload compact :</p>
+                        <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                            <li>Le Fichier (1 page) : Proposition pilote</li>
+                            <li>L'Hyperlien : Démo/vitrine FALC</li>
+                            <li>Le Script d'Impact : 3 chiffres (participants, coût/unité, métrique)</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">PHASE 3: EXÉCUTER</h4>
+                        <ol style="margin-left: 1.5rem;">
+                            <li><strong>Mimétisme:</strong> S'aligner sur leurs formats existants</li>
+                            <li><strong>Quarantaine:</strong> Pilote sur 1-3 communes</li>
+                            <li><strong>Requête minimale:</strong> Lieu + relais + petite enveloppe</li>
+                            <li><strong>Réplication:</strong> Planifier le scaling dès le départ</li>
+                        </ol>
+                        
+                        <div style="margin-top: 2rem; text-align: center;">
+                            <button class="btn btn-primary" onclick="startMission('tutorial')">🚀 LANCER LA MISSION</button>
+                        </div>
+                    `
+                },
+                campaign: {
+                    title: 'MISSION 02: LA MATRICE POLITIQUE',
+                    content: `
+                        <h4 style="color: var(--purple); margin-bottom: 1rem;">📋 BRIEFING</h4>
+                        <p style="margin-bottom: 1.5rem;">L'objectif n'est plus un projet-pilote, mais la reprogrammation des règles collectives. Vous devez monter en niveau.</p>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">NIVEAU 1: L'OPÉRATEUR (Solo)</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem;">
+                                <strong style="color: var(--cyan);">INFOSEC</strong><br>
+                                <span style="font-size: 0.85rem;">S'informer de façon critique</span>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem;">
+                                <strong style="color: var(--cyan);">EXECUTE</strong><br>
+                                <span style="font-size: 0.85rem;">Voter — le script fondamental</span>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem;">
+                                <strong style="color: var(--cyan);">P2P</strong><br>
+                                <span style="font-size: 0.85rem;">Dialoguer, créer un micro-réseau</span>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem;">
+                                <strong style="color: var(--cyan);">DEBUG</strong><br>
+                                <span style="font-size: 0.85rem;">Identifier les promesses "vaporware"</span>
+                            </div>
+                        </div>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">NIVEAU 2: LA GUILDE (Multiplayer)</h4>
+                        <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+                            <li>Rejoindre ou créer un collectif</li>
+                            <li>Lancer des raids locaux (interpeller les "boss" municipaux)</li>
+                            <li>Maintenir la cohésion — éviter la polarisation</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--green-matrix); margin-bottom: 1rem;">NIVEAU 3: LE RAID MONDIAL (Endgame)</h4>
+                        <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+                            <li>Coordonner les attaques (#hashtags = DDoS citoyens)</li>
+                            <li>Lancer des pétitions "Million-Hit" (ICE, fédéral)</li>
+                            <li>Pratiquer le lobbying citoyen</li>
+                            <li>Hacker l'opinion publique (médias = amplificateur)</li>
+                        </ul>
+                        
+                        <div style="margin-top: 2rem; text-align: center;">
+                            <button class="btn btn-primary" onclick="startMission('campaign')">🚀 LANCER LA CAMPAGNE</button>
+                        </div>
+                    `
+                }
+            };
+            
+            const mission = missions[missionId];
+            document.getElementById('modalTitle').textContent = mission.title;
+            document.getElementById('modalBody').innerHTML = mission.content;
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+        
+        function startMission(missionId) {
+            closeModal();
+            showToast(`Mission ${missionId} lancée ! Rendez-vous dans KERN::MISSIONS`);
+            
+            // Add to KERN missions
+            if (typeof KERN !== 'undefined') {
+                KERN.emit('protocole:mission_started', { missionId });
+            }
+        }
+        
+        // ============================================
+        // TOOLS
+        // ============================================
+        function openTool(toolId) {
+            const tools = {
+                swot: {
+                    title: '🎯 Analyse SWOT',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">Évaluez votre position stratégique en analysant :</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="background: rgba(74, 222, 128, 0.1); padding: 1rem; border: 1px solid var(--green-matrix);">
+                                <h5 style="color: var(--green-matrix);">Forces (S)</h5>
+                                <p style="font-size: 0.85rem;">Qu'est-ce qui vous donne un avantage ?</p>
+                            </div>
+                            <div style="background: rgba(248, 113, 113, 0.1); padding: 1rem; border: 1px solid var(--red);">
+                                <h5 style="color: var(--red);">Faiblesses (W)</h5>
+                                <p style="font-size: 0.85rem;">Qu'est-ce qui vous désavantage ?</p>
+                            </div>
+                            <div style="background: rgba(34, 211, 238, 0.1); padding: 1rem; border: 1px solid var(--cyan);">
+                                <h5 style="color: var(--cyan);">Opportunités (O)</h5>
+                                <p style="font-size: 0.85rem;">Quels éléments externes peuvent vous aider ?</p>
+                            </div>
+                            <div style="background: rgba(251, 191, 36, 0.1); padding: 1rem; border: 1px solid var(--amber);">
+                                <h5 style="color: var(--amber);">Menaces (T)</h5>
+                                <p style="font-size: 0.85rem;">Quels éléments externes peuvent vous nuire ?</p>
+                            </div>
+                        </div>
+                    `
+                },
+                pestel: {
+                    title: '🌐 Analyse PESTEL',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">Scannez l'environnement macro de votre action :</p>
+                        <ul style="line-height: 2;">
+                            <li><strong style="color: var(--purple);">P</strong>olitique — Stabilité, orientation du gouvernement</li>
+                            <li><strong style="color: var(--green-matrix);">E</strong>conomique — Croissance, chômage, inflation</li>
+                            <li><strong style="color: var(--cyan);">S</strong>ocial — Démographie, culture, tendances</li>
+                            <li><strong style="color: var(--amber);">T</strong>echnologique — Innovations, digital, IA</li>
+                            <li><strong style="color: var(--green-matrix);">E</strong>cologique — Environnement, durabilité</li>
+                            <li><strong style="color: var(--red);">L</strong>égal — Lois, régulations, jurisprudence</li>
+                        </ul>
+                    `
+                },
+                powermap: {
+                    title: '🕸️ Power Mapping',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">Cartographiez les acteurs selon deux axes :</p>
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="display: inline-block; padding: 2rem; border: 1px solid var(--text-dim); position: relative;">
+                                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); color: var(--green-matrix);">ALLIÉS</div>
+                                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); color: var(--red);">OPPOSANTS</div>
+                                <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); color: var(--text-dim);">Influence -</div>
+                                <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%) rotate(90deg); color: var(--amber);">Influence +</div>
+                                <div style="width: 200px; height: 150px; display: flex; align-items: center; justify-content: center; color: var(--cyan);">
+                                    🎯 OBJECTIF
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-dim);">Placez chaque acteur dans ce quadrant : cibles (à convaincre), alliés (à mobiliser), adversaires (à neutraliser), influenceurs (à activer).</p>
+                    `
+                },
+                arbre: {
+                    title: '🌳 Arbre à Problèmes',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">Analysez les causes racines et conséquences :</p>
+                        <div style="text-align: center; font-family: monospace;">
+                            <div style="color: var(--red);">🍂 CONSÉQUENCES</div>
+                            <div style="font-size: 1.5rem;">↑</div>
+                            <div style="padding: 1rem; border: 2px solid var(--amber); display: inline-block; color: var(--amber);">
+                                🌳 PROBLÈME CENTRAL
+                            </div>
+                            <div style="font-size: 1.5rem;">↓</div>
+                            <div style="color: var(--green-matrix);">🌱 CAUSES RACINES</div>
+                        </div>
+                        <p style="margin-top: 1.5rem; font-size: 0.9rem;">Remontez aux causes profondes pour traiter le problème à la source, pas juste les symptômes.</p>
+                    `
+                },
+                smart: {
+                    title: '✅ Objectifs SMART',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">Formulez des objectifs opérationnels :</p>
+                        <ul style="line-height: 2.5;">
+                            <li><strong style="color: var(--cyan);">S</strong>pécifique — Quoi exactement ?</li>
+                            <li><strong style="color: var(--cyan);">M</strong>esurable — Comment savoir si c'est atteint ?</li>
+                            <li><strong style="color: var(--cyan);">A</strong>tteignable — Est-ce réaliste avec nos ressources ?</li>
+                            <li><strong style="color: var(--cyan);">R</strong>elevant — Est-ce pertinent pour notre mission ?</li>
+                            <li><strong style="color: var(--cyan);">T</strong>emporel — Quelle deadline ?</li>
+                        </ul>
+                        <p style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); font-size: 0.9rem;">
+                            <strong>Exemple:</strong> "Former 120 participants aux droits sociaux dans 3 communes d'ici 8 semaines, avec 50% activant un nouveau droit."
+                        </p>
+                    `
+                },
+                storytelling: {
+                    title: '📖 Storytelling',
+                    content: `
+                        <p style="margin-bottom: 1.5rem;">L'art de convaincre par le récit :</p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; margin-bottom: 1rem;">
+                            <h5 style="color: var(--purple); margin-bottom: 0.5rem;">Structure narrative efficace</h5>
+                            <ol style="margin-left: 1.5rem; line-height: 2;">
+                                <li><strong>Le Héros</strong> — Une personne réelle touchée par le problème</li>
+                                <li><strong>Le Défi</strong> — L'obstacle qu'elle affronte</li>
+                                <li><strong>L'Aide</strong> — Comment votre solution intervient</li>
+                                <li><strong>La Transformation</strong> — Le changement positif observable</li>
+                            </ol>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-dim);">
+                            Combinez TOUJOURS : <span style="color: var(--cyan);">données factuelles</span> + <span style="color: var(--amber);">histoire humaine</span> = persuasion maximale.
+                        </p>
+                    `
+                }
+            };
+            
+            const tool = tools[toolId];
+            document.getElementById('modalTitle').textContent = tool.title;
+            document.getElementById('modalBody').innerHTML = tool.content;
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+        
+        function openKnowledge(moduleId) {
+            showToast('Module en cours de développement...');
+        }
+        
+        // ============================================
+        // MODAL
+        // ============================================
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+        
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // ============================================
+        // PERSISTENCE
+        // ============================================
+        function saveProgress() {
+            const progress = {
+                quizAnswered: Array.from(quizAnswered),
+                correctAnswers,
+                currentQuestion
+            };
+            localStorage.setItem('kern_protocole_progress', JSON.stringify(progress));
+        }
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('kern_protocole_progress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                quizAnswered = new Set(progress.quizAnswered || []);
+                correctAnswers = progress.correctAnswers || 0;
+                currentQuestion = progress.currentQuestion || 0;
+                updateQuizScore();
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight') nextQuestion();
+            if (e.key === 'ArrowLeft') prevQuestion();
+        });
+    </script>
+</body>
+</html>

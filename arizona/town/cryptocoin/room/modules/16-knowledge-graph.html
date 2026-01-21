@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::KNOWLEDGE — Graphe de Connaissances</title>
+    <script src="kern-core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / 4;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .logo-text { font-weight: 700; font-size: 1rem; }
+        .logo-sub { font-size: 0.6rem; color: var(--text-dim); }
+        
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .search-box input:focus { outline: none; border-color: var(--accent); }
+        .search-box::before { content: '🔍'; position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); opacity: 0.5; }
+        
+        .stats-cluster {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .stat { text-align: center; }
+        .stat-value { font-weight: 700; font-size: 1.1rem; }
+        .stat-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        .skill-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .skill-icon { font-size: 1.2rem; }
+        .skill-info { display: flex; flex-direction: column; gap: 0.1rem; }
+        .skill-name { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
+        .skill-level { font-size: 0.8rem; font-weight: 600; color: var(--green); }
+        .skill-progress { width: 60px; height: 5px; background: var(--bg-card); border-radius: 3px; overflow: hidden; }
+        .skill-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.3s; }
+        
+        .header-agent {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .agent-avatar { width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        .agent-info { text-align: left; }
+        .agent-name { font-size: 0.75rem; font-weight: 600; }
+        .agent-xp { font-size: 0.6rem; color: var(--amber); }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); }
+        
+        .btn-new {
+            padding: 0.4rem 0.8rem;
+            background: var(--green);
+            border: none;
+            border-radius: 6px;
+            color: var(--bg-void);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .notes-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .note-item {
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .note-item:hover { background: var(--bg-hover); }
+        .note-item.active { background: var(--bg-card); border-left: 3px solid var(--green); }
+        
+        .note-title { font-weight: 500; font-size: 0.85rem; margin-bottom: 0.2rem; }
+        .note-preview { font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-meta { display: flex; gap: 0.5rem; margin-top: 0.4rem; flex-wrap: wrap; }
+        .tag { font-size: 0.55rem; padding: 0.1rem 0.35rem; background: var(--bg-surface); border-radius: 3px; color: var(--cyan); }
+        .link-count { font-size: 0.55rem; color: var(--purple); }
+        
+        /* Main - Graph */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .view-toggle {
+            display: flex;
+            padding: 0.75rem 1rem;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-deep);
+        }
+        
+        .view-btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .view-btn:hover { background: var(--bg-hover); color: var(--text); }
+        .view-btn.active { background: var(--green); border-color: var(--green); color: var(--bg-void); }
+        
+        .graph-container {
+            flex: 1;
+            position: relative;
+            background: var(--bg-surface);
+        }
+        
+        .graph-container svg { width: 100%; height: 100%; }
+        
+        .node circle { stroke: var(--bg-void); stroke-width: 2px; cursor: pointer; transition: all 0.2s; }
+        .node:hover circle { stroke: var(--cyan); stroke-width: 3px; }
+        .node.selected circle { stroke: var(--amber); stroke-width: 4px; }
+        .node text { font-size: 10px; fill: var(--text); pointer-events: none; }
+        .link { stroke: var(--border); stroke-opacity: 0.6; }
+        .link.highlighted { stroke: var(--cyan); stroke-opacity: 1; stroke-width: 2px; }
+        
+        .graph-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.65rem;
+        }
+        
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        
+        /* Editor Panel */
+        .editor-panel {
+            background: var(--bg-deep);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .editor-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .editor-title-input {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .editor-title-input:focus { outline: none; border-color: var(--green); }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        
+        .toolbar-btn {
+            padding: 0.35rem 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .toolbar-btn:hover { background: var(--bg-hover); color: var(--text); }
+        
+        .editor-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .editor-textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            resize: none;
+        }
+        
+        .editor-textarea:focus { outline: none; border-color: var(--green); }
+        
+        .editor-preview {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        
+        .editor-preview.active { display: block; }
+        .editor-preview .internal-link { color: var(--purple); cursor: pointer; text-decoration: underline dotted; }
+        .editor-preview .internal-link:hover { color: var(--cyan); }
+        .editor-preview .tag-link { color: var(--cyan); background: rgba(34, 211, 238, 0.1); padding: 0.1rem 0.4rem; border-radius: 4px; }
+        .editor-preview h1, .editor-preview h2, .editor-preview h3 { color: var(--text); margin: 1rem 0 0.5rem 0; }
+        .editor-preview h1 { font-size: 1.4rem; }
+        .editor-preview h2 { font-size: 1.2rem; }
+        .editor-preview p { margin-bottom: 0.75rem; }
+        .editor-preview code { background: var(--bg-card); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+        .editor-preview blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-dim); font-style: italic; }
+        
+        .editor-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .links-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .links-title { font-size: 0.65rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
+        .links-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        
+        .link-chip {
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .link-chip:hover { border-color: var(--purple); color: var(--purple); }
+        .link-chip.incoming { border-left: 2px solid var(--green); }
+        .link-chip.outgoing { border-left: 2px solid var(--cyan); }
+        
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+        
+        /* Notifications */
+        .notifications { position: fixed; top: 70px; right: 20px; width: 300px; z-index: 1000; }
+        
+        .notif {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .notif.success { border-left: 3px solid var(--green); }
+        
+        .xp-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            z-index: 1001;
+            animation: popIn 0.3s ease-out;
+        }
+        
+        @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+        .xp-amount { font-size: 2rem; font-weight: 700; color: var(--green); }
+        .xp-reason { color: var(--text-dim); font-size: 0.85rem; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        
+        @media (max-width: 1100px) {
+            .app { grid-template-columns: 250px 1fr 320px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="00-kern-nexus.html" class="logo">
+                <div class="logo-icon">🧠</div>
+                <div>
+                    <div class="logo-text">KERN::KNOWLEDGE</div>
+                    <div class="logo-sub">Graphe de Connaissances</div>
+                </div>
+            </a>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Rechercher une note, un tag, un lien...">
+            </div>
+            
+            <div class="stats-cluster">
+                <div class="stat">
+                    <div class="stat-value" style="color: var(--green)" id="statNotes">0</div>
+                    <div class="stat-label">Notes</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="color: var(--purple)" id="statLinks">0</div>
+                    <div class="stat-label">Liens</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" style="color: var(--cyan)" id="statTags">0</div>
+                    <div class="stat-label">Tags</div>
+                </div>
+            </div>
+            
+            <div class="skill-bar">
+                <span class="skill-icon">📝</span>
+                <div class="skill-info">
+                    <span class="skill-name">Documentation</span>
+                    <span class="skill-level">Niv. <span id="skillLevel">1</span></span>
+                </div>
+                <div class="skill-progress">
+                    <div class="skill-fill" id="skillFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <a href="00-kern-nexus.html" class="header-agent">
+                <div class="agent-avatar">🎭</div>
+                <div class="agent-info">
+                    <div class="agent-name" id="agentName">---</div>
+                    <div class="agent-xp">Niv. <span id="agentLevel">1</span></div>
+                </div>
+            </a>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Mes Notes</span>
+                <button class="btn-new" onclick="createNote()">+ Nouvelle</button>
+            </div>
+            <div class="notes-list" id="notesList"></div>
+        </aside>
+        
+        <!-- Main - Graph -->
+        <main class="main-content">
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="graph" onclick="switchView('graph')">📊 Graphe</button>
+                <button class="view-btn" data-view="list" onclick="switchView('list')">📋 Liste</button>
+                <span style="margin-left: auto; display: flex; gap: 0.25rem;">
+                    <button class="view-btn" onclick="zoomOut()" title="Zoom arrière">−</button>
+                    <button class="view-btn" onclick="zoomReset()" title="Réinitialiser">⟲</button>
+                    <button class="view-btn" onclick="zoomIn()" title="Zoom avant">+</button>
+                </span>
+            </div>
+            <div class="graph-container" id="graphContainer">
+                <svg id="graphSvg"></svg>
+                <div style="position: absolute; bottom: 10px; left: 10px; font-size: 0.75rem; color: #666; pointer-events: none;">
+                    🖱️ Molette pour zoomer · Glisser pour déplacer
+                </div>
+                <div class="graph-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--green)"></div><span>Note standard</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--cyan)"></div><span>Hub (5+ liens)</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--amber)"></div><span>Orpheline</span></div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Editor Panel -->
+        <aside class="editor-panel" id="editorPanel">
+            <div id="editorEmpty" class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div class="empty-title">Sélectionnez une note</div>
+                <div>Ou créez-en une nouvelle</div>
+            </div>
+            
+            <div id="editorContent" style="display: none; height: 100%; flex-direction: column;">
+                <div class="editor-header">
+                    <input type="text" class="editor-title-input" id="editorTitle" placeholder="Titre de la note...">
+                </div>
+                <div class="editor-toolbar">
+                    <button class="toolbar-btn" onclick="insertSyntax('**', '**')"><b>B</b></button>
+                    <button class="toolbar-btn" onclick="insertSyntax('*', '*')"><i>I</i></button>
+                    <button class="toolbar-btn" onclick="insertSyntax('[[', ']]')">[[Lien]]</button>
+                    <button class="toolbar-btn" onclick="insertSyntax('#', '')">#Tag</button>
+                    <button class="toolbar-btn" onclick="insertSyntax('## ', '')">H2</button>
+                    <button class="toolbar-btn" onclick="insertSyntax('- ', '')">Liste</button>
+                    <button class="toolbar-btn" onclick="insertSyntax('`', '`')">Code</button>
+                    <button class="toolbar-btn" onclick="togglePreview()" id="previewBtn">👁️ Preview</button>
+                </div>
+                <div class="editor-body">
+                    <textarea class="editor-textarea" id="editorContent_textarea" placeholder="Écrivez votre note ici...
+
+Syntaxe supportée:
+- [[Lien vers une note]] pour créer des connexions
+- #tag pour organiser
+- **gras** et *italique*
+- ## Titre
+- > Citation
+- `code`"></textarea>
+                    <div class="editor-preview" id="editorPreview"></div>
+                </div>
+                <div class="editor-footer">
+                    <span id="editorDate" style="font-size: 0.65rem; color: var(--text-dim);"></span>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="toolbar-btn" style="color: var(--red);" onclick="deleteNote()">🗑️</button>
+                        <button class="btn-new" onclick="saveNote()">💾 Sauvegarder</button>
+                    </div>
+                </div>
+                
+                <div class="links-section" style="padding: 0 1rem 1rem 1rem;">
+                    <div class="links-title">🔗 Liens sortants</div>
+                    <div class="links-list" id="outgoingLinks"></div>
+                    <div class="links-title" style="margin-top: 0.75rem;">📥 Liens entrants</div>
+                    <div class="links-list" id="incomingLinks"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <div class="notifications" id="notifications"></div>
+
+<script>
+// ==================== STATE ====================
+let currentNoteId = null;
+let simulation = null;
+
+// ==================== INITIALIZATION ====================
+KERN.ready(() => {
+    renderNotesList();
+    renderGraph();
+    updateStats();
+    updateAgentInfo();
+    updateSkillDisplay();
+    setupEventListeners();
+    
+    // Create welcome note if empty
+    if (KERN.getAllNotes().length === 0) {
+        createWelcomeNote();
+    }
+    
+    KERN.on('xp:gained', (data) => {
+        showXPPopup(data.amount, data.reason);
+        updateAgentInfo();
+        updateSkillDisplay();
+    });
+    
+    KERN.on('note:created', () => {
+        renderNotesList();
+        renderGraph();
+        updateStats();
+    });
+});
+
+function createWelcomeNote() {
+    KERN.createNote({
+        title: 'Bienvenue dans KERN::KNOWLEDGE',
+        content: `# Bienvenue dans votre base de connaissances ! 🧠
+
+Ce système vous permet de créer des notes interconnectées, comme un **second cerveau**.
+
+## Comment ça marche ?
+
+### Créer des liens
+Utilisez la syntaxe \`[[Nom de la note]]\` pour créer des liens vers d'autres notes.
+
+### Organiser avec des tags
+Ajoutez des #tags pour catégoriser vos notes.
+
+### Visualiser le graphe
+Le graphe interactif montre toutes les connexions entre vos notes.
+
+#bienvenue #tutoriel`
+    });
+}
+
+// ==================== AGENT ====================
+function updateAgentInfo() {
+    const agent = KERN.getAgent();
+    if (agent) {
+        document.getElementById('agentName').textContent = agent.codename;
+        document.getElementById('agentLevel').textContent = agent.level;
+    }
+}
+
+function updateSkillDisplay() {
+    const agent = KERN.getAgent();
+    if (agent && agent.skills.documentation) {
+        const skill = agent.skills.documentation;
+        document.getElementById('skillLevel').textContent = skill.level;
+        const percent = (skill.xp / (skill.level * 100)) * 100;
+        document.getElementById('skillFill').style.width = `${percent}%`;
+    }
+}
+
+// ==================== NOTES CRUD ====================
+function createNote() {
+    const note = KERN.createNote({
+        title: 'Nouvelle note',
+        content: ''
+    });
+    
+    selectNote(note.id);
+    document.getElementById('editorTitle').select();
+    showNotification('Nouvelle note créée ! +15 XP');
+}
+
+function selectNote(id) {
+    currentNoteId = id;
+    const note = KERN.getNote(id);
+    if (!note) return;
+    
+    document.getElementById('editorEmpty').style.display = 'none';
+    document.getElementById('editorContent').style.display = 'flex';
+    
+    document.getElementById('editorTitle').value = note.title || '';
+    document.getElementById('editorContent_textarea').value = note.content || '';
+    document.getElementById('editorDate').textContent = `Modifié: ${formatDate(note.updated)}`;
+    
+    updatePreview();
+    updateLinksSection(note);
+    highlightNoteInGraph(id);
+    
+    document.querySelectorAll('.note-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+}
+
+function saveNote() {
+    if (!currentNoteId) return;
+    
+    const note = KERN.getNote(currentNoteId);
+    if (!note) return;
+    
+    KERN.updateNote(currentNoteId, {
+        title: document.getElementById('editorTitle').value || 'Sans titre',
+        content: document.getElementById('editorContent_textarea').value
+    });
+    
+    renderNotesList();
+    renderGraph();
+    updateStats();
+    updateLinksSection(note);
+    showNotification('Note sauvegardée');
+}
+
+function deleteNote() {
+    if (!currentNoteId) return;
+    if (!confirm('Supprimer cette note ?')) return;
+    
+    const notes = KERN.getAllNotes().filter(n => n.id !== currentNoteId);
+    localStorage.setItem('kern_knowledge', JSON.stringify(notes));
+    
+    currentNoteId = null;
+    document.getElementById('editorEmpty').style.display = 'flex';
+    document.getElementById('editorContent').style.display = 'none';
+    
+    renderNotesList();
+    renderGraph();
+    updateStats();
+}
+
+// ==================== LINKS & TAGS ====================
+function extractLinks(content) {
+    const regex = /\[\[([^\]]+)\]\]/g;
+    const links = [];
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+        links.push(match[1]);
+    }
+    return [...new Set(links)];
+}
+
+function extractTags(content) {
+    const regex = /#([a-zA-ZÀ-ÿ0-9_-]+)/g;
+    const tags = [];
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+        tags.push(match[1]);
+    }
+    return [...new Set(tags)];
+}
+
+function findNoteByTitle(title) {
+    return KERN.getAllNotes().find(n => n.title.toLowerCase() === title.toLowerCase());
+}
+
+function getIncomingLinks(noteId) {
+    const note = KERN.getNote(noteId);
+    if (!note) return [];
+    
+    return KERN.getAllNotes().filter(n => {
+        if (n.id === noteId) return false;
+        const links = extractLinks(n.content);
+        return links.some(l => l.toLowerCase() === note.title.toLowerCase());
+    });
+}
+
+function getOutgoingLinks(noteId) {
+    const note = KERN.getNote(noteId);
+    if (!note) return [];
+    
+    return extractLinks(note.content).map(l => ({
+        title: l,
+        note: findNoteByTitle(l)
+    }));
+}
+
+function updateLinksSection(note) {
+    const outgoing = getOutgoingLinks(note.id);
+    const incoming = getIncomingLinks(note.id);
+    
+    document.getElementById('outgoingLinks').innerHTML = outgoing.length ?
+        outgoing.map(l => `
+            <span class="link-chip outgoing" onclick="${l.note ? `selectNote('${l.note.id}')` : `createNoteFromLink('${l.title}')`}">
+                ${l.title} ${l.note ? '' : '(+)'}
+            </span>
+        `).join('') : '<span style="font-size: 0.65rem; color: var(--text-dim);">Aucun</span>';
+    
+    document.getElementById('incomingLinks').innerHTML = incoming.length ?
+        incoming.map(n => `<span class="link-chip incoming" onclick="selectNote('${n.id}')">${n.title}</span>`).join('') 
+        : '<span style="font-size: 0.65rem; color: var(--text-dim);">Aucun</span>';
+}
+
+function createNoteFromLink(title) {
+    const note = KERN.createNote({
+        title: title,
+        content: `# ${title}\n\n`
+    });
+    
+    selectNote(note.id);
+    showNotification('Note créée depuis un lien ! +15 XP');
+}
+
+// ==================== RENDER LIST ====================
+function renderNotesList() {
+    const notes = KERN.getAllNotes();
+    const container = document.getElementById('notesList');
+    
+    if (notes.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: 2rem;">
+                <div class="empty-icon">📝</div>
+                <div>Aucune note</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = notes.map(note => {
+        const tags = extractTags(note.content || '');
+        const links = extractLinks(note.content || '');
+        const preview = (note.content || '').replace(/[#*\[\]`>]/g, '').substring(0, 50);
+        
+        return `
+            <div class="note-item ${note.id === currentNoteId ? 'active' : ''}" 
+                 data-id="${note.id}" onclick="selectNote('${note.id}')">
+                <div class="note-title">${note.title || 'Sans titre'}</div>
+                <div class="note-preview">${preview}...</div>
+                <div class="note-meta">
+                    ${tags.slice(0, 3).map(t => `<span class="tag">#${t}</span>`).join('')}
+                    ${links.length ? `<span class="link-count">🔗 ${links.length}</span>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== GRAPH ====================
+function renderGraph() {
+    const container = document.getElementById('graphContainer');
+    const svg = d3.select('#graphSvg');
+    svg.selectAll('*').remove();
+    
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    const notes = KERN.getAllNotes();
+    if (notes.length === 0) return;
+    
+    // Create a group for zoom/pan
+    const g = svg.append('g').attr('class', 'graph-group');
+    
+    // Add zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on('zoom', (event) => {
+            g.attr('transform', event.transform);
+        });
+    
+    svg.call(zoom);
+    
+    // Store zoom for external controls
+    window.graphZoom = zoom;
+    window.graphSvg = svg;
+    
+    // Build nodes
+    const nodeMap = new Map();
+    notes.forEach(note => {
+        nodeMap.set(note.title.toLowerCase(), {
+            id: note.id,
+            title: note.title,
+            content: note.content,
+            linkCount: 0
+        });
+    });
+    
+    // Build links
+    const links = [];
+    notes.forEach(note => {
+        const noteLinks = extractLinks(note.content || '');
+        noteLinks.forEach(linkTitle => {
+            const targetKey = linkTitle.toLowerCase();
+            if (nodeMap.has(targetKey)) {
+                links.push({
+                    source: note.id,
+                    target: nodeMap.get(targetKey).id
+                });
+                nodeMap.get(note.title.toLowerCase()).linkCount++;
+                nodeMap.get(targetKey).linkCount++;
+            }
+        });
+    });
+    
+    const nodes = Array.from(nodeMap.values());
+    
+    simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(40));
+    
+    const link = g.append('g')
+        .attr('class', 'links-group')
+        .selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('class', 'link');
+    
+    const node = g.append('g')
+        .attr('class', 'nodes-group')
+        .selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended))
+        .on('click', (event, d) => {
+            event.stopPropagation();
+            selectNote(d.id);
+        });
+    
+    node.append('circle')
+        .attr('r', d => 8 + Math.min(d.linkCount * 2, 12))
+        .attr('fill', d => {
+            if (d.linkCount >= 5) return 'var(--cyan)';
+            if (d.linkCount === 0) return 'var(--amber)';
+            return 'var(--green)';
+        });
+    
+    node.append('text')
+        .text(d => d.title.length > 15 ? d.title.substring(0, 15) + '...' : d.title)
+        .attr('x', 15)
+        .attr('y', 4);
+    
+    simulation.on('tick', () => {
+        link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+    
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
+}
+
+// Zoom controls
+function zoomIn() {
+    if (window.graphZoom && window.graphSvg) {
+        window.graphSvg.transition().call(window.graphZoom.scaleBy, 1.3);
+    }
+}
+
+function zoomOut() {
+    if (window.graphZoom && window.graphSvg) {
+        window.graphSvg.transition().call(window.graphZoom.scaleBy, 0.7);
+    }
+}
+
+function zoomReset() {
+    if (window.graphZoom && window.graphSvg) {
+        const container = document.getElementById('graphContainer');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        window.graphSvg.transition().call(
+            window.graphZoom.transform,
+            d3.zoomIdentity.translate(0, 0).scale(1)
+        );
+    }
+}
+
+function highlightNoteInGraph(noteId) {
+    d3.selectAll('.node').classed('selected', d => d.id === noteId);
+    d3.selectAll('.link').classed('highlighted', d => d.source.id === noteId || d.target.id === noteId);
+}
+
+function switchView(view) {
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    if (view === 'graph') renderGraph();
+}
+
+// ==================== PREVIEW ====================
+function togglePreview() {
+    const textarea = document.getElementById('editorContent_textarea');
+    const preview = document.getElementById('editorPreview');
+    const btn = document.getElementById('previewBtn');
+    
+    if (preview.classList.contains('active')) {
+        preview.classList.remove('active');
+        textarea.style.display = 'block';
+        btn.textContent = '👁️ Preview';
+    } else {
+        updatePreview();
+        preview.classList.add('active');
+        textarea.style.display = 'none';
+        btn.textContent = '✏️ Éditer';
+    }
+}
+
+function updatePreview() {
+    const content = document.getElementById('editorContent_textarea').value;
+    document.getElementById('editorPreview').innerHTML = parseMarkdown(content);
+}
+
+function parseMarkdown(text) {
+    return text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/\[\[([^\]]+)\]\]/g, (match, p1) => {
+            const note = findNoteByTitle(p1);
+            if (note) return `<span class="internal-link" onclick="selectNote('${note.id}')">${p1}</span>`;
+            return `<span class="internal-link" onclick="createNoteFromLink('${p1}')">${p1} (+)</span>`;
+        })
+        .replace(/#([a-zA-ZÀ-ÿ0-9_-]+)/g, '<span class="tag-link">#$1</span>')
+        .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(.+)$/gm, '<p>$1</p>')
+        .replace(/<p><\/p>/g, '');
+}
+
+// ==================== TOOLBAR ====================
+function insertSyntax(before, after) {
+    const textarea = document.getElementById('editorContent_textarea');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    
+    textarea.value = text.substring(0, start) + before + selected + after + text.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const notes = KERN.getAllNotes();
+    let totalLinks = 0;
+    const allTags = new Set();
+    
+    notes.forEach(n => {
+        totalLinks += extractLinks(n.content || '').length;
+        extractTags(n.content || '').forEach(t => allTags.add(t));
+    });
+    
+    document.getElementById('statNotes').textContent = notes.length;
+    document.getElementById('statLinks').textContent = totalLinks;
+    document.getElementById('statTags').textContent = allTags.size;
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.note-item').forEach(item => {
+            const title = item.querySelector('.note-title').textContent.toLowerCase();
+            item.style.display = title.includes(query) ? 'block' : 'none';
+        });
+    });
+    
+    // Auto-save on change
+    let saveTimeout;
+    document.getElementById('editorContent_textarea').addEventListener('input', () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            if (currentNoteId) {
+                const note = KERN.getNote(currentNoteId);
+                if (note) {
+                    note.content = document.getElementById('editorContent_textarea').value;
+                    note.title = document.getElementById('editorTitle').value || 'Sans titre';
+                    note.updated = new Date().toISOString();
+                    localStorage.setItem('kern_knowledge', JSON.stringify(KERN.getAllNotes()));
+                    renderNotesList();
+                }
+            }
+        }, 1000);
+    });
+    
+    window.addEventListener('resize', () => renderGraph());
+}
+
+// ==================== UTILS ====================
+function formatDate(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function showNotification(message) {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = 'notif success';
+    notif.innerHTML = `<span>✅</span><span>${message}</span>`;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function showXPPopup(amount, reason) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.innerHTML = `<div class="xp-amount">+${amount} XP</div><div class="xp-reason">${reason.replace(':', ' ')}</div>`;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEGANO — Analyse d'image</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;600&display=swap');
+        
+        :root {
+            --bg: #0a0a0c;
+            --surface: #111114;
+            --border: #222228;
+            --green: #33ff33;
+            --red: #ff3366;
+            --blue: #00aaff;
+            --yellow: #ffcc00;
+            --text: #e0e0e0;
+            --muted: #666;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* CRT Effect */
+        .crt {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .crt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+        }
+        
+        .crt::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+        }
+        
+        /* Header */
+        header {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: var(--red);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--green);
+            border-color: var(--green);
+        }
+        
+        /* Main content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .title h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .title p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Image container */
+        .image-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 900px) {
+            .image-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .image-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+        }
+        
+        .image-box h3 {
+            font-size: 0.8rem;
+            color: var(--yellow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        canvas {
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+        
+        /* Controls */
+        .controls {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .controls h3 {
+            font-size: 0.8rem;
+            color: var(--yellow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .control-group select,
+        .control-group input[type="range"] {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+        
+        .control-group input[type="range"] {
+            padding: 0;
+            height: 30px;
+            cursor: pointer;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem 1.5rem;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 15px rgba(51, 255, 51, 0.2);
+        }
+        
+        button.primary {
+            background: var(--green);
+            color: var(--bg);
+            border-color: var(--green);
+        }
+        
+        button.primary:hover {
+            background: #44ff44;
+            box-shadow: 0 0 20px rgba(51, 255, 51, 0.4);
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .instructions h3 {
+            font-size: 0.8rem;
+            color: var(--yellow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .instructions p {
+            line-height: 1.8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .instructions code {
+            background: rgba(51, 255, 51, 0.1);
+            padding: 0.2rem 0.5rem;
+            color: var(--green);
+        }
+        
+        /* Hint box */
+        .hint-box {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--yellow);
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .hint-box.show {
+            display: block;
+        }
+        
+        .hint-box h4 {
+            color: var(--yellow);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Result */
+        .result {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .result h3 {
+            font-size: 0.8rem;
+            color: var(--yellow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .result-content {
+            font-family: 'Courier New', monospace;
+            background: var(--bg);
+            padding: 1rem;
+            border: 1px solid var(--border);
+            min-height: 60px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        /* Success popup */
+        #success-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9000;
+        }
+        
+        #success-popup.show {
+            display: flex;
+        }
+        
+        .success-content {
+            background: var(--surface);
+            border: 2px solid var(--green);
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+            animation: popIn 0.5s ease-out;
+        }
+        
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .success-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-code {
+            background: var(--bg);
+            padding: 1rem;
+            border: 1px solid var(--green);
+            font-size: 1.2rem;
+            color: var(--green);
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        
+        .hidden-text {
+            color: var(--bg);
+            font-size: 8px;
+            user-select: all;
+        }
+        
+        /* Pixel zoom */
+        #zoom-view {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px;
+            z-index: 100;
+            display: none;
+        }
+        
+        #zoom-view.show {
+            display: block;
+        }
+        
+        #zoom-canvas {
+            width: 150px;
+            height: 150px;
+            image-rendering: pixelated;
+            border: 1px solid var(--border);
+        }
+        
+        #zoom-info {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<header>
+    <div class="logo">◈ STEGANO</div>
+    <div class="nav-links">
+        <a href="game.html">← Terminal</a>
+        <a href="exercice.html">Exercice OSINT</a>
+    </div>
+</header>
+
+<main>
+    <div class="title">
+        <h1>Analyse Stéganographique</h1>
+        <p>Un message est caché dans cette image. Saurez-vous l'extraire?</p>
+    </div>
+    
+    <div class="instructions">
+        <h3>Contexte de la mission</h3>
+        <p>Une image a été interceptée lors d'une communication entre cellules. Elle semble anodine, mais nos analystes suspectent qu'elle contient un message caché par stéganographie LSB (Least Significant Bit).</p>
+        <p>En stéganographie LSB, les bits de poids faible des pixels sont modifiés pour encoder un message. Ces modifications sont invisibles à l'œil nu.</p>
+        <p><strong>Votre mission:</strong> Extraire le message caché en analysant les bits de poids faible.</p>
+        
+        <div class="hint-box" id="hint1">
+            <h4>💡 Indice 1</h4>
+            <p>Essayez d'isoler uniquement le bit de poids faible de chaque canal (R, G, B). Mettez le slider "Bit à extraire" sur 0.</p>
+        </div>
+        
+        <div class="hint-box" id="hint2">
+            <h4>💡 Indice 2</h4>
+            <p>Le message est encodé dans le canal Rouge uniquement. Utilisez le mode "Canal unique: R".</p>
+        </div>
+        
+        <div class="hint-box" id="hint3">
+            <h4>💡 Indice 3</h4>
+            <p>Une fois l'image filtrée, regardez les pixels blancs en haut à gauche. Ils forment des caractères binaires. Cliquez sur "Décoder message LSB".</p>
+        </div>
+    </div>
+    
+    <div class="image-section">
+        <div class="image-box">
+            <h3>Image originale</h3>
+            <div class="canvas-container">
+                <canvas id="original-canvas" width="400" height="300"></canvas>
+            </div>
+        </div>
+        
+        <div class="image-box">
+            <h3>Image analysée</h3>
+            <div class="canvas-container">
+                <canvas id="analyzed-canvas" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <h3>Outils d'analyse</h3>
+        
+        <div class="control-row">
+            <div class="control-group">
+                <label>Mode d'extraction</label>
+                <select id="mode-select">
+                    <option value="all">Tous les canaux (RGB)</option>
+                    <option value="r">Canal unique: R</option>
+                    <option value="g">Canal unique: G</option>
+                    <option value="b">Canal unique: B</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Bit à extraire (0 = LSB, 7 = MSB): <span id="bit-value">0</span></label>
+                <input type="range" id="bit-slider" min="0" max="7" value="0">
+            </div>
+            
+            <div class="control-group">
+                <label>Amplification</label>
+                <select id="amplify-select">
+                    <option value="1">×1 (Pas d'amplification)</option>
+                    <option value="128" selected>×128 (Bit visible)</option>
+                    <option value="255">×255 (Maximum)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button onclick="analyze()">🔍 Analyser</button>
+            <button onclick="decodeLSB()" class="primary">📤 Décoder message LSB</button>
+            <button onclick="showHint()">💡 Indice</button>
+            <button onclick="reset()">↺ Réinitialiser</button>
+        </div>
+    </div>
+    
+    <div class="result">
+        <h3>Message extrait</h3>
+        <div class="result-content" id="result-content">En attente d'analyse...</div>
+    </div>
+</main>
+
+<div id="zoom-view">
+    <canvas id="zoom-canvas" width="150" height="150"></canvas>
+    <div id="zoom-info">Position: -, - | RGB: -, -, -</div>
+</div>
+
+<div id="success-popup">
+    <div class="success-content">
+        <div class="success-icon">🔓</div>
+        <div class="success-title">MESSAGE DÉCHIFFRÉ</div>
+        <div class="success-message">
+            Vous avez extrait le message caché avec succès.<br>
+            Cette phrase de reconnaissance permet d'identifier les membres du réseau.
+        </div>
+        <div class="success-code" id="decoded-message"></div>
+        <button onclick="closeSuccess()" class="primary">Continuer →</button>
+    </div>
+</div>
+
+<footer>
+    VÉNUS — Module de formation stéganographique
+    <span class="hidden-text">Les étoiles sont alignées ce soir</span>
+</footer>
+
+<script>
+// Hidden message to encode
+const HIDDEN_MESSAGE = "LES ETOILES SONT ALIGNEES CE SOIR";
+
+// Canvases
+const originalCanvas = document.getElementById('original-canvas');
+const analyzedCanvas = document.getElementById('analyzed-canvas');
+const originalCtx = originalCanvas.getContext('2d');
+const analyzedCtx = analyzedCanvas.getContext('2d');
+const zoomCanvas = document.getElementById('zoom-canvas');
+const zoomCtx = zoomCanvas.getContext('2d');
+
+let originalImageData = null;
+let hintLevel = 0;
+
+// Generate a "nature" image with hidden message
+function generateImage() {
+    const width = 400;
+    const height = 300;
+    
+    // Create gradient background (sky and ground)
+    const gradient = originalCtx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, '#4a6fa5');
+    gradient.addColorStop(0.5, '#7a9cc6');
+    gradient.addColorStop(0.5, '#3a5a40');
+    gradient.addColorStop(1, '#2d4a32');
+    originalCtx.fillStyle = gradient;
+    originalCtx.fillRect(0, 0, width, height);
+    
+    // Draw sun
+    originalCtx.beginPath();
+    originalCtx.arc(320, 80, 40, 0, Math.PI * 2);
+    originalCtx.fillStyle = '#f0c040';
+    originalCtx.fill();
+    
+    // Draw mountains
+    originalCtx.beginPath();
+    originalCtx.moveTo(0, 150);
+    originalCtx.lineTo(100, 80);
+    originalCtx.lineTo(180, 130);
+    originalCtx.lineTo(260, 60);
+    originalCtx.lineTo(340, 120);
+    originalCtx.lineTo(400, 90);
+    originalCtx.lineTo(400, 150);
+    originalCtx.closePath();
+    originalCtx.fillStyle = '#5a7a60';
+    originalCtx.fill();
+    
+    // Draw trees
+    for (let i = 0; i < 8; i++) {
+        const x = 30 + i * 50 + Math.random() * 20;
+        const y = 180 + Math.random() * 80;
+        const h = 40 + Math.random() * 30;
+        
+        // Trunk
+        originalCtx.fillStyle = '#4a3a2a';
+        originalCtx.fillRect(x - 3, y, 6, 20);
+        
+        // Foliage
+        originalCtx.beginPath();
+        originalCtx.moveTo(x, y - h);
+        originalCtx.lineTo(x - 15, y);
+        originalCtx.lineTo(x + 15, y);
+        originalCtx.closePath();
+        originalCtx.fillStyle = '#2a4a32';
+        originalCtx.fill();
+    }
+    
+    // Add some noise for realism
+    const imageData = originalCtx.getImageData(0, 0, width, height);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * 10;
+        imageData.data[i] = Math.max(0, Math.min(255, imageData.data[i] + noise));
+        imageData.data[i + 1] = Math.max(0, Math.min(255, imageData.data[i + 1] + noise));
+        imageData.data[i + 2] = Math.max(0, Math.min(255, imageData.data[i + 2] + noise));
+    }
+    
+    // Hide message in LSB of red channel
+    embedMessage(imageData, HIDDEN_MESSAGE);
+    
+    originalCtx.putImageData(imageData, 0, 0);
+    originalImageData = originalCtx.getImageData(0, 0, width, height);
+    
+    // Copy to analyzed canvas
+    analyzedCtx.putImageData(originalImageData, 0, 0);
+}
+
+// Embed message using LSB steganography
+function embedMessage(imageData, message) {
+    // Convert message to binary
+    let binary = '';
+    for (let char of message) {
+        binary += char.charCodeAt(0).toString(2).padStart(8, '0');
+    }
+    // Add null terminator
+    binary += '00000000';
+    
+    // Embed in red channel LSB, starting from top-left
+    for (let i = 0; i < binary.length && i * 4 < imageData.data.length; i++) {
+        const pixelIndex = i * 4; // Red channel
+        // Clear LSB and set to message bit
+        imageData.data[pixelIndex] = (imageData.data[pixelIndex] & 0xFE) | parseInt(binary[i]);
+    }
+}
+
+// Analyze image with current settings
+function analyze() {
+    if (!originalImageData) return;
+    
+    const mode = document.getElementById('mode-select').value;
+    const bit = parseInt(document.getElementById('bit-slider').value);
+    const amplify = parseInt(document.getElementById('amplify-select').value);
+    
+    const width = originalCanvas.width;
+    const height = originalCanvas.height;
+    const newImageData = analyzedCtx.createImageData(width, height);
+    
+    for (let i = 0; i < originalImageData.data.length; i += 4) {
+        let r = originalImageData.data[i];
+        let g = originalImageData.data[i + 1];
+        let b = originalImageData.data[i + 2];
+        
+        // Extract specified bit
+        const rBit = (r >> bit) & 1;
+        const gBit = (g >> bit) & 1;
+        const bBit = (b >> bit) & 1;
+        
+        // Apply mode
+        let outR = 0, outG = 0, outB = 0;
+        
+        switch (mode) {
+            case 'r':
+                outR = outG = outB = rBit * amplify;
+                break;
+            case 'g':
+                outR = outG = outB = gBit * amplify;
+                break;
+            case 'b':
+                outR = outG = outB = bBit * amplify;
+                break;
+            default:
+                outR = rBit * amplify;
+                outG = gBit * amplify;
+                outB = bBit * amplify;
+        }
+        
+        newImageData.data[i] = outR;
+        newImageData.data[i + 1] = outG;
+        newImageData.data[i + 2] = outB;
+        newImageData.data[i + 3] = 255;
+    }
+    
+    analyzedCtx.putImageData(newImageData, 0, 0);
+    
+    document.getElementById('result-content').textContent = 
+        `Analyse effectuée:\n- Mode: ${mode.toUpperCase()}\n- Bit extrait: ${bit}\n- Amplification: ×${amplify}`;
+}
+
+// Decode LSB message
+function decodeLSB() {
+    if (!originalImageData) return;
+    
+    let binary = '';
+    let message = '';
+    
+    // Read LSB from red channel
+    for (let i = 0; i < originalImageData.data.length; i += 4) {
+        const lsb = originalImageData.data[i] & 1;
+        binary += lsb;
+        
+        // Check for complete byte
+        if (binary.length === 8) {
+            const charCode = parseInt(binary, 2);
+            if (charCode === 0) break; // Null terminator
+            message += String.fromCharCode(charCode);
+            binary = '';
+        }
+        
+        // Safety limit
+        if (message.length > 1000) break;
+    }
+    
+    if (message.length > 0) {
+        document.getElementById('result-content').textContent = 
+            `MESSAGE EXTRAIT:\n\n${message}\n\n[${message.length} caractères décodés]`;
+        
+        // Check for success
+        if (message.includes('ETOILES') || message.includes('ALIGNEES')) {
+            showSuccess(message);
+        }
+    } else {
+        document.getElementById('result-content').textContent = 
+            'Aucun message détecté. Essayez différents paramètres.';
+    }
+}
+
+// Show hint
+function showHint() {
+    hintLevel++;
+    if (hintLevel <= 3) {
+        document.getElementById(`hint${hintLevel}`).classList.add('show');
+    }
+}
+
+// Reset
+function reset() {
+    if (originalImageData) {
+        analyzedCtx.putImageData(originalImageData, 0, 0);
+    }
+    document.getElementById('result-content').textContent = 'En attente d\'analyse...';
+    document.getElementById('mode-select').value = 'all';
+    document.getElementById('bit-slider').value = 0;
+    document.getElementById('bit-value').textContent = '0';
+    document.getElementById('amplify-select').value = '128';
+}
+
+// Success popup
+function showSuccess(message) {
+    document.getElementById('decoded-message').textContent = message;
+    document.getElementById('success-popup').classList.add('show');
+    
+    // Save progress
+    try {
+        const state = JSON.parse(localStorage.getItem('venus_state') || '{}');
+        state.secrets = state.secrets || [];
+        if (!state.secrets.includes('stegano')) {
+            state.secrets.push('stegano');
+            localStorage.setItem('venus_state', JSON.stringify(state));
+        }
+    } catch(e) {}
+}
+
+function closeSuccess() {
+    document.getElementById('success-popup').classList.remove('show');
+}
+
+// Bit slider update
+document.getElementById('bit-slider').addEventListener('input', (e) => {
+    document.getElementById('bit-value').textContent = e.target.value;
+});
+
+// Zoom on hover
+analyzedCanvas.addEventListener('mousemove', (e) => {
+    const rect = analyzedCanvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) * (analyzedCanvas.width / rect.width));
+    const y = Math.floor((e.clientY - rect.top) * (analyzedCanvas.height / rect.height));
+    
+    // Get pixel data from original
+    if (originalImageData && x >= 0 && x < 400 && y >= 0 && y < 300) {
+        const idx = (y * 400 + x) * 4;
+        const r = originalImageData.data[idx];
+        const g = originalImageData.data[idx + 1];
+        const b = originalImageData.data[idx + 2];
+        
+        document.getElementById('zoom-info').textContent = 
+            `Pos: ${x}, ${y} | RGB: ${r}, ${g}, ${b} | LSB(R): ${r & 1}`;
+    }
+    
+    // Show zoomed area
+    const zoomView = document.getElementById('zoom-view');
+    zoomView.classList.add('show');
+    
+    // Draw zoomed version
+    zoomCtx.imageSmoothingEnabled = false;
+    zoomCtx.clearRect(0, 0, 150, 150);
+    zoomCtx.drawImage(
+        analyzedCanvas,
+        x - 7, y - 7, 15, 15,
+        0, 0, 150, 150
+    );
+});
+
+analyzedCanvas.addEventListener('mouseleave', () => {
+    document.getElementById('zoom-view').classList.remove('show');
+});
+
+// Init
+window.addEventListener('load', generateImage);
+
+// Console easter egg
+console.log('%c🔍 STEGANO', 'color: #00aaff; font-size: 20px; font-weight: bold;');
+console.log('%cLSB steganography module', 'color: #33ff33;');
+console.log('%cHint: The message is in the RED channel, bit 0', 'color: #666;');
+</script>
+</body>
+</html>

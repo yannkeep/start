@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KERN::NETWORK — Réseau de Contacts</title>
+    <script src="kern-core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --bg-void: #0a0a0f;
+            --bg-deep: #0f0f18;
+            --bg-surface: #14141f;
+            --bg-card: #1a1a28;
+            --bg-hover: #22222f;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --cyan: #22d3ee;
+            --green: #4ade80;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --pink: #f472b6;
+            --orange: #fb923c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-void);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .app {
+            display: grid;
+            grid-template-columns: 320px 1fr 350px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / 4;
+            background: var(--bg-deep);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--cyan), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .logo-text { font-weight: 700; font-size: 1rem; }
+        .logo-sub { font-size: 0.6rem; color: var(--text-dim); }
+        
+        .header-search {
+            flex: 1;
+            max-width: 350px;
+            position: relative;
+        }
+        
+        .header-search input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .header-search input:focus { outline: none; border-color: var(--accent); }
+        .header-search::before {
+            content: '🔍';
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .hstat { text-align: center; }
+        .hstat-value { font-weight: 700; font-size: 1.1rem; }
+        .hstat-label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        /* Skill Bar */
+        .skill-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .skill-icon { font-size: 1.2rem; }
+        .skill-info { display: flex; flex-direction: column; gap: 0.15rem; }
+        .skill-name { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
+        .skill-level { font-size: 0.8rem; font-weight: 600; color: var(--cyan); }
+        
+        .skill-progress {
+            width: 60px;
+            height: 5px;
+            background: var(--bg-card);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .skill-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--accent));
+            transition: width 0.3s;
+        }
+        
+        .header-agent {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .agent-info { text-align: left; }
+        .agent-name { font-size: 0.75rem; font-weight: 600; }
+        .agent-xp { font-size: 0.6rem; color: var(--amber); }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-dim); }
+        
+        .btn-new {
+            padding: 0.4rem 0.8rem;
+            background: var(--cyan);
+            border: none;
+            border-radius: 6px;
+            color: var(--bg-void);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .filters {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--cyan);
+            border-color: var(--cyan);
+            color: var(--bg-void);
+        }
+        
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s;
+        }
+        
+        .contact-item:hover { background: var(--bg-hover); }
+        .contact-item.active { background: var(--bg-card); border-left: 3px solid var(--cyan); }
+        
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        
+        .contact-info { flex: 1; min-width: 0; }
+        .contact-name { font-weight: 500; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .contact-role { font-size: 0.7rem; color: var(--text-dim); }
+        
+        .contact-strength {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .strength-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        
+        .strength-dot.active { background: var(--cyan); }
+        
+        /* Role Colors */
+        .role-colleague { background: var(--accent); color: white; }
+        .role-friend { background: var(--green); color: var(--bg-void); }
+        .role-family { background: var(--pink); color: var(--bg-void); }
+        .role-source { background: var(--amber); color: var(--bg-void); }
+        .role-professional { background: var(--cyan); color: var(--bg-void); }
+        .role-politician { background: var(--red); color: white; }
+        .role-journalist { background: var(--purple); color: white; }
+        .role-activist { background: var(--orange); color: var(--bg-void); }
+        .role-other { background: var(--text-dim); color: var(--bg-void); }
+        
+        /* Main - Graph */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .graph-toolbar {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            background: var(--bg-deep);
+        }
+        
+        .toolbar-group { display: flex; gap: 0.5rem; align-items: center; }
+        .toolbar-label { font-size: 0.7rem; color: var(--text-dim); }
+        
+        .toolbar-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .toolbar-btn:hover { background: var(--bg-hover); }
+        .toolbar-btn.active { background: var(--cyan); border-color: var(--cyan); color: var(--bg-void); }
+        
+        .graph-container {
+            flex: 1;
+            background: var(--bg-surface);
+            position: relative;
+        }
+        
+        .graph-container svg { width: 100%; height: 100%; }
+        
+        .node-group { cursor: pointer; }
+        .node-circle { stroke: var(--bg-void); stroke-width: 3px; transition: all 0.2s; }
+        .node-group:hover .node-circle { stroke: var(--cyan); stroke-width: 4px; }
+        .node-group.selected .node-circle { stroke: var(--amber); stroke-width: 5px; }
+        .node-label { font-size: 10px; fill: var(--text); pointer-events: none; text-anchor: middle; }
+        
+        .link { stroke: var(--border); stroke-opacity: 0.4; }
+        .link.highlighted { stroke: var(--cyan); stroke-opacity: 1; stroke-width: 2px; }
+        .link.strong { stroke-width: 3px; stroke-opacity: 0.6; }
+        .link.medium { stroke-width: 2px; }
+        .link.weak { stroke-width: 1px; stroke-opacity: 0.3; }
+        
+        .center-node .node-circle { stroke: var(--amber); stroke-width: 4px; }
+        
+        .graph-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.65rem;
+        }
+        
+        .legend-title { font-weight: 600; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        
+        /* Detail Panel */
+        .detail-panel {
+            background: var(--bg-deep);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .detail-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .detail-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .detail-info { flex: 1; }
+        .detail-name { font-weight: 600; font-size: 1rem; margin-bottom: 0.2rem; }
+        .detail-role { font-size: 0.8rem; color: var(--text-dim); }
+        
+        .detail-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .detail-section { margin-bottom: 1.25rem; }
+        .detail-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-field { margin-bottom: 0.75rem; }
+        .detail-field label { display: block; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 0.2rem; }
+        
+        .detail-field input, .detail-field select, .detail-field textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.8rem;
+            font-family: inherit;
+        }
+        
+        .detail-field input:focus, .detail-field select:focus, .detail-field textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .strength-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .strength-option {
+            flex: 1;
+            padding: 0.4rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+        
+        .strength-option:hover { border-color: var(--cyan); }
+        .strength-option.selected { background: var(--cyan); border-color: var(--cyan); color: var(--bg-void); }
+        
+        .connections-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-surface);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .connection-item:hover { background: var(--bg-hover); }
+        
+        .connection-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .add-connection-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        
+        .add-connection-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+        
+        .detail-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .detail-footer button {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .btn-save { background: var(--cyan); border: none; color: var(--bg-void); font-weight: 600; }
+        .btn-delete { background: transparent; border: 1px solid var(--red); color: var(--red); }
+        
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.open { display: flex; }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title { font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 1rem; }
+        .modal-footer { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; justify-content: flex-end; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 0.4rem; }
+        
+        .link-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .link-option:hover { background: var(--bg-hover); }
+        
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 300px;
+            z-index: 1000;
+        }
+        
+        .notif {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notif.success { border-left: 3px solid var(--green); }
+        
+        /* XP Popup */
+        .xp-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            z-index: 1001;
+            animation: popIn 0.3s ease-out;
+        }
+        
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .xp-amount { font-size: 2rem; font-weight: 700; color: var(--green); }
+        .xp-reason { color: var(--text-dim); font-size: 0.85rem; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="00-kern-nexus.html" class="logo">
+                <div class="logo-icon">🔗</div>
+                <div>
+                    <div class="logo-text">KERN::NETWORK</div>
+                    <div class="logo-sub">Réseau de Contacts</div>
+                </div>
+            </a>
+            
+            <div class="header-search">
+                <input type="text" id="searchInput" placeholder="Rechercher un contact...">
+            </div>
+            
+            <div class="header-stats">
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--cyan)" id="statContacts">0</div>
+                    <div class="hstat-label">Contacts</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--purple)" id="statConnections">0</div>
+                    <div class="hstat-label">Connexions</div>
+                </div>
+                <div class="hstat">
+                    <div class="hstat-value" style="color: var(--amber)" id="statInfluence">0</div>
+                    <div class="hstat-label">Influence</div>
+                </div>
+            </div>
+            
+            <div class="skill-bar">
+                <span class="skill-icon">🌐</span>
+                <div class="skill-info">
+                    <span class="skill-name">Réseau</span>
+                    <span class="skill-level">Niv. <span id="skillLevel">1</span></span>
+                </div>
+                <div class="skill-progress">
+                    <div class="skill-fill" id="skillFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <a href="00-kern-nexus.html" class="header-agent">
+                <div class="agent-avatar">🎭</div>
+                <div class="agent-info">
+                    <div class="agent-name" id="agentName">---</div>
+                    <div class="agent-xp">Niv. <span id="agentLevel">1</span></div>
+                </div>
+            </a>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Mes Contacts</span>
+                <button class="btn-new" onclick="openCreateModal()">+ Ajouter</button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="colleague">Collègues</button>
+                <button class="filter-btn" data-filter="source">Sources</button>
+                <button class="filter-btn" data-filter="politician">Politiques</button>
+                <button class="filter-btn" data-filter="journalist">Journalistes</button>
+                <button class="filter-btn" data-filter="activist">Activistes</button>
+            </div>
+            
+            <div class="contacts-list" id="contactsList"></div>
+        </aside>
+        
+        <!-- Main - Graph -->
+        <main class="main-content">
+            <div class="graph-toolbar">
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Vue:</span>
+                    <button class="toolbar-btn active" id="btnRadial" onclick="setLayout('radial')">Radiale</button>
+                    <button class="toolbar-btn" id="btnForce" onclick="setLayout('force')">Force</button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn active" id="btnLabels" onclick="toggleLabels()">Labels</button>
+                    <button class="toolbar-btn" id="btnSecondary" onclick="toggleSecondary()">Connexions 2°</button>
+                </div>
+                <div style="flex:1"></div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" onclick="centerGraph()">🎯 Centrer</button>
+                    <button class="toolbar-btn" onclick="exportContacts()">📤 Export</button>
+                </div>
+            </div>
+            
+            <div class="graph-container" id="graphContainer">
+                <svg id="graphSvg"></svg>
+                <div class="graph-legend">
+                    <div class="legend-title">Types de contacts</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div><span>Collègue</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--amber)"></div><span>Source</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--red)"></div><span>Politique</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--purple)"></div><span>Journaliste</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--orange)"></div><span>Activiste</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background: var(--green)"></div><span>Ami</span></div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Detail Panel -->
+        <aside class="detail-panel" id="detailPanel">
+            <div id="detailEmpty" class="empty-state">
+                <div class="empty-icon">👤</div>
+                <div class="empty-title">Sélectionnez un contact</div>
+                <div>Cliquez sur un nœud du graphe</div>
+            </div>
+            
+            <div id="detailContent" style="display: none; height: 100%; flex-direction: column;">
+                <div class="detail-header">
+                    <div class="detail-avatar" id="detailAvatar">JD</div>
+                    <div class="detail-info">
+                        <div class="detail-name" id="detailName">---</div>
+                        <div class="detail-role" id="detailRole">---</div>
+                    </div>
+                </div>
+                
+                <div class="detail-body">
+                    <div class="detail-section">
+                        <div class="detail-section-title">📋 Informations</div>
+                        <div class="form-row">
+                            <div class="detail-field">
+                                <label>Prénom</label>
+                                <input type="text" id="inputFirstName">
+                            </div>
+                            <div class="detail-field">
+                                <label>Nom</label>
+                                <input type="text" id="inputLastName">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="detail-field">
+                                <label>Rôle / Fonction</label>
+                                <input type="text" id="inputRole" placeholder="Ex: Député...">
+                            </div>
+                            <div class="detail-field">
+                                <label>Type</label>
+                                <select id="inputType">
+                                    <option value="colleague">Collègue</option>
+                                    <option value="friend">Ami</option>
+                                    <option value="family">Famille</option>
+                                    <option value="source">Source</option>
+                                    <option value="professional">Professionnel</option>
+                                    <option value="politician">Politique</option>
+                                    <option value="journalist">Journaliste</option>
+                                    <option value="activist">Activiste</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="detail-field">
+                            <label>Organisation</label>
+                            <input type="text" id="inputOrg" placeholder="Entreprise, institution...">
+                        </div>
+                        <div class="form-row">
+                            <div class="detail-field">
+                                <label>Email</label>
+                                <input type="email" id="inputEmail">
+                            </div>
+                            <div class="detail-field">
+                                <label>Téléphone</label>
+                                <input type="tel" id="inputPhone">
+                            </div>
+                        </div>
+                        <div class="detail-field">
+                            <label>Force du lien</label>
+                            <div class="strength-selector" id="strengthSelector">
+                                <div class="strength-option" data-value="1">Faible</div>
+                                <div class="strength-option" data-value="2">Moyen</div>
+                                <div class="strength-option selected" data-value="3">Fort</div>
+                                <div class="strength-option" data-value="4">Très fort</div>
+                                <div class="strength-option" data-value="5">Intime</div>
+                            </div>
+                        </div>
+                        <div class="detail-field">
+                            <label>Notes</label>
+                            <textarea id="inputNotes" rows="3" placeholder="Notes sur ce contact..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <div class="detail-section-title">🔗 Connexions partagées (<span id="connectionCount">0</span>)</div>
+                        <div class="connections-list" id="connectionsList"></div>
+                        <button class="add-connection-btn" onclick="openConnectionModal()">+ Connecter à un autre contact</button>
+                    </div>
+                </div>
+                
+                <div class="detail-footer">
+                    <button class="btn-save" onclick="saveContact()">💾 Sauvegarder</button>
+                    <button class="btn-delete" onclick="deleteContact()">🗑️ Supprimer</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Create Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Nouveau contact</span>
+                <button class="modal-close" onclick="closeCreateModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" id="createFirstName">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="createLastName">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Rôle / Fonction</label>
+                        <input type="text" id="createRole">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="createType">
+                            <option value="colleague">Collègue</option>
+                            <option value="source">Source</option>
+                            <option value="politician">Politique</option>
+                            <option value="journalist">Journaliste</option>
+                            <option value="activist">Activiste</option>
+                            <option value="friend">Ami</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Organisation</label>
+                    <input type="text" id="createOrg">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="toolbar-btn" onclick="closeCreateModal()">Annuler</button>
+                <button class="btn-save" onclick="createContact()">Créer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Connection Modal -->
+    <div class="modal" id="connectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Connecter à un contact</span>
+                <button class="modal-close" onclick="closeConnectionModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="connectionSearch" placeholder="Rechercher un contact...">
+                </div>
+                <div id="connectionOptions" style="max-height: 250px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notifications" id="notifications"></div>
+
+<script>
+// ==================== STATE ====================
+let currentContactId = null;
+let currentFilter = 'all';
+let simulation = null;
+let showLabels = true;
+let showSecondary = false;
+let layout = 'radial';
+
+const TYPE_COLORS = {
+    colleague: '#6366f1',
+    friend: '#4ade80',
+    family: '#f472b6',
+    source: '#fbbf24',
+    professional: '#22d3ee',
+    politician: '#f87171',
+    journalist: '#a78bfa',
+    activist: '#fb923c',
+    other: '#888888'
+};
+
+// ==================== INITIALIZATION ====================
+KERN.ready(() => {
+    renderContactsList();
+    renderGraph();
+    updateStats();
+    updateAgentInfo();
+    updateSkillDisplay();
+    setupEventListeners();
+    
+    KERN.on('xp:gained', (data) => {
+        showXPPopup(data.amount, data.reason);
+        updateAgentInfo();
+        updateSkillDisplay();
+    });
+    
+    KERN.on('contact:created', () => {
+        renderContactsList();
+        renderGraph();
+        updateStats();
+    });
+    
+    KERN.on('contact:linked', () => {
+        renderGraph();
+        updateStats();
+        if (currentContactId) updateConnectionsList();
+    });
+});
+
+// ==================== AGENT ====================
+function updateAgentInfo() {
+    const agent = KERN.getAgent();
+    if (agent) {
+        document.getElementById('agentName').textContent = agent.codename;
+        document.getElementById('agentLevel').textContent = agent.level;
+    }
+}
+
+function updateSkillDisplay() {
+    const agent = KERN.getAgent();
+    if (agent && agent.skills.network) {
+        const skill = agent.skills.network;
+        document.getElementById('skillLevel').textContent = skill.level;
+        const percent = (skill.xp / (skill.level * 100)) * 100;
+        document.getElementById('skillFill').style.width = `${percent}%`;
+    }
+}
+
+// ==================== CONTACTS CRUD ====================
+function openCreateModal() {
+    document.getElementById('createFirstName').value = '';
+    document.getElementById('createLastName').value = '';
+    document.getElementById('createRole').value = '';
+    document.getElementById('createType').value = 'colleague';
+    document.getElementById('createOrg').value = '';
+    document.getElementById('createModal').classList.add('open');
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').classList.remove('open');
+}
+
+function createContact() {
+    const firstName = document.getElementById('createFirstName').value.trim();
+    const lastName = document.getElementById('createLastName').value.trim();
+    
+    if (!firstName || !lastName) {
+        alert('Prénom et nom requis');
+        return;
+    }
+    
+    const contact = KERN.createContact({
+        firstName,
+        lastName,
+        role: document.getElementById('createRole').value.trim(),
+        type: document.getElementById('createType').value,
+        org: document.getElementById('createOrg').value.trim(),
+        email: '',
+        phone: '',
+        strength: 3,
+        notes: ''
+    });
+    
+    closeCreateModal();
+    selectContact(contact.id);
+    showNotification('success', 'Contact ajouté ! +20 XP');
+}
+
+function selectContact(id) {
+    currentContactId = id;
+    const contact = KERN.getContact(id);
+    if (!contact) return;
+    
+    document.getElementById('detailEmpty').style.display = 'none';
+    document.getElementById('detailContent').style.display = 'flex';
+    
+    // Avatar
+    const initials = (contact.firstName?.charAt(0) || '') + (contact.lastName?.charAt(0) || '');
+    document.getElementById('detailAvatar').textContent = initials.toUpperCase();
+    document.getElementById('detailAvatar').className = `detail-avatar role-${contact.type}`;
+    document.getElementById('detailName').textContent = `${contact.firstName} ${contact.lastName}`;
+    document.getElementById('detailRole').textContent = contact.role || contact.type;
+    
+    // Form
+    document.getElementById('inputFirstName').value = contact.firstName || '';
+    document.getElementById('inputLastName').value = contact.lastName || '';
+    document.getElementById('inputRole').value = contact.role || '';
+    document.getElementById('inputType').value = contact.type || 'colleague';
+    document.getElementById('inputOrg').value = contact.org || '';
+    document.getElementById('inputEmail').value = contact.email || '';
+    document.getElementById('inputPhone').value = contact.phone || '';
+    document.getElementById('inputNotes').value = contact.notes || '';
+    
+    // Strength
+    document.querySelectorAll('.strength-option').forEach(opt => {
+        opt.classList.toggle('selected', parseInt(opt.dataset.value) === (contact.strength || 3));
+    });
+    
+    updateConnectionsList();
+    highlightContact(id);
+    
+    document.querySelectorAll('.contact-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+    });
+}
+
+function saveContact() {
+    if (!currentContactId) return;
+    
+    const contact = KERN.getContact(currentContactId);
+    if (!contact) return;
+    
+    const strength = parseInt(document.querySelector('.strength-option.selected')?.dataset.value || 3);
+    
+    contact.firstName = document.getElementById('inputFirstName').value || '';
+    contact.lastName = document.getElementById('inputLastName').value || '';
+    contact.role = document.getElementById('inputRole').value;
+    contact.type = document.getElementById('inputType').value;
+    contact.org = document.getElementById('inputOrg').value;
+    contact.email = document.getElementById('inputEmail').value;
+    contact.phone = document.getElementById('inputPhone').value;
+    contact.strength = strength;
+    contact.notes = document.getElementById('inputNotes').value;
+    
+    localStorage.setItem('kern_network_contacts', JSON.stringify(KERN.getAllContacts()));
+    
+    // Update header
+    document.getElementById('detailName').textContent = `${contact.firstName} ${contact.lastName}`;
+    document.getElementById('detailRole').textContent = contact.role || contact.type;
+    
+    renderContactsList();
+    renderGraph();
+    showNotification('success', 'Contact sauvegardé');
+}
+
+function deleteContact() {
+    if (!currentContactId) return;
+    if (!confirm('Supprimer ce contact ?')) return;
+    
+    // Remove from all contacts' connections
+    KERN.getAllContacts().forEach(c => {
+        c.connections = (c.connections || []).filter(id => id !== currentContactId);
+    });
+    
+    const contacts = KERN.getAllContacts().filter(c => c.id !== currentContactId);
+    localStorage.setItem('kern_network_contacts', JSON.stringify(contacts));
+    
+    currentContactId = null;
+    document.getElementById('detailEmpty').style.display = 'flex';
+    document.getElementById('detailContent').style.display = 'none';
+    
+    renderContactsList();
+    renderGraph();
+    updateStats();
+    showNotification('success', 'Contact supprimé');
+}
+
+// ==================== CONNECTIONS ====================
+function updateConnectionsList() {
+    const contact = KERN.getContact(currentContactId);
+    if (!contact) return;
+    
+    const connections = (contact.connections || []).map(id => KERN.getContact(id)).filter(c => c);
+    document.getElementById('connectionCount').textContent = connections.length;
+    
+    const container = document.getElementById('connectionsList');
+    
+    if (connections.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-dim); font-size: 0.75rem; text-align: center; padding: 1rem;">Aucune connexion</div>';
+        return;
+    }
+    
+    container.innerHTML = connections.map(c => {
+        const initials = (c.firstName?.charAt(0) || '') + (c.lastName?.charAt(0) || '');
+        return `
+            <div class="connection-item" onclick="selectContact('${c.id}')">
+                <div class="connection-avatar role-${c.type}">${initials.toUpperCase()}</div>
+                <span style="flex:1">${c.firstName} ${c.lastName}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function openConnectionModal() {
+    if (!currentContactId) return;
+    document.getElementById('connectionSearch').value = '';
+    renderConnectionOptions();
+    document.getElementById('connectionModal').classList.add('open');
+}
+
+function closeConnectionModal() {
+    document.getElementById('connectionModal').classList.remove('open');
+}
+
+function renderConnectionOptions(query = '') {
+    const container = document.getElementById('connectionOptions');
+    const currentContact = KERN.getContact(currentContactId);
+    const currentConnections = currentContact?.connections || [];
+    
+    const contacts = KERN.getAllContacts().filter(c =>
+        c.id !== currentContactId &&
+        !currentConnections.includes(c.id) &&
+        (!query || `${c.firstName} ${c.lastName}`.toLowerCase().includes(query.toLowerCase()))
+    );
+    
+    if (contacts.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 1rem;">Aucun contact disponible</div>';
+        return;
+    }
+    
+    container.innerHTML = contacts.map(c => {
+        const initials = (c.firstName?.charAt(0) || '') + (c.lastName?.charAt(0) || '');
+        return `
+            <div class="link-option" onclick="addConnection('${c.id}')">
+                <div class="connection-avatar role-${c.type}">${initials.toUpperCase()}</div>
+                <span>${c.firstName} ${c.lastName}</span>
+                <span style="font-size: 0.65rem; color: var(--text-dim)">${c.type}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function addConnection(targetId) {
+    KERN.linkContacts(currentContactId, targetId);
+    closeConnectionModal();
+    updateConnectionsList();
+    showNotification('success', 'Connexion ajoutée ! +10 XP');
+}
+
+// ==================== RENDER LIST ====================
+function renderContactsList() {
+    const allContacts = KERN.getAllContacts();
+    const filtered = currentFilter === 'all'
+        ? allContacts
+        : allContacts.filter(c => c.type === currentFilter);
+    
+    const container = document.getElementById('contactsList');
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: 2rem;">
+                <div class="empty-icon">👤</div>
+                <div>Aucun contact</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(c => {
+        const initials = (c.firstName?.charAt(0) || '') + (c.lastName?.charAt(0) || '');
+        return `
+            <div class="contact-item ${c.id === currentContactId ? 'active' : ''}"
+                 data-id="${c.id}" onclick="selectContact('${c.id}')">
+                <div class="contact-avatar role-${c.type}">${initials.toUpperCase()}</div>
+                <div class="contact-info">
+                    <div class="contact-name">${c.firstName} ${c.lastName}</div>
+                    <div class="contact-role">${c.role || c.type}${c.org ? ` • ${c.org}` : ''}</div>
+                </div>
+                <div class="contact-strength">
+                    ${[1,2,3,4,5].map(i => `<span class="strength-dot ${i <= (c.strength || 3) ? 'active' : ''}"></span>`).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==================== GRAPH ====================
+function renderGraph() {
+    const container = document.getElementById('graphContainer');
+    const svg = d3.select('#graphSvg');
+    svg.selectAll('*').remove();
+    
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    const contacts = KERN.getAllContacts();
+    
+    // Build nodes (add YOU as center)
+    const nodes = [
+        { id: 'user', firstName: 'VOUS', lastName: '', type: 'user', isUser: true, strength: 5 }
+    ];
+    
+    contacts.forEach(c => {
+        nodes.push({
+            id: c.id,
+            firstName: c.firstName,
+            lastName: c.lastName,
+            type: c.type,
+            strength: c.strength || 3
+        });
+    });
+    
+    // Build links
+    const links = [];
+    
+    // All contacts connect to user
+    contacts.forEach(c => {
+        links.push({
+            source: 'user',
+            target: c.id,
+            strength: c.strength || 3
+        });
+    });
+    
+    // Inter-contact connections
+    if (showSecondary) {
+        contacts.forEach(c => {
+            (c.connections || []).forEach(targetId => {
+                if (!links.find(l =>
+                    (l.source === c.id && l.target === targetId) ||
+                    (l.source === targetId && l.target === c.id)
+                )) {
+                    links.push({
+                        source: c.id,
+                        target: targetId,
+                        strength: 2,
+                        secondary: true
+                    });
+                }
+            });
+        });
+    }
+    
+    // Simulation
+    simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(d => d.secondary ? 150 : 120 - d.strength * 10))
+        .force('charge', d3.forceManyBody().strength(-400))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(50));
+    
+    // Draw links
+    const link = svg.append('g')
+        .selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('class', d => `link ${d.secondary ? 'secondary' : ''} ${d.strength >= 4 ? 'strong' : d.strength >= 2 ? 'medium' : 'weak'}`)
+        .attr('stroke', d => d.secondary ? 'var(--purple)' : 'var(--border)')
+        .attr('stroke-dasharray', d => d.secondary ? '5,5' : 'none');
+    
+    // Draw nodes
+    const node = svg.append('g')
+        .selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', d => `node-group ${d.isUser ? 'center-node' : ''}`)
+        .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended))
+        .on('click', (event, d) => {
+            event.stopPropagation();
+            if (!d.isUser) selectContact(d.id);
+        });
+    
+    node.append('circle')
+        .attr('class', 'node-circle')
+        .attr('r', d => d.isUser ? 25 : 12 + (d.strength || 3) * 2)
+        .attr('fill', d => d.isUser ? 'var(--amber)' : TYPE_COLORS[d.type] || TYPE_COLORS.other);
+    
+    if (showLabels) {
+        node.append('text')
+            .attr('class', 'node-label')
+            .attr('y', d => d.isUser ? 40 : 28)
+            .text(d => d.isUser ? 'VOUS' : `${d.firstName} ${d.lastName.charAt(0)}.`);
+    }
+    
+    simulation.on('tick', () => {
+        link
+            .attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
+        
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+    
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
+}
+
+function highlightContact(id) {
+    d3.selectAll('.node-group').classed('selected', d => d.id === id);
+    d3.selectAll('.link').classed('highlighted', d => d.source.id === id || d.target.id === id);
+}
+
+function setLayout(type) {
+    layout = type;
+    document.getElementById('btnRadial').classList.toggle('active', type === 'radial');
+    document.getElementById('btnForce').classList.toggle('active', type === 'force');
+    renderGraph();
+}
+
+function toggleLabels() {
+    showLabels = !showLabels;
+    document.getElementById('btnLabels').classList.toggle('active', showLabels);
+    renderGraph();
+}
+
+function toggleSecondary() {
+    showSecondary = !showSecondary;
+    document.getElementById('btnSecondary').classList.toggle('active', showSecondary);
+    renderGraph();
+}
+
+function centerGraph() {
+    if (simulation) simulation.alpha(1).restart();
+}
+
+function exportContacts() {
+    const data = { contacts: KERN.getAllContacts(), exported: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'network_export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    const contacts = KERN.getAllContacts();
+    let totalConnections = 0;
+    let totalInfluence = 0;
+    
+    contacts.forEach(c => {
+        totalConnections += (c.connections || []).length;
+        totalInfluence += c.strength || 3;
+    });
+    
+    document.getElementById('statContacts').textContent = contacts.length;
+    document.getElementById('statConnections').textContent = Math.floor(totalConnections / 2);
+    document.getElementById('statInfluence').textContent = totalInfluence;
+}
+
+// ==================== EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderContactsList();
+        });
+    });
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.contact-item').forEach(item => {
+            const name = item.querySelector('.contact-name').textContent.toLowerCase();
+            item.style.display = name.includes(query) ? 'flex' : 'none';
+        });
+    });
+    
+    // Connection search
+    document.getElementById('connectionSearch').addEventListener('input', (e) => {
+        renderConnectionOptions(e.target.value);
+    });
+    
+    // Strength selector
+    document.querySelectorAll('.strength-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.strength-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        });
+    });
+    
+    // Window resize
+    window.addEventListener('resize', () => renderGraph());
+}
+
+// ==================== UTILS ====================
+function showNotification(type, message) {
+    const container = document.getElementById('notifications');
+    const notif = document.createElement('div');
+    notif.className = `notif ${type}`;
+    notif.innerHTML = `<span>✅</span><span>${message}</span>`;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function showXPPopup(amount, reason) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.innerHTML = `
+        <div class="xp-amount">+${amount} XP</div>
+        <div class="xp-reason">${reason.replace(':', ' ')}</div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 2000);
+}
+</script>
+</body>
+</html>

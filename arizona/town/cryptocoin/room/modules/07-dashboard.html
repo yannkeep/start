@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎛️ Dashboard Central — Vue d'ensemble</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --orange-dim: rgba(255, 179, 71, 0.15);
+            --rouge: #ff6b6b;
+            --rouge-dim: rgba(255, 107, 107, 0.15);
+            --bleu: #74b9ff;
+            --bleu-dim: rgba(116, 185, 255, 0.15);
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { height: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100%;
+            line-height: 1.5;
+        }
+        
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--vert);
+        }
+        
+        .logo-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover { background: #7ed87e; }
+        
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--vert);
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--vert);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .stat-change.up { color: var(--vert); }
+        .stat-change.down { color: var(--rouge); }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 1000px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        
+        /* Panel */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-body {
+            padding: 1.5rem;
+        }
+        
+        .panel-body.no-padding {
+            padding: 0;
+        }
+        
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .tool-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .tool-card:hover {
+            border-color: var(--vert);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tool-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tool-stat {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .tool-stat .value {
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        /* Activity Timeline */
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        
+        .activity-item:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.finance { background: var(--vert-dim); }
+        .activity-icon.mission { background: var(--lilas-dim); }
+        .activity-icon.journal { background: var(--bleu-dim); }
+        .activity-icon.network { background: var(--orange-dim); }
+        .activity-icon.agenda { background: var(--rouge-dim); }
+        
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .activity-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .activity-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+        
+        .activity-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        /* Upcoming Events */
+        .event-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .event-item:last-child { border-bottom: none; }
+        
+        .event-date {
+            text-align: center;
+            min-width: 50px;
+        }
+        
+        .event-date-day {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vert);
+            line-height: 1;
+        }
+        
+        .event-date-month {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        .event-info { flex: 1; }
+        
+        .event-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .event-type {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 100px;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+        
+        .event-type.conseil { background: var(--lilas-dim); color: var(--lilas); }
+        .event-type.vote { background: var(--rouge-dim); color: var(--rouge); }
+        .event-type.deadline { background: var(--orange-dim); color: var(--orange); }
+        .event-type.reunion { background: var(--bleu-dim); color: var(--bleu); }
+        .event-type.action { background: var(--vert-dim); color: var(--vert); }
+        
+        /* Progress Section */
+        .missions-progress {
+            padding: 1.5rem;
+        }
+        
+        .mission-item {
+            margin-bottom: 1.25rem;
+        }
+        
+        .mission-item:last-child { margin-bottom: 0; }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mission-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .mission-percent {
+            font-size: 0.8rem;
+            color: var(--vert);
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--vert), var(--lilas));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Chart */
+        .chart-container {
+            padding: 1.5rem;
+            height: 200px;
+        }
+        
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            padding-top: 20px;
+        }
+        
+        .chart-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-bar {
+            width: 24px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease;
+        }
+        
+        .chart-bar.in { background: var(--vert); }
+        .chart-bar.out { background: var(--rouge); opacity: 0.7; }
+        
+        .chart-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        
+        /* Network mini */
+        .network-mini {
+            padding: 1.5rem;
+        }
+        
+        .network-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .network-stat {
+            text-align: center;
+        }
+        
+        .network-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--lilas);
+        }
+        
+        .network-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .network-types {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .network-type {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 100px;
+            background: var(--bg-input);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .quick-action {
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .quick-action:hover {
+            border-color: var(--vert);
+            background: var(--vert-dim);
+        }
+        
+        .quick-action-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .quick-action-label {
+            font-size: 0.75rem;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+        
+        /* Data status */
+        .data-status {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 1rem 1.5rem;
+            background: var(--bg-input);
+            border-top: 1px solid var(--border);
+        }
+        
+        .data-badge {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .data-badge.connected {
+            background: var(--vert-dim);
+            color: var(--vert);
+        }
+        
+        .data-badge.disconnected {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-muted);
+        }
+        
+        .data-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        
+        /* Last sync */
+        .last-sync {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sync-btn {
+            background: none;
+            border: none;
+            color: var(--vert);
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .sync-btn:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <div class="logo">
+                <div>
+                    <h1>🎛️ Dashboard Central</h1>
+                    <div class="logo-sub">Vue d'ensemble de votre activité</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="refreshData()">🔄 Actualiser</button>
+                <button class="btn" onclick="exportAll()">📤 Exporter tout</button>
+            </div>
+        </header>
+        
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="statBalance">€0</div>
+                <div class="stat-label">Solde actuel</div>
+                <div class="stat-change up" id="statBalanceChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="statMissions">0</div>
+                <div class="stat-label">Missions actives</div>
+                <div class="stat-change" id="statMissionsChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📓</div>
+                <div class="stat-value" id="statJournal">0</div>
+                <div class="stat-label">Entrées journal</div>
+                <div class="stat-change" id="statJournalChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="statContacts">0</div>
+                <div class="stat-label">Contacts réseau</div>
+                <div class="stat-change" id="statContactsChange">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="statEvents">0</div>
+                <div class="stat-label">Événements à venir</div>
+                <div class="stat-change" id="statEventsChange">--</div>
+            </div>
+        </div>
+        
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Tools Access -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">🧰 Vos outils</h2>
+                    </div>
+                    <div class="tools-grid">
+                        <a href="01-finance-tracker.html" class="tool-card">
+                            <div class="tool-icon">💰</div>
+                            <div class="tool-name">Finances</div>
+                            <div class="tool-stat"><span class="value" id="toolFinance">0</span> transactions</div>
+                        </a>
+                        <a href="02-mission-creator.html" class="tool-card">
+                            <div class="tool-icon">🎯</div>
+                            <div class="tool-name">Missions</div>
+                            <div class="tool-stat"><span class="value" id="toolMissions">0</span> quêtes</div>
+                        </a>
+                        <a href="03-journal.html" class="tool-card">
+                            <div class="tool-icon">📓</div>
+                            <div class="tool-name">Journal</div>
+                            <div class="tool-stat"><span class="value" id="toolJournal">0</span> entrées</div>
+                        </a>
+                        <a href="04-network-map.html" class="tool-card">
+                            <div class="tool-icon">🕸️</div>
+                            <div class="tool-name">Réseau</div>
+                            <div class="tool-stat"><span class="value" id="toolNetwork">0</span> contacts</div>
+                        </a>
+                        <a href="05-agenda-politique.html" class="tool-card">
+                            <div class="tool-icon">📅</div>
+                            <div class="tool-name">Agenda</div>
+                            <div class="tool-stat"><span class="value" id="toolAgenda">0</span> événements</div>
+                        </a>
+                        <a href="06-generateur-documents.html" class="tool-card">
+                            <div class="tool-icon">📝</div>
+                            <div class="tool-name">Documents</div>
+                            <div class="tool-stat"><span class="value" id="toolDocs">0</span> modèles</div>
+                        </a>
+                    </div>
+                    <div class="data-status">
+                        <span class="data-badge connected" id="badgeFinance"><span class="dot"></span> Finances</span>
+                        <span class="data-badge connected" id="badgeMissions"><span class="dot"></span> Missions</span>
+                        <span class="data-badge connected" id="badgeJournal"><span class="dot"></span> Journal</span>
+                        <span class="data-badge connected" id="badgeNetwork"><span class="dot"></span> Réseau</span>
+                        <span class="data-badge connected" id="badgeAgenda"><span class="dot"></span> Agenda</span>
+                    </div>
+                </div>
+                
+                <!-- Activity Timeline -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">📊 Activité récente</h2>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Generated -->
+                    </div>
+                    <div class="last-sync">
+                        <span id="lastSync">Dernière sync: --</span>
+                        <button class="sync-btn" onclick="refreshData()">🔄 Actualiser</button>
+                    </div>
+                </div>
+                
+                <!-- Finance Chart -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">💰 Flux financiers (6 mois)</h2>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-bars" id="financeChart">
+                            <!-- Generated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Upcoming Events -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">📅 Prochains événements</h2>
+                    </div>
+                    <div class="panel-body no-padding" id="upcomingEvents">
+                        <!-- Generated -->
+                    </div>
+                </div>
+                
+                <!-- Missions Progress -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">🎯 Missions en cours</h2>
+                    </div>
+                    <div class="missions-progress" id="missionsProgress">
+                        <!-- Generated -->
+                    </div>
+                </div>
+                
+                <!-- Network Summary -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">🕸️ Réseau</h2>
+                    </div>
+                    <div class="network-mini" id="networkSummary">
+                        <!-- Generated -->
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">⚡ Actions rapides</h2>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="01-finance-tracker.html" class="quick-action">
+                            <div class="quick-action-icon">💸</div>
+                            <div class="quick-action-label">Ajouter dépense</div>
+                        </a>
+                        <a href="03-journal.html" class="quick-action">
+                            <div class="quick-action-icon">✏️</div>
+                            <div class="quick-action-label">Écrire entrée</div>
+                        </a>
+                        <a href="05-agenda-politique.html" class="quick-action">
+                            <div class="quick-action-icon">📆</div>
+                            <div class="quick-action-label">Nouvel événement</div>
+                        </a>
+                        <a href="06-generateur-documents.html" class="quick-action">
+                            <div class="quick-action-icon">📄</div>
+                            <div class="quick-action-label">Créer document</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data sources (localStorage keys)
+        const dataSources = {
+            finance: 'financeTracker',
+            missions: 'missionCreator',
+            journal: 'journalEntries',
+            network: 'networkMap',
+            agenda: 'politicalAgenda',
+            documents: 'generatorDocuments'
+        };
+        
+        // State
+        let data = {
+            finance: [],
+            missions: [],
+            journal: [],
+            network: [],
+            agenda: [],
+            documents: []
+        };
+        
+        // Month names
+        const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+            render();
+            updateLastSync();
+        });
+        
+        // Load all data from localStorage
+        function loadAllData() {
+            // Finance
+            const financeData = localStorage.getItem(dataSources.finance);
+            data.finance = financeData ? JSON.parse(financeData) : [];
+            
+            // Missions
+            const missionsData = localStorage.getItem(dataSources.missions);
+            data.missions = missionsData ? JSON.parse(missionsData) : [];
+            
+            // Journal
+            const journalData = localStorage.getItem(dataSources.journal);
+            data.journal = journalData ? JSON.parse(journalData) : [];
+            
+            // Network
+            const networkData = localStorage.getItem(dataSources.network);
+            data.network = networkData ? JSON.parse(networkData) : [];
+            
+            // Agenda
+            const agendaData = localStorage.getItem(dataSources.agenda);
+            data.agenda = agendaData ? JSON.parse(agendaData) : [];
+            
+            // Documents
+            const docsData = localStorage.getItem(dataSources.documents);
+            data.documents = docsData ? JSON.parse(docsData) : [];
+            
+            updateDataBadges();
+        }
+        
+        // Update data badges
+        function updateDataBadges() {
+            const badges = {
+                Finance: data.finance.length > 0,
+                Missions: data.missions.length > 0,
+                Journal: data.journal.length > 0,
+                Network: data.network.length > 0,
+                Agenda: data.agenda.length > 0
+            };
+            
+            Object.entries(badges).forEach(([name, hasData]) => {
+                const badge = document.getElementById(`badge${name}`);
+                if (badge) {
+                    badge.className = `data-badge ${hasData ? 'connected' : 'disconnected'}`;
+                }
+            });
+        }
+        
+        // Render all
+        function render() {
+            renderStats();
+            renderToolStats();
+            renderActivity();
+            renderUpcomingEvents();
+            renderMissionsProgress();
+            renderNetworkSummary();
+            renderFinanceChart();
+        }
+        
+        // Render main stats
+        function renderStats() {
+            // Balance
+            const totalIn = data.finance.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0);
+            const totalOut = data.finance.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0);
+            const balance = totalIn - totalOut;
+            document.getElementById('statBalance').textContent = `€${balance.toFixed(0)}`;
+            document.getElementById('statBalanceChange').textContent = balance >= 0 ? `↑ Positif` : `↓ Négatif`;
+            document.getElementById('statBalanceChange').className = `stat-change ${balance >= 0 ? 'up' : 'down'}`;
+            
+            // Active missions
+            const activeMissions = data.missions.filter(m => m.status === 'active').length;
+            document.getElementById('statMissions').textContent = activeMissions;
+            document.getElementById('statMissionsChange').textContent = `${data.missions.length} total`;
+            
+            // Journal entries
+            const thisMonth = new Date().toISOString().substring(0, 7);
+            const monthEntries = data.journal.filter(e => e.createdAt?.startsWith(thisMonth)).length;
+            document.getElementById('statJournal').textContent = data.journal.length;
+            document.getElementById('statJournalChange').textContent = `${monthEntries} ce mois`;
+            
+            // Contacts
+            document.getElementById('statContacts').textContent = data.network.length;
+            const persons = data.network.filter(n => n.type === 'person').length;
+            document.getElementById('statContactsChange').textContent = `${persons} personnes`;
+            
+            // Upcoming events
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const upcoming = data.agenda.filter(e => new Date(e.date) >= today).length;
+            document.getElementById('statEvents').textContent = upcoming;
+            const thisWeek = data.agenda.filter(e => {
+                const d = new Date(e.date);
+                const diff = (d - today) / (1000 * 60 * 60 * 24);
+                return diff >= 0 && diff <= 7;
+            }).length;
+            document.getElementById('statEventsChange').textContent = `${thisWeek} cette semaine`;
+        }
+        
+        // Render tool stats
+        function renderToolStats() {
+            document.getElementById('toolFinance').textContent = data.finance.length;
+            document.getElementById('toolMissions').textContent = data.missions.length;
+            document.getElementById('toolJournal').textContent = data.journal.length;
+            document.getElementById('toolNetwork').textContent = data.network.length;
+            document.getElementById('toolAgenda').textContent = data.agenda.length;
+            document.getElementById('toolDocs').textContent = '8'; // Fixed number of templates
+        }
+        
+        // Render activity timeline
+        function renderActivity() {
+            const container = document.getElementById('activityList');
+            
+            // Collect all activities
+            let activities = [];
+            
+            // Finance transactions
+            data.finance.forEach(t => {
+                activities.push({
+                    type: 'finance',
+                    icon: t.type === 'in' ? '💰' : '💸',
+                    title: t.description,
+                    meta: `${t.type === 'in' ? '+' : '-'}€${t.amount.toFixed(2)}`,
+                    date: new Date(t.createdAt || t.date)
+                });
+            });
+            
+            // Journal entries
+            data.journal.forEach(e => {
+                activities.push({
+                    type: 'journal',
+                    icon: '📝',
+                    title: e.content.substring(0, 50) + (e.content.length > 50 ? '...' : ''),
+                    meta: e.tags?.join(', ') || 'Journal',
+                    date: new Date(e.createdAt)
+                });
+            });
+            
+            // Missions
+            data.missions.forEach(m => {
+                if (m.createdAt) {
+                    activities.push({
+                        type: 'mission',
+                        icon: m.icon || '🎯',
+                        title: m.title,
+                        meta: `Mission ${m.status}`,
+                        date: new Date(m.createdAt)
+                    });
+                }
+            });
+            
+            // Sort by date
+            activities.sort((a, b) => b.date - a.date);
+            
+            // Take last 10
+            activities = activities.slice(0, 10);
+            
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Aucune activité récente</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = activities.map(a => `
+                <div class="activity-item">
+                    <div class="activity-icon ${a.type}">${a.icon}</div>
+                    <div class="activity-content">
+                        <div class="activity-title">${escapeHtml(a.title)}</div>
+                        <div class="activity-meta">${escapeHtml(a.meta)}</div>
+                    </div>
+                    <div class="activity-time">${formatRelativeTime(a.date)}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Render upcoming events
+        function renderUpcomingEvents() {
+            const container = document.getElementById('upcomingEvents');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const upcoming = data.agenda
+                .filter(e => new Date(e.date) >= today)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .slice(0, 5);
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <p>Aucun événement prévu</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = upcoming.map(e => {
+                const d = new Date(e.date);
+                return `
+                    <div class="event-item">
+                        <div class="event-date">
+                            <div class="event-date-day">${d.getDate()}</div>
+                            <div class="event-date-month">${monthNames[d.getMonth()]}</div>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-title">${escapeHtml(e.title)}</div>
+                            <span class="event-type ${e.type}">${e.type}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render missions progress
+        function renderMissionsProgress() {
+            const container = document.getElementById('missionsProgress');
+            const activeMissions = data.missions.filter(m => m.status === 'active').slice(0, 4);
+            
+            if (activeMissions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <p>Aucune mission active</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = activeMissions.map(m => {
+                const total = m.requirements?.length || 0;
+                const completed = m.completedReqs?.length || 0;
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                return `
+                    <div class="mission-item">
+                        <div class="mission-header">
+                            <div class="mission-name">
+                                <span>${m.icon || '🎯'}</span>
+                                <span>${escapeHtml(m.title)}</span>
+                            </div>
+                            <span class="mission-percent">${percent}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render network summary
+        function renderNetworkSummary() {
+            const container = document.getElementById('networkSummary');
+            
+            if (data.network.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🕸️</div>
+                        <p>Réseau vide</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const types = {
+                person: data.network.filter(n => n.type === 'person').length,
+                org: data.network.filter(n => n.type === 'org').length,
+                media: data.network.filter(n => n.type === 'media').length,
+                institution: data.network.filter(n => n.type === 'institution').length
+            };
+            
+            let connections = 0;
+            data.network.forEach(n => {
+                if (n.connections) connections += n.connections.length;
+            });
+            
+            container.innerHTML = `
+                <div class="network-stats">
+                    <div class="network-stat">
+                        <div class="network-stat-value">${data.network.length}</div>
+                        <div class="network-stat-label">Contacts</div>
+                    </div>
+                    <div class="network-stat">
+                        <div class="network-stat-value">${Math.floor(connections / 2)}</div>
+                        <div class="network-stat-label">Connexions</div>
+                    </div>
+                </div>
+                <div class="network-types">
+                    ${types.person > 0 ? `<span class="network-type">👤 ${types.person} personnes</span>` : ''}
+                    ${types.org > 0 ? `<span class="network-type">🏢 ${types.org} orgas</span>` : ''}
+                    ${types.media > 0 ? `<span class="network-type">📰 ${types.media} médias</span>` : ''}
+                    ${types.institution > 0 ? `<span class="network-type">🏛️ ${types.institution} institutions</span>` : ''}
+                </div>
+            `;
+        }
+        
+        // Render finance chart
+        function renderFinanceChart() {
+            const container = document.getElementById('financeChart');
+            const months = [];
+            const now = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const monthName = monthNames[d.getMonth()];
+                
+                const monthTx = data.finance.filter(t => t.date?.startsWith(monthKey));
+                const inAmount = monthTx.filter(t => t.type === 'in').reduce((s, t) => s + t.amount, 0);
+                const outAmount = monthTx.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0);
+                
+                months.push({ name: monthName, in: inAmount, out: outAmount });
+            }
+            
+            const maxAmount = Math.max(...months.flatMap(m => [m.in, m.out]), 100);
+            
+            container.innerHTML = months.map(m => `
+                <div class="chart-bar-group">
+                    <div style="display: flex; gap: 4px; align-items: flex-end; height: 130px;">
+                        <div class="chart-bar in" style="height: ${Math.max(4, (m.in / maxAmount) * 120)}px;" title="Entrées: €${m.in.toFixed(0)}"></div>
+                        <div class="chart-bar out" style="height: ${Math.max(4, (m.out / maxAmount) * 120)}px;" title="Sorties: €${m.out.toFixed(0)}"></div>
+                    </div>
+                    <span class="chart-label">${m.name}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Refresh data
+        function refreshData() {
+            loadAllData();
+            render();
+            updateLastSync();
+        }
+        
+        // Update last sync time
+        function updateLastSync() {
+            const now = new Date();
+            document.getElementById('lastSync').textContent = `Dernière sync: ${now.toLocaleTimeString('fr-FR')}`;
+        }
+        
+        // Export all data
+        function exportAll() {
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                finance: data.finance,
+                missions: data.missions,
+                journal: data.journal,
+                network: data.network,
+                agenda: data.agenda,
+                documents: data.documents
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_complet_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Utilities
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'À l\'instant';
+            if (minutes < 60) return `Il y a ${minutes}m`;
+            if (hours < 24) return `Il y a ${hours}h`;
+            if (days < 7) return `Il y a ${days}j`;
+            return date.toLocaleDateString('fr-FR');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

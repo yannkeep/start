@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT — Exercice pratique</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;600&display=swap');
+        
+        :root {
+            --bg: #0a0a0c;
+            --surface: #111114;
+            --border: #222228;
+            --green: #33ff33;
+            --red: #ff3366;
+            --blue: #00aaff;
+            --yellow: #ffcc00;
+            --text: #e0e0e0;
+            --muted: #666;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* CRT */
+        .crt {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        .crt::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+        }
+        
+        /* Header */
+        header {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            color: var(--blue);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--green);
+            border-color: var(--green);
+        }
+        
+        /* Main */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Progress */
+        .progress-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        
+        .progress-track {
+            flex: 1;
+            height: 8px;
+            background: var(--bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+        
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--green);
+        }
+        
+        /* Exercise container */
+        .exercise {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .exercise.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .exercise-header {
+            background: rgba(0, 170, 255, 0.1);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .exercise-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            color: var(--blue);
+        }
+        
+        .exercise-badge {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+        
+        .exercise-body {
+            padding: 1.5rem;
+        }
+        
+        /* Scenario */
+        .scenario {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .scenario h4 {
+            color: var(--yellow);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        
+        .scenario p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Image container */
+        .image-container {
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .image-container img,
+        .image-container canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .image-caption {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* Question */
+        .question {
+            margin-bottom: 1.5rem;
+        }
+        
+        .question label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        
+        .question input[type="text"],
+        .question select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        
+        .question input:focus,
+        .question select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+        
+        .question.correct input {
+            border-color: var(--green);
+            background: rgba(51, 255, 51, 0.05);
+        }
+        
+        .question.incorrect input {
+            border-color: var(--red);
+            background: rgba(255, 51, 102, 0.05);
+        }
+        
+        /* Hints */
+        .hints {
+            margin-top: 1rem;
+        }
+        
+        .hint {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .hint.visible {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .hint-btn {
+            background: none;
+            border: 1px solid var(--yellow);
+            color: var(--yellow);
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hint-btn:hover {
+            background: rgba(255, 204, 0, 0.1);
+        }
+        
+        .hint-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Submit */
+        .submit-btn {
+            background: var(--green);
+            color: var(--bg);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #44ff44;
+            box-shadow: 0 0 20px rgba(51, 255, 51, 0.3);
+        }
+        
+        /* Feedback */
+        .feedback {
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .feedback.visible {
+            display: block;
+        }
+        
+        .feedback.success {
+            background: rgba(51, 255, 51, 0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+        }
+        
+        .feedback.error {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        
+        /* Explanation */
+        .explanation {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+        
+        .explanation.visible {
+            display: block;
+        }
+        
+        .explanation h4 {
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+        
+        .explanation p {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .explanation a {
+            color: var(--blue);
+        }
+        
+        /* Next button */
+        .next-btn {
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .next-btn.visible {
+            display: inline-block;
+        }
+        
+        /* Completion */
+        .completion {
+            text-align: center;
+            padding: 3rem;
+            display: none;
+        }
+        
+        .completion.active {
+            display: block;
+        }
+        
+        .completion-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .completion h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+        
+        .completion p {
+            color: var(--muted);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        
+        .completion-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        
+        .stat-box .value {
+            font-size: 2rem;
+            color: var(--green);
+            font-weight: bold;
+        }
+        
+        .stat-box .label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* Tools reference */
+        .tools-ref {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .tools-ref h3 {
+            font-size: 0.8rem;
+            color: var(--yellow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .tool-item {
+            font-size: 0.85rem;
+        }
+        
+        .tool-item a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+        
+        .tool-item a:hover {
+            text-decoration: underline;
+        }
+        
+        .tool-item span {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<header>
+    <div class="logo">◈ OSINT TRAINING</div>
+    <div class="nav-links">
+        <a href="game.html">← Terminal</a>
+        <a href="stegano.html">Stéganographie</a>
+    </div>
+</header>
+
+<main>
+    <!-- Progress -->
+    <div class="progress-bar">
+        <span class="progress-label">Progression:</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="progress-text" id="progress-text">0/3</span>
+    </div>
+    
+    <!-- Tools Reference -->
+    <div class="tools-ref">
+        <h3>Outils recommandés</h3>
+        <div class="tools-grid">
+            <div class="tool-item">
+                <a href="https://www.google.com/maps" target="_blank">Google Maps</a>
+                <span>— Satellite, Street View</span>
+            </div>
+            <div class="tool-item">
+                <a href="https://www.suncalc.org" target="_blank">SunCalc</a>
+                <span>— Position du soleil</span>
+            </div>
+            <div class="tool-item">
+                <a href="https://images.google.com" target="_blank">Google Images</a>
+                <span>— Recherche inversée</span>
+            </div>
+            <div class="tool-item">
+                <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a>
+                <span>— Données ouvertes</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exercise 1: Geolocation -->
+    <div class="exercise active" id="ex1">
+        <div class="exercise-header">
+            <span class="exercise-title">Exercice 1 — Géolocalisation</span>
+            <span class="exercise-badge">DIFFICULTÉ: ★★☆</span>
+        </div>
+        <div class="exercise-body">
+            <div class="scenario">
+                <h4>Scénario</h4>
+                <p>Une photo a été partagée sur un réseau social avec la légende "Manifestation énorme aujourd'hui !". Aucune autre information n'est disponible.</p>
+                <p>Votre mission: identifier le lieu précis de cette photo.</p>
+            </div>
+            
+            <div class="image-container">
+                <canvas id="geo-image" width="600" height="400"></canvas>
+                <div class="image-caption">Photo interceptée — Source: réseau social</div>
+            </div>
+            
+            <div class="question" id="q1">
+                <label>Dans quelle ville cette photo a-t-elle été prise ?</label>
+                <input type="text" id="answer1" placeholder="Nom de la ville...">
+            </div>
+            
+            <div class="hints">
+                <button class="hint-btn" onclick="showHint('ex1', 0)">💡 Indice 1</button>
+                <button class="hint-btn" onclick="showHint('ex1', 1)">💡 Indice 2</button>
+                <div class="hint" id="hint-ex1-0">Observez l'architecture. Le bâtiment central a un style très reconnaissable.</div>
+                <div class="hint" id="hint-ex1-1">Ce bâtiment abrite une institution politique majeure. Il y a des colonnes et un fronton triangulaire.</div>
+            </div>
+            
+            <button class="submit-btn" onclick="checkAnswer(1)">Vérifier</button>
+            
+            <div class="feedback" id="feedback1"></div>
+            
+            <div class="explanation" id="explanation1">
+                <h4>✓ Explication</h4>
+                <p>Cette image représente l'<strong>Assemblée nationale</strong> (Palais Bourbon) à <strong>Paris</strong>.</p>
+                <p><strong>Éléments clés:</strong></p>
+                <p>• Les 12 colonnes corinthiennes du péristyle (ajoutées par Napoléon)</p>
+                <p>• Le fronton triangulaire avec les sculptures allégoriques</p>
+                <p>• L'esplanade des Invalides visible en arrière-plan</p>
+                <p><strong>Méthode:</strong> Recherche d'image inversée ou reconnaissance architecturale + vérification Google Street View</p>
+            </div>
+            
+            <button class="next-btn" id="next1" onclick="nextExercise(2)">Exercice suivant →</button>
+        </div>
+    </div>
+    
+    <!-- Exercise 2: Chronolocation -->
+    <div class="exercise" id="ex2">
+        <div class="exercise-header">
+            <span class="exercise-title">Exercice 2 — Chronolocation</span>
+            <span class="exercise-badge">DIFFICULTÉ: ★★★</span>
+        </div>
+        <div class="exercise-body">
+            <div class="scenario">
+                <h4>Scénario</h4>
+                <p>Cette photo a été prise à Paris, Place de la Concorde, le 21 juin (solstice d'été).</p>
+                <p>En analysant l'ombre de l'Obélisque, déterminez l'heure approximative de la prise de vue.</p>
+            </div>
+            
+            <div class="image-container">
+                <canvas id="chrono-image" width="600" height="400"></canvas>
+                <div class="image-caption">Photo de l'Obélisque — 21 juin, Paris</div>
+            </div>
+            
+            <div class="question" id="q2">
+                <label>À quelle heure (approximative) cette photo a-t-elle été prise ? (format: HH:MM)</label>
+                <input type="text" id="answer2" placeholder="Ex: 14:30">
+            </div>
+            
+            <div class="hints">
+                <button class="hint-btn" onclick="showHint('ex2', 0)">💡 Indice 1</button>
+                <button class="hint-btn" onclick="showHint('ex2', 1)">💡 Indice 2</button>
+                <div class="hint" id="hint-ex2-0">L'ombre pointe vers le Nord-Ouest. Le soleil est donc au Sud-Est.</div>
+                <div class="hint" id="hint-ex2-1">Utilisez SunCalc.org avec les coordonnées 48.8656, 2.3212 pour le 21 juin. Cherchez quand l'azimut correspond.</div>
+            </div>
+            
+            <button class="submit-btn" onclick="checkAnswer(2)">Vérifier</button>
+            
+            <div class="feedback" id="feedback2"></div>
+            
+            <div class="explanation" id="explanation2">
+                <h4>✓ Explication</h4>
+                <p>L'ombre indique une heure d'environ <strong>10h00</strong> du matin.</p>
+                <p><strong>Méthode de calcul:</strong></p>
+                <p>1. L'ombre pointe vers le Nord-Ouest (azimut ~315°)</p>
+                <p>2. Le soleil est donc à l'opposé: Sud-Est (azimut ~135°)</p>
+                <p>3. Sur SunCalc, le 21 juin à Paris, le soleil atteint l'azimut 135° vers 10h</p>
+                <p>4. La longueur de l'ombre (environ 1.5× la hauteur) confirme une élévation d'environ 55°</p>
+                <p><strong>Outils:</strong> <a href="https://suncalc.org" target="_blank">SunCalc.org</a></p>
+            </div>
+            
+            <button class="next-btn" id="next2" onclick="nextExercise(3)">Exercice suivant →</button>
+        </div>
+    </div>
+    
+    <!-- Exercise 3: Source Verification -->
+    <div class="exercise" id="ex3">
+        <div class="exercise-header">
+            <span class="exercise-title">Exercice 3 — Vérification de source</span>
+            <span class="exercise-badge">DIFFICULTÉ: ★★☆</span>
+        </div>
+        <div class="exercise-body">
+            <div class="scenario">
+                <h4>Scénario</h4>
+                <p>Un compte Twitter partage une image avec le texte: "BREAKING: Explosion massive à Lyon ce matin !"</p>
+                <p>Analysez les éléments ci-dessous pour déterminer si cette information est fiable.</p>
+            </div>
+            
+            <div class="image-container">
+                <canvas id="source-image" width="600" height="400"></canvas>
+                <div class="image-caption">Image partagée sur les réseaux sociaux</div>
+            </div>
+            
+            <div style="background: var(--bg); border: 1px solid var(--border); padding: 1rem; margin-bottom: 1.5rem;">
+                <p style="font-size: 0.85rem; margin-bottom: 0.5rem;"><strong>Métadonnées du compte:</strong></p>
+                <p style="font-size: 0.8rem; color: var(--muted);">
+                    • Compte créé: il y a 3 jours<br>
+                    • Followers: 47<br>
+                    • Tweets: 2<br>
+                    • Aucune autre source ne confirme l'information<br>
+                    • Recherche inversée: image identique trouvée datant de 2019 (Beyrouth)
+                </p>
+            </div>
+            
+            <div class="question" id="q3">
+                <label>Cette information est-elle fiable ?</label>
+                <select id="answer3">
+                    <option value="">— Sélectionnez —</option>
+                    <option value="fiable">Oui, l'information semble fiable</option>
+                    <option value="douteuse">Non, l'information est douteuse/fausse</option>
+                    <option value="verifier">Impossible à déterminer sans plus d'éléments</option>
+                </select>
+            </div>
+            
+            <div class="hints">
+                <button class="hint-btn" onclick="showHint('ex3', 0)">💡 Indice 1</button>
+                <div class="hint" id="hint-ex3-0">Plusieurs signaux d'alerte: compte récent, peu de followers, image recyclée, aucune confirmation.</div>
+            </div>
+            
+            <button class="submit-btn" onclick="checkAnswer(3)">Vérifier</button>
+            
+            <div class="feedback" id="feedback3"></div>
+            
+            <div class="explanation" id="explanation3">
+                <h4>✓ Explication</h4>
+                <p>Cette information est <strong>fausse</strong> (désinformation).</p>
+                <p><strong>Signaux d'alerte identifiés:</strong></p>
+                <p>• <span style="color:var(--red)">Compte créé récemment</span> — Les comptes de désinformation sont souvent nouveaux</p>
+                <p>• <span style="color:var(--red)">Faible nombre de followers</span> — Pas de crédibilité établie</p>
+                <p>• <span style="color:var(--red)">Très peu de tweets</span> — Compte potentiellement créé pour cette opération</p>
+                <p>• <span style="color:var(--red)">Aucune confirmation</span> — Un événement majeur serait couvert par plusieurs sources</p>
+                <p>• <span style="color:var(--red)">Image recyclée</span> — La recherche inversée révèle l'origine réelle</p>
+                <p><strong>Méthode:</strong> Toujours vérifier l'ancienneté du compte, chercher des confirmations multiples, faire une recherche d'image inversée.</p>
+            </div>
+            
+            <button class="next-btn" id="next3" onclick="completeExercises()">Terminer →</button>
+        </div>
+    </div>
+    
+    <!-- Completion screen -->
+    <div class="completion" id="completion">
+        <div class="completion-icon">🎯</div>
+        <h2>FORMATION COMPLÉTÉE</h2>
+        <p>Vous maîtrisez maintenant les bases de l'OSINT: géolocalisation, chronolocation et vérification de sources.</p>
+        
+        <div class="completion-stats">
+            <div class="stat-box">
+                <div class="value" id="final-score">3/3</div>
+                <div class="label">Exercices réussis</div>
+            </div>
+            <div class="stat-box">
+                <div class="value" id="final-hints">0</div>
+                <div class="label">Indices utilisés</div>
+            </div>
+        </div>
+        
+        <p style="color: var(--green);">Ces techniques sont utilisées quotidiennement par des organisations comme Bellingcat, Disclose et Mediapart.</p>
+        
+        <a href="final.html" style="display: inline-block; background: var(--green); color: var(--bg); padding: 1rem 2rem; text-decoration: none; font-size: 0.9rem; margin-top: 1rem;">Continuer vers le message final →</a>
+    </div>
+</main>
+
+<script>
+// State
+let currentExercise = 1;
+let completed = [false, false, false];
+let hintsUsed = 0;
+
+// Answers
+const answers = {
+    1: ['paris', 'assemblée nationale', 'assemblee nationale', 'palais bourbon'],
+    2: ['10:00', '10h00', '10h', '10:30', '9:30', '09:30', '10', '9h30'],
+    3: ['douteuse']
+};
+
+// Generate images
+function generateImages() {
+    // Exercise 1: Assemblée nationale
+    const ctx1 = document.getElementById('geo-image').getContext('2d');
+    drawAssemblee(ctx1);
+    
+    // Exercise 2: Obelisk shadow
+    const ctx2 = document.getElementById('chrono-image').getContext('2d');
+    drawObelisk(ctx2);
+    
+    // Exercise 3: Fake explosion
+    const ctx3 = document.getElementById('source-image').getContext('2d');
+    drawExplosion(ctx3);
+}
+
+function drawAssemblee(ctx) {
+    // Sky
+    const sky = ctx.createLinearGradient(0, 0, 0, 200);
+    sky.addColorStop(0, '#87CEEB');
+    sky.addColorStop(1, '#E0E8F0');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, 600, 200);
+    
+    // Ground
+    ctx.fillStyle = '#C0C0C0';
+    ctx.fillRect(0, 200, 600, 200);
+    
+    // Building base
+    ctx.fillStyle = '#E8E4D4';
+    ctx.fillRect(100, 100, 400, 150);
+    
+    // Columns
+    ctx.fillStyle = '#D8D4C4';
+    for (let i = 0; i < 12; i++) {
+        const x = 115 + i * 32;
+        ctx.fillRect(x, 80, 15, 120);
+    }
+    
+    // Pediment (triangle)
+    ctx.beginPath();
+    ctx.moveTo(100, 80);
+    ctx.lineTo(300, 30);
+    ctx.lineTo(500, 80);
+    ctx.closePath();
+    ctx.fillStyle = '#E8E4D4';
+    ctx.fill();
+    ctx.strokeStyle = '#A8A498';
+    ctx.stroke();
+    
+    // Steps
+    for (let i = 0; i < 5; i++) {
+        ctx.fillStyle = i % 2 ? '#D0CCC0' : '#C8C4B8';
+        ctx.fillRect(50 + i * 10, 250 + i * 10, 500 - i * 20, 15);
+    }
+    
+    // Crowd (dots)
+    ctx.fillStyle = '#444';
+    for (let i = 0; i < 100; i++) {
+        const x = 50 + Math.random() * 500;
+        const y = 320 + Math.random() * 60;
+        ctx.beginPath();
+        ctx.arc(x, y, 3 + Math.random() * 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Signs
+    ctx.fillStyle = '#FF4444';
+    ctx.fillRect(200, 300, 30, 20);
+    ctx.fillRect(350, 290, 25, 25);
+    ctx.fillStyle = '#FFD700';
+    ctx.fillRect(450, 295, 20, 20);
+}
+
+function drawObelisk(ctx) {
+    // Sky
+    ctx.fillStyle = '#87CEEB';
+    ctx.fillRect(0, 0, 600, 250);
+    
+    // Ground
+    ctx.fillStyle = '#D4C4A8';
+    ctx.fillRect(0, 250, 600, 150);
+    
+    // Obelisk
+    ctx.fillStyle = '#C8A070';
+    ctx.beginPath();
+    ctx.moveTo(290, 50);
+    ctx.lineTo(270, 220);
+    ctx.lineTo(330, 220);
+    ctx.lineTo(310, 50);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Pyramidion
+    ctx.fillStyle = '#B89060';
+    ctx.beginPath();
+    ctx.moveTo(300, 20);
+    ctx.lineTo(290, 50);
+    ctx.lineTo(310, 50);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Base
+    ctx.fillStyle = '#A08050';
+    ctx.fillRect(260, 220, 80, 30);
+    
+    // Shadow (pointing NW = morning)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.moveTo(260, 250);
+    ctx.lineTo(100, 350);
+    ctx.lineTo(120, 360);
+    ctx.lineTo(280, 260);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Sun indicator
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.arc(500, 80, 30, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Compass
+    ctx.fillStyle = '#333';
+    ctx.font = '14px JetBrains Mono';
+    ctx.fillText('N', 295, 395);
+    ctx.fillText('S', 295, 260);
+    ctx.fillText('E', 580, 330);
+    ctx.fillText('O', 10, 330);
+}
+
+function drawExplosion(ctx) {
+    // Dark city
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, 600, 400);
+    
+    // Buildings silhouettes
+    ctx.fillStyle = '#2a2a3e';
+    ctx.fillRect(0, 200, 80, 200);
+    ctx.fillRect(100, 180, 60, 220);
+    ctx.fillRect(180, 220, 70, 180);
+    ctx.fillRect(350, 160, 80, 240);
+    ctx.fillRect(450, 200, 60, 200);
+    ctx.fillRect(530, 180, 70, 220);
+    
+    // Explosion center
+    const gradient = ctx.createRadialGradient(280, 200, 0, 280, 200, 150);
+    gradient.addColorStop(0, '#FFFFFF');
+    gradient.addColorStop(0.2, '#FFDD44');
+    gradient.addColorStop(0.5, '#FF6600');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(100, 50, 350, 300);
+    
+    // Smoke
+    ctx.fillStyle = 'rgba(50, 50, 50, 0.7)';
+    for (let i = 0; i < 15; i++) {
+        const x = 200 + Math.random() * 160;
+        const y = 50 + Math.random() * 100;
+        const r = 20 + Math.random() * 40;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Debris
+    ctx.fillStyle = '#666';
+    for (let i = 0; i < 30; i++) {
+        const x = 200 + Math.random() * 160;
+        const y = 150 + Math.random() * 100;
+        ctx.fillRect(x, y, 3 + Math.random() * 5, 3 + Math.random() * 5);
+    }
+    
+    // "FAKE" watermark (subtle)
+    ctx.font = '100px Arial';
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.03)';
+    ctx.fillText('FAKE', 150, 280);
+}
+
+// Show hint
+function showHint(ex, index) {
+    document.getElementById(`hint-${ex}-${index}`).classList.add('visible');
+    hintsUsed++;
+}
+
+// Check answer
+function checkAnswer(num) {
+    const input = document.getElementById(`answer${num}`);
+    const value = input.value.toLowerCase().trim();
+    const feedback = document.getElementById(`feedback${num}`);
+    const explanation = document.getElementById(`explanation${num}`);
+    const nextBtn = document.getElementById(`next${num}`);
+    const question = document.getElementById(`q${num}`);
+    
+    const correct = answers[num].some(a => value.includes(a) || a.includes(value));
+    
+    if (correct) {
+        feedback.textContent = '✓ Correct !';
+        feedback.className = 'feedback visible success';
+        question.classList.add('correct');
+        question.classList.remove('incorrect');
+        explanation.classList.add('visible');
+        nextBtn.classList.add('visible');
+        completed[num - 1] = true;
+        updateProgress();
+    } else {
+        feedback.textContent = '✗ Incorrect. Réessayez ou utilisez un indice.';
+        feedback.className = 'feedback visible error';
+        question.classList.add('incorrect');
+        question.classList.remove('correct');
+    }
+}
+
+// Next exercise
+function nextExercise(num) {
+    document.getElementById(`ex${num - 1}`).classList.remove('active');
+    document.getElementById(`ex${num}`).classList.add('active');
+    currentExercise = num;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Complete
+function completeExercises() {
+    document.getElementById('ex3').classList.remove('active');
+    document.getElementById('completion').classList.add('active');
+    document.getElementById('final-score').textContent = completed.filter(c => c).length + '/3';
+    document.getElementById('final-hints').textContent = hintsUsed;
+    
+    // Save progress
+    try {
+        const state = JSON.parse(localStorage.getItem('venus_state') || '{}');
+        state.secrets = state.secrets || [];
+        if (!state.secrets.includes('osint_training')) {
+            state.secrets.push('osint_training');
+            localStorage.setItem('venus_state', JSON.stringify(state));
+        }
+    } catch(e) {}
+}
+
+// Update progress bar
+function updateProgress() {
+    const done = completed.filter(c => c).length;
+    document.getElementById('progress-fill').style.width = (done / 3 * 100) + '%';
+    document.getElementById('progress-text').textContent = done + '/3';
+}
+
+// Init
+window.addEventListener('load', generateImages);
+
+// Console
+console.log('%c🔍 OSINT TRAINING', 'color: #00aaff; font-size: 20px; font-weight: bold;');
+console.log('%cGéolocalisation • Chronolocation • Vérification', 'color: #33ff33;');
+</script>
+</body>
+</html>

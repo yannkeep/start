@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Générateur de Documents — Actions Citoyennes</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a25;
+            --text: #e8e8ec;
+            --text-muted: #6a6a7a;
+            --vert: #90EE90;
+            --vert-dim: rgba(144, 238, 144, 0.15);
+            --lilas: #DDA0DD;
+            --lilas-dim: rgba(221, 160, 221, 0.15);
+            --orange: #ffb347;
+            --bleu: #74b9ff;
+            --border: rgba(144, 238, 144, 0.2);
+            --radius: 12px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100%;
+            line-height: 1.6;
+        }
+        
+        .app-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr 400px;
+            height: 100%;
+        }
+        
+        @media (max-width: 1200px) {
+            .app-layout { grid-template-columns: 280px 1fr; }
+            .preview-panel { display: none; }
+        }
+        
+        @media (max-width: 768px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+        }
+        
+        /* Sidebar - Templates */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--vert);
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .section-title:first-child { margin-top: 0; }
+        
+        .template-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+            border: 1px solid transparent;
+        }
+        
+        .template-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .template-item.selected {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+        }
+        
+        .template-icon {
+            font-size: 1.5rem;
+        }
+        
+        .template-info { flex: 1; }
+        
+        .template-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .template-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* Main - Form */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .main-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .main-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .btn:hover {
+            background: var(--vert-dim);
+            border-color: var(--vert);
+            color: var(--vert);
+        }
+        
+        .btn-primary {
+            background: var(--vert);
+            color: var(--bg);
+            border-color: var(--vert);
+        }
+        
+        .btn-primary:hover { background: #7ed87e; }
+        
+        .form-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        .form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group:last-child { margin-bottom: 0; }
+        
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--vert);
+        }
+        
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+        
+        /* Variable chips */
+        .variable-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .variable-chip {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            background: var(--lilas-dim);
+            color: var(--lilas);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .variable-chip:hover {
+            background: var(--lilas);
+            color: var(--bg);
+        }
+        
+        /* Preview Panel */
+        .preview-panel {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        .document-preview {
+            background: white;
+            color: #1a1a2e;
+            padding: 2rem;
+            border-radius: 4px;
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            min-height: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .document-preview .header {
+            text-align: right;
+            margin-bottom: 2rem;
+        }
+        
+        .document-preview .recipient {
+            margin-bottom: 2rem;
+        }
+        
+        .document-preview .subject {
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        
+        .document-preview .body {
+            text-align: justify;
+        }
+        
+        .document-preview .body p {
+            margin-bottom: 1rem;
+        }
+        
+        .document-preview .signature {
+            margin-top: 2rem;
+        }
+        
+        .document-preview .placeholder {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0 0.25rem;
+            border-radius: 2px;
+        }
+        
+        /* No template selected */
+        .no-template {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        
+        .no-template-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--vert);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Saved documents */
+        .saved-docs {
+            border-top: 1px solid var(--border);
+            padding: 1rem;
+        }
+        
+        .saved-doc-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .saved-doc-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+        
+        /* Print styles */
+        @media print {
+            body { background: white; }
+            .sidebar, .main-content, .preview-header, .preview-actions { display: none !important; }
+            .preview-panel { border: none; }
+            .document-preview { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar - Templates -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">📝 Générateur</div>
+                <div class="logo-sub">Documents d'action citoyenne</div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="section-title">📬 Courriers officiels</div>
+                
+                <div class="template-item" data-template="interpellation" onclick="selectTemplate('interpellation')">
+                    <span class="template-icon">🏛️</span>
+                    <div class="template-info">
+                        <div class="template-name">Interpellation citoyenne</div>
+                        <div class="template-desc">Question au conseil communal</div>
+                    </div>
+                </div>
+                
+                <div class="template-item" data-template="petition" onclick="selectTemplate('petition')">
+                    <span class="template-icon">✍️</span>
+                    <div class="template-info">
+                        <div class="template-name">Pétition</div>
+                        <div class="template-desc">Demande collective signée</div>
+                    </div>
+                </div>
+                
+                <div class="template-item" data-template="acces-documents" onclick="selectTemplate('acces-documents')">
+                    <span class="template-icon">📂</span>
+                    <div class="template-info">
+                        <div class="template-name">Accès aux documents</div>
+                        <div class="template-desc">Demande de transparence</div>
+                    </div>
+                </div>
+                
+                <div class="template-item" data-template="reclamation" onclick="selectTemplate('reclamation')">
+                    <span class="template-icon">⚠️</span>
+                    <div class="template-info">
+                        <div class="template-name">Réclamation</div>
+                        <div class="template-desc">Plainte formelle</div>
+                    </div>
+                </div>
+                
+                <div class="section-title">📣 Communication</div>
+                
+                <div class="template-item" data-template="communique" onclick="selectTemplate('communique')">
+                    <span class="template-icon">📰</span>
+                    <div class="template-info">
+                        <div class="template-name">Communiqué de presse</div>
+                        <div class="template-desc">Annonce médias</div>
+                    </div>
+                </div>
+                
+                <div class="template-item" data-template="lettre-ouverte" onclick="selectTemplate('lettre-ouverte')">
+                    <span class="template-icon">✉️</span>
+                    <div class="template-info">
+                        <div class="template-name">Lettre ouverte</div>
+                        <div class="template-desc">Message public</div>
+                    </div>
+                </div>
+                
+                <div class="section-title">🤝 Collaboration</div>
+                
+                <div class="template-item" data-template="demande-rdv" onclick="selectTemplate('demande-rdv')">
+                    <span class="template-icon">📅</span>
+                    <div class="template-info">
+                        <div class="template-name">Demande de RDV</div>
+                        <div class="template-desc">Solliciter une rencontre</div>
+                    </div>
+                </div>
+                
+                <div class="template-item" data-template="proposition" onclick="selectTemplate('proposition')">
+                    <span class="template-icon">💡</span>
+                    <div class="template-info">
+                        <div class="template-name">Proposition citoyenne</div>
+                        <div class="template-desc">Soumettre une idée</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="saved-docs" id="savedDocs">
+                <div class="section-title">💾 Mes documents</div>
+                <!-- Saved docs list -->
+            </div>
+        </aside>
+        
+        <!-- Main - Form -->
+        <main class="main-content">
+            <div class="main-header">
+                <h1 class="main-title" id="formTitle">Sélectionnez un modèle</h1>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn" onclick="saveDocument()">💾 Sauvegarder</button>
+                    <button class="btn" onclick="loadSaved()">📂 Charger</button>
+                </div>
+            </div>
+            
+            <div class="form-container" id="formContainer">
+                <div class="no-template">
+                    <div class="no-template-icon">📝</div>
+                    <h3>Choisissez un modèle</h3>
+                    <p>Sélectionnez un type de document dans la liste à gauche</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Preview Panel -->
+        <aside class="preview-panel">
+            <div class="preview-header">
+                <span class="preview-title">📄 Aperçu</span>
+                <div class="preview-actions">
+                    <button class="btn btn-sm" onclick="copyToClipboard()">📋 Copier</button>
+                    <button class="btn btn-sm" onclick="downloadTxt()">💾 .txt</button>
+                    <button class="btn btn-sm btn-primary" onclick="printDocument()">🖨️ Imprimer</button>
+                </div>
+            </div>
+            <div class="preview-content">
+                <div class="document-preview" id="documentPreview">
+                    <p style="color: #6a6a7a; text-align: center; padding: 2rem;">
+                        L'aperçu apparaîtra ici
+                    </p>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Templates definition
+        const templates = {
+            'interpellation': {
+                name: 'Interpellation citoyenne',
+                icon: '🏛️',
+                sections: [
+                    {
+                        title: '👤 Vos coordonnées',
+                        fields: [
+                            { id: 'nom', label: 'Nom complet', type: 'text', placeholder: 'Jean Dupont' },
+                            { id: 'adresse', label: 'Adresse complète', type: 'text', placeholder: 'Rue de la Loi 1, 1000 Bruxelles' },
+                            { id: 'email', label: 'Email', type: 'email', placeholder: 'jean@exemple.be' }
+                        ]
+                    },
+                    {
+                        title: '🏛️ Destinataire',
+                        fields: [
+                            { id: 'commune', label: 'Commune', type: 'text', placeholder: 'Ville de Bruxelles' },
+                            { id: 'destinataire', label: 'À l\'attention de', type: 'text', placeholder: 'M. le Bourgmestre et le Collège des Échevins' }
+                        ]
+                    },
+                    {
+                        title: '❓ Votre question',
+                        fields: [
+                            { id: 'objet', label: 'Objet', type: 'text', placeholder: 'Interpellation concernant...' },
+                            { id: 'contexte', label: 'Contexte / Constat', type: 'textarea', placeholder: 'Décrivez la situation qui motive votre question...' },
+                            { id: 'question', label: 'Question(s) précise(s)', type: 'textarea', placeholder: '1. Quelles mesures comptez-vous prendre pour...?\n2. Quel est le calendrier prévu pour...?' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div class="header">
+                        <p>${data.nom || '[Votre nom]'}</p>
+                        <p>${data.adresse || '[Votre adresse]'}</p>
+                        <p>${data.email || '[Votre email]'}</p>
+                        <p><br>${formatDate(new Date())}</p>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>${data.destinataire || '[Destinataire]'}</strong></p>
+                        <p>${data.commune || '[Commune]'}</p>
+                    </div>
+                    <div class="subject">
+                        <p>Objet : ${data.objet || '[Objet de l\'interpellation]'}</p>
+                    </div>
+                    <div class="body">
+                        <p>Madame, Monsieur,</p>
+                        <p>En application du droit d'interpellation citoyenne prévu par le Code de la démocratie locale et de la décentralisation, je souhaite soumettre la question suivante au Conseil communal.</p>
+                        <p><strong>Contexte :</strong></p>
+                        <p>${(data.contexte || '[Contexte]').replace(/\n/g, '</p><p>')}</p>
+                        <p><strong>Question(s) :</strong></p>
+                        <p>${(data.question || '[Questions]').replace(/\n/g, '</p><p>')}</p>
+                        <p>Je vous remercie de l'attention que vous porterez à cette interpellation et reste à votre disposition pour tout complément d'information.</p>
+                        <p>Je souhaite être présent(e) lors de la séance du Conseil communal où cette question sera traitée et pouvoir y prendre la parole.</p>
+                    </div>
+                    <div class="signature">
+                        <p>Veuillez agréer, Madame, Monsieur, l'expression de ma considération distinguée.</p>
+                        <p><br><br>${data.nom || '[Signature]'}</p>
+                    </div>
+                `
+            },
+            'petition': {
+                name: 'Pétition',
+                icon: '✍️',
+                sections: [
+                    {
+                        title: '📋 Informations de la pétition',
+                        fields: [
+                            { id: 'titre', label: 'Titre de la pétition', type: 'text', placeholder: 'Pour une meilleure...' },
+                            { id: 'destinataire', label: 'Destinataire', type: 'text', placeholder: 'Au Conseil communal de...' }
+                        ]
+                    },
+                    {
+                        title: '📝 Contenu',
+                        fields: [
+                            { id: 'constat', label: 'Constat / Problème', type: 'textarea', placeholder: 'Nous, citoyens, constatons que...' },
+                            { id: 'demande', label: 'Ce que nous demandons', type: 'textarea', placeholder: 'Nous demandons que les autorités compétentes...' }
+                        ]
+                    },
+                    {
+                        title: '👤 Premier signataire',
+                        fields: [
+                            { id: 'nom', label: 'Nom', type: 'text' },
+                            { id: 'adresse', label: 'Adresse', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 18pt; margin-bottom: 0.5rem;">PÉTITION</h1>
+                        <h2 style="font-size: 14pt; font-weight: normal;">${data.titre || '[Titre de la pétition]'}</h2>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>${data.destinataire || '[Destinataire]'}</strong></p>
+                    </div>
+                    <div class="body">
+                        <p><strong>Constat :</strong></p>
+                        <p>${(data.constat || '[Constat]').replace(/\n/g, '</p><p>')}</p>
+                        <p><strong>Nous, soussignés, demandons :</strong></p>
+                        <p>${(data.demande || '[Demande]').replace(/\n/g, '</p><p>')}</p>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <p><strong>Signatures :</strong></p>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <tr style="border-bottom: 1px solid #ccc;">
+                                <th style="text-align: left; padding: 0.5rem;">Nom</th>
+                                <th style="text-align: left; padding: 0.5rem;">Adresse</th>
+                                <th style="text-align: left; padding: 0.5rem;">Signature</th>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 0.5rem;">${data.nom || ''}</td>
+                                <td style="padding: 0.5rem;">${data.adresse || ''}</td>
+                                <td style="padding: 0.5rem;"></td>
+                            </tr>
+                            ${Array(10).fill('<tr style="border-bottom: 1px solid #eee;"><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;"></td></tr>').join('')}
+                        </table>
+                    </div>
+                `
+            },
+            'acces-documents': {
+                name: 'Demande d\'accès aux documents',
+                icon: '📂',
+                sections: [
+                    {
+                        title: '👤 Vos coordonnées',
+                        fields: [
+                            { id: 'nom', label: 'Nom complet', type: 'text' },
+                            { id: 'adresse', label: 'Adresse', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' }
+                        ]
+                    },
+                    {
+                        title: '🏛️ Administration concernée',
+                        fields: [
+                            { id: 'administration', label: 'Nom de l\'administration', type: 'text', placeholder: 'Commune de..., SPF...' },
+                            { id: 'service', label: 'Service (si connu)', type: 'text', placeholder: 'Service urbanisme' }
+                        ]
+                    },
+                    {
+                        title: '📄 Documents demandés',
+                        fields: [
+                            { id: 'documents', label: 'Description précise des documents', type: 'textarea', placeholder: 'Je souhaite obtenir copie de...\n- Document 1\n- Document 2' },
+                            { id: 'motif', label: 'Motif de la demande (optionnel)', type: 'textarea', placeholder: 'Cette demande s\'inscrit dans le cadre de...' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div class="header">
+                        <p>${data.nom || '[Votre nom]'}</p>
+                        <p>${data.adresse || '[Votre adresse]'}</p>
+                        <p>${data.email || '[Votre email]'}</p>
+                        <p><br>${formatDate(new Date())}</p>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>${data.administration || '[Administration]'}</strong></p>
+                        ${data.service ? `<p>${data.service}</p>` : ''}
+                    </div>
+                    <div class="subject">
+                        <p>Objet : Demande d'accès aux documents administratifs</p>
+                        <p style="font-size: 10pt; color: #666;">Réf. : Décret du 30 mars 1995 relatif à la publicité de l'administration</p>
+                    </div>
+                    <div class="body">
+                        <p>Madame, Monsieur,</p>
+                        <p>En application du principe de publicité de l'administration consacré par l'article 32 de la Constitution et le décret du 30 mars 1995, je sollicite l'accès aux documents suivants :</p>
+                        <p>${(data.documents || '[Documents demandés]').replace(/\n/g, '</p><p>')}</p>
+                        ${data.motif ? `<p><strong>Contexte de la demande :</strong></p><p>${data.motif.replace(/\n/g, '</p><p>')}</p>` : ''}
+                        <p>Conformément à la législation, je souhaite recevoir une copie de ces documents par voie électronique (email) ou, à défaut, par courrier postal.</p>
+                        <p>Je vous rappelle que l'administration dispose d'un délai de 30 jours pour répondre à cette demande. En cas de refus, celui-ci devra être motivé.</p>
+                    </div>
+                    <div class="signature">
+                        <p>Je vous remercie de votre diligence et reste à votre disposition pour tout renseignement complémentaire.</p>
+                        <p>Veuillez agréer, Madame, Monsieur, l'expression de ma considération distinguée.</p>
+                        <p><br><br>${data.nom || '[Signature]'}</p>
+                    </div>
+                `
+            },
+            'reclamation': {
+                name: 'Réclamation',
+                icon: '⚠️',
+                sections: [
+                    {
+                        title: '👤 Vos coordonnées',
+                        fields: [
+                            { id: 'nom', label: 'Nom complet', type: 'text' },
+                            { id: 'adresse', label: 'Adresse', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' },
+                            { id: 'tel', label: 'Téléphone', type: 'tel' }
+                        ]
+                    },
+                    {
+                        title: '🏛️ Destinataire',
+                        fields: [
+                            { id: 'destinataire', label: 'Service / Administration', type: 'text' }
+                        ]
+                    },
+                    {
+                        title: '⚠️ Objet de la réclamation',
+                        fields: [
+                            { id: 'objet', label: 'Objet', type: 'text', placeholder: 'Réclamation concernant...' },
+                            { id: 'faits', label: 'Description des faits', type: 'textarea', placeholder: 'Décrivez précisément la situation, les dates, les personnes impliquées...' },
+                            { id: 'prejudice', label: 'Préjudice subi', type: 'textarea', placeholder: 'Expliquez les conséquences pour vous...' },
+                            { id: 'demande', label: 'Ce que vous demandez', type: 'textarea', placeholder: 'Je demande que...' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div class="header">
+                        <p>${data.nom || '[Votre nom]'}</p>
+                        <p>${data.adresse || '[Votre adresse]'}</p>
+                        <p>${data.email || '[Votre email]'}</p>
+                        <p>${data.tel || ''}</p>
+                        <p><br>${formatDate(new Date())}</p>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>${data.destinataire || '[Destinataire]'}</strong></p>
+                    </div>
+                    <div class="subject">
+                        <p><strong>Objet : RÉCLAMATION - ${data.objet || '[Objet]'}</strong></p>
+                        <p style="font-size: 10pt; color: #c00;">LETTRE RECOMMANDÉE AVEC ACCUSÉ DE RÉCEPTION</p>
+                    </div>
+                    <div class="body">
+                        <p>Madame, Monsieur,</p>
+                        <p>Par la présente, je souhaite porter à votre connaissance les faits suivants et formuler une réclamation formelle.</p>
+                        <p><strong>Exposé des faits :</strong></p>
+                        <p>${(data.faits || '[Faits]').replace(/\n/g, '</p><p>')}</p>
+                        <p><strong>Préjudice subi :</strong></p>
+                        <p>${(data.prejudice || '[Préjudice]').replace(/\n/g, '</p><p>')}</p>
+                        <p><strong>Ma demande :</strong></p>
+                        <p>${(data.demande || '[Demande]').replace(/\n/g, '</p><p>')}</p>
+                        <p>Je vous prie de bien vouloir traiter cette réclamation dans les meilleurs délais et de m'informer des suites que vous entendez y donner.</p>
+                        <p>À défaut de réponse satisfaisante dans un délai de 30 jours, je me réserve le droit de saisir les instances compétentes (Médiateur, tribunal, etc.).</p>
+                    </div>
+                    <div class="signature">
+                        <p>Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+                        <p><br><br>${data.nom || '[Signature]'}</p>
+                        <p style="font-size: 10pt; color: #666;"><br>P.J. : [Liste des pièces jointes éventuelles]</p>
+                    </div>
+                `
+            },
+            'communique': {
+                name: 'Communiqué de presse',
+                icon: '📰',
+                sections: [
+                    {
+                        title: '📰 Informations',
+                        fields: [
+                            { id: 'organisation', label: 'Nom du collectif/organisation', type: 'text' },
+                            { id: 'titre', label: 'Titre accrocheur', type: 'text', placeholder: 'Un titre percutant qui résume l\'info' },
+                            { id: 'soustitre', label: 'Sous-titre (optionnel)', type: 'text' }
+                        ]
+                    },
+                    {
+                        title: '📝 Contenu',
+                        fields: [
+                            { id: 'accroche', label: 'Paragraphe d\'accroche (le plus important)', type: 'textarea', placeholder: 'QUI fait QUOI, OÙ, QUAND, POURQUOI - tout en 2-3 phrases' },
+                            { id: 'contexte', label: 'Contexte et détails', type: 'textarea', placeholder: 'Développez le contexte...' },
+                            { id: 'citation', label: 'Citation (porte-parole)', type: 'textarea', placeholder: '"Notre message est clair..."' },
+                            { id: 'porte_parole', label: 'Nom du porte-parole', type: 'text' }
+                        ]
+                    },
+                    {
+                        title: '📞 Contact presse',
+                        fields: [
+                            { id: 'contact_nom', label: 'Contact presse', type: 'text' },
+                            { id: 'contact_email', label: 'Email', type: 'email' },
+                            { id: 'contact_tel', label: 'Téléphone', type: 'tel' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                        <p style="font-size: 10pt; color: #666;">COMMUNIQUÉ DE PRESSE</p>
+                        <p style="font-size: 10pt; color: #666;">${formatDate(new Date())} - Diffusion immédiate</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 16pt; margin-bottom: 0.5rem;">${data.titre || '[TITRE]'}</h1>
+                        ${data.soustitre ? `<h2 style="font-size: 12pt; font-weight: normal; color: #444;">${data.soustitre}</h2>` : ''}
+                    </div>
+                    <div class="body">
+                        <p><strong>${data.accroche || '[Paragraphe d\'accroche]'}</strong></p>
+                        <p>${(data.contexte || '[Contexte]').replace(/\n/g, '</p><p>')}</p>
+                        ${data.citation ? `<blockquote style="border-left: 3px solid #000; padding-left: 1rem; margin: 1.5rem 0; font-style: italic;">${data.citation}<br><span style="font-style: normal; font-size: 10pt;">— ${data.porte_parole || '[Porte-parole]'}, ${data.organisation || '[Organisation]'}</span></blockquote>` : ''}
+                    </div>
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ccc; font-size: 10pt;">
+                        <p><strong>Contact presse :</strong></p>
+                        <p>${data.contact_nom || '[Nom]'}</p>
+                        <p>${data.contact_email || '[Email]'} ${data.contact_tel ? `| ${data.contact_tel}` : ''}</p>
+                        <p style="margin-top: 1rem; color: #666;"><strong>À propos de ${data.organisation || '[Organisation]'} :</strong><br>[Description courte du collectif]</p>
+                    </div>
+                `
+            },
+            'lettre-ouverte': {
+                name: 'Lettre ouverte',
+                icon: '✉️',
+                sections: [
+                    {
+                        title: '✉️ En-tête',
+                        fields: [
+                            { id: 'auteur', label: 'Auteur(s)', type: 'text', placeholder: 'Collectif X / Les habitants de...' },
+                            { id: 'destinataire', label: 'À qui s\'adresse la lettre', type: 'text', placeholder: 'M. le Ministre, Mme la Bourgmestre...' }
+                        ]
+                    },
+                    {
+                        title: '📝 Contenu',
+                        fields: [
+                            { id: 'titre', label: 'Titre', type: 'text', placeholder: 'Lettre ouverte à...' },
+                            { id: 'intro', label: 'Introduction', type: 'textarea', placeholder: 'Nous vous écrivons aujourd\'hui pour...' },
+                            { id: 'corps', label: 'Corps de la lettre', type: 'textarea', placeholder: 'Développez vos arguments...' },
+                            { id: 'conclusion', label: 'Conclusion / Appel à l\'action', type: 'textarea', placeholder: 'C\'est pourquoi nous vous demandons...' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h1 style="font-size: 16pt;">LETTRE OUVERTE</h1>
+                        <h2 style="font-size: 14pt; font-weight: normal;">${data.titre || '[Titre]'}</h2>
+                        <p style="font-size: 10pt; color: #666;">${formatDate(new Date())}</p>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>À l'attention de ${data.destinataire || '[Destinataire]'},</strong></p>
+                    </div>
+                    <div class="body">
+                        <p>${(data.intro || '[Introduction]').replace(/\n/g, '</p><p>')}</p>
+                        <p>${(data.corps || '[Corps]').replace(/\n/g, '</p><p>')}</p>
+                        <p>${(data.conclusion || '[Conclusion]').replace(/\n/g, '</p><p>')}</p>
+                    </div>
+                    <div class="signature">
+                        <p><br>${data.auteur || '[Signataires]'}</p>
+                    </div>
+                `
+            },
+            'demande-rdv': {
+                name: 'Demande de rendez-vous',
+                icon: '📅',
+                sections: [
+                    {
+                        title: '👤 Vos coordonnées',
+                        fields: [
+                            { id: 'nom', label: 'Nom / Organisation', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' },
+                            { id: 'tel', label: 'Téléphone', type: 'tel' }
+                        ]
+                    },
+                    {
+                        title: '📅 Demande',
+                        fields: [
+                            { id: 'destinataire', label: 'Personne à rencontrer', type: 'text', placeholder: 'M./Mme X, Échevin(e) de...' },
+                            { id: 'objet', label: 'Objet de la rencontre', type: 'text' },
+                            { id: 'contexte', label: 'Contexte / Raison', type: 'textarea', placeholder: 'Nous souhaitons vous rencontrer pour...' },
+                            { id: 'disponibilites', label: 'Vos disponibilités', type: 'textarea', placeholder: 'Nous sommes disponibles...' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div class="header">
+                        <p>${data.nom || '[Votre nom]'}</p>
+                        <p>${data.email || '[Email]'}</p>
+                        <p>${data.tel || '[Téléphone]'}</p>
+                        <p><br>${formatDate(new Date())}</p>
+                    </div>
+                    <div class="recipient">
+                        <p><strong>${data.destinataire || '[Destinataire]'}</strong></p>
+                    </div>
+                    <div class="subject">
+                        <p>Objet : Demande de rendez-vous - ${data.objet || '[Objet]'}</p>
+                    </div>
+                    <div class="body">
+                        <p>Madame, Monsieur,</p>
+                        <p>Nous nous permettons de solliciter un entretien avec vous concernant ${data.objet || '[objet]'}.</p>
+                        <p>${(data.contexte || '[Contexte]').replace(/\n/g, '</p><p>')}</p>
+                        <p><strong>Disponibilités :</strong></p>
+                        <p>${(data.disponibilites || '[Disponibilités]').replace(/\n/g, '</p><p>')}</p>
+                        <p>Nous restons flexibles et nous adapterons volontiers à votre agenda.</p>
+                    </div>
+                    <div class="signature">
+                        <p>Dans l'attente de votre réponse, nous vous prions d'agréer, Madame, Monsieur, l'expression de notre considération respectueuse.</p>
+                        <p><br><br>${data.nom || '[Signature]'}</p>
+                    </div>
+                `
+            },
+            'proposition': {
+                name: 'Proposition citoyenne',
+                icon: '💡',
+                sections: [
+                    {
+                        title: '👤 Porteur du projet',
+                        fields: [
+                            { id: 'nom', label: 'Nom / Collectif', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' }
+                        ]
+                    },
+                    {
+                        title: '💡 La proposition',
+                        fields: [
+                            { id: 'titre', label: 'Titre de la proposition', type: 'text' },
+                            { id: 'resume', label: 'Résumé (2-3 phrases)', type: 'textarea' },
+                            { id: 'probleme', label: 'Problème identifié', type: 'textarea', placeholder: 'Quel problème cette proposition résout-elle ?' },
+                            { id: 'solution', label: 'Solution proposée', type: 'textarea', placeholder: 'Décrivez votre proposition en détail...' },
+                            { id: 'benefices', label: 'Bénéfices attendus', type: 'textarea', placeholder: 'Quels avantages pour la collectivité ?' },
+                            { id: 'mise_en_oeuvre', label: 'Mise en œuvre', type: 'textarea', placeholder: 'Comment mettre en place cette proposition ?' }
+                        ]
+                    }
+                ],
+                generate: (data) => `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <p style="font-size: 10pt; color: #666;">PROPOSITION CITOYENNE</p>
+                        <h1 style="font-size: 16pt;">${data.titre || '[Titre de la proposition]'}</h1>
+                        <p style="font-size: 10pt; color: #666;">Soumise le ${formatDate(new Date())} par ${data.nom || '[Porteur]'}</p>
+                    </div>
+                    <div style="background: #f5f5f5; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+                        <p><strong>En résumé :</strong> ${data.resume || '[Résumé]'}</p>
+                    </div>
+                    <div class="body">
+                        <h3 style="font-size: 12pt; margin-top: 1.5rem;">🔍 Problème identifié</h3>
+                        <p>${(data.probleme || '[Problème]').replace(/\n/g, '</p><p>')}</p>
+                        
+                        <h3 style="font-size: 12pt; margin-top: 1.5rem;">💡 Solution proposée</h3>
+                        <p>${(data.solution || '[Solution]').replace(/\n/g, '</p><p>')}</p>
+                        
+                        <h3 style="font-size: 12pt; margin-top: 1.5rem;">✅ Bénéfices attendus</h3>
+                        <p>${(data.benefices || '[Bénéfices]').replace(/\n/g, '</p><p>')}</p>
+                        
+                        <h3 style="font-size: 12pt; margin-top: 1.5rem;">🛠️ Mise en œuvre</h3>
+                        <p>${(data.mise_en_oeuvre || '[Mise en œuvre]').replace(/\n/g, '</p><p>')}</p>
+                    </div>
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ccc; font-size: 10pt;">
+                        <p><strong>Contact :</strong> ${data.nom || '[Nom]'} - ${data.email || '[Email]'}</p>
+                    </div>
+                `
+            }
+        };
+        
+        // State
+        let currentTemplate = null;
+        let formData = {};
+        let savedDocuments = [];
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedDocuments();
+        });
+        
+        // Load saved documents list
+        function loadSavedDocuments() {
+            const saved = localStorage.getItem('generatorDocuments');
+            if (saved) savedDocuments = JSON.parse(saved);
+            renderSavedDocs();
+        }
+        
+        function renderSavedDocs() {
+            const container = document.getElementById('savedDocs');
+            if (savedDocuments.length === 0) {
+                container.innerHTML = '<div class="section-title">💾 Mes documents</div><p style="font-size: 0.75rem; color: var(--text-muted); padding: 0.5rem;">Aucun document sauvegardé</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="section-title">💾 Mes documents</div>
+                ${savedDocuments.slice(0, 5).map((doc, i) => `
+                    <div class="saved-doc-item" onclick="loadDocument(${i})">
+                        <span>${templates[doc.template]?.icon || '📄'}</span>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${doc.name || 'Sans titre'}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        // Select template
+        function selectTemplate(templateId) {
+            currentTemplate = templateId;
+            formData = {};
+            
+            // Update UI
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.template === templateId);
+            });
+            
+            const template = templates[templateId];
+            document.getElementById('formTitle').textContent = template.name;
+            
+            renderForm();
+            updatePreview();
+        }
+        
+        // Render form
+        function renderForm() {
+            const container = document.getElementById('formContainer');
+            const template = templates[currentTemplate];
+            
+            container.innerHTML = template.sections.map(section => `
+                <div class="form-section">
+                    <div class="form-section-title">${section.title}</div>
+                    ${section.fields.map(field => `
+                        <div class="form-group">
+                            <label class="form-label">${field.label}</label>
+                            ${field.type === 'textarea' 
+                                ? `<textarea class="form-input" id="${field.id}" placeholder="${field.placeholder || ''}" oninput="updateField('${field.id}', this.value)">${formData[field.id] || ''}</textarea>`
+                                : `<input type="${field.type}" class="form-input" id="${field.id}" placeholder="${field.placeholder || ''}" value="${formData[field.id] || ''}" oninput="updateField('${field.id}', this.value)">`
+                            }
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+        
+        // Update field
+        function updateField(fieldId, value) {
+            formData[fieldId] = value;
+            updatePreview();
+        }
+        
+        // Update preview
+        function updatePreview() {
+            if (!currentTemplate) return;
+            
+            const template = templates[currentTemplate];
+            const preview = document.getElementById('documentPreview');
+            preview.innerHTML = template.generate(formData);
+        }
+        
+        // Save document
+        function saveDocument() {
+            if (!currentTemplate) {
+                showToast('Sélectionnez d\'abord un modèle');
+                return;
+            }
+            
+            const name = prompt('Nom du document :', formData.objet || formData.titre || 'Sans titre');
+            if (!name) return;
+            
+            savedDocuments.unshift({
+                template: currentTemplate,
+                name,
+                data: { ...formData },
+                savedAt: new Date().toISOString()
+            });
+            
+            localStorage.setItem('generatorDocuments', JSON.stringify(savedDocuments));
+            renderSavedDocs();
+            showToast('Document sauvegardé');
+        }
+        
+        // Load document
+        function loadDocument(index) {
+            const doc = savedDocuments[index];
+            if (!doc) return;
+            
+            currentTemplate = doc.template;
+            formData = { ...doc.data };
+            
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.template === currentTemplate);
+            });
+            
+            document.getElementById('formTitle').textContent = templates[currentTemplate].name;
+            renderForm();
+            updatePreview();
+            
+            showToast('Document chargé');
+        }
+        
+        function loadSaved() {
+            if (savedDocuments.length === 0) {
+                showToast('Aucun document sauvegardé');
+                return;
+            }
+            
+            const list = savedDocuments.map((doc, i) => `${i + 1}. ${doc.name}`).join('\n');
+            const choice = prompt(`Choisissez un document (1-${savedDocuments.length}):\n\n${list}`);
+            if (choice) {
+                const index = parseInt(choice) - 1;
+                if (index >= 0 && index < savedDocuments.length) {
+                    loadDocument(index);
+                }
+            }
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard() {
+            const preview = document.getElementById('documentPreview');
+            const text = preview.innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copié dans le presse-papiers');
+            }).catch(() => {
+                showToast('Erreur lors de la copie');
+            });
+        }
+        
+        // Download as TXT
+        function downloadTxt() {
+            const preview = document.getElementById('documentPreview');
+            const text = preview.innerText;
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${formData.objet || formData.titre || 'document'}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Téléchargé');
+        }
+        
+        // Print
+        function printDocument() {
+            window.print();
+        }
+        
+        // Format date
+        function formatDate(date) {
+            return date.toLocaleDateString('fr-FR', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+        }
+        
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

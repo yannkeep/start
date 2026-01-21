@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards — Apprentissage Ludique</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-hover: #252540;
+            --border: #2a2a4a;
+            --text: #e8e8f0;
+            --text-muted: #8888aa;
+            --accent: #6366f1;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        html, body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        /* === HEADER === */
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-title { font-size: 1.3rem; font-weight: 700; }
+        .header-sub { font-size: 0.75rem; color: var(--text-muted); }
+        
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+        }
+        
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+        
+        .header-actions { display: flex; gap: 0.5rem; margin-left: 1rem; }
+        
+        .btn {
+            padding: 0.6rem 1rem;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover { background: var(--border); transform: translateY(-1px); }
+        .btn.primary { background: var(--accent); border-color: var(--accent); }
+        .btn.primary:hover { background: #5558e8; }
+        .btn.success { background: var(--success); border-color: var(--success); }
+        .btn.warning { background: var(--warning); border-color: var(--warning); color: #000; }
+        .btn.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* === NAV === */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-tab {
+            padding: 0.7rem 1.2rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-tab:hover { background: var(--bg-hover); color: var(--text); }
+        .nav-tab.active { background: var(--accent); color: white; }
+        .nav-tab .badge { background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; }
+        
+        /* === MAIN === */
+        .main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        /* === DECKS === */
+        .decks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        
+        .deck-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .deck-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .deck-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--deck-color, var(--accent)); border-radius: 10px 10px 0 0; }
+        
+        .deck-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .deck-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .deck-count { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+        
+        .deck-progress { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-bottom: 0.5rem; }
+        .deck-progress-bar { height: 100%; background: linear-gradient(90deg, var(--success), #4ade80); border-radius: 3px; transition: width 0.3s; }
+        
+        .deck-stats { display: flex; gap: 1rem; font-size: 0.7rem; color: var(--text-muted); }
+        .deck-stat { display: flex; align-items: center; gap: 0.3rem; }
+        .deck-stat.mastered { color: var(--success); }
+        .deck-stat.learning { color: var(--warning); }
+        .deck-stat.due { color: var(--danger); }
+        
+        .deck-actions { position: absolute; top: 0.75rem; right: 0.75rem; display: flex; gap: 0.25rem; opacity: 0; transition: opacity 0.2s; }
+        .deck-card:hover .deck-actions { opacity: 1; }
+        
+        .deck-action-btn {
+            width: 28px; height: 28px;
+            background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-muted); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+        }
+        .deck-action-btn:hover { background: var(--bg-hover); color: var(--text); }
+        
+        .deck-card.add-new {
+            border-style: dashed;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 180px; color: var(--text-muted);
+        }
+        .deck-card.add-new:hover { color: var(--accent); border-color: var(--accent); }
+        .deck-card.add-new .add-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        
+        /* === STUDY === */
+        .study-container { max-width: 700px; margin: 0 auto; }
+        
+        .study-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .study-back { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .study-back:hover { color: var(--text); }
+        .study-title { font-size: 1.2rem; font-weight: 600; flex: 1; }
+        
+        .study-progress-bar { height: 8px; background: var(--bg-card); border-radius: 4px; margin-bottom: 2rem; overflow: hidden; }
+        .study-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #a855f7); border-radius: 4px; transition: width 0.3s; }
+        
+        .study-counter { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+        
+        /* Flashcard */
+        .flashcard-container { perspective: 1000px; margin-bottom: 2rem; }
+        
+        .flashcard {
+            width: 100%; min-height: 300px;
+            position: relative; transform-style: preserve-3d;
+            transition: transform 0.6s; cursor: pointer;
+        }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        
+        .flashcard-face {
+            position: absolute; inset: 0;
+            background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px;
+            padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backface-visibility: hidden; text-align: center;
+        }
+        .flashcard-back { transform: rotateY(180deg); }
+        
+        .flashcard-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px; }
+        .flashcard-front .flashcard-label { color: var(--accent); }
+        .flashcard-back .flashcard-label { color: var(--success); }
+        .flashcard-content { font-size: 1.1rem; line-height: 1.6; }
+        .flashcard-hint { position: absolute; bottom: 1rem; font-size: 0.7rem; color: var(--text-muted); }
+        
+        .flashcard-due { position: absolute; top: 1rem; right: 1rem; font-size: 0.65rem; padding: 3px 8px; border-radius: 10px; background: var(--bg); }
+        .flashcard-due.overdue { color: var(--danger); }
+        .flashcard-due.today { color: var(--warning); }
+        .flashcard-due.future { color: var(--success); }
+        
+        /* Study actions */
+        .study-actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+        
+        .study-btn {
+            flex: 1; min-width: 130px; max-width: 170px;
+            padding: 1rem 0.75rem; border: 2px solid var(--border); border-radius: 12px;
+            background: var(--bg-card); color: var(--text); font-size: 0.85rem;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .study-btn:hover { transform: translateY(-2px); }
+        .study-btn.again { border-color: var(--danger); }
+        .study-btn.again:hover { background: rgba(239, 68, 68, 0.15); }
+        .study-btn.hard { border-color: var(--warning); }
+        .study-btn.hard:hover { background: rgba(245, 158, 11, 0.15); }
+        .study-btn.good { border-color: #3b82f6; }
+        .study-btn.good:hover { background: rgba(59, 130, 246, 0.15); }
+        .study-btn.easy { border-color: var(--success); }
+        .study-btn.easy:hover { background: rgba(34, 197, 94, 0.15); }
+        
+        .study-btn-icon { font-size: 1.5rem; }
+        .study-btn-interval { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; opacity: 0.8; }
+        
+        .keyboard-hint {
+            text-align: center; margin-top: 2rem; padding: 1rem;
+            font-size: 0.75rem; color: var(--text-muted);
+            background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border);
+        }
+        .keyboard-hint strong { color: var(--text); display: block; margin-bottom: 0.5rem; }
+        .keyboard-hint kbd {
+            background: var(--bg); border: 1px solid var(--border);
+            padding: 3px 8px; border-radius: 4px; margin: 0 3px; font-weight: 600;
+        }
+        
+        /* === CARDS LIST === */
+        .cards-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .cards-search { flex: 1; min-width: 200px; padding: 0.5rem 1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+        
+        .cards-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        
+        .card-item {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            padding: 1rem; display: flex; align-items: flex-start; gap: 1rem;
+            transition: all 0.2s;
+        }
+        .card-item:hover { border-color: var(--accent); }
+        
+        .card-item-content { flex: 1; min-width: 0; }
+        .card-item-q { font-size: 0.85rem; margin-bottom: 0.3rem; }
+        .card-item-a { font-size: 0.75rem; color: var(--text-muted); }
+        
+        .card-item-meta { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
+        .card-level { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; }
+        .card-level.new { background: var(--bg); color: var(--text-muted); }
+        .card-level.learning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .card-level.mastered { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        
+        .card-item-actions { display: flex; gap: 0.25rem; }
+        .card-item-btn {
+            width: 28px; height: 28px; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+        .card-item-btn:hover { background: var(--bg-hover); color: var(--text); }
+        .card-item-btn.delete:hover { color: var(--danger); }
+        
+        /* === QUIZ === */
+        .quiz-container { max-width: 700px; margin: 0 auto; }
+        .quiz-question { background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; text-align: center; }
+        .quiz-question-text { font-size: 1.15rem; line-height: 1.6; }
+        
+        .quiz-input-container { margin-bottom: 1.5rem; }
+        .quiz-input {
+            width: 100%; padding: 1rem; background: var(--bg-card); border: 2px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 1rem; text-align: center;
+        }
+        .quiz-input:focus { outline: none; border-color: var(--accent); }
+        .quiz-input.correct { border-color: var(--success); background: rgba(34, 197, 94, 0.1); }
+        .quiz-input.incorrect { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+        
+        .quiz-answer-reveal { background: var(--bg-card); border: 2px solid var(--success); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+        .quiz-answer-label { font-size: 0.7rem; color: var(--success); text-transform: uppercase; margin-bottom: 0.5rem; }
+        
+        .quiz-score { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; }
+        .quiz-score-item { text-align: center; }
+        .quiz-score-value { font-size: 2rem; font-weight: 700; }
+        .quiz-score-value.correct { color: var(--success); }
+        .quiz-score-value.incorrect { color: var(--danger); }
+        
+        /* === CHALLENGE === */
+        .challenge-timer { text-align: center; margin-bottom: 2rem; }
+        .challenge-time { font-size: 4rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+        .challenge-time.warning { color: var(--warning); }
+        .challenge-time.danger { color: var(--danger); animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .challenge-streak { text-align: center; margin-bottom: 1rem; }
+        .streak-label { font-size: 0.8rem; color: var(--text-muted); }
+        .streak-value { font-size: 2rem; font-weight: 700; color: var(--success); }
+        
+        /* === RESULTS === */
+        .results-container { max-width: 500px; margin: 0 auto; text-align: center; }
+        .results-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .results-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .results-subtitle { color: var(--text-muted); margin-bottom: 2rem; }
+        
+        .results-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .results-stat { background: var(--bg-card); border-radius: 12px; padding: 1rem; }
+        .results-stat-value { font-size: 1.5rem; font-weight: 700; }
+        .results-stat-label { font-size: 0.7rem; color: var(--text-muted); }
+        
+        /* === MODALS === */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 1rem;
+        }
+        .modal-overlay.open { display: flex; }
+        
+        .modal {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            width: 100%; max-width: 500px; max-height: 90vh; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        
+        .modal-header { padding: 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-title { font-size: 1.1rem; font-weight: 600; }
+        .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        
+        .modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; justify-content: flex-end; }
+        
+        .field-group { margin-bottom: 1rem; }
+        .field-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; }
+        .field-input, .field-select, .field-textarea {
+            width: 100%; padding: 0.6rem; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-size: 0.9rem;
+        }
+        .field-textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+        
+        /* Drop zone */
+        .drop-zone {
+            border: 2px dashed var(--border); border-radius: 12px; padding: 2rem;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(99, 102, 241, 0.1); }
+        .drop-zone-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .drop-zone-text { color: var(--text-muted); font-size: 0.85rem; }
+        .drop-zone-hint { color: var(--text-muted); font-size: 0.7rem; margin-top: 0.5rem; }
+        
+        /* Color picker */
+        .color-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .color-option { width: 32px; height: 32px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; }
+        .color-option:hover { transform: scale(1.1); }
+        .color-option.selected { border-color: white; box-shadow: 0 0 0 2px var(--accent); }
+        
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+            padding: 1rem 1.25rem; display: none; align-items: center; gap: 0.75rem;
+            z-index: 2000; animation: slideIn 0.3s;
+        }
+        .toast.show { display: flex; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-icon { font-size: 1.3rem; }
+        .toast-message { font-size: 0.85rem; }
+        
+        input[type="file"] { display: none; }
+        
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">🧠</div>
+        <div>
+            <div class="header-title">Flashcards</div>
+            <div class="header-sub">Répétition espacée • Raccourcis clavier</div>
+        </div>
+        
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalDecks">0</div>
+                <div class="stat-label">Decks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalCards">0</div>
+                <div class="stat-label">Cartes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalDue">0</div>
+                <div class="stat-label">À réviser</div>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button class="btn" onclick="exportAllData()">📤</button>
+            <button class="btn primary" onclick="openImportModal()">📥 Importer</button>
+        </div>
+    </header>
+    
+    <!-- NAV -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="showView('decks')">📚 Decks</button>
+        <button class="nav-tab" id="navStudy" style="display:none;">📖 Étude</button>
+        <button class="nav-tab" id="navCards" style="display:none;">✏️ Éditer</button>
+    </nav>
+    
+    <!-- MAIN -->
+    <main class="main">
+        <!-- DECKS VIEW -->
+        <div class="view active" id="viewDecks">
+            <div class="decks-grid" id="decksGrid"></div>
+        </div>
+        
+        <!-- STUDY VIEW -->
+        <div class="view" id="viewStudy">
+            <div class="study-container">
+                <div class="study-header">
+                    <button class="study-back" onclick="exitStudy()">←</button>
+                    <div class="study-title" id="studyTitle">Deck</div>
+                    <button class="btn" onclick="shuffleStudyCards()">🔀</button>
+                </div>
+                
+                <div class="study-progress-bar">
+                    <div class="study-progress-fill" id="studyProgressFill" style="width:0%"></div>
+                </div>
+                
+                <div class="study-counter" id="studyCounter">1 / 10</div>
+                
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard" onclick="flipCard()">
+                        <div class="flashcard-face flashcard-front">
+                            <div class="flashcard-label">Question</div>
+                            <div class="flashcard-content" id="cardQuestion">...</div>
+                            <div class="flashcard-hint">Espace pour retourner</div>
+                            <div class="flashcard-due" id="cardDue"></div>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <div class="flashcard-label">Réponse</div>
+                            <div class="flashcard-content" id="cardAnswer">...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="study-actions">
+                    <button class="study-btn again" onclick="rateCard(0)">
+                        <span class="study-btn-icon">❌</span>
+                        <span>Je ne savais pas</span>
+                        <span class="study-btn-interval">→ revoir dans <span id="int0">1 min</span></span>
+                    </button>
+                    <button class="study-btn hard" onclick="rateCard(1)">
+                        <span class="study-btn-icon">😓</span>
+                        <span>Difficile</span>
+                        <span class="study-btn-interval">→ revoir dans <span id="int1">10 min</span></span>
+                    </button>
+                    <button class="study-btn good" onclick="rateCard(2)">
+                        <span class="study-btn-icon">👍</span>
+                        <span>Je savais</span>
+                        <span class="study-btn-interval">→ revoir dans <span id="int2">1 j</span></span>
+                    </button>
+                    <button class="study-btn easy" onclick="rateCard(3)">
+                        <span class="study-btn-icon">✨</span>
+                        <span>Trop facile !</span>
+                        <span class="study-btn-interval">→ revoir dans <span id="int3">4 j</span></span>
+                    </button>
+                </div>
+                
+                <div class="keyboard-hint">
+                    <strong>Raccourcis clavier :</strong> 
+                    <kbd>Espace</kbd> = retourner la carte | 
+                    <kbd>1</kbd> = Je ne savais pas |
+                    <kbd>2</kbd> = Difficile |
+                    <kbd>3</kbd> = Je savais |
+                    <kbd>4</kbd> = Trop facile
+                </div>
+            </div>
+        </div>
+        
+        <!-- CARDS VIEW -->
+        <div class="view" id="viewCards">
+            <div class="study-container" style="max-width:800px;">
+                <div class="study-header">
+                    <button class="study-back" onclick="exitStudy()">←</button>
+                    <div class="study-title" id="cardsTitle">Éditer</div>
+                </div>
+                
+                <div class="cards-header">
+                    <input type="text" class="cards-search" id="cardsSearch" placeholder="🔍 Rechercher..." oninput="renderCardsList()">
+                    <button class="btn primary" onclick="openCardModal()">+ Carte</button>
+                </div>
+                
+                <div class="cards-list" id="cardsList"></div>
+            </div>
+        </div>
+        
+        <!-- QUIZ VIEW -->
+        <div class="view" id="viewQuiz">
+            <div class="quiz-container">
+                <div class="study-header">
+                    <button class="study-back" onclick="exitStudy()">←</button>
+                    <div class="study-title" id="quizTitle">Quiz</div>
+                </div>
+                
+                <div class="quiz-score">
+                    <div class="quiz-score-item">
+                        <div class="quiz-score-value correct" id="quizCorrect">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="quiz-score-item">
+                        <div class="quiz-score-value incorrect" id="quizIncorrect">0</div>
+                        <div class="stat-label">Incorrect</div>
+                    </div>
+                </div>
+                
+                <div class="study-counter" id="quizCounter">1 / 10</div>
+                
+                <div class="quiz-question">
+                    <div class="quiz-question-text" id="quizQuestion">...</div>
+                </div>
+                
+                <div class="quiz-input-container">
+                    <input type="text" class="quiz-input" id="quizInput" placeholder="Réponse..." onkeypress="if(event.key==='Enter')checkQuiz()">
+                </div>
+                
+                <div class="quiz-answer-reveal" id="quizReveal" style="display:none;">
+                    <div class="quiz-answer-label">Réponse</div>
+                    <div id="quizCorrectAnswer"></div>
+                </div>
+                
+                <div style="text-align:center;">
+                    <button class="btn primary" id="quizSubmitBtn" onclick="checkQuiz()">Vérifier</button>
+                    <button class="btn primary" id="quizNextBtn" onclick="nextQuiz()" style="display:none;">Suivant</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CHALLENGE VIEW -->
+        <div class="view" id="viewChallenge">
+            <div class="quiz-container">
+                <div class="study-header">
+                    <button class="study-back" onclick="exitStudy()">←</button>
+                    <div class="study-title" id="challengeTitle">Défi</div>
+                </div>
+                
+                <div class="challenge-timer">
+                    <div class="challenge-time" id="challengeTime">2:00</div>
+                </div>
+                
+                <div class="challenge-streak">
+                    <div class="streak-label">Score</div>
+                    <div class="streak-value" id="challengeScore">0</div>
+                </div>
+                
+                <div class="quiz-question">
+                    <div class="quiz-question-text" id="challengeQuestion">...</div>
+                </div>
+                
+                <div class="quiz-input-container">
+                    <input type="text" class="quiz-input" id="challengeInput" onkeypress="if(event.key==='Enter')checkChallenge()">
+                </div>
+                
+                <div style="text-align:center;">
+                    <button class="btn success" onclick="checkChallenge()">✓</button>
+                    <button class="btn" onclick="skipChallenge()">Passer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RESULTS VIEW -->
+        <div class="view" id="viewResults">
+            <div class="results-container">
+                <div class="results-icon" id="resultsIcon">🎉</div>
+                <div class="results-title" id="resultsTitle">Terminé !</div>
+                <div class="results-subtitle" id="resultsSubtitle"></div>
+                
+                <div class="results-stats">
+                    <div class="results-stat">
+                        <div class="results-stat-value" id="resultsTotal">0</div>
+                        <div class="results-stat-label">Cartes</div>
+                    </div>
+                    <div class="results-stat">
+                        <div class="results-stat-value" style="color:var(--success);" id="resultsCorrect">0</div>
+                        <div class="results-stat-label">OK</div>
+                    </div>
+                    <div class="results-stat">
+                        <div class="results-stat-value" style="color:var(--warning);" id="resultsToReview">0</div>
+                        <div class="results-stat-label">À revoir</div>
+                    </div>
+                </div>
+                
+                <div style="display:flex;gap:1rem;justify-content:center;">
+                    <button class="btn" onclick="exitStudy()">← Decks</button>
+                    <button class="btn primary" onclick="restart()">🔄 Encore</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- IMPORT MODAL -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📥 Importer</div>
+                <button class="modal-close" onclick="closeModal('import')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label class="field-label">Nom</label>
+                    <input type="text" class="field-input" id="importName" placeholder="Mon deck">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Catégorie</label>
+                    <input type="text" class="field-input" id="importCat">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Couleur</label>
+                    <div class="color-options" id="colorOpts"></div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Fichier</label>
+                    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <div class="drop-zone-icon">📄</div>
+                        <div class="drop-zone-text">CSV ou JSON</div>
+                    </div>
+                    <div id="fileInfo" style="margin-top:0.5rem;font-size:0.8rem;color:var(--success);display:none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('import')">Annuler</button>
+                <button class="btn primary" onclick="doImport()">Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DECK MODAL -->
+    <div class="modal-overlay" id="deckModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="deckModalTitle">Deck</div>
+                <button class="modal-close" onclick="closeModal('deck')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;" id="deckInfo"></p>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                    <button class="btn warning" onclick="startReview()" id="btnReview">🔥 Révision (<span id="dueCount">0</span>)</button>
+                    <button class="btn" onclick="startStudy()">📖 Étude complète</button>
+                    <button class="btn" onclick="startQuiz()">🎯 Quiz</button>
+                    <button class="btn" onclick="startChallenge()">⚡ Défi chrono</button>
+                    <button class="btn" onclick="openCards()">✏️ Éditer cartes</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn danger" onclick="deleteDeck()">🗑️</button>
+                <button class="btn" onclick="closeModal('deck')">Fermer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CARD MODAL -->
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="cardModalTitle">Carte</div>
+                <button class="modal-close" onclick="closeModal('card')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label class="field-label">Question</label>
+                    <textarea class="field-textarea" id="cardQ"></textarea>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Réponse</label>
+                    <textarea class="field-textarea" id="cardA"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn danger" onclick="deleteCard()" id="btnDelCard" style="margin-right:auto;">🗑️</button>
+                <button class="btn" onclick="closeModal('card')">Annuler</button>
+                <button class="btn primary" onclick="saveCard()">💾</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"><span class="toast-icon">✓</span><span class="toast-message"></span></div>
+    <input type="file" id="fileInput" accept=".csv,.json" onchange="handleFile(event)">
+
+<script>
+const STORE = 'flashcards_v2';
+const COLORS = ['#6366f1','#a855f7','#ec4899','#ef4444','#f59e0b','#22c55e','#14b8a6','#3b82f6'];
+
+let data = { decks: [] };
+let deckId = null, cardId = null;
+let cards = [], idx = 0, results = { ok: 0, ko: 0 };
+let mode = 'all', quizDone = false, timer = null, timeLeft = 120;
+let pendingCards = null, color = COLORS[0];
+
+// SM-2
+const SM2 = {
+    next(c, r) {
+        let int = c.interval || 1, ef = c.easeFactor || 2.5;
+        if (r === 0) { int = 1; ef = Math.max(1.3, ef - 0.2); }
+        else if (r === 1) { int = Math.max(1, int * 0.5); ef = Math.max(1.3, ef - 0.15); }
+        else if (r === 2) { int = c.reviews === 0 ? 1440 : c.reviews === 1 ? 4320 : Math.round(int * ef); }
+        else { int = c.reviews === 0 ? 5760 : Math.round(int * ef * 1.3); ef = Math.min(3, ef + 0.15); }
+        return { interval: int, easeFactor: ef };
+    },
+    fmt(m) {
+        if (m < 60) return Math.round(m) + ' min';
+        if (m < 1440) return Math.round(m / 60) + ' h';
+        if (m < 10080) return Math.round(m / 1440) + ' j';
+        return Math.round(m / 10080) + ' sem';
+    },
+    due(c) { return !c.nextReview || new Date(c.nextReview) <= new Date(); }
+};
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    load(); render(); stats();
+    setupDrop(); setupColors(); setupKeys();
+});
+
+function load() {
+    try { data = JSON.parse(localStorage.getItem(STORE)) || { decks: [] }; } catch(e) {}
+    data.decks.forEach(d => d.cards.forEach(c => {
+        c.interval = c.interval || 0;
+        c.easeFactor = c.easeFactor || 2.5;
+        c.reviews = c.reviews || 0;
+    }));
+}
+function save() { localStorage.setItem(STORE, JSON.stringify(data)); }
+
+function stats() {
+    let cards = 0, due = 0;
+    data.decks.forEach(d => { cards += d.cards.length; d.cards.forEach(c => { if (SM2.due(c)) due++; }); });
+    document.getElementById('totalDecks').textContent = data.decks.length;
+    document.getElementById('totalCards').textContent = cards;
+    document.getElementById('totalDue').textContent = due;
+}
+
+function deckStats(d) {
+    let m = 0, l = 0, due = 0;
+    d.cards.forEach(c => {
+        if (c.interval >= 1440) m++; else if (c.reviews > 0) l++;
+        if (SM2.due(c)) due++;
+    });
+    return { m, l, due };
+}
+
+// Views
+function showView(v) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.getElementById('view' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('active');
+}
+
+// Render decks
+function render() {
+    const g = document.getElementById('decksGrid');
+    if (!data.decks.length) {
+        g.innerHTML = '<div class="deck-card add-new" onclick="openImportModal()"><div class="add-icon">+</div><div>Importer</div></div>';
+        return;
+    }
+    g.innerHTML = data.decks.map(d => {
+        const s = deckStats(d), p = d.cards.length ? (s.m / d.cards.length) * 100 : 0;
+        return `<div class="deck-card" style="--deck-color:${d.color||'#6366f1'}" onclick="openDeck('${d.id}')">
+            <div class="deck-actions"><button class="deck-action-btn" onclick="event.stopPropagation();deckId='${d.id}';openCards()">✏️</button></div>
+            <div class="deck-icon">${d.icon||'📚'}</div>
+            <div class="deck-name">${d.name}</div>
+            <div class="deck-count">${d.cards.length} cartes</div>
+            <div class="deck-progress"><div class="deck-progress-bar" style="width:${p}%"></div></div>
+            <div class="deck-stats">
+                <span class="deck-stat mastered">✓${s.m}</span>
+                <span class="deck-stat learning">◐${s.l}</span>
+                ${s.due ? `<span class="deck-stat due">🔥${s.due}</span>` : ''}
+            </div>
+        </div>`;
+    }).join('') + '<div class="deck-card add-new" onclick="openImportModal()"><div class="add-icon">+</div></div>';
+}
+
+// Deck modal
+function openDeck(id) {
+    deckId = id;
+    const d = data.decks.find(x => x.id === id);
+    const s = deckStats(d);
+    document.getElementById('deckModalTitle').textContent = (d.icon||'📚') + ' ' + d.name;
+    document.getElementById('deckInfo').textContent = `${d.cards.length} cartes • ${s.m} maîtrisées`;
+    document.getElementById('dueCount').textContent = s.due;
+    document.getElementById('btnReview').disabled = !s.due;
+    document.getElementById('deckModal').classList.add('open');
+}
+
+function deleteDeck() {
+    if (!confirm('Supprimer ?')) return;
+    data.decks = data.decks.filter(d => d.id !== deckId);
+    save(); closeModal('deck'); render(); stats(); toast('Supprimé');
+}
+
+// Import
+function openImportModal() {
+    document.getElementById('importName').value = '';
+    document.getElementById('importCat').value = '';
+    document.getElementById('fileInfo').style.display = 'none';
+    pendingCards = null;
+    document.getElementById('importModal').classList.add('open');
+}
+
+function setupDrop() {
+    const dz = document.getElementById('dropZone');
+    ['dragenter','dragover','dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); }));
+    dz.addEventListener('dragenter', () => dz.classList.add('dragover'));
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => { dz.classList.remove('dragover'); if (e.dataTransfer.files[0]) parseFile(e.dataTransfer.files[0]); });
+}
+
+function setupColors() {
+    document.getElementById('colorOpts').innerHTML = COLORS.map((c, i) =>
+        `<div class="color-option${i===0?' selected':''}" style="background:${c}" data-c="${c}" onclick="pickColor(this)"></div>`
+    ).join('');
+}
+
+function pickColor(el) {
+    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    color = el.dataset.c;
+}
+
+function handleFile(e) { if (e.target.files[0]) parseFile(e.target.files[0]); e.target.value = ''; }
+
+function parseFile(f) {
+    const r = new FileReader();
+    r.onload = e => {
+        let arr = [];
+        if (f.name.endsWith('.json')) {
+            try { arr = JSON.parse(e.target.result).map(x => ({ q: x.question||x.q, a: x.answer||x.a })); } catch(e) {}
+        } else {
+            e.target.result.split(/\r?\n/).filter(l => l.trim()).forEach(l => {
+                const m = l.match(/^"(.+?)","(.+?)"$/);
+                if (m) arr.push({ q: m[1], a: m[2] });
+                else { const p = l.split(/[;,]/); if (p.length >= 2) arr.push({ q: p[0].replace(/"/g,''), a: p[1].replace(/"/g,'') }); }
+            });
+        }
+        if (!arr.length) { toast('Aucune carte', 'error'); return; }
+        pendingCards = arr;
+        document.getElementById('fileInfo').textContent = '✓ ' + arr.length + ' cartes';
+        document.getElementById('fileInfo').style.display = 'block';
+        if (!document.getElementById('importName').value) document.getElementById('importName').value = f.name.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+    };
+    r.readAsText(f);
+}
+
+function doImport() {
+    if (!pendingCards?.length) { toast('Fichier requis', 'error'); return; }
+    const d = {
+        id: 'd' + Date.now(),
+        name: document.getElementById('importName').value.trim() || 'Deck',
+        category: document.getElementById('importCat').value.trim() || null,
+        color, icon: '📚',
+        cards: pendingCards.map((c, i) => ({ id: 'c' + Date.now() + i, question: c.q, answer: c.a, interval: 0, easeFactor: 2.5, reviews: 0, nextReview: null }))
+    };
+    data.decks.push(d);
+    save(); closeModal('import'); render(); stats(); toast(d.cards.length + ' cartes !');
+}
+
+// Study
+function startStudy() {
+    closeModal('deck');
+    const d = data.decks.find(x => x.id === deckId);
+    mode = 'all';
+    cards = shuffle([...d.cards]);
+    idx = 0; results = { ok: 0, ko: 0 };
+    document.getElementById('studyTitle').textContent = d.name;
+    document.getElementById('navStudy').style.display = 'flex';
+    showView('study');
+    showCard();
+}
+
+function startReview() {
+    closeModal('deck');
+    const d = data.decks.find(x => x.id === deckId);
+    mode = 'review';
+    cards = shuffle(d.cards.filter(c => SM2.due(c)));
+    if (!cards.length) { toast('Rien à réviser'); return; }
+    idx = 0; results = { ok: 0, ko: 0 };
+    document.getElementById('studyTitle').textContent = '🔥 ' + d.name;
+    document.getElementById('navStudy').style.display = 'flex';
+    showView('study');
+    showCard();
+}
+
+function showCard() {
+    if (idx >= cards.length) { showResults(); return; }
+    const c = cards[idx];
+    document.getElementById('cardQuestion').textContent = c.question;
+    document.getElementById('cardAnswer').textContent = c.answer;
+    document.getElementById('flashcard').classList.remove('flipped');
+    
+    // Due badge
+    const due = document.getElementById('cardDue');
+    if (c.nextReview) {
+        const d = new Date(c.nextReview) - new Date();
+        if (d < 0) { due.textContent = 'En retard'; due.className = 'flashcard-due overdue'; }
+        else if (d < 86400000) { due.textContent = "Aujourd'hui"; due.className = 'flashcard-due today'; }
+        else { due.textContent = SM2.fmt(d / 60000); due.className = 'flashcard-due future'; }
+    } else { due.textContent = 'Nouvelle'; due.className = 'flashcard-due'; }
+    
+    // Intervals
+    [0,1,2,3].forEach(r => {
+        const el = document.getElementById('int' + r);
+        if (el) el.textContent = SM2.fmt(SM2.next(c, r).interval);
+    });
+    
+    document.getElementById('studyCounter').textContent = `${idx + 1} / ${cards.length}`;
+    document.getElementById('studyProgressFill').style.width = ((idx / cards.length) * 100) + '%';
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+
+function rateCard(r) {
+    const c = cards[idx];
+    const di = data.decks.findIndex(d => d.id === deckId);
+    const ci = data.decks[di].cards.findIndex(x => x.id === c.id);
+    const db = data.decks[di].cards[ci];
+    
+    const { interval, easeFactor } = SM2.next(db, r);
+    db.interval = interval;
+    db.easeFactor = easeFactor;
+    db.reviews++;
+    db.lastReview = new Date().toISOString();
+    db.nextReview = new Date(Date.now() + interval * 60000).toISOString();
+    
+    if (r >= 2) results.ok++; else results.ko++;
+    save();
+    idx++;
+    showCard();
+}
+
+function shuffleStudyCards() { cards = shuffle(cards); idx = 0; showCard(); toast('Mélangé'); }
+
+// Cards edit
+function openCards() {
+    closeModal('deck');
+    const d = data.decks.find(x => x.id === deckId);
+    document.getElementById('cardsTitle').textContent = '✏️ ' + d.name;
+    document.getElementById('cardsSearch').value = '';
+    document.getElementById('navCards').style.display = 'flex';
+    showView('cards');
+    renderCards();
+}
+
+function renderCards() {
+    const d = data.decks.find(x => x.id === deckId);
+    const q = document.getElementById('cardsSearch').value.toLowerCase();
+    let list = d.cards;
+    if (q) list = list.filter(c => c.question.toLowerCase().includes(q) || c.answer.toLowerCase().includes(q));
+    
+    if (!list.length) { document.getElementById('cardsList').innerHTML = '<div class="empty-state">Aucune carte</div>'; return; }
+    
+    document.getElementById('cardsList').innerHTML = list.map(c => {
+        let lv = 'new', lt = 'Nouvelle';
+        if (c.interval >= 1440) { lv = 'mastered'; lt = 'Maîtrisée'; }
+        else if (c.reviews > 0) { lv = 'learning'; lt = 'En cours'; }
+        return `<div class="card-item">
+            <div class="card-item-content">
+                <div class="card-item-q">${esc(c.question.substring(0,100))}</div>
+                <div class="card-item-a">${esc(c.answer.substring(0,80))}</div>
+            </div>
+            <div class="card-item-meta">
+                <span class="card-level ${lv}" style="pointer-events:none;">${lt}</span>
+                <button class="card-item-btn" onclick="event.stopPropagation();openCardModal('${c.id}')">✏️</button>
+                <button class="card-item-btn delete" onclick="delCard('${c.id}')">🗑️</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function openCardModal(id = null) {
+    cardId = id;
+    if (id) {
+        const d = data.decks.find(x => x.id === deckId);
+        const c = d.cards.find(x => x.id === id);
+        document.getElementById('cardQ').value = c.question;
+        document.getElementById('cardA').value = c.answer;
+        document.getElementById('cardModalTitle').textContent = 'Modifier';
+        document.getElementById('btnDelCard').style.display = 'flex';
+    } else {
+        document.getElementById('cardQ').value = '';
+        document.getElementById('cardA').value = '';
+        document.getElementById('cardModalTitle').textContent = 'Nouvelle carte';
+        document.getElementById('btnDelCard').style.display = 'none';
+    }
+    document.getElementById('cardModal').classList.add('open');
+}
+
+function saveCard() {
+    const q = document.getElementById('cardQ').value.trim();
+    const a = document.getElementById('cardA').value.trim();
+    if (!q || !a) { toast('Q&R requis', 'error'); return; }
+    
+    const di = data.decks.findIndex(d => d.id === deckId);
+    if (cardId) {
+        const ci = data.decks[di].cards.findIndex(c => c.id === cardId);
+        data.decks[di].cards[ci].question = q;
+        data.decks[di].cards[ci].answer = a;
+    } else {
+        data.decks[di].cards.push({ id: 'c' + Date.now(), question: q, answer: a, interval: 0, easeFactor: 2.5, reviews: 0, nextReview: null });
+    }
+    save(); closeModal('card'); renderCards(); render(); stats(); toast('OK');
+}
+
+function deleteCard() {
+    if (!cardId || !confirm('Supprimer ?')) return;
+    const di = data.decks.findIndex(d => d.id === deckId);
+    data.decks[di].cards = data.decks[di].cards.filter(c => c.id !== cardId);
+    save(); closeModal('card'); renderCards(); render(); stats(); toast('Supprimé');
+}
+
+function delCard(id) {
+    if (!confirm('Supprimer ?')) return;
+    const di = data.decks.findIndex(d => d.id === deckId);
+    data.decks[di].cards = data.decks[di].cards.filter(c => c.id !== id);
+    save(); renderCards(); render(); stats();
+}
+
+// Quiz
+function startQuiz() {
+    closeModal('deck');
+    const d = data.decks.find(x => x.id === deckId);
+    cards = shuffle([...d.cards]);
+    idx = 0; results = { ok: 0, ko: 0 };
+    document.getElementById('quizTitle').textContent = d.name;
+    document.getElementById('quizCorrect').textContent = '0';
+    document.getElementById('quizIncorrect').textContent = '0';
+    showView('quiz');
+    showQuiz();
+}
+
+function showQuiz() {
+    if (idx >= cards.length) { showResults(); return; }
+    quizDone = false;
+    document.getElementById('quizQuestion').textContent = cards[idx].question;
+    document.getElementById('quizInput').value = '';
+    document.getElementById('quizInput').className = 'quiz-input';
+    document.getElementById('quizInput').disabled = false;
+    document.getElementById('quizInput').focus();
+    document.getElementById('quizReveal').style.display = 'none';
+    document.getElementById('quizSubmitBtn').style.display = 'inline-flex';
+    document.getElementById('quizNextBtn').style.display = 'none';
+    document.getElementById('quizCounter').textContent = `${idx + 1} / ${cards.length}`;
+}
+
+function checkQuiz() {
+    if (quizDone) return;
+    quizDone = true;
+    const u = document.getElementById('quizInput').value.trim().toLowerCase();
+    const c = cards[idx].answer.toLowerCase();
+    const ok = u.length > 3 && (c.includes(u) || sim(u, c) > 0.5);
+    
+    document.getElementById('quizInput').disabled = true;
+    document.getElementById('quizInput').classList.add(ok ? 'correct' : 'incorrect');
+    if (ok) { results.ok++; document.getElementById('quizCorrect').textContent = results.ok; }
+    else { results.ko++; document.getElementById('quizIncorrect').textContent = results.ko; }
+    
+    document.getElementById('quizCorrectAnswer').textContent = cards[idx].answer;
+    document.getElementById('quizReveal').style.display = 'block';
+    document.getElementById('quizSubmitBtn').style.display = 'none';
+    document.getElementById('quizNextBtn').style.display = 'inline-flex';
+}
+
+function nextQuiz() { idx++; showQuiz(); }
+
+// Challenge
+function startChallenge() {
+    closeModal('deck');
+    const d = data.decks.find(x => x.id === deckId);
+    cards = shuffle([...d.cards]);
+    idx = 0; results = { ok: 0, ko: 0 }; timeLeft = 120;
+    document.getElementById('challengeTitle').textContent = '⚡ ' + d.name;
+    document.getElementById('challengeScore').textContent = '0';
+    showView('challenge');
+    showChallenge();
+    timer = setInterval(() => {
+        timeLeft--;
+        const el = document.getElementById('challengeTime');
+        el.textContent = `${Math.floor(timeLeft/60)}:${(timeLeft%60).toString().padStart(2,'0')}`;
+        el.className = 'challenge-time' + (timeLeft <= 30 ? ' danger' : timeLeft <= 60 ? ' warning' : '');
+        if (timeLeft <= 0) { clearInterval(timer); showResults(); }
+    }, 1000);
+}
+
+function showChallenge() {
+    if (idx >= cards.length) { cards = shuffle(cards); idx = 0; }
+    document.getElementById('challengeQuestion').textContent = cards[idx].question;
+    document.getElementById('challengeInput').value = '';
+    document.getElementById('challengeInput').focus();
+}
+
+function checkChallenge() {
+    const u = document.getElementById('challengeInput').value.trim().toLowerCase();
+    const c = cards[idx].answer.toLowerCase();
+    if (u.length > 2 && (c.includes(u) || sim(u, c) > 0.4)) {
+        results.ok++;
+        document.getElementById('challengeScore').textContent = results.ok;
+    }
+    idx++; showChallenge();
+}
+
+function skipChallenge() { idx++; showChallenge(); }
+
+// Results
+function showResults() {
+    if (timer) { clearInterval(timer); timer = null; }
+    const t = results.ok + results.ko;
+    const p = t ? Math.round((results.ok / t) * 100) : 0;
+    
+    let i = '🎉', ti = 'Terminé', su = '';
+    if (p >= 80) { i = '🏆'; ti = 'Excellent !'; su = p + '%'; }
+    else if (p >= 50) { i = '👍'; ti = 'Bien !'; su = p + '%'; }
+    else if (t > 0) { i = '💪'; ti = 'Continue !'; }
+    
+    document.getElementById('resultsIcon').textContent = i;
+    document.getElementById('resultsTitle').textContent = ti;
+    document.getElementById('resultsSubtitle').textContent = su;
+    document.getElementById('resultsTotal').textContent = t;
+    document.getElementById('resultsCorrect').textContent = results.ok;
+    document.getElementById('resultsToReview').textContent = results.ko;
+    
+    showView('results');
+    stats(); render();
+}
+
+function restart() { mode === 'review' ? startReview() : startStudy(); }
+
+function exitStudy() {
+    if (timer) { clearInterval(timer); timer = null; }
+    document.getElementById('navStudy').style.display = 'none';
+    document.getElementById('navCards').style.display = 'none';
+    showView('decks');
+    render(); stats();
+}
+
+// Keyboard
+function setupKeys() {
+    document.addEventListener('keydown', e => {
+        if (document.getElementById('viewStudy').classList.contains('active')) {
+            if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+            else if (e.key >= '1' && e.key <= '4' && document.getElementById('flashcard').classList.contains('flipped')) {
+                e.preventDefault(); rateCard(parseInt(e.key) - 1);
+            }
+        }
+    });
+}
+
+// Export
+function exportAllData() {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    a.download = 'flashcards.json';
+    a.click();
+    toast('Exporté');
+}
+
+// Utils
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function sim(a, b) {
+    const l = a.length > b.length ? a : b;
+    if (!l.length) return 1;
+    const c = [];
+    for (let i = 0; i <= a.length; i++) {
+        let v = i;
+        for (let j = 0; j <= b.length; j++) {
+            if (i === 0) c[j] = j;
+            else if (j > 0) {
+                let n = c[j - 1];
+                if (a[i - 1] !== b[j - 1]) n = Math.min(n, v, c[j]) + 1;
+                c[j - 1] = v; v = n;
+            }
+        }
+        if (i > 0) c[b.length] = v;
+    }
+    return (l.length - c[b.length]) / l.length;
+}
+function toast(m, t = 'ok') {
+    const el = document.getElementById('toast');
+    el.querySelector('.toast-icon').textContent = t === 'error' ? '✕' : '✓';
+    el.querySelector('.toast-message').textContent = m;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+}
+function closeModal(n) { document.getElementById(n + 'Modal').classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+</script>
+</body>
+</html>

@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Store — Outils Low-Tech</title>
+    <meta name="description" content="Bibliothèque de modules HTML autonomes. Téléchargez, utilisez, modifiez librement.">
+    <style>
+        :root {
+            --bg: #050508;
+            --bg-card: #0d0d12;
+            --bg-elevated: #141419;
+            --bg-hover: #1a1a22;
+            --border: #222230;
+            --border-light: #2a2a3a;
+            --text: #f0f0f5;
+            --text-muted: #888899;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --pink: #ec4899;
+            --cyan: #06b6d4;
+            --purple: #a855f7;
+            --gradient-1: linear-gradient(135deg, #6366f1, #a855f7);
+            --gradient-2: linear-gradient(135deg, #06b6d4, #22c55e);
+            --gradient-3: linear-gradient(135deg, #f59e0b, #ef4444);
+            --shadow: 0 20px 60px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 60px rgba(99, 102, 241, 0.15);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* === HEADER === */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text);
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-badge {
+            font-size: 0.6rem;
+            background: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .nav { display: flex; gap: 0.5rem; }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
+        
+        .header-search {
+            flex: 1;
+            max-width: 400px;
+            margin-left: auto;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888899'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 0.75rem center;
+            background-size: 1rem;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        
+        .header-actions { display: flex; gap: 0.5rem; }
+        
+        .btn {
+            padding: 0.6rem 1.25rem;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn:hover { background: var(--border); transform: translateY(-1px); }
+        .btn.primary { background: var(--accent); border-color: var(--accent); }
+        .btn.primary:hover { background: #5558e8; }
+        .btn.success { background: var(--success); border-color: var(--success); }
+        .btn.sm { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
+        .btn.lg { padding: 0.8rem 1.75rem; font-size: 1rem; }
+        
+        /* === HERO === */
+        .hero {
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent),
+                        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168, 85, 247, 0.1), transparent);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        /* === MAIN === */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section { margin-bottom: 4rem; }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-title-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        /* === CATEGORIES === */
+        .categories {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .category {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .category:hover { border-color: var(--border-light); color: var(--text); }
+        .category.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .category-count {
+            background: rgba(255,255,255,0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+        
+        /* === PRODUCT GRID === */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow), var(--shadow-glow);
+        }
+        
+        .product-cover {
+            height: 180px;
+            background: var(--bg-elevated);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-cover-gradient {
+            position: absolute;
+            inset: 0;
+            opacity: 0.8;
+        }
+        
+        .product-cover-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            opacity: 0.9;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.75rem;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .product-badge.new { color: var(--success); }
+        .product-badge.popular { color: var(--warning); }
+        .product-badge.featured { color: var(--pink); }
+        
+        .product-body { padding: 1.25rem; }
+        
+        .product-category {
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .product-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .product-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .product-tags {
+            display: flex;
+            gap: 0.4rem;
+        }
+        
+        .product-tag {
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .product-price {
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        /* === PRODUCT DETAIL MODAL === */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.open { display: block; }
+        
+        .modal {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            animation: modalIn 0.3s ease;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .modal-header {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+        }
+        
+        .modal-header-bg {
+            position: absolute;
+            inset: 0;
+        }
+        
+        .modal-header-content {
+            position: relative;
+            height: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: linear-gradient(to top, var(--bg-card), transparent);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover { background: rgba(0,0,0,0.7); }
+        
+        .modal-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .modal-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .modal-subtitle { color: var(--text-muted); font-size: 1rem; }
+        
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 800px) {
+            .modal-body { grid-template-columns: 1fr; }
+        }
+        
+        .modal-main { display: flex; flex-direction: column; gap: 2rem; }
+        
+        .modal-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        
+        .modal-description {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+        
+        .features-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+        }
+        
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-text { font-size: 0.9rem; }
+        .feature-text strong { display: block; margin-bottom: 0.2rem; }
+        .feature-text span { color: var(--text-muted); font-size: 0.8rem; }
+        
+        /* Preview */
+        .preview-container {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        
+        .preview-header {
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .preview-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .preview-dot.red { background: #ff5f57; }
+        .preview-dot.yellow { background: #febc2e; }
+        .preview-dot.green { background: #28c840; }
+        
+        .preview-iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            background: white;
+        }
+        
+        /* Sidebar */
+        .modal-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+        
+        .download-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .download-main {
+            margin-bottom: 1rem;
+        }
+        
+        .download-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .download-btn:hover { transform: scale(1.02); box-shadow: var(--shadow-glow); }
+        
+        .download-info {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .downloads-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .download-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .download-item-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .download-item-icon { opacity: 0.7; }
+        
+        .download-item-btn {
+            background: var(--bg-hover);
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .download-item-btn:hover { background: var(--border); }
+        
+        /* Specs */
+        .specs-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .specs-title {
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .specs-list { padding: 0.5rem 0; }
+        
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.85rem;
+        }
+        
+        .spec-row:hover { background: var(--bg-hover); }
+        
+        .spec-label { color: var(--text-muted); }
+        .spec-value { font-weight: 500; }
+        
+        /* Tags section */
+        .tags-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .modal-tag {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        /* === FOOTER === */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover { color: var(--text); }
+        
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        
+        /* === TOAST === */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 2000;
+            box-shadow: var(--shadow);
+        }
+        
+        .toast.show { display: flex; animation: slideUp 0.3s ease; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .toast-icon { font-size: 1.25rem; }
+        .toast-message { font-size: 0.9rem; }
+        
+        /* === EMPTY STATE === */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-icon { font-size: 4rem; opacity: 0.5; margin-bottom: 1rem; }
+        .empty-title { font-size: 1.2rem; color: var(--text); margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">🏪</div>
+                <span class="logo-text">Module Store<span class="logo-badge">BETA</span></span>
+            </a>
+            
+            <nav class="nav">
+                <a href="#" class="nav-link active" onclick="filterCategory('all')">Tous</a>
+                <a href="#" class="nav-link" onclick="filterCategory('productivity')">Productivité</a>
+                <a href="#" class="nav-link" onclick="filterCategory('learning')">Apprentissage</a>
+                <a href="#" class="nav-link" onclick="filterCategory('data')">Données</a>
+            </nav>
+            
+            <div class="header-search">
+                <input type="text" class="search-box" id="searchInput" placeholder="Rechercher un module..." oninput="filterProducts()">
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn" onclick="exportCatalog()">📤 Export</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span>✨</span>
+            <span>100% Gratuit • Open Source • Sans dépendances</span>
+        </div>
+        <h1>Modules Low-Tech</h1>
+        <p>Des outils HTML autonomes, prêts à l'emploi. Téléchargez un fichier, ouvrez-le dans un navigateur. C'est tout.</p>
+        
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value" id="statModules">0</div>
+                <div class="hero-stat-label">Modules</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value" id="statDownloads">0</div>
+                <div class="hero-stat-label">Téléchargements</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">0€</div>
+                <div class="hero-stat-label">Toujours gratuit</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- MAIN -->
+    <main class="main">
+        <!-- FEATURED -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-title-icon">⭐</span>
+                    En vedette
+                </h2>
+            </div>
+            <div class="products-grid" id="featuredGrid"></div>
+        </section>
+        
+        <!-- ALL PRODUCTS -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-title-icon">📦</span>
+                    Tous les modules
+                </h2>
+            </div>
+            
+            <div class="categories" id="categoriesBar"></div>
+            
+            <div class="products-grid" id="productsGrid"></div>
+        </section>
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">Documentation</a>
+            <a href="#">GitHub</a>
+            <a href="#">Contact</a>
+        </div>
+        <p>Module Store — Outils Low-Tech pour tous • 2024-2025</p>
+    </footer>
+    
+    <!-- PRODUCT MODAL -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header" id="modalHeader">
+                <div class="modal-header-bg" id="modalHeaderBg"></div>
+                <div class="modal-header-content">
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                    <div class="modal-icon" id="modalIcon">📦</div>
+                    <h1 class="modal-title" id="modalTitle">Module</h1>
+                    <p class="modal-subtitle" id="modalSubtitle">Description</p>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-main">
+                    <div>
+                        <div class="modal-section-title">À propos</div>
+                        <p class="modal-description" id="modalDescription"></p>
+                    </div>
+                    
+                    <div>
+                        <div class="modal-section-title">Fonctionnalités</div>
+                        <div class="features-list" id="modalFeatures"></div>
+                    </div>
+                    
+                    <div id="previewSection" style="display:none;">
+                        <div class="modal-section-title">Aperçu en direct</div>
+                        <div class="preview-container">
+                            <div class="preview-header">
+                                <div class="preview-dot red"></div>
+                                <div class="preview-dot yellow"></div>
+                                <div class="preview-dot green"></div>
+                            </div>
+                            <iframe class="preview-iframe" id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-sidebar">
+                    <div class="download-card">
+                        <div class="download-main">
+                            <button class="download-btn" id="mainDownloadBtn" onclick="downloadMain()">
+                                <span>⬇️</span>
+                                <span>Télécharger</span>
+                            </button>
+                            <div class="download-info">
+                                <span id="modalSize">0 KB</span>
+                                <span id="modalVersion">v1.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="downloads-list" id="additionalDownloads"></div>
+                    </div>
+                    
+                    <div class="specs-card">
+                        <div class="specs-title">📋 Fiche technique</div>
+                        <div class="specs-list" id="modalSpecs"></div>
+                    </div>
+                    
+                    <div>
+                        <div class="modal-section-title">Tags</div>
+                        <div class="tags-section" id="modalTags"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMsg"></span>
+    </div>
+
+<script>
+// === DATA ===
+const PRODUCTS = [
+    {
+        id: 'module-store',
+        name: 'Module Store',
+        icon: '🏪',
+        category: 'productivity',
+        categoryLabel: 'Productivité',
+        badge: 'featured',
+        tagline: 'Le magasin des modules, lui-même un module',
+        description: 'Catalogue complet de tous vos modules HTML autonomes. Fiches produits, spécifications techniques, téléchargements multiples, aperçu en direct. Le Module Store est lui-même un module téléchargeable et modifiable.',
+        features: [
+            { icon: '📦', title: 'Catalogue visuel', desc: 'Grille de produits avec covers, badges, catégories' },
+            { icon: '📋', title: 'Fiches complètes', desc: 'Description, fonctionnalités, specs techniques' },
+            { icon: '⬇️', title: 'Multi-downloads', desc: 'Module principal + addons + datasets' },
+            { icon: '👁️', title: 'Preview live', desc: 'Testez le module avant de télécharger' },
+            { icon: '🔍', title: 'Recherche & filtres', desc: 'Trouvez rapidement par nom ou catégorie' },
+            { icon: '🎨', title: 'Design premium', desc: 'Interface moderne style App Store' }
+        ],
+        specs: {
+            version: '1.0.0',
+            size: '45 KB',
+            stack: 'HTML, CSS, JS vanilla',
+            storage: 'Aucun (statique)',
+            browser: 'Tous navigateurs modernes',
+            license: 'MIT'
+        },
+        tags: ['catalogue', 'store', 'low-tech', 'autonome'],
+        downloads: [
+            { name: 'Module Store', file: '00-module-store.html', size: '45 KB', main: true }
+        ],
+        gradient: 'linear-gradient(135deg, #6366f1, #a855f7)',
+        featured: true
+    },
+    {
+        id: 'kanban',
+        name: 'Kanban Projets',
+        icon: '📋',
+        category: 'productivity',
+        categoryLabel: 'Productivité',
+        badge: 'new',
+        tagline: 'Gestion de projets visuelle et intuitive',
+        description: 'Un tableau Kanban complet pour gérer tous vos projets. Multi-tableaux, colonnes personnalisables, cartes avec priorités, deadlines, checklists et étiquettes. Drag & drop fluide, filtres avancés, statistiques en temps réel.',
+        features: [
+            { icon: '📊', title: 'Multi-tableaux', desc: 'Un tableau par projet, templates prédéfinis' },
+            { icon: '🎴', title: 'Cartes complètes', desc: 'Titre, description, priorité, deadline, checklist' },
+            { icon: '🏷️', title: '8 étiquettes', desc: 'Urgent, Bug, Feature, Design, Doc, Réunion...' },
+            { icon: '✅', title: 'Checklists', desc: 'Sous-tâches avec progression visible' },
+            { icon: '🖱️', title: 'Drag & Drop', desc: 'Déplacez cartes et colonnes intuitivement' },
+            { icon: '⚠️', title: 'Alertes deadlines', desc: 'En retard (rouge), Aujourd\'hui (orange)' }
+        ],
+        specs: {
+            version: '1.0.0',
+            size: '38 KB',
+            stack: 'HTML, CSS, JS vanilla',
+            storage: 'localStorage',
+            browser: 'Tous navigateurs modernes',
+            license: 'MIT'
+        },
+        tags: ['kanban', 'projets', 'gestion', 'productivité', 'trello'],
+        downloads: [
+            { name: 'Kanban Projets', file: '15-kanban.html', size: '38 KB', main: true },
+            { name: 'Template Agile', file: 'kanban-agile-template.json', size: '2 KB', type: 'addon' },
+            { name: 'Template GTD', file: 'kanban-gtd-template.json', size: '1 KB', type: 'addon' }
+        ],
+        gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+        featured: true,
+        previewUrl: '15-kanban.html'
+    },
+    {
+        id: 'flashcards',
+        name: 'Flashcards',
+        icon: '🧠',
+        category: 'learning',
+        categoryLabel: 'Apprentissage',
+        badge: 'popular',
+        tagline: 'Apprentissage ludique avec répétition espacée',
+        description: 'Système de flashcards avec algorithme SM-2 (répétition espacée comme Anki). Modes Étude, Quiz, Défi chrono. Import CSV/JSON, édition des cartes, statistiques de progression.',
+        features: [
+            { icon: '📚', title: 'Multi-decks', desc: 'Importez autant de lots que vous voulez' },
+            { icon: '🧠', title: 'SM-2 Algorithm', desc: 'Répétition espacée pour mémorisation durable' },
+            { icon: '📖', title: 'Mode Étude', desc: 'Flashcards à retourner, notez votre niveau' },
+            { icon: '🎯', title: 'Mode Quiz', desc: 'Tapez la réponse, validation intelligente' },
+            { icon: '⚡', title: 'Mode Défi', desc: '2 minutes chrono, combien de bonnes réponses ?' },
+            { icon: '⌨️', title: 'Raccourcis', desc: 'Espace = retourner, 1-4 = noter' }
+        ],
+        specs: {
+            version: '2.0.0',
+            size: '32 KB',
+            stack: 'HTML, CSS, JS vanilla',
+            storage: 'localStorage',
+            browser: 'Tous navigateurs modernes',
+            license: 'MIT'
+        },
+        tags: ['flashcards', 'apprentissage', 'anki', 'mémorisation', 'quiz'],
+        downloads: [
+            { name: 'Flashcards', file: '14-flashcards.html', size: '32 KB', main: true },
+            { name: 'Dataset Citoyenneté', file: 'flashcards-citoyennete.csv', size: '8 KB', type: 'dataset' },
+            { name: 'Dataset Stratégie', file: 'flashcards-strategie.csv', size: '5 KB', type: 'dataset' }
+        ],
+        gradient: 'linear-gradient(135deg, #a855f7, #ec4899)',
+        featured: true,
+        previewUrl: '14-flashcards.html'
+    },
+    {
+        id: 'repertoire-ep',
+        name: 'Répertoire EP',
+        icon: '🗂️',
+        category: 'data',
+        categoryLabel: 'Données',
+        badge: 'new',
+        tagline: 'Cartographie des associations d\'éducation permanente',
+        description: 'Outil de mapping des associations d\'éducation permanente belges. Damier 500 cases, classification par piliers (socialiste, chrétien, libéral, écolo...), drag & drop, gestion de logos, import XLSX/CSV.',
+        features: [
+            { icon: '🔲', title: 'Damier 500 cases', desc: 'Grille visuelle pour positionner les entités' },
+            { icon: '🎨', title: 'Piliers colorés', desc: '6 piliers politiques avec zones de drop' },
+            { icon: '🖼️', title: 'Logos', desc: 'Upload URL ou fichier, preview en direct' },
+            { icon: '📥', title: 'Import XLSX/CSV', desc: 'Reconnaissance automatique des colonnes' },
+            { icon: '🖱️', title: 'Drag & Drop', desc: 'Classez par pilier, placez dans le damier' },
+            { icon: '🔍', title: 'Filtres', desc: 'Recherche, filtre par pilier, stats' }
+        ],
+        specs: {
+            version: '1.0.0',
+            size: '42 KB',
+            stack: 'HTML, CSS, JS + SheetJS',
+            storage: 'localStorage',
+            browser: 'Tous navigateurs modernes',
+            license: 'MIT'
+        },
+        tags: ['associations', 'belgique', 'éducation permanente', 'mapping'],
+        downloads: [
+            { name: 'Répertoire EP', file: '13-repertoire-ep.html', size: '42 KB', main: true },
+            { name: 'Liste EP officielle', file: 'ep-associations-2024.xlsx', size: '85 KB', type: 'dataset' },
+            { name: 'BCE Open Data', file: 'bce-asbl-sample.csv', size: '120 KB', type: 'dataset' }
+        ],
+        gradient: 'linear-gradient(135deg, #22c55e, #14b8a6)',
+        previewUrl: '13-repertoire-ep.html'
+    },
+    {
+        id: 'file-store',
+        name: 'Magasin de fichiers',
+        icon: '📁',
+        category: 'data',
+        categoryLabel: 'Données',
+        badge: '',
+        tagline: 'Catalogue statique de fichiers avec manifest.json',
+        description: 'Bibliothèque de fichiers (PDF, images, zips, scripts, markdown, vidéos) générée dynamiquement depuis un manifest.json. Recherche, tags, tri, aperçu intégré, thème sombre/clair.',
+        features: [
+            { icon: '📄', title: 'Multi-formats', desc: 'PDF, images, vidéos, audio, markdown, zips' },
+            { icon: '🔍', title: 'Recherche', desc: 'Filtrage en temps réel par nom et tags' },
+            { icon: '👁️', title: 'Aperçu intégré', desc: 'Preview des fichiers sans télécharger' },
+            { icon: '🏷️', title: 'Tags & types', desc: 'Filtres visuels par catégorie' },
+            { icon: '🌓', title: 'Thème', desc: 'Mode sombre et clair automatique' },
+            { icon: '⚡', title: 'Manifest.json', desc: 'Configuration simple, déploiement statique' }
+        ],
+        specs: {
+            version: '1.0.0',
+            size: '25 KB',
+            stack: 'HTML, CSS, JS vanilla',
+            storage: 'Aucun (manifest.json)',
+            browser: 'Tous navigateurs modernes',
+            license: 'MIT'
+        },
+        tags: ['fichiers', 'catalogue', 'bibliothèque', 'statique'],
+        downloads: [
+            { name: 'Magasin de fichiers', file: 'file-store.html', size: '25 KB', main: true },
+            { name: 'Manifest exemple', file: 'manifest-example.json', size: '2 KB', type: 'addon' }
+        ],
+        gradient: 'linear-gradient(135deg, #06b6d4, #3b82f6)'
+    }
+];
+
+const CATEGORIES = [
+    { id: 'all', name: 'Tous', icon: '📦' },
+    { id: 'productivity', name: 'Productivité', icon: '⚡' },
+    { id: 'learning', name: 'Apprentissage', icon: '📚' },
+    { id: 'data', name: 'Données', icon: '🗄️' }
+];
+
+let currentCategory = 'all';
+let currentProduct = null;
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+    renderCategories();
+    renderFeatured();
+    renderProducts();
+    updateStats();
+});
+
+// === RENDER ===
+function renderCategories() {
+    document.getElementById('categoriesBar').innerHTML = CATEGORIES.map(cat => {
+        const count = cat.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.category === cat.id).length;
+        return `
+            <div class="category ${currentCategory === cat.id ? 'active' : ''}" onclick="filterCategory('${cat.id}')">
+                <span>${cat.icon}</span>
+                <span>${cat.name}</span>
+                <span class="category-count">${count}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderFeatured() {
+    const featured = PRODUCTS.filter(p => p.featured);
+    document.getElementById('featuredGrid').innerHTML = featured.map(p => renderProductCard(p)).join('');
+}
+
+function renderProducts() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let products = PRODUCTS;
+    
+    if (currentCategory !== 'all') {
+        products = products.filter(p => p.category === currentCategory);
+    }
+    
+    if (search) {
+        products = products.filter(p => 
+            p.name.toLowerCase().includes(search) ||
+            p.tagline.toLowerCase().includes(search) ||
+            p.tags.some(t => t.includes(search))
+        );
+    }
+    
+    const grid = document.getElementById('productsGrid');
+    
+    if (products.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1/-1;">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">Aucun module trouvé</div>
+                <p>Essayez d'autres termes de recherche</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+}
+
+function renderProductCard(product) {
+    const badgeText = {
+        'new': 'Nouveau',
+        'popular': 'Populaire',
+        'featured': 'Vedette'
+    };
+    
+    return `
+        <div class="product-card" onclick="openProduct('${product.id}')">
+            <div class="product-cover">
+                <div class="product-cover-gradient" style="background: ${product.gradient}"></div>
+                <div class="product-cover-icon">${product.icon}</div>
+                ${product.badge ? `<div class="product-badge ${product.badge}">${badgeText[product.badge]}</div>` : ''}
+            </div>
+            <div class="product-body">
+                <div class="product-category">${product.categoryLabel}</div>
+                <div class="product-title">${product.name}</div>
+                <div class="product-desc">${product.tagline}</div>
+                <div class="product-meta">
+                    <div class="product-meta-item">
+                        <span>📦</span>
+                        <span>${product.specs.size}</span>
+                    </div>
+                    <div class="product-meta-item">
+                        <span>🏷️</span>
+                        <span>${product.specs.version}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-footer">
+                <div class="product-tags">
+                    ${product.tags.slice(0, 3).map(t => `<span class="product-tag">${t}</span>`).join('')}
+                </div>
+                <div class="product-price">Gratuit</div>
+            </div>
+        </div>
+    `;
+}
+
+function updateStats() {
+    document.getElementById('statModules').textContent = PRODUCTS.length;
+    const totalDownloads = PRODUCTS.reduce((sum, p) => sum + p.downloads.length, 0);
+    document.getElementById('statDownloads').textContent = totalDownloads + '+';
+}
+
+// === FILTERS ===
+function filterCategory(catId) {
+    currentCategory = catId;
+    
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.category').forEach(el => el.classList.remove('active'));
+    
+    const navLink = document.querySelector(`.nav-link[onclick*="${catId}"]`);
+    if (navLink) navLink.classList.add('active');
+    
+    renderCategories();
+    renderProducts();
+}
+
+function filterProducts() {
+    renderProducts();
+}
+
+// === MODAL ===
+function openProduct(productId) {
+    currentProduct = PRODUCTS.find(p => p.id === productId);
+    if (!currentProduct) return;
+    
+    const p = currentProduct;
+    
+    // Header
+    document.getElementById('modalHeaderBg').style.background = p.gradient;
+    document.getElementById('modalIcon').textContent = p.icon;
+    document.getElementById('modalIcon').style.background = p.gradient;
+    document.getElementById('modalTitle').textContent = p.name;
+    document.getElementById('modalSubtitle').textContent = p.tagline;
+    
+    // Description
+    document.getElementById('modalDescription').textContent = p.description;
+    
+    // Features
+    document.getElementById('modalFeatures').innerHTML = p.features.map(f => `
+        <div class="feature-item">
+            <div class="feature-icon">${f.icon}</div>
+            <div class="feature-text">
+                <strong>${f.title}</strong>
+                <span>${f.desc}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    // Preview
+    const previewSection = document.getElementById('previewSection');
+    if (p.previewUrl) {
+        previewSection.style.display = 'block';
+        document.getElementById('previewFrame').src = p.previewUrl;
+    } else {
+        previewSection.style.display = 'none';
+    }
+    
+    // Downloads
+    const mainDl = p.downloads.find(d => d.main);
+    document.getElementById('modalSize').textContent = mainDl?.size || p.specs.size;
+    document.getElementById('modalVersion').textContent = p.specs.version;
+    
+    const additionalDls = p.downloads.filter(d => !d.main);
+    const dlList = document.getElementById('additionalDownloads');
+    if (additionalDls.length > 0) {
+        dlList.innerHTML = `<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">Fichiers additionnels</div>` +
+            additionalDls.map(d => `
+                <div class="download-item">
+                    <div class="download-item-info">
+                        <span class="download-item-icon">${d.type === 'dataset' ? '📊' : '🔧'}</span>
+                        <span>${d.name}</span>
+                    </div>
+                    <button class="download-item-btn" onclick="downloadFile('${d.file}', '${d.name}')">⬇️ ${d.size}</button>
+                </div>
+            `).join('');
+        dlList.style.display = 'block';
+    } else {
+        dlList.style.display = 'none';
+    }
+    
+    // Specs
+    document.getElementById('modalSpecs').innerHTML = Object.entries(p.specs).map(([key, val]) => {
+        const labels = {
+            version: 'Version',
+            size: 'Taille',
+            stack: 'Technologies',
+            storage: 'Stockage',
+            browser: 'Navigateurs',
+            license: 'Licence'
+        };
+        return `
+            <div class="spec-row">
+                <span class="spec-label">${labels[key] || key}</span>
+                <span class="spec-value">${val}</span>
+            </div>
+        `;
+    }).join('');
+    
+    // Tags
+    document.getElementById('modalTags').innerHTML = p.tags.map(t => 
+        `<span class="modal-tag">#${t}</span>`
+    ).join('');
+    
+    document.getElementById('productModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('productModal').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('previewFrame').src = '';
+}
+
+// === DOWNLOADS ===
+function downloadMain() {
+    if (!currentProduct) return;
+    const mainDl = currentProduct.downloads.find(d => d.main);
+    if (mainDl) {
+        downloadFile(mainDl.file, currentProduct.name);
+    }
+}
+
+function downloadFile(filename, name) {
+    // Simulate download - in real app, would link to actual files
+    toast(`⬇️ Téléchargement de ${name}...`);
+    
+    // Create download link
+    const a = document.createElement('a');
+    a.href = filename;
+    a.download = filename;
+    // a.click(); // Uncomment when files exist
+    
+    setTimeout(() => {
+        toast(`✓ ${name} téléchargé !`);
+    }, 1000);
+}
+
+function exportCatalog() {
+    const catalog = {
+        name: 'Module Store Catalog',
+        version: '1.0.0',
+        exported: new Date().toISOString(),
+        products: PRODUCTS
+    };
+    
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(catalog, null, 2)], { type: 'application/json' }));
+    a.download = 'module-store-catalog.json';
+    a.click();
+    
+    toast('Catalogue exporté !');
+}
+
+// === UTILS ===
+function toast(message) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = message;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Close modal on outside click
+document.getElementById('productModal').addEventListener('click', e => {
+    if (e.target.id === 'productModal') closeModal();
+});
+
+// ESC to close
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

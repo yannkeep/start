@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ÆGIS PRO - La Plateforme #1 de l'Éducation Permanente</title>
+    <meta name="description" content="CRM, Networking & Intelligence pour les acteurs de l'éducation permanente. Rejoignez 274+ associations.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="@ÆGIS PRO - Dominez l'Éducation Permanente">
+    <meta property="og:description" content="La plateforme tout-en-un pour les professionnels de l'EP">
+    <meta property="og:type" content="website">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark: #141414;
+            --gray: #1e1e1e;
+            --light-gray: #888;
+            --white: #ffffff;
+            --gold: #d4af37;
+            --gold-light: #f4e4bc;
+            --green: #00c853;
+            --blue: #2196f3;
+            --red: #ff5252;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* UTILITY */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .text-gold { color: var(--gold); }
+        .text-green { color: var(--green); }
+        .text-muted { color: var(--light-gray); }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mt-3 { margin-top: 30px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .mb-3 { margin-bottom: 30px; }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            background: rgba(10,10,10,0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--black);
+        }
+        nav { display: flex; gap: 30px; align-items: center; }
+        nav a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: var(--white); }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--gold);
+            color: var(--black);
+        }
+        .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+        }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-large { padding: 16px 32px; font-size: 1rem; }
+        .btn-green { background: var(--green); color: var(--black); }
+
+        /* HERO */
+        .hero {
+            padding: 150px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 100%;
+            background: radial-gradient(ellipse at center top, rgba(212,175,55,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 25px;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--light-gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .hero-stat-label { color: var(--light-gray); font-size: 0.9rem; }
+
+        /* LOGOS */
+        .logos {
+            padding: 60px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logos p {
+            text-align: center;
+            color: var(--light-gray);
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+        .logos-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            opacity: 0.5;
+            font-size: 1.5rem;
+        }
+
+        /* PROBLEMS */
+        .problems {
+            padding: 100px 0;
+        }
+        .section-label {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .section-desc {
+            color: var(--light-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .problem-card {
+            background: var(--dark);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        .problem-card:hover {
+            border-color: rgba(255,82,82,0.3);
+            transform: translateY(-5px);
+        }
+        .problem-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,82,82,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .problem-card h3 { font-size: 1.1rem; margin-bottom: 10px; }
+        .problem-card p { color: var(--light-gray); font-size: 0.95rem; }
+
+        /* SOLUTION */
+        .solution {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--black), var(--dark));
+        }
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .solution-card {
+            background: var(--gray);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gold);
+        }
+        .solution-card.featured {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, rgba(212,175,55,0.1), var(--gray));
+        }
+        .solution-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+        .solution-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+        .solution-card p { color: var(--light-gray); margin-bottom: 25px; }
+        .solution-features {
+            list-style: none;
+        }
+        .solution-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--light-gray);
+            font-size: 0.95rem;
+        }
+        .solution-features li::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* PRICING */
+        .pricing {
+            padding: 100px 0;
+        }
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 60px;
+        }
+        .pricing-toggle span { color: var(--light-gray); font-size: 0.95rem; }
+        .pricing-toggle span.active { color: var(--white); }
+        .toggle-switch {
+            width: 60px;
+            height: 30px;
+            background: var(--gray);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--gold);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.yearly::after { transform: translateX(30px); }
+        .pricing-badge {
+            background: var(--green);
+            color: var(--black);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: var(--dark);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .pricing-card:hover { transform: translateY(-5px); }
+        .pricing-card.popular {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, rgba(212,175,55,0.1), var(--dark));
+            position: relative;
+        }
+        .pricing-card.popular::before {
+            content: 'POPULAIRE';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--black);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .pricing-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .pricing-desc {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+        .pricing-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .pricing-price span { font-size: 1rem; color: var(--light-gray); }
+        .pricing-period { color: var(--light-gray); font-size: 0.9rem; margin-bottom: 30px; }
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .pricing-features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .pricing-features li:last-child { border-bottom: none; }
+        .pricing-features .check { color: var(--green); }
+        .pricing-features .x { color: var(--red); opacity: 0.5; }
+        .pricing-card .btn { width: 100%; justify-content: center; }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            padding: 100px 0;
+            background: var(--dark);
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        .testimonial-card {
+            background: var(--gray);
+            border-radius: 20px;
+            padding: 35px;
+        }
+        .testimonial-stars {
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        .testimonial-text {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .testimonial-name { font-weight: 600; }
+        .testimonial-role { color: var(--light-gray); font-size: 0.85rem; }
+
+        /* FAQ */
+        .faq {
+            padding: 100px 0;
+        }
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .faq-question {
+            padding: 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--gold);
+            transition: transform 0.3s;
+        }
+        .faq-item.open .faq-question::after { transform: rotate(45deg); }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+        .faq-item.open .faq-answer { max-height: 200px; }
+        .faq-answer p {
+            padding-bottom: 25px;
+            color: var(--light-gray);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--black), var(--dark));
+            text-align: center;
+        }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 30px;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 50%);
+            animation: pulse-bg 10s infinite;
+        }
+        @keyframes pulse-bg {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .cta h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .cta p {
+            color: var(--light-gray);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .cta .btn { position: relative; }
+        .cta-guarantee {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        .footer-brand p {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            max-width: 300px;
+        }
+        .footer-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--gold); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--light-gray);
+            font-size: 0.85rem;
+        }
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: var(--gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .footer-social a:hover { background: var(--gold); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav { display: none; }
+            .hero-stats { flex-direction: column; gap: 30px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 20px; }
+        }
+
+        /* FLOATING CTA */
+        .floating-cta {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">Ⓐ</span>
+                ÆGIS PRO
+            </a>
+            <nav>
+                <a href="#features">Fonctionnalités</a>
+                <a href="#pricing">Tarifs</a>
+                <a href="#testimonials">Témoignages</a>
+                <a href="#faq">FAQ</a>
+                <a href="#" class="btn btn-outline">Connexion</a>
+                <a href="#pricing" class="btn btn-primary">Essai Gratuit</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container text-center">
+            <div class="hero-badge">
+                🚀 Nouveau : Intégration IA disponible
+            </div>
+            <h1>Dominez le secteur de<br><span class="text-gold">l'Éducation Permanente</span></h1>
+            <p>La plateforme tout-en-un qui connecte 274 associations, centralise vos contacts et multiplie votre impact. Rejoignez les leaders du secteur.</p>
+            <div class="hero-cta">
+                <a href="#pricing" class="btn btn-primary btn-large">Démarrer gratuitement →</a>
+                <a href="#demo" class="btn btn-outline btn-large">🎥 Voir la démo</a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">274</div>
+                    <div class="hero-stat-label">Associations référencées</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">12K+</div>
+                    <div class="hero-stat-label">Contacts qualifiés</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">98%</div>
+                    <div class="hero-stat-label">Satisfaction client</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGOS -->
+    <section class="logos">
+        <div class="container">
+            <p>Ils nous font confiance</p>
+            <div class="logos-grid">
+                <span>🏛️ FWB</span>
+                <span>🎓 CESEP</span>
+                <span>📚 PAC</span>
+                <span>🤝 MOC</span>
+                <span>🌍 CNCD</span>
+                <span>⚖️ LUSS</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEMS -->
+    <section class="problems" id="problems">
+        <div class="container text-center">
+            <span class="section-label">Le Problème</span>
+            <h2 class="section-title">Vous perdez du temps et de l'argent</h2>
+            <p class="section-desc">Le secteur de l'EP est fragmenté. Sans les bons outils, vous passez à côté d'opportunités cruciales.</p>
+            <div class="problems-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">😤</div>
+                    <h3>Données éparpillées</h3>
+                    <p>Vos contacts sont dans Excel, votre agenda dans Google, vos notes sur papier. Impossible de tout centraliser.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">💸</div>
+                    <h3>CRM trop chers</h3>
+                    <p>Salesforce à 150€/mois ? HubSpot trop complexe ? Aucun outil n'est adapté au secteur associatif.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🔍</div>
+                    <h3>Manque de visibilité</h3>
+                    <p>Vous ne savez pas qui fait quoi, où sont les opportunités, ni comment vous positionner.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">📊</div>
+                    <h3>Reporting fastidieux</h3>
+                    <p>Les rapports pour la FWB prennent des heures. Et vous n'êtes jamais sûr des chiffres.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section class="solution" id="features">
+        <div class="container text-center">
+            <span class="section-label">La Solution</span>
+            <h2 class="section-title">Tout ce qu'il vous faut, en un seul endroit</h2>
+            <p class="section-desc">@ÆGIS PRO centralise vos contacts, cartographie le secteur et automatise vos tâches répétitives.</p>
+            <div class="solution-grid">
+                <div class="solution-card">
+                    <div class="solution-icon">📇</div>
+                    <h3>CRM Intelligent</h3>
+                    <p>Gérez tous vos contacts en un clic. Historique complet, tags, rappels automatiques.</p>
+                    <ul class="solution-features">
+                        <li>Import/Export Excel, CSV</li>
+                        <li>Segmentation avancée</li>
+                        <li>Pipeline de suivi</li>
+                        <li>Rappels automatiques</li>
+                    </ul>
+                </div>
+                <div class="solution-card featured">
+                    <div class="solution-icon">🗺️</div>
+                    <h3>Cartographie 274 Assos</h3>
+                    <p>Base de données complète et à jour de toutes les associations EP reconnues.</p>
+                    <ul class="solution-features">
+                        <li>274 fiches détaillées</li>
+                        <li>Carte interactive</li>
+                        <li>Filtres par axe/région</li>
+                        <li>Mises à jour en temps réel</li>
+                    </ul>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-icon">📊</div>
+                    <h3>Analytics & Rapports</h3>
+                    <p>Tableaux de bord visuels et rapports automatisés pour vos financeurs.</p>
+                    <ul class="solution-features">
+                        <li>Dashboards personnalisés</li>
+                        <li>Export PDF/Excel</li>
+                        <li>Templates FWB inclus</li>
+                        <li>Statistiques en temps réel</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+        <div class="container text-center">
+            <span class="section-label">Tarifs</span>
+            <h2 class="section-title">Choisissez votre plan</h2>
+            <p class="section-desc">Commencez gratuitement, évoluez selon vos besoins. Sans engagement.</p>
+            
+            <div class="pricing-toggle">
+                <span class="active">Mensuel</span>
+                <div class="toggle-switch" onclick="togglePricing(this)"></div>
+                <span>Annuel</span>
+                <span class="pricing-badge">-20%</span>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-desc">Pour découvrir</div>
+                    <div class="pricing-price">0€</div>
+                    <div class="pricing-period">Pour toujours</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Accès base de données (lecture)</li>
+                        <li><span class="check">✓</span> 10 contacts max</li>
+                        <li><span class="check">✓</span> 1 utilisateur</li>
+                        <li><span class="x">✗</span> Export données</li>
+                        <li><span class="x">✗</span> Support prioritaire</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Commencer</a>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-desc">Pour les professionnels</div>
+                    <div class="pricing-price">29€<span>/mois</span></div>
+                    <div class="pricing-period">Facturé mensuellement</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Base de données complète</li>
+                        <li><span class="check">✓</span> Contacts illimités</li>
+                        <li><span class="check">✓</span> 3 utilisateurs</li>
+                        <li><span class="check">✓</span> Export PDF/Excel</li>
+                        <li><span class="check">✓</span> Support email</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Essai 14 jours gratuit</a>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-name">Team</div>
+                    <div class="pricing-desc">Pour les équipes</div>
+                    <div class="pricing-price">79€<span>/mois</span></div>
+                    <div class="pricing-period">Facturé mensuellement</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Tout PRO inclus</li>
+                        <li><span class="check">✓</span> 10 utilisateurs</li>
+                        <li><span class="check">✓</span> API access</li>
+                        <li><span class="check">✓</span> Analytics avancés</li>
+                        <li><span class="check">✓</span> Support prioritaire</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline">Contacter</a>
+                </div>
+            </div>
+
+            <p class="mt-3 text-muted">💳 Paiement sécurisé par Stripe • Annulez à tout moment • Satisfait ou remboursé 30 jours</p>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+        <div class="container text-center">
+            <span class="section-label">Témoignages</span>
+            <h2 class="section-title">Ils ont transformé leur organisation</h2>
+            <div class="testimonials-grid mt-3">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Depuis qu'on utilise @ÆGIS, on a divisé par 3 le temps passé sur nos rapports FWB. L'outil est vraiment pensé pour notre secteur."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩</div>
+                        <div>
+                            <div class="testimonial-name">Marie Dupont</div>
+                            <div class="testimonial-role">Directrice - Association Alpha</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"La cartographie des 274 assos est une mine d'or. On a trouvé 3 nouveaux partenaires en un mois. ROI immédiat."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨</div>
+                        <div>
+                            <div class="testimonial-name">Jean-Marc Leblanc</div>
+                            <div class="testimonial-role">Coordinateur - Fédération Beta</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Enfin un CRM qui ne coûte pas un bras et qui comprend nos spécificités. L'équipe support est top en plus."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩</div>
+                        <div>
+                            <div class="testimonial-name">Sophie Martin</div>
+                            <div class="testimonial-role">Chargée de projet - ONG Gamma</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container text-center">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">Questions fréquentes</h2>
+            <div class="faq-grid mt-3">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Puis-je essayer gratuitement ?
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oui ! Le plan Free est gratuit pour toujours, et les plans payants incluent un essai de 14 jours sans carte bancaire requise.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Les données sont-elles sécurisées ?
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolument. Nous utilisons un chiffrement AES-256, nos serveurs sont en Europe (RGPD compliant), et nous effectuons des backups quotidiens.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Puis-je importer mes données existantes ?
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oui, nous supportons l'import depuis Excel, CSV, et même depuis d'autres CRM comme HubSpot ou Salesforce. Notre équipe peut vous accompagner.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Comment fonctionne le support ?
+                    </div>
+                    <div class="faq-answer">
+                        <p>Support email pour tous, chat en direct pour Pro, et support téléphonique dédié pour Team. Temps de réponse moyen : 2h.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Puis-je annuler à tout moment ?
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oui, sans frais ni justification. Vos données restent exportables pendant 30 jours après annulation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Prêt à dominer l'Éducation Permanente ?</h2>
+                <p>Rejoignez les 50+ organisations qui utilisent @ÆGIS pour multiplier leur impact.</p>
+                <a href="#pricing" class="btn btn-primary btn-large">Démarrer gratuitement →</a>
+                <div class="cta-guarantee">
+                    🔒 Essai 14 jours gratuit • Sans carte bancaire • Annulation facile
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">Ⓐ</span>
+                        ÆGIS PRO
+                    </a>
+                    <p>La plateforme #1 pour les professionnels de l'éducation permanente en Belgique francophone.</p>
+                </div>
+                <div>
+                    <div class="footer-title">Produit</div>
+                    <ul class="footer-links">
+                        <li><a href="#">Fonctionnalités</a></li>
+                        <li><a href="#">Tarifs</a></li>
+                        <li><a href="#">Intégrations</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">Ressources</div>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Guides</a></li>
+                        <li><a href="#">Webinaires</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">Entreprise</div>
+                    <ul class="footer-links">
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Carrières</a></li>
+                        <li><a href="#">Presse</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2025 @ÆGIS PRO. Tous droits réservés. | <a href="#" style="color: var(--light-gray);">Mentions légales</a> | <a href="#" style="color: var(--light-gray);">RGPD</a></div>
+                <div class="footer-social">
+                    <a href="#">💼</a>
+                    <a href="#">🐦</a>
+                    <a href="#">📘</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING CTA -->
+    <a href="#pricing" class="floating-cta btn btn-green btn-large">🚀 Essai Gratuit</a>
+
+    <script>
+        // FAQ Toggle
+        function toggleFaq(el) {
+            el.parentElement.classList.toggle('open');
+        }
+
+        // Pricing Toggle
+        function togglePricing(el) {
+            el.classList.toggle('yearly');
+            // In real app, would update prices
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(10,10,10,0.98)';
+            } else {
+                header.style.background = 'rgba(10,10,10,0.9)';
+            }
+        });
+
+        console.log('💰 @ÆGIS PRO - Landing Page loaded');
+    </script>
+</body>
+</html>

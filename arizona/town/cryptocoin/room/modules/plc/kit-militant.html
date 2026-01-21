@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr-BE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kit Militant - Parti Libre & Conscient</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #1a1a2e;
+        background: #f8f9fa;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'Space Grotesk', sans-serif;
+        line-height: 1.3;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 30px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 60px;
+        padding-bottom: 40px;
+        border-bottom: 3px solid #e94560;
+    }
+
+    .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Space Grotesk';
+        font-size: 20px;
+        font-weight: 800;
+        color: white;
+    }
+
+    .logo-text {
+        font-family: 'Space Grotesk';
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .header h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .header p {
+        font-size: 18px;
+        color: #666;
+    }
+
+    .section {
+        margin-bottom: 60px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-title .emoji {
+        font-size: 32px;
+    }
+
+    /* Elevator Pitch */
+    .elevator-pitch {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+    }
+
+    .elevator-pitch h3 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #e94560;
+    }
+
+    .pitch-versions {
+        display: grid;
+        gap: 25px;
+    }
+
+    .pitch-version {
+        background: rgba(255,255,255,0.05);
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 4px solid #e94560;
+    }
+
+    .pitch-version .label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #e94560;
+        margin-bottom: 10px;
+    }
+
+    .pitch-version p {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    /* Arguments */
+    .argument-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border-left: 4px solid #e94560;
+    }
+
+    .argument-card h4 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #1a1a2e;
+    }
+
+    .argument-card p {
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .argument-card .key-point {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-weight: 500;
+        color: #1a1a2e;
+    }
+
+    .argument-card .key-point::before {
+        content: '💡 ';
+    }
+
+    /* FAQ */
+    .faq-item {
+        background: white;
+        margin-bottom: 15px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    }
+
+    .faq-question {
+        padding: 20px 25px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fafafa;
+    }
+
+    .faq-question::after {
+        content: '+';
+        font-size: 24px;
+        color: #e94560;
+    }
+
+    .faq-answer {
+        padding: 0 25px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .faq-item.open .faq-answer {
+        padding: 20px 25px;
+        max-height: 500px;
+    }
+
+    .faq-item.open .faq-question::after {
+        content: '−';
+    }
+
+    .faq-answer p {
+        color: #555;
+    }
+
+    /* Objections */
+    .objection-block {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .objection {
+        background: #fff5f5;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border-left: 4px solid #e74c3c;
+    }
+
+    .objection::before {
+        content: '❌ Objection : ';
+        font-weight: 600;
+        color: #e74c3c;
+    }
+
+    .response {
+        background: #f0fff4;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border-left: 4px solid #2ecc71;
+    }
+
+    .response::before {
+        content: '✅ Réponse : ';
+        font-weight: 600;
+        color: #2ecc71;
+    }
+
+    /* Talking Points */
+    .talking-points {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .talking-point {
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .talking-point:last-child {
+        border-bottom: none;
+    }
+
+    .talking-point h4 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #e94560;
+    }
+
+    .talking-point p {
+        color: #555;
+    }
+
+    /* Checklist */
+    .checklist {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .checklist ul {
+        list-style: none;
+    }
+
+    .checklist li {
+        padding: 12px 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .checklist li:last-child {
+        border-bottom: none;
+    }
+
+    .checklist li::before {
+        content: '☐';
+        font-size: 18px;
+        color: #e94560;
+    }
+
+    /* Print */
+    .print-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(233,69,96,0.4);
+        z-index: 100;
+    }
+
+    @media print {
+        .print-btn { display: none; }
+        body { background: white; }
+        .container { padding: 20px; }
+    }
+
+    @media (max-width: 768px) {
+        .container { padding: 30px 20px; }
+        .header h1 { font-size: 32px; }
+        .elevator-pitch { padding: 25px; }
+    }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+
+    <div class="container">
+        
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">PLC</div>
+                <span class="logo-text">Parti Libre & Conscient</span>
+            </div>
+            <h1>Kit Militant</h1>
+            <p>Argumentaire, FAQ et outils pour convaincre et mobiliser</p>
+        </div>
+
+        <!-- ELEVATOR PITCH -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🎯</span> L'elevator pitch</h2>
+            <div class="elevator-pitch">
+                <h3>Explique le PLC en...</h3>
+                <div class="pitch-versions">
+                    <div class="pitch-version">
+                        <div class="label">10 secondes</div>
+                        <p><strong>Le Parti Libre & Conscient</strong>, c'est un mouvement citoyen qui donne les outils pour comprendre la politique — sans te dire quoi penser.</p>
+                    </div>
+                    <div class="pitch-version">
+                        <div class="label">30 secondes</div>
+                        <p>Le PLC est né du constat que la démocratie belge dysfonctionne : particratie, opacité, déconnexion. Mais on ne propose pas de programme clé en main. On propose des <strong>outils</strong> : veille citoyenne, formations à l'analyse critique, documentation libre. Pas de chef, pas de cotisation. Juste des citoyens qui reprennent le pouvoir.</p>
+                    </div>
+                    <div class="pitch-version">
+                        <div class="label">1 minute</div>
+                        <p>Tu as déjà eu l'impression que la politique, c'était un club fermé ? Que les décisions se prennent sans toi ? Le <strong>Parti Libre & Conscient</strong>, c'est un mouvement qui veut changer ça. Pas en proposant un énième programme électoral, mais en donnant à chaque citoyen les moyens de <strong>comprendre</strong> le système. On fait de la veille sur l'action publique, on documente, on forme à l'esprit critique. Tout est gratuit, tout est en accès libre. Il n'y a pas de chef suprême, chaque cellule locale est autonome. On ne te dit pas pour qui voter — on te donne les outils pour te faire ton propre avis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARGUMENTS CLÉS -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">💪</span> Arguments clés</h2>
+            
+            <div class="argument-card">
+                <h4>1. On ne te dit pas quoi penser</h4>
+                <p>Contrairement aux partis traditionnels qui cherchent à te convaincre de voter pour eux, le PLC n'a pas de ligne politique à imposer. Notre rôle, c'est de te donner les outils pour analyser toi-même les programmes, les décisions, les discours.</p>
+                <div class="key-point">La démocratie, c'est pas juste voter tous les 5 ans. C'est comprendre, participer, contrôler.</div>
+            </div>
+
+            <div class="argument-card">
+                <h4>2. Transparence radicale</h4>
+                <p>Toutes nos décisions, nos finances, nos débats sont publics et archivés sur GitHub. Pas de coulisse, pas de deal secret. Si on demande de la transparence aux politiques, on commence par l'appliquer à nous-mêmes.</p>
+                <div class="key-point">On ne peut pas critiquer l'opacité des autres si on n'est pas exemplaire soi-même.</div>
+            </div>
+
+            <div class="argument-card">
+                <h4>3. Décentralisation et autonomie</h4>
+                <p>Pas de président tout-puissant, pas de QG qui dicte la ligne. Chaque cellule locale définit ses priorités et ses actions. Le mouvement est un réseau, pas une pyramide.</p>
+                <div class="key-point">Si tu veux créer une cellule dans ta commune, tu peux. Tu n'as besoin de demander la permission à personne.</div>
+            </div>
+
+            <div class="argument-card">
+                <h4>4. Gratuit et non-commercial</h4>
+                <p>Pas de cotisation, pas de revente de données, pas de merchandising. Tout notre contenu est sous licence Creative Commons. Tu peux le copier, l'adapter, le redistribuer — tant que c'est pas pour faire de l'argent.</p>
+                <div class="key-point">L'éducation citoyenne ne devrait jamais être un produit.</div>
+            </div>
+
+            <div class="argument-card">
+                <h4>5. Action concrète, pas que du blabla</h4>
+                <p>On ne se contente pas de critiquer. On produit : dossiers de veille, guides pratiques, formations, outils open source. Et on mesure notre impact avec des indicateurs publics.</p>
+                <div class="key-point">4 dossiers de veille par an, 100 citoyens formés d'ici 2026 — des objectifs concrets et vérifiables.</div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">❓</span> FAQ — Questions fréquentes</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">C'est quoi la différence avec un parti politique classique ?</div>
+                <div class="faq-answer">
+                    <p>Un parti classique veut conquérir le pouvoir pour appliquer son programme. Le PLC ne présente pas de candidats, n'a pas de programme électoral. Notre objectif, c'est de renforcer le pouvoir d'agir des citoyens — qu'ils votent ensuite pour qui ils veulent.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">C'est gratuit ? Comment vous vous financez ?</div>
+                <div class="faq-answer">
+                    <p>100% gratuit. On fonctionne grâce au bénévolat et à des dons ponctuels de particuliers. On refuse tout financement de parti ou d'entreprise. Nos comptes sont publics.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Vous êtes de gauche ou de droite ?</div>
+                <div class="faq-answer">
+                    <p>Ni l'un ni l'autre. On refuse ce clivage simpliste. On a des membres de toutes sensibilités. Ce qui nous unit, c'est la volonté de comprendre le système et de le rendre plus démocratique — pas une idéologie particulière.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Comment je peux contribuer ?</div>
+                <div class="faq-answer">
+                    <p>Plein de façons : rejoindre une cellule locale, en créer une, contribuer à la documentation, animer un atelier, relire des contenus, coder des outils, ou simplement partager nos ressources. Contacte-nous.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">C'est quoi le CCPLC ?</div>
+                <div class="faq-answer">
+                    <p>Le CCPLC (Collectif Citoyen pour la Participation Libre & Consciente) est le projet fondateur. Le "Parti Libre & Conscient" est la déclinaison grand public du même projet. Mêmes valeurs, même charte, même objectif.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RÉPONDRE AUX OBJECTIONS -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🛡️</span> Répondre aux objections</h2>
+            
+            <div class="objection-block">
+                <div class="objection">"C'est encore un truc d'intellectuels déconnectés"</div>
+                <div class="response">Justement non. On fait tout pour être accessibles : langage clair, supports variés, traduction en facile-à-lire. Et on part des questions des gens, pas d'un programme abstrait. Nos ateliers se font dans des maisons de quartier, pas dans des amphis universitaires.</div>
+            </div>
+
+            <div class="objection-block">
+                <div class="objection">"Ça ne sert à rien si vous ne prenez pas le pouvoir"</div>
+                <div class="response">Le pouvoir n'est pas que dans les parlements. Un citoyen informé qui interpelle son bourgmestre, qui participe à une consultation, qui décrypte un programme électoral — c'est déjà du pouvoir. On n'a pas besoin de ministres pour changer les choses.</div>
+            </div>
+
+            <div class="objection-block">
+                <div class="objection">"Vous allez vous faire récupérer par un parti"</div>
+                <div class="response">C'est pour ça qu'on a des garde-fous : charte stricte, transparence totale, décentralisation. Si une cellule dérape, les autres peuvent la dénoncer. Et tout notre contenu est sous licence libre — impossible à privatiser.</div>
+            </div>
+
+            <div class="objection-block">
+                <div class="objection">"C'est naïf de croire qu'on peut changer le système"</div>
+                <div class="response">On ne prétend pas révolutionner le système du jour au lendemain. On construit, pas à pas, une culture de la participation citoyenne. C'est long, c'est ingrat, mais c'est la seule voie durable.</div>
+            </div>
+        </div>
+
+        <!-- TALKING POINTS -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">🗣️</span> Talking points par contexte</h2>
+            <div class="talking-points">
+                <div class="talking-point">
+                    <h4>En soirée / discussion informelle</h4>
+                    <p>"Tu sais ce qui m'énerve ? C'est qu'on nous demande de voter mais on nous explique jamais vraiment comment ça marche. Le PLC, c'est un collectif qui fait ce boulot-là : décrypter, former, donner des outils. Sans te dire pour qui voter."</p>
+                </div>
+                <div class="talking-point">
+                    <h4>Avec quelqu'un de dépolitisé</h4>
+                    <p>"Je comprends que t'en aies marre de la politique. Mais justement, le PLC c'est pas de la politique classique. C'est pas un parti qui veut ton vote. C'est un collectif qui t'aide à comprendre le système — après, tu fais ce que tu veux de cette info."</p>
+                </div>
+                <div class="talking-point">
+                    <h4>Avec quelqu'un d'engagé politiquement</h4>
+                    <p>"On n'est pas concurrents de ton engagement. Au contraire : on produit des ressources que tu peux utiliser dans ton propre contexte. Nos analyses sont non-partisanes, nos outils sont libres. C'est complémentaire."</p>
+                </div>
+                <div class="talking-point">
+                    <h4>Avec un élu ou une institution</h4>
+                    <p>"Le PLC fait de la veille citoyenne et de l'éducation populaire. On documente l'action publique, on forme à l'analyse critique. C'est un travail qui renforce la démocratie, pas qui la fragilise. On peut être partenaires."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHECKLIST MILITANT -->
+        <div class="section">
+            <h2 class="section-title"><span class="emoji">✅</span> Checklist du militant</h2>
+            <div class="checklist">
+                <ul>
+                    <li>Lire la charte du CCPLC et s'assurer qu'on adhère aux valeurs</li>
+                    <li>Maîtriser l'elevator pitch (10s, 30s, 1min)</li>
+                    <li>Avoir lu au moins 2-3 dossiers sur ouaisfieu.github.io/tech/</li>
+                    <li>Connaître les 6 piliers d'action (Observer, Documenter, Outiller, Former, Connecter, Évaluer)</li>
+                    <li>Savoir répondre aux 3-4 objections les plus courantes</li>
+                    <li>Avoir les liens utiles en tête (site, réseaux, Discord)</li>
+                    <li>Toujours avoir un flyer ou un QR code sous la main</li>
+                    <li>Ne jamais promettre ce qu'on ne peut pas tenir</li>
+                    <li>Rester humble : on n'a pas toutes les réponses</li>
+                    <li>Respecter la diversité des opinions au sein du mouvement</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => {
+            q.parentElement.classList.toggle('open');
+        });
+    });
+    </script>
+</body>
+</html>
