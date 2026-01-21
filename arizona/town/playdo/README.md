@@ -246,3 +246,21 @@ Cordialement,
 
 *Document généré le 21 janvier 2026*
 *Version 1.0*
+
+
+---
+
+
+**Corrigé :**
+
+1. **IndexedDB** — Plus de LocalStorage de merde. Base de données persistante, multi-projets, pas de limite de 5MB
+
+2. **Multi-projets** — Liste dans la sidebar, créer/supprimer, switcher entre projets
+
+3. **Preview temps réel** — Panneau droit qui se met à jour en direct pendant que tu tapes, plus besoin d'exporter pour voir ton travail
+
+4. **Sauvegarde visible** — Indicateur vert/orange qui montre l'état (sauvegardé/en cours)
+
+5. **Workflow logique** — Tu crées un projet → tu bosses → tu vois le résultat → tu exportes si tu veux
+
+Ouvre le fichier HTML dans ton navigateur et teste.
