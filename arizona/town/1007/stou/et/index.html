@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FundingScout: Stratégie NGI Zero</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfbf7; /* Warm neutral background */
+            color: #1f2937;
+        }
+
+        /* Chart Container Utilities */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Card Hover Effects */
+        .interactive-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .interactive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Custom Scrollbar for canvas table */
+        .canvas-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .canvas-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .canvas-scroll::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        .canvas-scroll::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+    <!-- Chosen Palette: Warm Professional -> #fdfbf7 (Bg), #1f2937 (Text), #d97706 (Amber/Action), #0ea5e9 (Sky/Tech) -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Dashboard Overview & NGI Zero Countdown (Urgency).
+         2. Strategy Visualizer: Interactive Chart showing the priority hierarchy of targets (Particuliers -> Companies).
+         3. The Canvas: An interactive tool to simulate evaluating new calls (fulfilling the "créer un canevas" requirement).
+         4. Action Plan: Checklist based on the "Commencer la recherche" prompt.
+         Rationale: Focuses on clarity of the immediate goal (NGI Zero) while providing the requested tool (Canvas) for the broader search.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Countdown Timer (JS): Immediate visual cue for the Feb 1, 2026 deadline.
+         2. Priority Bar Chart (Chart.js): Visualizes the "Particuliers en priorité..." list. Interactive click updates context text.
+         3. Dynamic Table (JS/HTML): Represents the "Canevas" user needs to create/use.
+         4. NO SVG/Mermaid used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-gray-800 tracking-tight">Funding<span class="text-amber-600">Scout</span></span>
+                    <span class="hidden md:block ml-4 text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-md">Dossier: NLnet NGI Zero</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Statut</p>
+                        <p class="text-sm font-medium text-green-600">Recherche Active</p>
+                    </div>
+                    <button onclick="scrollToSection('canvas-section')" class="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+                        Accéder au Canevas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Section 1: NGI Zero Opportunity (The Anchor) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                        <div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-2">
+                                Opportunité Principale
+                            </span>
+                            <h1 class="text-3xl font-bold text-gray-900">NLnet NGI Zero</h1>
+                            <p class="text-gray-600 mt-1">Communs numériques & Open Source</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <p class="text-4xl font-bold text-amber-600">5 - 50k€</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Financement</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-amber-500">
+                            <p class="text-sm text-gray-500 font-semibold mb-1">Date Limite</p>
+                            <p class="text-lg font-bold text-gray-900">1er Février 2026</p>
+                            <p id="countdown" class="text-sm text-amber-600 font-medium mt-1">Calcul...</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <p class="text-sm text-gray-500 font-semibold mb-1">Thématique</p>
+                            <p class="text-lg font-bold text-gray-900">Open Source</p>
+                            <p class="text-sm text-gray-600 mt-1">Infrastructure Internet Next-Gen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context / Intro -->
+            <div class="bg-amber-50 rounded-xl p-8 border border-amber-100 flex flex-col justify-center">
+                <h3 class="text-lg font-bold text-amber-900 mb-3">Contexte de la Recherche</h3>
+                <p class="text-amber-800 text-sm leading-relaxed mb-4">
+                    Cette application structure la recherche de financement autour de l'appel <strong>NGI Zero</strong>. L'objectif est double : sécuriser ce financement et <strong>trouver des appels similaires</strong> en utilisant un canevas standardisé.
+                </p>
+                <div class="border-t border-amber-200 pt-4 mt-auto">
+                    <p class="text-xs font-bold text-amber-900 uppercase mb-2">Prochaines Étapes :</p>
+                    <ul class="text-sm text-amber-800 space-y-1">
+                        <li class="flex items-center"><span class="mr-2">🔍</span> Rechercher appels similaires</li>
+                        <li class="flex items-center"><span class="mr-2">📝</span> Remplir le canevas</li>
+                        <li class="flex items-center"><span class="mr-2">🎯</span> Cibler les particuliers en prio.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Stratégie de Ciblage (Interactive Chart) -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Stratégie de Ciblage</h2>
+                <p class="text-gray-600 mt-2 max-w-3xl">
+                    Le plan de recherche impose une <strong>hiérarchie stricte</strong> des cibles pour maximiser les options. Cliquez sur les barres du graphique pour comprendre la logique derrière chaque cible juridique.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <!-- Chart Container -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="chart-container">
+                        <canvas id="targetPriorityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Interactive Detail Panel -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
+                    <div id="target-detail-panel" class="transition-opacity duration-300">
+                        <div class="flex items-center mb-4">
+                            <span id="detail-icon" class="text-3xl mr-3">👤</span>
+                            <h3 id="detail-title" class="text-xl font-bold text-gray-900">Particuliers</h3>
+                        </div>
+                        <div class="mb-4">
+                            <span id="detail-badge" class="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold uppercase">Priorité Absolue</span>
+                        </div>
+                        <p id="detail-desc" class="text-gray-600 text-sm leading-relaxed">
+                            Cible principale de la recherche. Les financements directs aux individus permettent une flexibilité maximale et une rapidité d'exécution sans structure lourde.
+                        </p>
+                        <div class="mt-6 pt-6 border-t border-gray-100">
+                            <p class="text-xs text-gray-400 uppercase font-semibold mb-2">Justification Stratégique</p>
+                            <p class="text-sm font-medium text-gray-800 italic">"Pour avoir toutes les options."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Le Canevas d'Analyse (The Tool) -->
+        <section id="canvas-section" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Canevas d'Appel à Projets</h2>
+                    <p class="text-gray-600 mt-2">
+                        Utilisez ce tableau interactif pour cataloguer et comparer les nouveaux appels trouvés ("appels similaires").
+                    </p>
+                </div>
+                <button onclick="addCanvasRow()" class="mt-4 md:mt-0 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center">
+                    <span class="mr-2 text-lg">+</span> Ajouter une opportunité
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto canvas-scroll">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Nom de l'Appel</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Cible (Statut)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Montant Max</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Date Limite</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Pertinence</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="canvas-body" class="bg-white divide-y divide-gray-200">
+                            <!-- NGI Zero Row (Reference) -->
+                            <tr class="bg-amber-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 font-bold text-xs">NL</div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-gray-900">NLnet NGI Zero</div>
+                                            <div class="text-xs text-gray-500">Référence</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Tous status</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">50.000 €</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">01 Fév 2026</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-amber-600 h-2.5 rounded-full" style="width: 100%"></div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <span class="text-gray-400 cursor-not-allowed">Fixé</span>
+                                </td>
+                            </tr>
+                            <!-- JS will append rows here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+                    <p class="text-xs text-gray-500">Le tableau calcule automatiquement un score de pertinence basé sur vos critères stratégiques.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Visualisation des Montants (Context) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Analyse des Montants</h3>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="fundingRangeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col justify-center space-y-4">
+                <div class="bg-white p-6 rounded-xl border-l-4 border-gray-800 shadow-sm">
+                    <h4 class="font-bold text-gray-900">1. Commencer la recherche</h4>
+                    <p class="text-sm text-gray-600 mt-1">Lancer les requêtes pour trouver des appels "Open Source" et "Digital Commons".</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border-l-4 border-gray-600 shadow-sm opacity-90">
+                    <h4 class="font-bold text-gray-900">2. Filtrer par Cible</h4>
+                    <p class="text-sm text-gray-600 mt-1">Appliquer le filtre de priorité : Particuliers > Asso > ASBL > Coop > Société.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border-l-4 border-gray-400 shadow-sm opacity-75">
+                    <h4 class="font-bold text-gray-900">3. Remplir le Canevas</h4>
+                    <p class="text-sm text-gray-600 mt-1">Ajouter chaque opportunité validée dans le tableau ci-dessus.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-white border-t border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-sm text-gray-400">Généré pour l'analyse NGI Zero.</p>
+            </div>
+            <div class="flex space-x-6 text-sm text-gray-400">
+                <span>Deadline: 2026-02-01</span>
+                <span>•</span>
+                <span>Type: Open Source</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const appState = {
+            deadline: new Date('2026-02-01T00:00:00'),
+            targetPriorities: [
+                { id: 'indiv', label: 'Particuliers', priority: 5, icon: '👤', color: '#10b981', desc: 'Cible principale. Flexibilité maximale, moins de contraintes administratives.', type: 'Priorité 1' },
+                { id: 'facto', label: 'Assoc. de Fait', priority: 4, icon: '🤝', color: '#34d399', desc: 'Regroupement informel de personnes. Bon intermédiaire avant la structure légale.', type: 'Priorité 2' },
+                { id: 'asbl', label: 'ASBL', priority: 3, icon: '🏛️', color: '#60a5fa', desc: 'Structure non-lucrative formelle. Nécessaire pour certains appels plus importants.', type: 'Priorité 3' },
+                { id: 'coop', label: 'Société Coop.', priority: 2, icon: '🐝', color: '#818cf8', desc: 'Modèle économique démocratique. Option solide pour des projets générateurs de revenus.', type: 'Priorité 4' },
+                { id: 'comm', label: 'Soc. Commerciale', priority: 1, icon: '🏢', color: '#a78bfa', desc: 'Dernière option. Souvent plus de concurrence et moins de subventions "open source" pures.', type: 'Priorité 5' }
+            ],
+            canvasData: [] // Stores user added rows
+        };
+
+        // --- Countdown Logic ---
+        function updateCountdown() {
+            const now = new Date();
+            const diff = appState.deadline - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+            const el = document.getElementById('countdown');
+            if (diff > 0) {
+                el.innerText = `Dans ${days} jours et ${hours} heures`;
+            } else {
+                el.innerText = "Date limite dépassée";
+                el.classList.add('text-red-600');
+            }
+        }
+        setInterval(updateCountdown, 1000000); // Update regularly (slow interval for simplicity)
+        updateCountdown();
+
+        // --- Chart.js Implementations ---
+        
+        // 1. Target Priority Chart
+        const ctxPriority = document.getElementById('targetPriorityChart').getContext('2d');
+        const priorityChart = new Chart(ctxPriority, {
+            type: 'bar',
+            data: {
+                labels: appState.targetPriorities.map(t => t.label),
+                datasets: [{
+                    label: 'Niveau de Priorité',
+                    data: appState.targetPriorities.map(t => t.priority),
+                    backgroundColor: appState.targetPriorities.map(t => t.color),
+                    borderRadius: 6,
+                    barThickness: 30
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal Bar
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Niveau: ${context.raw}/5`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 6,
+                        grid: { display: false },
+                        ticks: { display: false }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 14, family: "'Inter', sans-serif" } }
+                    }
+                },
+                onClick: (e) => {
+                    const points = priorityChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+                    if (points.length) {
+                        const index = points[0].index;
+                        updateDetailPanel(index);
+                    }
+                }
+            }
+        });
+
+        // 2. Funding Range Chart (Comparison)
+        const ctxFunding = document.getElementById('fundingRangeChart').getContext('2d');
+        new Chart(ctxFunding, {
+            type: 'doughnut',
+            data: {
+                labels: ['Min (5k€)', 'Moyenne/Flex', 'Max (50k€)'],
+                datasets: [{
+                    data: [5000, 45000, 50000], // Visual representation
+                    backgroundColor: ['#fbbf24', '#f59e0b', '#d97706'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: { enabled: false } // Static viz
+                }
+            }
+        });
+
+        // --- Interaction Logic ---
+
+        function updateDetailPanel(index) {
+            const target = appState.targetPriorities[index];
+            const panel = document.getElementById('target-detail-panel');
+            
+            // Simple opacity transition
+            panel.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                document.getElementById('detail-title').innerText = target.label;
+                document.getElementById('detail-icon').innerText = target.icon;
+                document.getElementById('detail-desc').innerText = target.desc;
+                
+                const badge = document.getElementById('detail-badge');
+                badge.innerText = target.type;
+                badge.className = `px-2 py-1 rounded text-xs font-bold uppercase`;
+                badge.style.backgroundColor = target.color + '33'; // Add transparency
+                badge.style.color = '#1f2937';
+
+                panel.style.opacity = '1';
+            }, 150);
+        }
+
+        // --- Canvas Table Logic ---
+        
+        function addCanvasRow() {
+            const tbody = document.getElementById('canvas-body');
+            const rowId = 'row-' + Date.now();
+            
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.className = 'hover:bg-gray-50 transition-colors';
+            
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <input type="text" placeholder="Nom de l'appel..." class="text-sm font-medium text-gray-900 border-b border-gray-300 focus:border-amber-500 outline-none w-full bg-transparent">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <select class="text-xs rounded-full bg-gray-100 text-gray-800 border-none px-2 py-1 outline-none">
+                        <option>Particulier</option>
+                        <option>ASBL</option>
+                        <option>Coopérative</option>
+                        <option>Société</option>
+                    </select>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <input type="number" placeholder="€" class="w-20 border-b border-gray-300 outline-none">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <input type="date" class="border-b border-gray-300 outline-none">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                     <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-gray-400 h-2.5 rounded-full" style="width: 50%"></div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button onclick="removeRow('${rowId}')" class="text-red-600 hover:text-red-900">×</button>
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+
+        function removeRow(id) {
+            const row = document.getElementById(id);
+            if (row) row.remove();
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize with the highest priority detail
+        updateDetailPanel(0);
+
+    </script>
+</body>
+</html>
