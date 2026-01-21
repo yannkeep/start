@@ -3,831 +3,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plaidoyer Citoyen — Poste de Travail</title>
+    <meta name="description" content="Poste de Travail Plaidoyer Citoyen - Outil d'éducation populaire">
+    <meta name="theme-color" content="#1e293b">
+    <title>Plaidoyer Citoyen — Poste de Travail v4</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUGxhaWRveWVyIENpdG95ZW4iLCJzaG9ydF9uYW1lIjoiUGxhaWRveWVyIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMxZTI5M2IiLCJ0aGVtZV9jb2xvciI6IiMxZTI5M2IifQ==">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
     <style>
 :root {
-    --bg: #0a0a0b;
-    --bg-panel: #141417;
-    --bg-card: #1c1c21;
-    --bg-input: #252529;
-    --border: #2e2e33;
-    --border-light: #3a3a40;
-    --text: #fafafa;
-    --text-muted: #71717a;
-    --accent: #f59e0b;
-    --accent-dim: #b45309;
-    --success: #22c55e;
-    --danger: #ef4444;
-    --info: #3b82f6;
+    --bg:#0a0a0b;--bg-panel:#12141a;--bg-card:#1a1d24;--bg-input:#22262f;
+    --border:#2a2f3a;--border-light:#363c4a;--text:#f4f4f5;--text-muted:#71717a;
+    --accent:#f59e0b;--accent-dim:#b45309;--success:#22c55e;--danger:#ef4444;--info:#3b82f6;
+    --voir:#0ea5e9;--juger:#f59e0b;--agir:#22c55e;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-    overflow: hidden;
-}
-
-.app {
-    display: grid;
-    grid-template-columns: 260px 1fr 380px;
-    height: 100vh;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow:hidden}
+.app{display:grid;grid-template-columns:280px 1fr 420px;height:100vh}
 
 /* SIDEBAR */
-.sidebar {
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+.sidebar{background:var(--bg-panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:1.25rem;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:0.6rem}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.logo-text{font-weight:700;font-size:1rem}
+.logo-sub{font-size:0.65rem;color:var(--text-muted);margin-top:2px}
 
-.sidebar-header {
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border);
-}
+.projects-section{padding:0.75rem;border-bottom:1px solid var(--border)}
+.section-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);padding:0.5rem 0.5rem 0.4rem;display:flex;align-items:center;gap:0.4rem}
+.project-list{max-height:180px;overflow-y:auto}
+.project-item{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.85rem;transition:background 0.15s}
+.project-item:hover{background:var(--bg-card)}
+.project-item.active{background:var(--accent-dim);color:white}
+.project-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-item-delete{opacity:0;background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.8rem}
+.project-item:hover .project-item-delete{opacity:0.7}
+.btn-new-project{width:100%;padding:0.5rem;margin-top:0.5rem;background:var(--bg-card);border:1px dashed var(--border-light);border-radius:6px;color:var(--text-muted);font-size:0.8rem;cursor:pointer}
+.btn-new-project:hover{background:var(--bg-input);color:var(--text);border-color:var(--accent)}
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
+.nav-section{flex:1;overflow-y:auto;padding:0.5rem}
+.nav-group-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);padding:0.75rem 0.5rem 0.25rem;display:flex;align-items:center;gap:0.4rem}
+.nav-group-title.voir{color:var(--voir)}
+.nav-group-title.juger{color:var(--juger)}
+.nav-group-title.agir{color:var(--agir)}
+.nav-item{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.8rem;color:var(--text-muted);transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg-card);color:var(--text)}
+.nav-item.active{background:var(--bg-card);color:var(--accent)}
+.nav-item-icon{width:18px;text-align:center}
 
-.logo-icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, var(--accent), #ea580c);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-}
-
-.logo-text {
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-.projects-section {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.section-title {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    padding: 0.5rem 0.5rem 0.25rem;
-}
-
-.project-list {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.project-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.6rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background 0.15s;
-}
-
-.project-item:hover { background: var(--bg-card); }
-.project-item.active { background: var(--accent-dim); color: white; }
-
-.project-item-name {
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.project-item-delete {
-    opacity: 0;
-    background: none;
-    border: none;
-    color: var(--danger);
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-
-.project-item:hover .project-item-delete { opacity: 0.7; }
-.project-item-delete:hover { opacity: 1 !important; }
-
-.btn-new-project {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    background: var(--bg-card);
-    border: 1px dashed var(--border-light);
-    border-radius: 6px;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.btn-new-project:hover {
-    background: var(--bg-input);
-    color: var(--text);
-    border-color: var(--accent);
-}
-
-.nav-section {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.5rem;
-}
-
-.nav-group-title {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    padding: 0.75rem 0.5rem 0.25rem;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 0.6rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    transition: all 0.15s;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
-}
-
-.nav-item:hover { background: var(--bg-card); color: var(--text); }
-.nav-item.active { background: var(--bg-card); color: var(--accent); }
-
-.sidebar-footer {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.save-status { display: flex; align-items: center; gap: 0.4rem; }
-
-.save-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
-}
-
-.save-dot.saving {
-    background: var(--accent);
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
+.sidebar-footer{padding:0.75rem 1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between}
+.save-status{display:flex;align-items:center;gap:0.4rem}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
+.save-dot.saving{background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
 /* EDITOR */
-.editor {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
-}
+.editor{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.editor-header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel)}
+.editor-title{font-size:1.1rem;font-weight:600}
+.editor-actions{display:flex;gap:0.5rem}
+.editor-content{flex:1;overflow-y:auto;padding:1.5rem}
 
-.editor-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-panel);
-}
+.page{display:none;max-width:900px}
+.page.active{display:block;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-intro{color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
 
-.editor-title { font-size: 1.1rem; font-weight: 600; }
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem}
+.card-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem;display:flex;align-items:center;gap:0.5rem}
+.card-body{padding:1rem}
+.card-footer{padding:0.75rem 1rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.5rem}
 
-.editor-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-}
+.form-group{margin-bottom:1rem}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:0.8rem;font-weight:500;margin-bottom:0.4rem;color:var(--text-muted)}
+.form-input,.form-textarea,.form-select{width:100%;padding:0.6rem 0.8rem;background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:0.9rem;transition:border-color 0.15s}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--accent)}
+.form-textarea{min-height:100px;resize:vertical;line-height:1.6}
+.form-hint{font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem}
+.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.form-row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 
-.page { display: none; max-width: 800px; }
-.page.active { display: block; animation: fadeIn 0.2s ease; }
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.5rem 1rem;font-family:inherit;font-size:0.8rem;font-weight:500;border-radius:6px;border:none;cursor:pointer;transition:all 0.15s}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:var(--accent-dim)}
+.btn-secondary{background:var(--bg-input);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg-card)}
+.btn-success{background:var(--success);color:#000}
+.btn-danger{background:var(--danger);color:white}
+.btn-sm{padding:0.35rem 0.7rem;font-size:0.75rem}
+.btn-icon{width:32px;height:32px;padding:0}
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* STATS DASHBOARD */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:0.75rem}
+.stat-value{font-size:1.5rem;font-weight:700}
+.stat-label{font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem}
 
-.page-intro {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 1rem;
-}
-
-.card-header {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.card-body { padding: 1rem; }
-
-.form-group { margin-bottom: 1rem; }
-.form-group:last-child { margin-bottom: 0; }
-
-.form-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    margin-bottom: 0.4rem;
-    color: var(--text-muted);
-}
-
-.form-input, .form-textarea, .form-select {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.9rem;
-    transition: border-color 0.15s;
-}
-
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-    outline: none;
-    border-color: var(--accent);
-}
-
-.form-textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
-
-.form-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.3rem; }
-
-.form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.btn-primary { background: var(--accent); color: #000; }
-.btn-primary:hover { background: var(--accent-dim); }
-.btn-secondary { background: var(--bg-input); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: var(--bg-card); }
-.btn-sm { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
+.progress-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.progress-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.progress-title{font-size:0.85rem;font-weight:600;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+.progress-bar{height:8px;background:var(--bg-input);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.3s}
+.progress-label{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-muted);margin-top:0.4rem}
 
 /* ACTORS */
-.actor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1rem; }
+.actor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+.actor-column{background:var(--bg-input);border-radius:8px;padding:0.75rem;min-height:150px}
+.actor-column-title{font-size:0.75rem;font-weight:600;margin-bottom:0.5rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.actor-column.ally .actor-column-title{color:var(--success)}
+.actor-column.neutral .actor-column-title{color:var(--text-muted)}
+.actor-column.opponent .actor-column-title{color:var(--danger)}
+.actor-chip{display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.5rem;background:var(--bg-card);border-radius:4px;font-size:0.75rem;margin-bottom:0.4rem}
+.actor-chip-power{color:var(--accent);font-size:0.65rem}
+.actor-chip-delete{margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;font-size:0.7rem}
+.actor-chip-delete:hover{color:var(--danger);opacity:1}
 
-.actor-column {
-    background: var(--bg-input);
-    border-radius: 8px;
-    padding: 0.75rem;
-    min-height: 150px;
-}
-
-.actor-column-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.actor-column.ally .actor-column-title { color: var(--success); }
-.actor-column.neutral .actor-column-title { color: var(--text-muted); }
-.actor-column.opponent .actor-column-title { color: var(--danger); }
-
-.actor-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.5rem;
-    background: var(--bg-card);
-    border-radius: 4px;
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-}
-
-.actor-chip-power { color: var(--accent); font-size: 0.65rem; }
-
-.actor-chip-delete {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    opacity: 0.5;
-    font-size: 0.7rem;
-}
-
-.actor-chip-delete:hover { color: var(--danger); opacity: 1; }
+/* MERMAID */
+.mermaid-container{background:var(--bg-input);border-radius:8px;padding:1rem;margin-top:1rem;overflow-x:auto}
+.mermaid{text-align:center}
+.mermaid svg{max-width:100%}
 
 /* SMART */
-.smart-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.6rem;
-    background: var(--bg-input);
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-}
-
-.smart-checkbox { margin-top: 0.2rem; }
-.smart-content { flex: 1; }
-.smart-text { font-size: 0.85rem; }
-.smart-text.done { text-decoration: line-through; opacity: 0.6; }
-.smart-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; }
+.smart-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem;background:var(--bg-input);border-radius:6px;margin-bottom:0.5rem}
+.smart-checkbox{margin-top:0.2rem;width:16px;height:16px}
+.smart-content{flex:1}
+.smart-text{font-size:0.85rem}
+.smart-text.done{text-decoration:line-through;opacity:0.6}
+.smart-meta{font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem}
 
 /* JOURNAL */
-.journal-entry {
-    display: flex;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: var(--bg-input);
-    border-radius: 6px;
-    margin-bottom: 0.5rem;
-}
+.journal-entry{display:flex;gap:0.75rem;padding:0.75rem;background:var(--bg-input);border-radius:6px;margin-bottom:0.5rem}
+.journal-icon{font-size:1.2rem}
+.journal-content{flex:1}
+.journal-text{font-size:0.85rem}
+.journal-date{font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem}
 
-.journal-icon { font-size: 1.2rem; }
-.journal-content { flex: 1; }
-.journal-text { font-size: 0.85rem; }
-.journal-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; }
+/* EXPORT */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.export-option{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1.25rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.15s}
+.export-option:hover{border-color:var(--accent);background:var(--bg-card)}
+.export-icon{font-size:2rem}
+.export-label{font-weight:600;font-size:0.9rem}
+.export-desc{font-size:0.7rem;color:var(--text-muted)}
 
 /* PREVIEW */
-.preview {
-    background: var(--bg-panel);
-    border-left: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.preview-header {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.preview-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem;
-}
-
-.preview-doc {
-    background: #1a1a1f;
-    border-radius: 8px;
-    padding: 1.5rem;
-    font-size: 0.85rem;
-    line-height: 1.7;
-}
-
-.preview-doc h1 {
-    font-size: 1.3rem;
-    color: var(--accent);
-    margin-bottom: 0.25rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--border);
-}
-
-.preview-doc .doc-meta {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-}
-
-.preview-doc h2 {
-    font-size: 1rem;
-    color: var(--info);
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.preview-doc h3 {
-    font-size: 0.9rem;
-    color: var(--text);
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.preview-doc p {
-    margin-bottom: 0.75rem;
-    color: var(--text-muted);
-}
-
-.preview-doc p.filled { color: var(--text); }
-.preview-doc .empty { color: var(--text-muted); font-style: italic; opacity: 0.6; }
-
-.preview-doc .actor-badge {
-    display: inline-block;
-    padding: 0.15rem 0.5rem;
-    border-radius: 100px;
-    font-size: 0.7rem;
-    margin: 0.15rem;
-}
-
-.preview-doc .actor-badge.ally { background: rgba(34, 197, 94, 0.2); color: var(--success); }
-.preview-doc .actor-badge.neutral { background: rgba(113, 113, 122, 0.2); color: var(--text-muted); }
-.preview-doc .actor-badge.opponent { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-
-.preview-actions {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 0.5rem;
-}
-
-.preview-actions .btn { flex: 1; }
+.preview{background:var(--bg-panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:0.9rem;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.preview-tabs{display:flex;gap:0.25rem}
+.preview-tab{padding:0.35rem 0.7rem;font-size:0.75rem;background:none;border:none;color:var(--text-muted);cursor:pointer;border-radius:4px}
+.preview-tab:hover{background:var(--bg-card)}
+.preview-tab.active{background:var(--bg-card);color:var(--accent)}
+.preview-content{flex:1;overflow-y:auto;padding:1.25rem}
+.preview-doc{background:#13151a;border-radius:8px;padding:1.5rem;font-size:0.85rem;line-height:1.7}
+.preview-doc h1{font-size:1.3rem;color:var(--accent);margin-bottom:0.25rem;padding-bottom:0.75rem;border-bottom:2px solid var(--border)}
+.preview-doc .doc-meta{font-size:0.75rem;color:var(--text-muted);margin-bottom:1.5rem}
+.preview-doc h2{font-size:1rem;margin-top:1.5rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+.preview-doc h2.voir{color:var(--voir)}
+.preview-doc h2.juger{color:var(--juger)}
+.preview-doc h2.agir{color:var(--agir)}
+.preview-doc h3{font-size:0.9rem;color:var(--text);margin-top:1rem;margin-bottom:0.5rem}
+.preview-doc p{margin-bottom:0.75rem;color:var(--text-muted)}
+.preview-doc p.filled{color:var(--text)}
+.preview-doc .empty{font-style:italic;opacity:0.5}
+.preview-doc ul{margin:0.5rem 0 0.5rem 1.25rem}
+.preview-doc li{margin-bottom:0.25rem;color:var(--text-muted)}
+.preview-doc .actor-badge{display:inline-block;padding:0.15rem 0.5rem;border-radius:100px;font-size:0.7rem;margin:0.15rem}
+.preview-doc .actor-badge.ally{background:rgba(34,197,94,0.2);color:var(--success)}
+.preview-doc .actor-badge.neutral{background:rgba(113,113,122,0.2);color:var(--text-muted)}
+.preview-doc .actor-badge.opponent{background:rgba(239,68,68,0.2);color:var(--danger)}
+.preview-doc table{width:100%;border-collapse:collapse;margin:0.75rem 0;font-size:0.8rem}
+.preview-doc th,.preview-doc td{padding:0.5rem;border:1px solid var(--border);text-align:left}
+.preview-doc th{background:var(--bg-input)}
+.preview-actions{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;flex-wrap:wrap}
+.preview-actions .btn{flex:1;min-width:60px}
 
 /* MODAL */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-overlay.show { display: flex; }
-
-.modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    width: 400px;
-    max-width: 90vw;
-}
-
-.modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
-
-.modal-actions {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;width:450px;max-width:90vw;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1.1rem;font-weight:600;margin-bottom:1rem}
+.modal-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.5rem}
 
 /* TOAST */
-.toast-container {
-    position: fixed;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1001;
-}
+.toast-container{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:1001;display:flex;flex-direction:column;gap:0.5rem}
+.toast{background:var(--bg-card);border:1px solid var(--border);padding:0.75rem 1.25rem;border-radius:8px;font-size:0.85rem;display:flex;align-items:center;gap:0.5rem;box-shadow:0 10px 40px rgba(0,0,0,0.4);animation:toastIn 0.3s ease}
+.toast.success{border-left:3px solid var(--success)}
+.toast.error{border-left:3px solid var(--danger)}
+.toast.warning{border-left:3px solid var(--accent)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.toast {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-    animation: toastIn 0.3s ease;
-}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-muted)}
+.empty-state-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+.empty-state-title{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:0.5rem}
+.empty-state-text{font-size:0.85rem;margin-bottom:1.5rem}
 
-@keyframes toastIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-muted);
-}
-
-.empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
-.empty-state-title { font-size: 1.1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
-.empty-state-text { font-size: 0.85rem; margin-bottom: 1.5rem; }
-
-@media (max-width: 1100px) {
-    .app { grid-template-columns: 240px 1fr 300px; }
-}
-
-@media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; }
-    .sidebar, .preview { display: none; }
-}
+@media(max-width:1200px){.app{grid-template-columns:260px 1fr 360px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar,.preview{display:none}}
     </style>
 </head>
 <body>
-
 <div class="app">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <div class="logo-icon">⚖️</div>
-                <span class="logo-text">Plaidoyer Citoyen</span>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <div class="logo-icon">⚖️</div>
+            <div>
+                <div class="logo-text">Plaidoyer Citoyen</div>
+                <div class="logo-sub">Poste de Travail v4</div>
             </div>
         </div>
-        
-        <div class="projects-section">
-            <div class="section-title">📁 Mes projets</div>
-            <div class="project-list" id="project-list"></div>
-            <button class="btn-new-project" onclick="createProject()">+ Nouveau projet</button>
-        </div>
-        
-        <nav class="nav-section" id="nav-section">
-            <div class="nav-group-title">👁️ VOIR</div>
-            <button class="nav-item active" data-page="domino"><span>🎯</span> Vision (Domino)</button>
-            <button class="nav-item" data-page="profil"><span>👤</span> Profil citoyen</button>
-            <button class="nav-item" data-page="fleur"><span>🌸</span> Fleur du pouvoir</button>
-            
-            <div class="nav-group-title">⚖️ JUGER</div>
-            <button class="nav-item" data-page="acteurs"><span>👥</span> Acteurs</button>
-            <button class="nav-item" data-page="arbre"><span>🌳</span> Arbre à problèmes</button>
-            <button class="nav-item" data-page="swot"><span>📊</span> SWOT</button>
-            <button class="nav-item" data-page="pestel"><span>🌍</span> PESTEL</button>
-            <button class="nav-item" data-page="tdc"><span>🔄</span> Théorie du changement</button>
-            
-            <div class="nav-group-title">✊ AGIR</div>
-            <button class="nav-item" data-page="cibles"><span>🎯</span> Cibles & Alliés</button>
-            <button class="nav-item" data-page="smart"><span>📋</span> Objectifs SMART</button>
-            <button class="nav-item" data-page="message"><span>💬</span> Message clé</button>
-            <button class="nav-item" data-page="journal"><span>📓</span> Journal de bord</button>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="save-status">
-                <span class="save-dot" id="save-dot"></span>
-                <span id="save-text">Sauvegardé</span>
-            </div>
-            <span id="storage-info">--</span>
-        </div>
-    </aside>
+    </div>
     
-    <!-- EDITOR -->
-    <main class="editor">
-        <header class="editor-header">
-            <h1 class="editor-title" id="editor-title">Vision (Domino)</h1>
-        </header>
-        
-        <div class="editor-content" id="editor-content">
-            <!-- EMPTY STATE -->
-            <div class="page active" id="page-empty">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📂</div>
-                    <div class="empty-state-title">Aucun projet sélectionné</div>
-                    <div class="empty-state-text">Créez un nouveau projet ou sélectionnez-en un existant</div>
-                    <button class="btn btn-primary" onclick="createProject()">+ Créer un projet</button>
-                </div>
-            </div>
-            
-            <!-- DOMINO -->
-            <div class="page" id="page-domino">
-                <p class="page-intro">Clarifiez votre vision du changement : quels obstacles surmonter, quelles ressources mobiliser.</p>
-                <div class="card">
-                    <div class="card-header">🎯 Vision du changement</div>
-                    <div class="card-body">
-                        <textarea class="form-textarea" data-field="domino.vision" rows="4" placeholder="Décrivez le changement que vous souhaitez voir advenir..."></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="card">
-                        <div class="card-header">🚧 Obstacles</div>
-                        <div class="card-body">
-                            <textarea class="form-textarea" data-field="domino.obstacles" rows="5" placeholder="Obstacles politiques, administratifs, culturels..."></textarea>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">💪 Ressources</div>
-                        <div class="card-body">
-                            <textarea class="form-textarea" data-field="domino.ressources" rows="5" placeholder="Réseaux, expertise, légitimité..."></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- PROFIL -->
-            <div class="page" id="page-profil">
-                <p class="page-intro">Définissez votre profil citoyen : motivations, compétences, disponibilités.</p>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">❤️ Motivations</div><div class="card-body"><textarea class="form-textarea" data-field="profil.motivations" rows="4" placeholder="Pourquoi vous engagez-vous ?"></textarea></div></div>
-                    <div class="card"><div class="card-header">🛠️ Compétences</div><div class="card-body"><textarea class="form-textarea" data-field="profil.competences" rows="4" placeholder="Analyse, communication..."></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">⏰ Temps disponible</div><div class="card-body"><textarea class="form-textarea" data-field="profil.temps" rows="4" placeholder="Disponibilités..."></textarea></div></div>
-                    <div class="card"><div class="card-header">⚠️ Limites</div><div class="card-body"><textarea class="form-textarea" data-field="profil.limites" rows="4" placeholder="Contraintes, lignes rouges..."></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- FLEUR -->
-            <div class="page" id="page-fleur">
-                <p class="page-intro">Analysez les rapports de pouvoir et de privilège.</p>
-                <div class="card"><div class="card-header">👥 Personnes concernées</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.identites" rows="3" placeholder="Profils des personnes touchées..."></textarea></div></div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header" style="color:var(--success)">✅ Privilèges relatifs</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.privileges" rows="4" placeholder="Accès à l'information, capital social..."></textarea></div></div>
-                    <div class="card"><div class="card-header" style="color:var(--danger)">🎯 Oppressions subies</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.oppressions" rows="4" placeholder="Discriminations, violences..."></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- ACTEURS -->
-            <div class="page" id="page-acteurs">
-                <p class="page-intro">Cartographiez les acteurs clés : décideurs, alliés, opposants.</p>
-                <div class="card">
-                    <div class="card-header">➕ Ajouter un acteur</div>
-                    <div class="card-body">
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="actor-name" placeholder="Nom"></div>
-                            <div class="form-group"><label class="form-label">Rôle</label><input type="text" class="form-input" id="actor-role" placeholder="Fonction..."></div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label">Position</label><select class="form-select" id="actor-position"><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option></select></div>
-                            <div class="form-group"><label class="form-label">Pouvoir</label><select class="form-select" id="actor-power"><option value="1">1 ★</option><option value="2">2 ★★</option><option value="3" selected>3 ★★★</option><option value="4">4 ★★★★</option><option value="5">5 ★★★★★</option></select></div>
-                        </div>
-                        <button class="btn btn-primary" onclick="addActor()">Ajouter</button>
-                    </div>
-                </div>
-                <div class="actor-grid">
-                    <div class="actor-column ally"><div class="actor-column-title">🟢 Alliés</div><div id="actors-ally"></div></div>
-                    <div class="actor-column neutral"><div class="actor-column-title">🟡 Neutres</div><div id="actors-neutral"></div></div>
-                    <div class="actor-column opponent"><div class="actor-column-title">🔴 Opposants</div><div id="actors-opponent"></div></div>
-                </div>
-            </div>
-            
-            <!-- ARBRE -->
-            <div class="page" id="page-arbre">
-                <p class="page-intro">Identifiez le problème central, ses causes et ses effets.</p>
-                <div class="card"><div class="card-header">🎯 Problème central</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.probleme" rows="2" placeholder="Quel est le problème ?"></textarea></div></div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🌱 Causes</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.causes" rows="5" placeholder="Une cause par ligne..."></textarea><p class="form-hint">Une cause par ligne</p></div></div>
-                    <div class="card"><div class="card-header">🍃 Effets</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.effets" rows="5" placeholder="Un effet par ligne..."></textarea><p class="form-hint">Un effet par ligne</p></div></div>
-                </div>
-            </div>
-            
-            <!-- SWOT -->
-            <div class="page" id="page-swot">
-                <p class="page-intro">Analysez vos Forces, Faiblesses, Opportunités et Menaces.</p>
-                <div class="form-row">
-                    <div class="card"><div class="card-header" style="color:var(--success)">💪 Forces</div><div class="card-body"><textarea class="form-textarea" data-field="swot.forces" rows="4" placeholder="Atouts internes..."></textarea></div></div>
-                    <div class="card"><div class="card-header" style="color:var(--danger)">😰 Faiblesses</div><div class="card-body"><textarea class="form-textarea" data-field="swot.faiblesses" rows="4" placeholder="Limites internes..."></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header" style="color:var(--info)">🌟 Opportunités</div><div class="card-body"><textarea class="form-textarea" data-field="swot.opportunites" rows="4" placeholder="Facteurs favorables..."></textarea></div></div>
-                    <div class="card"><div class="card-header" style="color:var(--accent)">⚠️ Menaces</div><div class="card-body"><textarea class="form-textarea" data-field="swot.menaces" rows="4" placeholder="Facteurs défavorables..."></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- PESTEL -->
-            <div class="page" id="page-pestel">
-                <p class="page-intro">Analysez le macro-environnement.</p>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🏛️ Politique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.politique" rows="3" placeholder="Gouvernance, élections..."></textarea></div></div>
-                    <div class="card"><div class="card-header">💶 Économique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.economique" rows="3" placeholder="Conjoncture, budgets..."></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">👥 Social</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.social" rows="3" placeholder="Tendances sociales..."></textarea></div></div>
-                    <div class="card"><div class="card-header">💻 Technologique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.technologique" rows="3" placeholder="Innovations..."></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🌱 Environnemental</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.environnemental" rows="3" placeholder="Enjeux écologiques..."></textarea></div></div>
-                    <div class="card"><div class="card-header">⚖️ Légal</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.legal" rows="3" placeholder="Cadre juridique..."></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- TDC -->
-            <div class="page" id="page-tdc">
-                <p class="page-intro">Articulez vos hypothèses sur comment le changement se produit.</p>
-                <div class="card"><div class="card-header">🎯 Impact final visé</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.impact" rows="2" placeholder="Changement ultime visé..."></textarea></div></div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🔹 Individuel interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_interne" rows="3" placeholder="Connaissances, attitudes..."></textarea></div></div>
-                    <div class="card"><div class="card-header">🔹 Individuel externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_externe" rows="3" placeholder="Comportements..."></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🔸 Collectif interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_interne" rows="3" placeholder="Culture, normes..."></textarea></div></div>
-                    <div class="card"><div class="card-header">🔸 Collectif externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_externe" rows="3" placeholder="Politiques, lois..."></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- CIBLES -->
-            <div class="page" id="page-cibles">
-                <p class="page-intro">Identifiez vos cibles et alliés stratégiques.</p>
-                <div class="form-row">
-                    <div class="card"><div class="card-header">🎯 Cible principale</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.principale" rows="3" placeholder="Qui décide ?"></textarea></div></div>
-                    <div class="card"><div class="card-header">🎯 Cibles secondaires</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.secondaires" rows="3" placeholder="Qui influence ?"></textarea></div></div>
-                </div>
-                <div class="form-row">
-                    <div class="card"><div class="card-header" style="color:var(--success)">🤝 Alliés</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.allies" rows="3" placeholder="Organisations, réseaux..."></textarea></div></div>
-                    <div class="card"><div class="card-header" style="color:var(--danger)">⚔️ Opposants</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.opposants" rows="3" placeholder="Qui s'oppose ?"></textarea></div></div>
-                </div>
-            </div>
-            
-            <!-- SMART -->
-            <div class="page" id="page-smart">
-                <p class="page-intro">Définissez des objectifs Spécifiques, Mesurables, Atteignables, Réalistes, Temporels.</p>
-                <div class="card">
-                    <div class="card-header">➕ Nouvel objectif</div>
-                    <div class="card-body">
-                        <div class="form-group"><textarea class="form-textarea" id="smart-text" rows="2" placeholder="Ex: Obtenir 50 000 signatures d'ici le 1er mars"></textarea></div>
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label">Indicateur</label><input type="text" class="form-input" id="smart-indicator" placeholder="Ex: Nombre de signatures"></div>
-                            <div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" id="smart-deadline"></div>
-                        </div>
-                        <button class="btn btn-primary" onclick="addSmart()">Ajouter</button>
-                    </div>
-                </div>
-                <div class="card"><div class="card-header">📋 Objectifs</div><div class="card-body" id="smart-list"><p style="color:var(--text-muted);text-align:center;font-size:0.85rem">Aucun objectif</p></div></div>
-            </div>
-            
-            <!-- MESSAGE -->
-            <div class="page" id="page-message">
-                <p class="page-intro">Construisez votre message de plaidoyer.</p>
-                <div class="card">
-                    <div class="card-header">💬 Construction du message</div>
-                    <div class="card-body">
-                        <div class="form-group"><label class="form-label">🎣 Accroche</label><textarea class="form-textarea" data-field="message.accroche" rows="2" placeholder="Phrase percutante..."></textarea></div>
-                        <div class="form-group"><label class="form-label">❗ Problème</label><textarea class="form-textarea" data-field="message.probleme" rows="2" placeholder="Décrivez le problème..."></textarea></div>
-                        <div class="form-group"><label class="form-label">⚡ Importance</label><textarea class="form-textarea" data-field="message.importance" rows="2" placeholder="Pourquoi agir ?"></textarea></div>
-                        <div class="form-group"><label class="form-label">👉 Appel à l'action</label><textarea class="form-textarea" data-field="message.action" rows="2" placeholder="Que demandez-vous ?"></textarea></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- JOURNAL -->
-            <div class="page" id="page-journal">
-                <p class="page-intro">Tenez un journal de vos actions et rencontres.</p>
-                <div class="card">
-                    <div class="card-header">➕ Nouvelle entrée</div>
-                    <div class="card-body">
-                        <div class="form-row">
-                            <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="journal-date"></div>
-                            <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="journal-type"><option value="action">🎯 Action</option><option value="rencontre">🤝 Rencontre</option><option value="victoire">🏆 Victoire</option><option value="difficulte">⚠️ Difficulté</option><option value="note">📝 Note</option></select></div>
-                        </div>
-                        <div class="form-group"><textarea class="form-textarea" id="journal-content" rows="2" placeholder="Décrivez..."></textarea></div>
-                        <button class="btn btn-primary" onclick="addJournal()">Ajouter</button>
-                    </div>
-                </div>
-                <div class="card"><div class="card-header">📓 Historique</div><div class="card-body" id="journal-list"><p style="color:var(--text-muted);text-align:center;font-size:0.85rem">Aucune entrée</p></div></div>
-            </div>
-        </div>
-    </main>
+    <div class="projects-section">
+        <div class="section-title">📁 Mes projets</div>
+        <div class="project-list" id="project-list"></div>
+        <button class="btn-new-project" onclick="createProject()">+ Nouveau projet</button>
+    </div>
     
-    <!-- PREVIEW -->
-    <aside class="preview">
-        <header class="preview-header">👁️ Aperçu en direct</header>
-        <div class="preview-content"><div class="preview-doc" id="preview-doc"></div></div>
-        <div class="preview-actions">
-            <button class="btn btn-secondary" onclick="exportJSON()">📄 JSON</button>
-            <button class="btn btn-secondary" onclick="exportMD()">📝 MD</button>
-            <button class="btn btn-primary" onclick="exportPDF()">📕 PDF</button>
+    <nav class="nav-section">
+        <div class="nav-group-title">📊 Général</div>
+        <button class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span>Tableau de bord</button>
+        
+        <div class="nav-group-title voir">👁️ VOIR</div>
+        <button class="nav-item" data-page="domino"><span class="nav-item-icon">🎯</span>Vision (Domino)</button>
+        <button class="nav-item" data-page="profil"><span class="nav-item-icon">👤</span>Profil citoyen</button>
+        <button class="nav-item" data-page="fleur"><span class="nav-item-icon">🌸</span>Fleur du pouvoir</button>
+        
+        <div class="nav-group-title juger">⚖️ JUGER</div>
+        <button class="nav-item" data-page="acteurs"><span class="nav-item-icon">👥</span>Acteurs</button>
+        <button class="nav-item" data-page="arbre"><span class="nav-item-icon">🌳</span>Arbre à problèmes</button>
+        <button class="nav-item" data-page="pourquoi"><span class="nav-item-icon">❓</span>5 Pourquoi</button>
+        <button class="nav-item" data-page="swot"><span class="nav-item-icon">📐</span>SWOT</button>
+        <button class="nav-item" data-page="pestel"><span class="nav-item-icon">🌍</span>PESTEL</button>
+        <button class="nav-item" data-page="tdc"><span class="nav-item-icon">🔄</span>Théorie du changement</button>
+        
+        <div class="nav-group-title agir">✊ AGIR</div>
+        <button class="nav-item" data-page="pouvoir"><span class="nav-item-icon">⚡</span>Avec/Sans/Contre</button>
+        <button class="nav-item" data-page="cibles"><span class="nav-item-icon">🎯</span>Cibles & Alliés</button>
+        <button class="nav-item" data-page="smart"><span class="nav-item-icon">📋</span>Objectifs SMART</button>
+        <button class="nav-item" data-page="message"><span class="nav-item-icon">💬</span>Message clé</button>
+        <button class="nav-item" data-page="evaluation"><span class="nav-item-icon">📈</span>Suivi-évaluation</button>
+        <button class="nav-item" data-page="journal"><span class="nav-item-icon">📓</span>Journal de bord</button>
+        
+        <div class="nav-group-title">🔧 Outils</div>
+        <button class="nav-item" data-page="export"><span class="nav-item-icon">💾</span>Import / Export</button>
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="save-status">
+            <span class="save-dot" id="save-dot"></span>
+            <span id="save-text">Sauvegardé</span>
         </div>
-    </aside>
+        <span id="storage-info">IndexedDB</span>
+    </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     EDITOR
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<main class="editor">
+    <header class="editor-header">
+        <h1 class="editor-title" id="editor-title">Tableau de bord</h1>
+    </header>
+    
+    <div class="editor-content" id="editor-content">
+        
+        <!-- EMPTY STATE -->
+        <div class="page active" id="page-empty">
+            <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <div class="empty-state-title">Bienvenue dans Plaidoyer Citoyen</div>
+                <div class="empty-state-text">Créez un nouveau projet pour commencer à construire votre campagne de plaidoyer</div>
+                <button class="btn btn-primary" onclick="createProject()">+ Créer un projet</button>
+            </div>
+        </div>
+        
+        <!-- DASHBOARD -->
+        <div class="page" id="page-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(14,165,233,0.2);color:var(--voir)">📝</div>
+                    <div class="stat-value" id="stat-fields">0</div>
+                    <div class="stat-label">Champs remplis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(34,197,94,0.2);color:var(--success)">👥</div>
+                    <div class="stat-value" id="stat-actors">0</div>
+                    <div class="stat-label">Acteurs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(245,158,11,0.2);color:var(--accent)">🎯</div>
+                    <div class="stat-value" id="stat-smart">0</div>
+                    <div class="stat-label">Objectifs SMART</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(59,130,246,0.2);color:var(--info)">📓</div>
+                    <div class="stat-value" id="stat-journal">0</div>
+                    <div class="stat-label">Entrées journal</div>
+                </div>
+            </div>
+            
+            <div class="progress-grid">
+                <div class="progress-card">
+                    <div class="progress-title" style="color:var(--voir)">👁️ Phase VOIR</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-voir" style="background:var(--voir);width:0%"></div></div>
+                    <div class="progress-label"><span>Analyse de la situation</span><span id="progress-voir-pct">0%</span></div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-title" style="color:var(--juger)">⚖️ Phase JUGER</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-juger" style="background:var(--juger);width:0%"></div></div>
+                    <div class="progress-label"><span>Analyse stratégique</span><span id="progress-juger-pct">0%</span></div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-title" style="color:var(--agir)">✊ Phase AGIR</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progress-agir" style="background:var(--agir);width:0%"></div></div>
+                    <div class="progress-label"><span>Passage à l'action</span><span id="progress-agir-pct">0%</span></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">📌 Informations du projet</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom du projet</label>
+                            <input type="text" class="form-input" id="project-name" data-field="meta.name" placeholder="Ex: Campagne Stop Arizona">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Organisation</label>
+                            <input type="text" class="form-input" data-field="meta.organization" placeholder="Ex: Collectif citoyen...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" data-field="meta.description" rows="2" placeholder="Résumez votre projet de plaidoyer..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Date de création</label>
+                            <input type="date" class="form-input" data-field="meta.created">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Échéance visée</label>
+                            <input type="date" class="form-input" data-field="meta.deadline">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DOMINO -->
+        <div class="page" id="page-domino">
+            <p class="page-intro">Clarifiez votre vision du changement : quels obstacles surmonter, quelles ressources mobiliser.</p>
+            <div class="card">
+                <div class="card-header">🎯 Vision du changement</div>
+                <div class="card-body">
+                    <textarea class="form-textarea" data-field="domino.vision" rows="4" placeholder="Décrivez le changement que vous souhaitez voir advenir. Quel est l'horizon de votre plaidoyer ?"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="card">
+                    <div class="card-header">🚧 Obstacles</div>
+                    <div class="card-body">
+                        <textarea class="form-textarea" data-field="domino.obstacles" rows="5" placeholder="Obstacles politiques, administratifs, culturels, économiques..."></textarea>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">💪 Ressources</div>
+                    <div class="card-body">
+                        <textarea class="form-textarea" data-field="domino.ressources" rows="5" placeholder="Réseaux, expertise, légitimité, financement, alliés..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PROFIL -->
+        <div class="page" id="page-profil">
+            <p class="page-intro">Définissez votre profil en tant que citoyen·ne engagé·e.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">❤️ Motivations</div><div class="card-body"><textarea class="form-textarea" data-field="profil.motivations" rows="4" placeholder="Pourquoi vous engagez-vous ?"></textarea></div></div>
+                <div class="card"><div class="card-header">🛠️ Compétences</div><div class="card-body"><textarea class="form-textarea" data-field="profil.competences" rows="4" placeholder="Analyse, communication, juridique..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">⏰ Temps disponible</div><div class="card-body"><textarea class="form-textarea" data-field="profil.temps" rows="4" placeholder="Disponibilités, pics d'activité..."></textarea></div></div>
+                <div class="card"><div class="card-header">⚠️ Limites</div><div class="card-body"><textarea class="form-textarea" data-field="profil.limites" rows="4" placeholder="Contraintes, lignes rouges, risques..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- FLEUR -->
+        <div class="page" id="page-fleur">
+            <p class="page-intro">Analysez les rapports de domination et de privilège.</p>
+            <div class="card"><div class="card-header">👥 Personnes concernées</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.identites" rows="3" placeholder="Décrivez les profils des personnes directement touchées par votre plaidoyer..."></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">✅ Privilèges relatifs</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.privileges" rows="4" placeholder="Accès à l'information, capital social, légitimité de parole..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">🎯 Oppressions subies</div><div class="card-body"><textarea class="form-textarea" data-field="fleur.oppressions" rows="4" placeholder="Discriminations, violences symboliques, administratives, économiques..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- ACTEURS -->
+        <div class="page" id="page-acteurs">
+            <p class="page-intro">Cartographiez les acteurs clés : décideurs, alliés, opposants, neutres.</p>
+            <div class="card">
+                <div class="card-header">➕ Ajouter un acteur</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="actor-name" placeholder="Nom de l'acteur"></div>
+                        <div class="form-group"><label class="form-label">Rôle / Fonction</label><input type="text" class="form-input" id="actor-role" placeholder="Ex: Ministre, Député..."></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Position</label><select class="form-select" id="actor-position"><option value="ally">🟢 Allié</option><option value="neutral">🟡 Neutre</option><option value="opponent">🔴 Opposant</option></select></div>
+                        <div class="form-group"><label class="form-label">Pouvoir (1-5)</label><select class="form-select" id="actor-power"><option value="1">1 ★</option><option value="2">2 ★★</option><option value="3" selected>3 ★★★</option><option value="4">4 ★★★★</option><option value="5">5 ★★★★★</option></select></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addActor()">➕ Ajouter</button>
+                </div>
+            </div>
+            <div class="actor-grid">
+                <div class="actor-column ally"><div class="actor-column-title">🟢 Alliés</div><div id="actors-ally"></div></div>
+                <div class="actor-column neutral"><div class="actor-column-title">🟡 Neutres</div><div id="actors-neutral"></div></div>
+                <div class="actor-column opponent"><div class="actor-column-title">🔴 Opposants</div><div id="actors-opponent"></div></div>
+            </div>
+            <div class="card" style="margin-top:1rem">
+                <div class="card-header">📊 Visualisation Mermaid</div>
+                <div class="card-body">
+                    <div class="mermaid-container" id="actors-mermaid-container"><pre class="mermaid" id="actors-mermaid"></pre></div>
+                    <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="renderActorsMermaid()">🔄 Rafraîchir</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ARBRE -->
+        <div class="page" id="page-arbre">
+            <p class="page-intro">Identifiez le problème central, ses causes (racines) et ses effets (branches).</p>
+            <div class="card"><div class="card-header">🎯 Problème central</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.probleme" rows="2" placeholder="Quel est le problème que vous cherchez à résoudre ?"></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🌱 Causes (racines)</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.causes" rows="5" placeholder="Une cause par ligne..."></textarea><p class="form-hint">Entrez une cause par ligne</p></div></div>
+                <div class="card"><div class="card-header">🍃 Effets (branches)</div><div class="card-body"><textarea class="form-textarea" data-field="arbre.effets" rows="5" placeholder="Un effet par ligne..."></textarea><p class="form-hint">Entrez un effet par ligne</p></div></div>
+            </div>
+            <div class="card">
+                <div class="card-header">🌳 Visualisation de l'arbre</div>
+                <div class="card-body">
+                    <div class="mermaid-container"><pre class="mermaid" id="tree-mermaid"></pre></div>
+                    <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="renderTreeMermaid()">🔄 Rafraîchir</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5 POURQUOI -->
+        <div class="page" id="page-pourquoi">
+            <p class="page-intro">La méthode des 5 Pourquoi permet de remonter à la cause racine d'un problème.</p>
+            <div class="card"><div class="card-header">❓ Problème de départ</div><div class="card-body"><textarea class="form-textarea" data-field="pourquoi.probleme" rows="2" placeholder="Décrivez le problème ou symptôme observé"></textarea></div></div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">1️⃣ Pourquoi ce problème existe-t-il ?</label><textarea class="form-textarea" data-field="pourquoi.why1" rows="2" placeholder="Première réponse..."></textarea></div>
+                    <div class="form-group"><label class="form-label">2️⃣ Pourquoi cette cause ?</label><textarea class="form-textarea" data-field="pourquoi.why2" rows="2" placeholder="Deuxième réponse..."></textarea></div>
+                    <div class="form-group"><label class="form-label">3️⃣ Pourquoi cette cause ?</label><textarea class="form-textarea" data-field="pourquoi.why3" rows="2" placeholder="Troisième réponse..."></textarea></div>
+                    <div class="form-group"><label class="form-label">4️⃣ Pourquoi cette cause ?</label><textarea class="form-textarea" data-field="pourquoi.why4" rows="2" placeholder="Quatrième réponse..."></textarea></div>
+                    <div class="form-group"><label class="form-label">5️⃣ Pourquoi ? → <strong style="color:var(--accent)">Cause racine</strong></label><textarea class="form-textarea" data-field="pourquoi.why5" rows="2" placeholder="Cause racine identifiée..." style="border-color:var(--accent)"></textarea></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SWOT -->
+        <div class="page" id="page-swot">
+            <p class="page-intro">Analysez vos Forces, Faiblesses, Opportunités et Menaces.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">💪 Forces (Strengths)</div><div class="card-body"><textarea class="form-textarea" data-field="swot.forces" rows="4" placeholder="Atouts internes..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">😰 Faiblesses (Weaknesses)</div><div class="card-body"><textarea class="form-textarea" data-field="swot.faiblesses" rows="4" placeholder="Limites internes..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--info)">🌟 Opportunités</div><div class="card-body"><textarea class="form-textarea" data-field="swot.opportunites" rows="4" placeholder="Facteurs externes favorables..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--accent)">⚠️ Menaces (Threats)</div><div class="card-body"><textarea class="form-textarea" data-field="swot.menaces" rows="4" placeholder="Facteurs externes défavorables..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- PESTEL -->
+        <div class="page" id="page-pestel">
+            <p class="page-intro">Analysez le macro-environnement : facteurs Politique, Économique, Social, Technologique, Environnemental, Légal.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🏛️ Politique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.politique" rows="3" placeholder="Gouvernance, élections, stabilité..."></textarea></div></div>
+                <div class="card"><div class="card-header">💶 Économique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.economique" rows="3" placeholder="Conjoncture, budgets, emploi..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">👥 Social</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.social" rows="3" placeholder="Tendances, démographie, opinions..."></textarea></div></div>
+                <div class="card"><div class="card-header">💻 Technologique</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.technologique" rows="3" placeholder="Innovations, digitalisation..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🌱 Environnemental</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.environnemental" rows="3" placeholder="Enjeux écologiques, climat..."></textarea></div></div>
+                <div class="card"><div class="card-header">⚖️ Légal</div><div class="card-body"><textarea class="form-textarea" data-field="pestel.legal" rows="3" placeholder="Cadre juridique, recours possibles..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- TDC -->
+        <div class="page" id="page-tdc">
+            <p class="page-intro">La Théorie du Changement articule vos hypothèses sur comment le changement se produit.</p>
+            <div class="card"><div class="card-header">🎯 Impact final visé</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.impact" rows="2" placeholder="Quel changement ultime voulez-vous voir dans la société ?"></textarea></div></div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🔹 Changement individuel interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_interne" rows="3" placeholder="Connaissances, attitudes, compétences..."></textarea></div></div>
+                <div class="card"><div class="card-header">🔹 Changement individuel externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.individuel_externe" rows="3" placeholder="Comportements observables..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🔸 Changement collectif interne</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_interne" rows="3" placeholder="Culture, normes, valeurs du groupe..."></textarea></div></div>
+                <div class="card"><div class="card-header">🔸 Changement collectif externe</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.collectif_externe" rows="3" placeholder="Politiques, lois, institutions..."></textarea></div></div>
+            </div>
+            <div class="card"><div class="card-header">🔗 Hypothèses sous-jacentes</div><div class="card-body"><textarea class="form-textarea" data-field="tdc.hypotheses" rows="3" placeholder="Quelles hypothèses faites-vous sur comment ces changements s'enchaînent ?"></textarea></div></div>
+        </div>
+        
+        <!-- POUVOIR -->
+        <div class="page" id="page-pouvoir">
+            <p class="page-intro">Définissez votre positionnement stratégique par rapport au pouvoir établi.</p>
+            <div class="form-row-3">
+                <div class="card">
+                    <div class="card-header" style="color:var(--success);border-bottom:3px solid var(--success)">🤝 AVEC le pouvoir</div>
+                    <div class="card-body">
+                        <textarea class="form-textarea" data-field="pouvoir.avec" rows="6" placeholder="Collaboration, dialogue, participation aux instances officielles, lobbying constructif..."></textarea>
+                        <p class="form-hint">Ex: Auditions parlementaires, commissions consultatives</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="color:var(--accent);border-bottom:3px solid var(--accent)">🔄 SANS le pouvoir</div>
+                    <div class="card-body">
+                        <textarea class="form-textarea" data-field="pouvoir.sans" rows="6" placeholder="Actions autonomes, alternatives, construction d'espaces propres..."></textarea>
+                        <p class="form-hint">Ex: Projets pilotes, médias alternatifs, économie sociale</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" style="color:var(--danger);border-bottom:3px solid var(--danger)">✊ CONTRE le pouvoir</div>
+                    <div class="card-body">
+                        <textarea class="form-textarea" data-field="pouvoir.contre" rows="6" placeholder="Opposition, contestation, mobilisation de masse, rapport de force..."></textarea>
+                        <p class="form-hint">Ex: Manifestations, pétitions, désobéissance civile</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CIBLES -->
+        <div class="page" id="page-cibles">
+            <p class="page-intro">Identifiez vos cibles de plaidoyer et vos alliés stratégiques.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">🎯 Cible principale</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.principale" rows="3" placeholder="Qui a le pouvoir de décision direct ?"></textarea></div></div>
+                <div class="card"><div class="card-header">🎯 Cibles secondaires</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.secondaires" rows="3" placeholder="Qui peut influencer la cible principale ?"></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header" style="color:var(--success)">🤝 Alliés potentiels</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.allies" rows="3" placeholder="Organisations, réseaux, personnalités qui partagent vos objectifs..."></textarea></div></div>
+                <div class="card"><div class="card-header" style="color:var(--danger)">⚔️ Opposants identifiés</div><div class="card-body"><textarea class="form-textarea" data-field="cibles.opposants" rows="3" placeholder="Qui s'oppose activement à vos objectifs ?"></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- SMART -->
+        <div class="page" id="page-smart">
+            <p class="page-intro">Définissez des objectifs SMART : Spécifiques, Mesurables, Atteignables, Réalistes, Temporellement définis.</p>
+            <div class="card">
+                <div class="card-header">➕ Ajouter un objectif</div>
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">Objectif</label><textarea class="form-textarea" id="smart-text" rows="2" placeholder="Ex: Obtenir 50 000 signatures sur la pétition d'ici le 1er mars 2026"></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Indicateur de mesure</label><input type="text" class="form-input" id="smart-indicator" placeholder="Ex: Nombre de signatures"></div>
+                        <div class="form-group"><label class="form-label">Échéance</label><input type="date" class="form-input" id="smart-deadline"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addSmart()">➕ Ajouter</button>
+                </div>
+            </div>
+            <div class="card"><div class="card-header">📋 Objectifs définis</div><div class="card-body" id="smart-list"><p style="color:var(--text-muted);text-align:center">Aucun objectif SMART défini</p></div></div>
+        </div>
+        
+        <!-- MESSAGE -->
+        <div class="page" id="page-message">
+            <p class="page-intro">Construisez votre message de plaidoyer : accroche, problème, importance, appel à l'action.</p>
+            <div class="card">
+                <div class="card-header">💬 Construction du message</div>
+                <div class="card-body">
+                    <div class="form-group"><label class="form-label">🎣 Accroche (Hook)</label><textarea class="form-textarea" data-field="message.accroche" rows="2" placeholder="Une phrase percutante pour capter l'attention"></textarea></div>
+                    <div class="form-group"><label class="form-label">❗ Problème</label><textarea class="form-textarea" data-field="message.probleme" rows="2" placeholder="Décrivez le problème clairement"></textarea></div>
+                    <div class="form-group"><label class="form-label">⚡ Pourquoi c'est important ?</label><textarea class="form-textarea" data-field="message.importance" rows="2" placeholder="Pourquoi agir maintenant ?"></textarea></div>
+                    <div class="form-group"><label class="form-label">👉 Appel à l'action</label><textarea class="form-textarea" data-field="message.action" rows="2" placeholder="Que demandez-vous concrètement ?"></textarea></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">📝 Aperçu du message</div>
+                <div class="card-body" id="message-preview" style="background:var(--bg-input);border-radius:6px;padding:1rem;font-style:italic;color:var(--text-muted)">Remplissez les champs ci-dessus...</div>
+            </div>
+        </div>
+        
+        <!-- EVALUATION -->
+        <div class="page" id="page-evaluation">
+            <p class="page-intro">Définissez comment vous allez suivre et évaluer l'impact de votre plaidoyer.</p>
+            <div class="form-row">
+                <div class="card"><div class="card-header">📊 Indicateurs de suivi</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.indicateurs" rows="5" placeholder="Quels indicateurs quantitatifs et qualitatifs ?"></textarea></div></div>
+                <div class="card"><div class="card-header">🔍 Méthodes de collecte</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.methodes" rows="5" placeholder="Sondages, entretiens, revue de presse..."></textarea></div></div>
+            </div>
+            <div class="form-row">
+                <div class="card"><div class="card-header">📅 Calendrier d'évaluation</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.calendrier" rows="5" placeholder="Fréquence, jalons..."></textarea></div></div>
+                <div class="card"><div class="card-header">📚 Leçons apprises</div><div class="card-body"><textarea class="form-textarea" data-field="evaluation.lecons" rows="5" placeholder="Notez les apprentissages au fil du projet..."></textarea></div></div>
+            </div>
+        </div>
+        
+        <!-- JOURNAL -->
+        <div class="page" id="page-journal">
+            <p class="page-intro">Tenez un journal de vos actions, rencontres, avancées et difficultés.</p>
+            <div class="card">
+                <div class="card-header">➕ Nouvelle entrée</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="journal-date"></div>
+                        <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="journal-type"><option value="action">🎯 Action</option><option value="rencontre">🤝 Rencontre</option><option value="victoire">🏆 Victoire</option><option value="difficulte">⚠️ Difficulté</option><option value="note">📝 Note</option></select></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="journal-content" rows="2" placeholder="Décrivez l'événement..."></textarea></div>
+                    <button class="btn btn-primary" onclick="addJournal()">➕ Ajouter</button>
+                </div>
+            </div>
+            <div class="card"><div class="card-header">📓 Historique</div><div class="card-body" id="journal-list"><p style="color:var(--text-muted);text-align:center">Aucune entrée</p></div></div>
+        </div>
+        
+        <!-- EXPORT -->
+        <div class="page" id="page-export">
+            <div class="card">
+                <div class="card-header">📤 Exporter le projet</div>
+                <div class="card-body">
+                    <p style="margin-bottom:1rem;color:var(--text-muted)">Exportez votre projet dans le format de votre choix :</p>
+                    <div class="export-grid">
+                        <div class="export-option" onclick="exportJSON()"><span class="export-icon">📄</span><span class="export-label">JSON</span><span class="export-desc">Sauvegarde complète</span></div>
+                        <div class="export-option" onclick="exportMD()"><span class="export-icon">📝</span><span class="export-label">Markdown</span><span class="export-desc">Document texte</span></div>
+                        <div class="export-option" onclick="exportHTML()"><span class="export-icon">🌐</span><span class="export-label">HTML</span><span class="export-desc">Page web</span></div>
+                        <div class="export-option" onclick="exportPDF()"><span class="export-icon">📕</span><span class="export-label">PDF</span><span class="export-desc">Document imprimable</span></div>
+                        <div class="export-option" onclick="exportDOCX()"><span class="export-icon">📘</span><span class="export-label">Word</span><span class="export-desc">Document éditable</span></div>
+                        <div class="export-option" onclick="exportXLSX()"><span class="export-icon">📊</span><span class="export-label">Excel</span><span class="export-desc">Tableur</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">📥 Importer un projet</div>
+                <div class="card-body">
+                    <p style="margin-bottom:0.75rem;color:var(--text-muted)">Chargez un projet JSON précédemment exporté :</p>
+                    <input type="file" id="import-file" accept=".json" class="form-input" onchange="importJSON(event)">
+                    <p class="form-hint">⚠️ L'import créera un nouveau projet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PREVIEW
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<aside class="preview">
+    <header class="preview-header">
+        <span>👁️ Aperçu en direct</span>
+    </header>
+    <div class="preview-content">
+        <div class="preview-doc" id="preview-doc"></div>
+    </div>
+    <div class="preview-actions">
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📄 JSON</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportMD()">📝 MD</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportDOCX()">📘 DOCX</button>
+        <button class="btn btn-primary btn-sm" onclick="exportPDF()">📕 PDF</button>
+    </div>
+</aside>
 </div>
 
 <!-- MODAL -->
@@ -846,267 +685,350 @@ body {
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-const DB_NAME = 'PlaidoyerDB', DB_VERSION = 1;
-let db, currentId = null, current = null, saveTimer = null;
+// ═══════════════════════════════════════════════════════════════════════════════
+// INDEXEDDB
+// ═══════════════════════════════════════════════════════════════════════════════
+const DB_NAME='PlaidoyerCitoyenDB',DB_VERSION=1;
+let db,currentId=null,current=null,saveTimer=null;
 
-async function initDB() {
-    return new Promise((res, rej) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onerror = () => rej(req.error);
-        req.onsuccess = () => { db = req.result; res(db); };
-        req.onupgradeneeded = e => {
-            if (!e.target.result.objectStoreNames.contains('projects'))
-                e.target.result.createObjectStore('projects', { keyPath: 'id' });
+async function initDB(){
+    return new Promise((res,rej)=>{
+        const req=indexedDB.open(DB_NAME,DB_VERSION);
+        req.onerror=()=>rej(req.error);
+        req.onsuccess=()=>{db=req.result;res(db)};
+        req.onupgradeneeded=e=>{
+            if(!e.target.result.objectStoreNames.contains('projects'))
+                e.target.result.createObjectStore('projects',{keyPath:'id'});
         };
     });
 }
 
-async function dbSave(p) {
-    return new Promise((res, rej) => {
-        const tx = db.transaction('projects', 'readwrite');
-        const req = tx.objectStore('projects').put(p);
-        req.onsuccess = () => res();
-        req.onerror = () => rej(req.error);
-    });
-}
+const dbSave=p=>new Promise((res,rej)=>{const req=db.transaction('projects','readwrite').objectStore('projects').put(p);req.onsuccess=()=>res();req.onerror=()=>rej(req.error)});
+const dbGet=id=>new Promise((res,rej)=>{const req=db.transaction('projects').objectStore('projects').get(id);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)});
+const dbAll=()=>new Promise((res,rej)=>{const req=db.transaction('projects').objectStore('projects').getAll();req.onsuccess=()=>res(req.result||[]);req.onerror=()=>rej(req.error)});
+const dbDel=id=>new Promise((res,rej)=>{const req=db.transaction('projects','readwrite').objectStore('projects').delete(id);req.onsuccess=()=>res();req.onerror=()=>rej(req.error)});
 
-async function dbGet(id) {
-    return new Promise((res, rej) => {
-        const req = db.transaction('projects').objectStore('projects').get(id);
-        req.onsuccess = () => res(req.result);
-        req.onerror = () => rej(req.error);
-    });
-}
-
-async function dbAll() {
-    return new Promise((res, rej) => {
-        const req = db.transaction('projects').objectStore('projects').getAll();
-        req.onsuccess = () => res(req.result || []);
-        req.onerror = () => rej(req.error);
-    });
-}
-
-async function dbDel(id) {
-    return new Promise((res, rej) => {
-        const req = db.transaction('projects', 'readwrite').objectStore('projects').delete(id);
-        req.onsuccess = () => res();
-        req.onerror = () => rej(req.error);
-    });
-}
-
-function newProject(name, desc = '') {
-    return {
-        id: Date.now().toString(), name, description: desc,
-        created: new Date().toISOString(), modified: new Date().toISOString(),
-        domino: { vision: '', obstacles: '', ressources: '' },
-        profil: { motivations: '', competences: '', temps: '', limites: '' },
-        fleur: { identites: '', privileges: '', oppressions: '' },
-        acteurs: [],
-        arbre: { probleme: '', causes: '', effets: '' },
-        swot: { forces: '', faiblesses: '', opportunites: '', menaces: '' },
-        pestel: { politique: '', economique: '', social: '', technologique: '', environnemental: '', legal: '' },
-        tdc: { impact: '', individuel_interne: '', individuel_externe: '', collectif_interne: '', collectif_externe: '' },
-        cibles: { principale: '', secondaires: '', allies: '', opposants: '' },
-        smart: [], message: { accroche: '', probleme: '', importance: '', action: '' }, journal: []
+function newProject(name,desc=''){
+    const now=new Date().toISOString();
+    return{
+        id:Date.now().toString(),
+        meta:{name,description:desc,organization:'',created:now.split('T')[0],deadline:''},
+        modified:now,
+        domino:{vision:'',obstacles:'',ressources:''},
+        profil:{motivations:'',competences:'',temps:'',limites:''},
+        fleur:{identites:'',privileges:'',oppressions:''},
+        acteurs:[],
+        arbre:{probleme:'',causes:'',effets:''},
+        pourquoi:{probleme:'',why1:'',why2:'',why3:'',why4:'',why5:''},
+        swot:{forces:'',faiblesses:'',opportunites:'',menaces:''},
+        pestel:{politique:'',economique:'',social:'',technologique:'',environnemental:'',legal:''},
+        tdc:{impact:'',individuel_interne:'',individuel_externe:'',collectif_interne:'',collectif_externe:'',hypotheses:''},
+        pouvoir:{avec:'',sans:'',contre:''},
+        cibles:{principale:'',secondaires:'',allies:'',opposants:''},
+        smart:[],
+        message:{accroche:'',probleme:'',importance:'',action:''},
+        evaluation:{indicateurs:'',methodes:'',calendrier:'',lecons:''},
+        journal:[]
     };
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
     await initDB();
+    mermaid.initialize({startOnLoad:false,theme:'dark',securityLevel:'loose'});
     await renderList();
     initNav();
     initAutoSave();
-    document.getElementById('journal-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('journal-date').value=new Date().toISOString().split('T')[0];
 });
 
-function initNav() {
-    document.querySelectorAll('.nav-item').forEach(el => {
-        el.addEventListener('click', () => {
-            if (!currentId) { toast('Sélectionnez un projet', 'warning'); return; }
+function initNav(){
+    document.querySelectorAll('.nav-item').forEach(el=>{
+        el.addEventListener('click',()=>{
+            if(!currentId&&el.dataset.page!=='empty'){toast('Sélectionnez un projet','warning');return}
             showPage(el.dataset.page);
         });
     });
 }
 
-function initAutoSave() {
-    document.querySelectorAll('[data-field]').forEach(el => {
-        el.addEventListener('input', () => {
-            if (!current) return;
-            const [a, b] = el.dataset.field.split('.');
-            current[a][b] = el.value;
+function initAutoSave(){
+    document.querySelectorAll('[data-field]').forEach(el=>{
+        el.addEventListener('input',()=>{
+            if(!current)return;
+            const[a,b]=el.dataset.field.split('.');
+            if(!current[a])current[a]={};
+            current[a][b]=el.value;
+            if(a==='meta'&&b==='name'){
+                current.meta.name=el.value;
+                renderList();
+            }
             scheduleSave();
             updatePreview();
+            updateStats();
+            if(el.dataset.field.startsWith('message.'))updateMessagePreview();
         });
     });
 }
 
-function scheduleSave() {
+function scheduleSave(){
     document.getElementById('save-dot').classList.add('saving');
-    document.getElementById('save-text').textContent = 'Sauvegarde...';
+    document.getElementById('save-text').textContent='Sauvegarde...';
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-        if (current) {
-            current.modified = new Date().toISOString();
+    saveTimer=setTimeout(async()=>{
+        if(current){
+            current.modified=new Date().toISOString();
             await dbSave(current);
             document.getElementById('save-dot').classList.remove('saving');
-            document.getElementById('save-text').textContent = 'Sauvegardé';
+            document.getElementById('save-text').textContent='Sauvegardé';
         }
-    }, 400);
+    },400);
 }
 
-async function renderList() {
-    const list = await dbAll();
-    const el = document.getElementById('project-list');
-    if (!list.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;padding:0.5rem;text-align:center">Aucun projet</p>'; return; }
-    el.innerHTML = list.map(p => `
-        <div class="project-item ${p.id === currentId ? 'active' : ''}" onclick="selectProject('${p.id}')">
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROJECTS
+// ═══════════════════════════════════════════════════════════════════════════════
+async function renderList(){
+    const list=await dbAll();
+    const el=document.getElementById('project-list');
+    if(!list.length){el.innerHTML='<p style="color:var(--text-muted);font-size:0.8rem;padding:0.5rem;text-align:center">Aucun projet</p>';return}
+    el.innerHTML=list.map(p=>`
+        <div class="project-item ${p.id===currentId?'active':''}" onclick="selectProject('${p.id}')">
             <span>📁</span>
-            <span class="project-item-name">${esc(p.name)}</span>
-            <button class="project-item-delete" onclick="event.stopPropagation();delProject('${p.id}')" title="Supprimer">✕</button>
+            <span class="project-item-name">${esc(p.meta?.name||'Sans nom')}</span>
+            <button class="project-item-delete" onclick="event.stopPropagation();delProject('${p.id}')">✕</button>
         </div>
     `).join('');
 }
 
-function createProject() { document.getElementById('modal').classList.add('show'); document.getElementById('new-project-name').focus(); }
-function closeModal() { document.getElementById('modal').classList.remove('show'); document.getElementById('new-project-name').value = ''; document.getElementById('new-project-desc').value = ''; }
+function createProject(){document.getElementById('modal').classList.add('show');document.getElementById('new-project-name').focus()}
+function closeModal(){document.getElementById('modal').classList.remove('show');document.getElementById('new-project-name').value='';document.getElementById('new-project-desc').value=''}
 
-async function confirmCreate() {
-    const name = document.getElementById('new-project-name').value.trim();
-    const desc = document.getElementById('new-project-desc').value.trim();
-    if (!name) { toast('Entrez un nom', 'error'); return; }
-    const p = newProject(name, desc);
+async function confirmCreate(){
+    const name=document.getElementById('new-project-name').value.trim();
+    const desc=document.getElementById('new-project-desc').value.trim();
+    if(!name){toast('Entrez un nom','error');return}
+    const p=newProject(name,desc);
     await dbSave(p);
     closeModal();
     await renderList();
     await selectProject(p.id);
-    toast('Projet créé', 'success');
+    toast('Projet créé','success');
 }
 
-async function selectProject(id) {
-    currentId = id;
-    current = await dbGet(id);
+async function selectProject(id){
+    currentId=id;
+    current=await dbGet(id);
     await renderList();
     populate();
     renderActors();
     renderSmart();
     renderJournal();
     updatePreview();
-    showPage('domino');
+    updateStats();
+    showPage('dashboard');
 }
 
-async function delProject(id) {
-    if (!confirm('Supprimer ce projet ?')) return;
+async function delProject(id){
+    if(!confirm('Supprimer ce projet ?'))return;
     await dbDel(id);
-    if (currentId === id) { currentId = null; current = null; showPage('empty'); document.getElementById('preview-doc').innerHTML = ''; }
+    if(currentId===id){currentId=null;current=null;showPage('empty');document.getElementById('preview-doc').innerHTML=''}
     await renderList();
-    toast('Projet supprimé', 'success');
+    toast('Projet supprimé','success');
 }
 
-function populate() {
-    document.querySelectorAll('[data-field]').forEach(el => {
-        const [a, b] = el.dataset.field.split('.');
-        el.value = current?.[a]?.[b] || '';
+function populate(){
+    document.querySelectorAll('[data-field]').forEach(el=>{
+        const[a,b]=el.dataset.field.split('.');
+        el.value=current?.[a]?.[b]||'';
     });
+    updateMessagePreview();
 }
 
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+// ═══════════════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════════
+const PAGE_TITLES={empty:'Bienvenue',dashboard:'Tableau de bord',domino:'Vision (Domino)',profil:'Profil citoyen',fleur:'Fleur du pouvoir',acteurs:'Cartographie des acteurs',arbre:'Arbre à problèmes',pourquoi:'5 Pourquoi',swot:'Analyse SWOT',pestel:'Analyse PESTEL',tdc:'Théorie du changement',pouvoir:'Avec/Sans/Contre le pouvoir',cibles:'Cibles & Alliés',smart:'Objectifs SMART',message:'Message clé',evaluation:'Suivi-évaluation',journal:'Journal de bord',export:'Import / Export'};
+
+function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.getElementById(`page-${id}`)?.classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === id));
-    const titles = { empty:'Bienvenue', domino:'Vision (Domino)', profil:'Profil citoyen', fleur:'Fleur du pouvoir', acteurs:'Acteurs', arbre:'Arbre à problèmes', swot:'SWOT', pestel:'PESTEL', tdc:'Théorie du changement', cibles:'Cibles & Alliés', smart:'Objectifs SMART', message:'Message clé', journal:'Journal de bord' };
-    document.getElementById('editor-title').textContent = titles[id] || id;
+    document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===id));
+    document.getElementById('editor-title').textContent=PAGE_TITLES[id]||id;
+    if(id==='acteurs')renderActorsMermaid();
+    if(id==='arbre')renderTreeMermaid();
 }
 
-function addActor() {
-    if (!current) return;
-    const name = document.getElementById('actor-name').value.trim();
-    const role = document.getElementById('actor-role').value.trim();
-    const position = document.getElementById('actor-position').value;
-    const power = +document.getElementById('actor-power').value;
-    if (!name) { toast('Entrez un nom', 'error'); return; }
-    current.acteurs.push({ id: Date.now(), name, role, position, power });
-    renderActors(); scheduleSave(); updatePreview();
-    document.getElementById('actor-name').value = '';
-    document.getElementById('actor-role').value = '';
-    toast('Acteur ajouté', 'success');
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════════════════════════
+function updateStats(){
+    if(!current)return;
+    let filled=0,total=0;
+    const count=(obj)=>{Object.values(obj).forEach(v=>{if(typeof v==='string'){total++;if(v.trim())filled++}})};
+    ['domino','profil','fleur','arbre','pourquoi','swot','pestel','tdc','pouvoir','cibles','message','evaluation'].forEach(k=>count(current[k]||{}));
+    
+    document.getElementById('stat-fields').textContent=filled;
+    document.getElementById('stat-actors').textContent=current.acteurs?.length||0;
+    document.getElementById('stat-smart').textContent=current.smart?.length||0;
+    document.getElementById('stat-journal').textContent=current.journal?.length||0;
+    
+    const voirFields=['domino.vision','profil.motivations','fleur.identites'];
+    const jugerFields=['arbre.probleme','swot.forces','pestel.politique','tdc.impact','acteurs'];
+    const agirFields=['pouvoir.avec','cibles.principale','message.accroche','smart'];
+    
+    const calcPct=(fields)=>{
+        let f=0;
+        fields.forEach(path=>{
+            if(path==='acteurs'){if(current.acteurs?.length)f++}
+            else if(path==='smart'){if(current.smart?.length)f++}
+            else{const[a,b]=path.split('.');if(current[a]?.[b]?.trim())f++}
+        });
+        return Math.round((f/fields.length)*100);
+    };
+    
+    const vp=calcPct(voirFields),jp=calcPct(jugerFields),ap=calcPct(agirFields);
+    document.getElementById('progress-voir').style.width=vp+'%';
+    document.getElementById('progress-voir-pct').textContent=vp+'%';
+    document.getElementById('progress-juger').style.width=jp+'%';
+    document.getElementById('progress-juger-pct').textContent=jp+'%';
+    document.getElementById('progress-agir').style.width=ap+'%';
+    document.getElementById('progress-agir-pct').textContent=ap+'%';
 }
 
-function removeActor(id) {
-    if (!current) return;
-    current.acteurs = current.acteurs.filter(a => a.id !== id);
-    renderActors(); scheduleSave(); updatePreview();
+// ═══════════════════════════════════════════════════════════════════════════════
+// ACTORS
+// ═══════════════════════════════════════════════════════════════════════════════
+function addActor(){
+    if(!current)return;
+    const name=document.getElementById('actor-name').value.trim();
+    const role=document.getElementById('actor-role').value.trim();
+    const position=document.getElementById('actor-position').value;
+    const power=+document.getElementById('actor-power').value;
+    if(!name){toast('Entrez un nom','error');return}
+    current.acteurs.push({id:Date.now(),name,role,position,power});
+    renderActors();scheduleSave();updatePreview();updateStats();
+    document.getElementById('actor-name').value='';
+    document.getElementById('actor-role').value='';
+    toast('Acteur ajouté','success');
 }
 
-function renderActors() {
-    if (!current) return;
-    ['ally', 'neutral', 'opponent'].forEach(pos => {
-        const c = document.getElementById(`actors-${pos}`);
-        const actors = current.acteurs.filter(a => a.position === pos);
-        c.innerHTML = actors.length ? actors.map(a => `
+function removeActor(id){
+    if(!current)return;
+    current.acteurs=current.acteurs.filter(a=>a.id!==id);
+    renderActors();scheduleSave();updatePreview();updateStats();
+}
+
+function renderActors(){
+    if(!current)return;
+    ['ally','neutral','opponent'].forEach(pos=>{
+        const c=document.getElementById(`actors-${pos}`);
+        const actors=current.acteurs.filter(a=>a.position===pos);
+        c.innerHTML=actors.length?actors.map(a=>`
             <div class="actor-chip">
                 <span>${esc(a.name)}</span>
                 <span class="actor-chip-power">${'★'.repeat(a.power)}</span>
                 <button class="actor-chip-delete" onclick="removeActor(${a.id})">✕</button>
             </div>
-        `).join('') : '<p style="color:var(--text-muted);font-size:0.75rem;text-align:center">—</p>';
+        `).join(''):'<p style="color:var(--text-muted);font-size:0.75rem;text-align:center">—</p>';
     });
 }
 
-function addSmart() {
-    if (!current) return;
-    const text = document.getElementById('smart-text').value.trim();
-    const indicator = document.getElementById('smart-indicator').value.trim();
-    const deadline = document.getElementById('smart-deadline').value;
-    if (!text) { toast('Décrivez l\'objectif', 'error'); return; }
-    current.smart.push({ id: Date.now(), text, indicator, deadline, done: false });
-    renderSmart(); scheduleSave(); updatePreview();
-    document.getElementById('smart-text').value = '';
-    document.getElementById('smart-indicator').value = '';
-    document.getElementById('smart-deadline').value = '';
-    toast('Objectif ajouté', 'success');
+async function renderActorsMermaid(){
+    if(!current)return;
+    const allies=current.acteurs.filter(a=>a.position==='ally');
+    const neutrals=current.acteurs.filter(a=>a.position==='neutral');
+    const opponents=current.acteurs.filter(a=>a.position==='opponent');
+    let code='graph LR\n';
+    if(allies.length){code+='    subgraph Alliés\n';allies.forEach((a,i)=>code+=`    A${i}["${a.name}"]\n`);code+='    end\n'}
+    if(neutrals.length){code+='    subgraph Neutres\n';neutrals.forEach((a,i)=>code+=`    N${i}["${a.name}"]\n`);code+='    end\n'}
+    if(opponents.length){code+='    subgraph Opposants\n';opponents.forEach((a,i)=>code+=`    O${i}["${a.name}"]\n`);code+='    end\n'}
+    if(!allies.length&&!neutrals.length&&!opponents.length)code+='    X[Ajoutez des acteurs]\n';
+    const el=document.getElementById('actors-mermaid');
+    el.textContent=code;
+    el.removeAttribute('data-processed');
+    try{await mermaid.run({nodes:[el]})}catch(e){console.error(e)}
 }
 
-function toggleSmart(id) { if (!current) return; const s = current.smart.find(x => x.id === id); if (s) s.done = !s.done; renderSmart(); scheduleSave(); updatePreview(); }
-function removeSmart(id) { if (!current) return; current.smart = current.smart.filter(x => x.id !== id); renderSmart(); scheduleSave(); updatePreview(); }
+async function renderTreeMermaid(){
+    if(!current)return;
+    const prob=current.arbre?.probleme||'Problème central';
+    const causes=(current.arbre?.causes||'').split('\n').filter(c=>c.trim());
+    const effects=(current.arbre?.effets||'').split('\n').filter(e=>e.trim());
+    let code='graph TB\n';
+    if(effects.length){code+='    subgraph Effets\n';effects.forEach((e,i)=>code+=`    E${i}["${e.trim().substring(0,30)}"]\n`);code+='    end\n'}
+    code+=`    P["🎯 ${prob.substring(0,40)}"]\n`;
+    if(causes.length){code+='    subgraph Causes\n';causes.forEach((c,i)=>code+=`    C${i}["${c.trim().substring(0,30)}"]\n`);code+='    end\n'}
+    causes.forEach((_,i)=>code+=`    C${i} --> P\n`);
+    effects.forEach((_,i)=>code+=`    P --> E${i}\n`);
+    const el=document.getElementById('tree-mermaid');
+    el.textContent=code;
+    el.removeAttribute('data-processed');
+    try{await mermaid.run({nodes:[el]})}catch(e){console.error(e)}
+}
 
-function renderSmart() {
-    if (!current) return;
-    const c = document.getElementById('smart-list');
-    if (!current.smart.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;font-size:0.85rem">Aucun objectif</p>'; return; }
-    c.innerHTML = current.smart.map(s => `
+// ═══════════════════════════════════════════════════════════════════════════════
+// SMART
+// ═══════════════════════════════════════════════════════════════════════════════
+function addSmart(){
+    if(!current)return;
+    const text=document.getElementById('smart-text').value.trim();
+    const indicator=document.getElementById('smart-indicator').value.trim();
+    const deadline=document.getElementById('smart-deadline').value;
+    if(!text){toast('Décrivez l\'objectif','error');return}
+    current.smart.push({id:Date.now(),text,indicator,deadline,done:false});
+    renderSmart();scheduleSave();updatePreview();updateStats();
+    document.getElementById('smart-text').value='';
+    document.getElementById('smart-indicator').value='';
+    document.getElementById('smart-deadline').value='';
+    toast('Objectif ajouté','success');
+}
+
+function toggleSmart(id){if(!current)return;const s=current.smart.find(x=>x.id===id);if(s)s.done=!s.done;renderSmart();scheduleSave();updatePreview()}
+function removeSmart(id){if(!current)return;current.smart=current.smart.filter(x=>x.id!==id);renderSmart();scheduleSave();updatePreview();updateStats()}
+
+function renderSmart(){
+    if(!current)return;
+    const c=document.getElementById('smart-list');
+    if(!current.smart.length){c.innerHTML='<p style="color:var(--text-muted);text-align:center">Aucun objectif SMART défini</p>';return}
+    c.innerHTML=current.smart.map(s=>`
         <div class="smart-item">
-            <input type="checkbox" class="smart-checkbox" ${s.done ? 'checked' : ''} onchange="toggleSmart(${s.id})">
+            <input type="checkbox" class="smart-checkbox" ${s.done?'checked':''} onchange="toggleSmart(${s.id})">
             <div class="smart-content">
-                <div class="smart-text ${s.done ? 'done' : ''}">${esc(s.text)}</div>
-                <div class="smart-meta">${s.indicator ? '📊 ' + esc(s.indicator) : ''} ${s.deadline ? '📅 ' + s.deadline : ''}</div>
+                <div class="smart-text ${s.done?'done':''}">${esc(s.text)}</div>
+                <div class="smart-meta">${s.indicator?'📊 '+esc(s.indicator):''} ${s.deadline?'📅 '+s.deadline:''}</div>
             </div>
             <button class="btn btn-sm btn-secondary" onclick="removeSmart(${s.id})">✕</button>
         </div>
     `).join('');
 }
 
-function addJournal() {
-    if (!current) return;
-    const date = document.getElementById('journal-date').value;
-    const type = document.getElementById('journal-type').value;
-    const content = document.getElementById('journal-content').value.trim();
-    if (!content) { toast('Décrivez l\'entrée', 'error'); return; }
-    current.journal.unshift({ id: Date.now(), date, type, content });
-    renderJournal(); scheduleSave(); updatePreview();
-    document.getElementById('journal-content').value = '';
-    toast('Entrée ajoutée', 'success');
+// ═══════════════════════════════════════════════════════════════════════════════
+// JOURNAL
+// ═══════════════════════════════════════════════════════════════════════════════
+function addJournal(){
+    if(!current)return;
+    const date=document.getElementById('journal-date').value;
+    const type=document.getElementById('journal-type').value;
+    const content=document.getElementById('journal-content').value.trim();
+    if(!content){toast('Décrivez l\'entrée','error');return}
+    current.journal.unshift({id:Date.now(),date,type,content});
+    renderJournal();scheduleSave();updatePreview();updateStats();
+    document.getElementById('journal-content').value='';
+    toast('Entrée ajoutée','success');
 }
 
-function removeJournal(id) { if (!current) return; current.journal = current.journal.filter(x => x.id !== id); renderJournal(); scheduleSave(); updatePreview(); }
+function removeJournal(id){if(!current)return;current.journal=current.journal.filter(x=>x.id!==id);renderJournal();scheduleSave();updatePreview();updateStats()}
 
-function renderJournal() {
-    if (!current) return;
-    const c = document.getElementById('journal-list');
-    const icons = { action:'🎯', rencontre:'🤝', victoire:'🏆', difficulte:'⚠️', note:'📝' };
-    if (!current.journal.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;font-size:0.85rem">Aucune entrée</p>'; return; }
-    c.innerHTML = current.journal.map(j => `
+function renderJournal(){
+    if(!current)return;
+    const c=document.getElementById('journal-list');
+    const icons={action:'🎯',rencontre:'🤝',victoire:'🏆',difficulte:'⚠️',note:'📝'};
+    if(!current.journal.length){c.innerHTML='<p style="color:var(--text-muted);text-align:center">Aucune entrée</p>';return}
+    c.innerHTML=current.journal.map(j=>`
         <div class="journal-entry">
-            <span class="journal-icon">${icons[j.type] || '📝'}</span>
+            <span class="journal-icon">${icons[j.type]||'📝'}</span>
             <div class="journal-content">
                 <div class="journal-text">${esc(j.content)}</div>
                 <div class="journal-date">${j.date}</div>
@@ -1116,77 +1038,237 @@ function renderJournal() {
     `).join('');
 }
 
-function updatePreview() {
-    if (!current) { document.getElementById('preview-doc').innerHTML = '<p style="color:var(--text-muted);text-align:center">Aucun projet</p>'; return; }
-    const p = current;
-    const f = v => v ? `<p class="filled">${esc(v)}</p>` : '<p class="empty">Non renseigné</p>';
-    let h = `<h1>${esc(p.name)}</h1><div class="doc-meta">${p.description ? esc(p.description) + ' — ' : ''}Modifié le ${new Date(p.modified).toLocaleDateString('fr-FR')}</div>`;
-    h += `<h2>👁️ VOIR</h2><h3>🎯 Vision</h3>${f(p.domino.vision)}<h3>🚧 Obstacles</h3>${f(p.domino.obstacles)}<h3>💪 Ressources</h3>${f(p.domino.ressources)}`;
-    h += `<h2>⚖️ JUGER</h2><h3>🌳 Problème</h3>${f(p.arbre.probleme)}`;
-    if (p.acteurs.length) { h += '<h3>👥 Acteurs</h3><p>'; p.acteurs.forEach(a => h += `<span class="actor-badge ${a.position}">${esc(a.name)}</span>`); h += '</p>'; }
-    h += `<h3>📊 SWOT</h3><p><strong>Forces:</strong> ${p.swot.forces || '—'}</p><p><strong>Faiblesses:</strong> ${p.swot.faiblesses || '—'}</p><p><strong>Opportunités:</strong> ${p.swot.opportunites || '—'}</p><p><strong>Menaces:</strong> ${p.swot.menaces || '—'}</p>`;
-    h += `<h2>✊ AGIR</h2><h3>💬 Message</h3>`;
-    if (p.message.accroche) h += `<p class="filled"><strong>${esc(p.message.accroche)}</strong></p>`;
-    if (p.message.probleme) h += `<p class="filled">${esc(p.message.probleme)}</p>`;
-    if (p.message.importance) h += `<p class="filled"><em>${esc(p.message.importance)}</em></p>`;
-    if (p.message.action) h += `<p class="filled"><strong>→ ${esc(p.message.action)}</strong></p>`;
-    if (!p.message.accroche && !p.message.probleme && !p.message.action) h += '<p class="empty">Non renseigné</p>';
-    if (p.smart.length) { h += '<h3>📋 Objectifs</h3><ul>'; p.smart.forEach(s => h += `<li style="${s.done ? 'text-decoration:line-through;opacity:0.6' : ''}">${esc(s.text)}</li>`); h += '</ul>'; }
-    document.getElementById('preview-doc').innerHTML = h;
-}
-
-function exportJSON() {
-    if (!current) return;
-    dl(JSON.stringify(current, null, 2), `${slug(current.name)}.json`, 'application/json');
-    toast('Export JSON OK', 'success');
-}
-
-function exportMD() {
-    if (!current) return;
-    const p = current;
-    let md = `# ${p.name}\n\n*${p.description || ''} — ${new Date().toLocaleDateString('fr-FR')}*\n\n---\n\n`;
-    md += `## 👁️ VOIR\n\n### Vision\n${p.domino.vision || '*—*'}\n\n### Obstacles\n${p.domino.obstacles || '*—*'}\n\n### Ressources\n${p.domino.ressources || '*—*'}\n\n`;
-    md += `## ⚖️ JUGER\n\n### Problème\n${p.arbre.probleme || '*—*'}\n\n`;
-    if (p.acteurs.length) { md += '### Acteurs\n'; p.acteurs.forEach(a => md += `- ${a.position === 'ally' ? '🟢' : a.position === 'opponent' ? '🔴' : '🟡'} **${a.name}** (${a.role})\n`); md += '\n'; }
-    md += `### SWOT\n| Forces | Faiblesses |\n|---|---|\n| ${p.swot.forces || '—'} | ${p.swot.faiblesses || '—'} |\n\n| Opportunités | Menaces |\n|---|---|\n| ${p.swot.opportunites || '—'} | ${p.swot.menaces || '—'} |\n\n`;
-    md += `## ✊ AGIR\n\n### Message\n`;
-    if (p.message.accroche) md += `**${p.message.accroche}**\n\n`;
-    if (p.message.action) md += `→ **${p.message.action}**\n\n`;
-    if (p.smart.length) { md += '### Objectifs\n'; p.smart.forEach((s, i) => md += `${i + 1}. ${s.text}\n`); }
-    dl(md, `${slug(p.name)}.md`, 'text/markdown');
-    toast('Export MD OK', 'success');
-}
-
-async function exportPDF() {
-    if (!current) return;
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const p = current;
-    doc.setFontSize(18); doc.text(p.name, 20, 20);
-    doc.setFontSize(10); doc.setTextColor(100); doc.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`, 20, 28);
-    let y = 40;
-    doc.setFontSize(12); doc.setTextColor(0); doc.text('VISION', 20, y); y += 8;
-    doc.setFontSize(10);
-    const vis = doc.splitTextToSize(p.domino.vision || '—', 170);
-    doc.text(vis, 20, y); y += vis.length * 5 + 10;
-    doc.setFontSize(12); doc.text('PROBLÈME', 20, y); y += 8;
-    doc.setFontSize(10);
-    const prob = doc.splitTextToSize(p.arbre.probleme || '—', 170);
-    doc.text(prob, 20, y); y += prob.length * 5 + 10;
-    if (p.message.accroche || p.message.action) {
-        doc.setFontSize(12); doc.text('MESSAGE', 20, y); y += 8;
-        doc.setFontSize(10);
-        if (p.message.accroche) { doc.text(p.message.accroche, 20, y); y += 6; }
-        if (p.message.action) { doc.text('→ ' + p.message.action, 20, y); }
+// ═══════════════════════════════════════════════════════════════════════════════
+// MESSAGE PREVIEW
+// ═══════════════════════════════════════════════════════════════════════════════
+function updateMessagePreview(){
+    if(!current)return;
+    const m=current.message||{};
+    const el=document.getElementById('message-preview');
+    if(!m.accroche&&!m.probleme&&!m.importance&&!m.action){
+        el.innerHTML='<span style="color:var(--text-muted);font-style:italic">Remplissez les champs ci-dessus pour voir l\'aperçu...</span>';
+        return;
     }
-    doc.save(`${slug(p.name)}.pdf`);
-    toast('Export PDF OK', 'success');
+    let html='';
+    if(m.accroche)html+=`<strong>${esc(m.accroche)}</strong><br><br>`;
+    if(m.probleme)html+=`${esc(m.probleme)}<br><br>`;
+    if(m.importance)html+=`<em>${esc(m.importance)}</em><br><br>`;
+    if(m.action)html+=`<strong>→ ${esc(m.action)}</strong>`;
+    el.innerHTML=html||'<span style="color:var(--text-muted)">Aucun contenu</span>';
 }
 
-function esc(s) { return s ? s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') : ''; }
-function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'projet'; }
-function dl(content, name, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type })); a.download = name; a.click(); }
-function toast(msg, type = 'info') { const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `<span>${{ success: '✓', error: '✕', warning: '⚠', info: 'ℹ' }[type] || 'ℹ'}</span> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2500); }
+// ═══════════════════════════════════════════════════════════════════════════════
+// PREVIEW
+// ═══════════════════════════════════════════════════════════════════════════════
+function updatePreview(){
+    if(!current){document.getElementById('preview-doc').innerHTML='<p style="color:var(--text-muted);text-align:center">Aucun projet</p>';return}
+    const p=current;
+    const f=v=>v?`<p class="filled">${esc(v)}</p>`:'<p class="empty">Non renseigné</p>';
+    let h=`<h1>${esc(p.meta?.name||'Sans nom')}</h1>`;
+    h+=`<div class="doc-meta">${p.meta?.description?esc(p.meta.description)+' — ':''}Modifié le ${new Date(p.modified).toLocaleDateString('fr-FR')}</div>`;
+    
+    h+=`<h2 class="voir">👁️ VOIR</h2>`;
+    h+=`<h3>🎯 Vision</h3>${f(p.domino?.vision)}`;
+    h+=`<h3>🚧 Obstacles</h3>${f(p.domino?.obstacles)}`;
+    h+=`<h3>💪 Ressources</h3>${f(p.domino?.ressources)}`;
+    
+    h+=`<h2 class="juger">⚖️ JUGER</h2>`;
+    h+=`<h3>🌳 Problème central</h3>${f(p.arbre?.probleme)}`;
+    
+    if(p.acteurs?.length){
+        h+='<h3>👥 Acteurs</h3><p>';
+        p.acteurs.forEach(a=>h+=`<span class="actor-badge ${a.position}">${esc(a.name)}</span>`);
+        h+='</p>';
+    }
+    
+    h+=`<h3>📐 SWOT</h3>`;
+    h+=`<table><tr><th>Forces</th><th>Faiblesses</th></tr><tr><td>${p.swot?.forces||'—'}</td><td>${p.swot?.faiblesses||'—'}</td></tr></table>`;
+    h+=`<table><tr><th>Opportunités</th><th>Menaces</th></tr><tr><td>${p.swot?.opportunites||'—'}</td><td>${p.swot?.menaces||'—'}</td></tr></table>`;
+    
+    h+=`<h2 class="agir">✊ AGIR</h2>`;
+    h+=`<h3>⚡ Positionnement</h3>`;
+    h+=`<p><strong>Avec:</strong> ${p.pouvoir?.avec||'—'}</p>`;
+    h+=`<p><strong>Sans:</strong> ${p.pouvoir?.sans||'—'}</p>`;
+    h+=`<p><strong>Contre:</strong> ${p.pouvoir?.contre||'—'}</p>`;
+    
+    h+=`<h3>💬 Message clé</h3>`;
+    if(p.message?.accroche)h+=`<p class="filled"><strong>${esc(p.message.accroche)}</strong></p>`;
+    if(p.message?.probleme)h+=`<p class="filled">${esc(p.message.probleme)}</p>`;
+    if(p.message?.importance)h+=`<p class="filled"><em>${esc(p.message.importance)}</em></p>`;
+    if(p.message?.action)h+=`<p class="filled"><strong>→ ${esc(p.message.action)}</strong></p>`;
+    if(!p.message?.accroche&&!p.message?.probleme&&!p.message?.action)h+='<p class="empty">Non renseigné</p>';
+    
+    if(p.smart?.length){
+        h+='<h3>📋 Objectifs SMART</h3><ul>';
+        p.smart.forEach(s=>h+=`<li style="${s.done?'text-decoration:line-through;opacity:0.6':''}">${esc(s.text)}${s.deadline?' ('+s.deadline+')':''}</li>`);
+        h+='</ul>';
+    }
+    
+    document.getElementById('preview-doc').innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORTS
+// ═══════════════════════════════════════════════════════════════════════════════
+function exportJSON(){
+    if(!current)return;
+    dl(JSON.stringify(current,null,2),`${slug(current.meta?.name)}.json`,'application/json');
+    toast('Export JSON OK','success');
+}
+
+function exportMD(){
+    if(!current)return;
+    const p=current;
+    let md=`# ${p.meta?.name||'Projet'}\n\n*${p.meta?.description||''} — Exporté le ${new Date().toLocaleDateString('fr-FR')}*\n\n---\n\n`;
+    md+=`## 👁️ VOIR\n\n### Vision\n${p.domino?.vision||'*—*'}\n\n### Obstacles\n${p.domino?.obstacles||'*—*'}\n\n### Ressources\n${p.domino?.ressources||'*—*'}\n\n`;
+    md+=`## ⚖️ JUGER\n\n### Problème central\n${p.arbre?.probleme||'*—*'}\n\n`;
+    if(p.acteurs?.length){md+='### Acteurs\n';p.acteurs.forEach(a=>md+=`- ${a.position==='ally'?'🟢':a.position==='opponent'?'🔴':'🟡'} **${a.name}** (${a.role}) — ${'★'.repeat(a.power)}\n`);md+='\n'}
+    md+=`### SWOT\n| Forces | Faiblesses |\n|---|---|\n| ${p.swot?.forces||'—'} | ${p.swot?.faiblesses||'—'} |\n\n| Opportunités | Menaces |\n|---|---|\n| ${p.swot?.opportunites||'—'} | ${p.swot?.menaces||'—'} |\n\n`;
+    md+=`## ✊ AGIR\n\n### Positionnement\n- **Avec:** ${p.pouvoir?.avec||'—'}\n- **Sans:** ${p.pouvoir?.sans||'—'}\n- **Contre:** ${p.pouvoir?.contre||'—'}\n\n`;
+    md+=`### Message clé\n`;
+    if(p.message?.accroche)md+=`**${p.message.accroche}**\n\n`;
+    if(p.message?.probleme)md+=`${p.message.probleme}\n\n`;
+    if(p.message?.action)md+=`→ **${p.message.action}**\n\n`;
+    if(p.smart?.length){md+='### Objectifs SMART\n';p.smart.forEach((s,i)=>md+=`${i+1}. ${s.done?'~~':''}${s.text}${s.done?'~~':''}${s.deadline?' ('+s.deadline+')':''}\n`)}
+    dl(md,`${slug(p.meta?.name)}.md`,'text/markdown');
+    toast('Export Markdown OK','success');
+}
+
+function exportHTML(){
+    if(!current)return;
+    const p=current;
+    let html=`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${esc(p.meta?.name)}</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:0 auto;padding:2rem;background:#f8fafc;color:#1e293b}h1{color:#1e40af;border-bottom:3px solid #f59e0b;padding-bottom:0.5rem}h2{color:#0369a1;margin-top:2rem}h3{color:#475569;margin-top:1.5rem}.badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:100px;font-size:0.8rem;margin:0.1rem}.ally{background:#dcfce7;color:#166534}.neutral{background:#f3f4f6;color:#4b5563}.opponent{background:#fee2e2;color:#991b1b}</style></head><body>`;
+    html+=`<h1>⚖️ ${esc(p.meta?.name)}</h1><p><em>${esc(p.meta?.description||'')} — Exporté le ${new Date().toLocaleDateString('fr-FR')}</em></p>`;
+    html+=`<h2>👁️ VOIR</h2><h3>Vision</h3><p>${esc(p.domino?.vision)||'—'}</p>`;
+    html+=`<h2>⚖️ JUGER</h2><h3>Problème</h3><p>${esc(p.arbre?.probleme)||'—'}</p>`;
+    if(p.acteurs?.length){html+='<h3>Acteurs</h3><p>';p.acteurs.forEach(a=>html+=`<span class="badge ${a.position}">${esc(a.name)}</span> `);html+='</p>'}
+    html+=`<h2>✊ AGIR</h2><h3>Message</h3>`;
+    if(p.message?.accroche)html+=`<p><strong>${esc(p.message.accroche)}</strong></p>`;
+    if(p.message?.action)html+=`<p><strong>→ ${esc(p.message.action)}</strong></p>`;
+    html+=`</body></html>`;
+    dl(html,`${slug(p.meta?.name)}.html`,'text/html');
+    toast('Export HTML OK','success');
+}
+
+async function exportPDF(){
+    if(!current)return;
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF();
+    const p=current;
+    doc.setFontSize(18);doc.text(p.meta?.name||'Projet',20,20);
+    doc.setFontSize(10);doc.setTextColor(100);doc.text(`Exporté le ${new Date().toLocaleDateString('fr-FR')}`,20,28);
+    let y=40;
+    const addSection=(title,content)=>{
+        if(y>250){doc.addPage();y=20}
+        doc.setFontSize(12);doc.setTextColor(0);doc.text(title,20,y);y+=8;
+        doc.setFontSize(10);doc.setTextColor(60);
+        const lines=doc.splitTextToSize(content||'Non renseigné',170);
+        doc.text(lines,20,y);y+=lines.length*5+10;
+    };
+    addSection('VISION',p.domino?.vision);
+    addSection('PROBLÈME CENTRAL',p.arbre?.probleme);
+    addSection('FORCES',p.swot?.forces);
+    addSection('FAIBLESSES',p.swot?.faiblesses);
+    if(p.message?.accroche||p.message?.action){
+        addSection('MESSAGE CLÉ',`${p.message?.accroche||''}\n\n→ ${p.message?.action||''}`);
+    }
+    doc.save(`${slug(p.meta?.name)}.pdf`);
+    toast('Export PDF OK','success');
+}
+
+async function exportDOCX(){
+    if(!current)return;
+    const{Document,Paragraph,TextRun,HeadingLevel,Packer}=docx;
+    const p=current;
+    const doc=new Document({
+        sections:[{
+            children:[
+                new Paragraph({text:p.meta?.name||'Projet',heading:HeadingLevel.TITLE}),
+                new Paragraph({children:[new TextRun({text:`Exporté le ${new Date().toLocaleDateString('fr-FR')}`,italics:true,color:'666666'})]}),
+                new Paragraph({text:''}),
+                new Paragraph({text:'VOIR — Vision',heading:HeadingLevel.HEADING_1}),
+                new Paragraph({text:p.domino?.vision||'Non renseigné'}),
+                new Paragraph({text:''}),
+                new Paragraph({text:'JUGER — Problème central',heading:HeadingLevel.HEADING_1}),
+                new Paragraph({text:p.arbre?.probleme||'Non renseigné'}),
+                new Paragraph({text:''}),
+                new Paragraph({text:'Acteurs',heading:HeadingLevel.HEADING_2}),
+                ...p.acteurs.map(a=>new Paragraph({children:[new TextRun({text:`• ${a.name}`,bold:true}),new TextRun({text:` (${a.role}) — ${a.position==='ally'?'Allié':a.position==='opponent'?'Opposant':'Neutre'}`})]})),
+                new Paragraph({text:''}),
+                new Paragraph({text:'AGIR — Message clé',heading:HeadingLevel.HEADING_1}),
+                new Paragraph({children:[new TextRun({text:p.message?.accroche||'',bold:true})]}),
+                new Paragraph({text:p.message?.probleme||''}),
+                new Paragraph({children:[new TextRun({text:`→ ${p.message?.action||''}`,bold:true})]})
+            ]
+        }]
+    });
+    const blob=await Packer.toBlob(doc);
+    dlBlob(blob,`${slug(p.meta?.name)}.docx`);
+    toast('Export Word OK','success');
+}
+
+function exportXLSX(){
+    if(!current)return;
+    const p=current;
+    const wb=XLSX.utils.book_new();
+    
+    const summary=[
+        ['Projet de Plaidoyer Citoyen'],[''],
+        ['Nom',p.meta?.name||''],['Organisation',p.meta?.organization||''],['Description',p.meta?.description||''],
+        [''],['VOIR'],['Vision',p.domino?.vision||''],['Obstacles',p.domino?.obstacles||''],['Ressources',p.domino?.ressources||''],
+        [''],['JUGER'],['Problème',p.arbre?.probleme||''],['Forces',p.swot?.forces||''],['Faiblesses',p.swot?.faiblesses||''],
+        ['Opportunités',p.swot?.opportunites||''],['Menaces',p.swot?.menaces||''],
+        [''],['AGIR'],['Avec le pouvoir',p.pouvoir?.avec||''],['Sans le pouvoir',p.pouvoir?.sans||''],['Contre le pouvoir',p.pouvoir?.contre||''],
+        ['Message accroche',p.message?.accroche||''],['Appel action',p.message?.action||'']
+    ];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),'Résumé');
+    
+    if(p.acteurs?.length){
+        const actors=[['Nom','Rôle','Position','Pouvoir'],...p.acteurs.map(a=>[a.name,a.role,a.position,a.power])];
+        XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(actors),'Acteurs');
+    }
+    
+    if(p.smart?.length){
+        const smart=[['Objectif','Indicateur','Échéance','Complété'],...p.smart.map(s=>[s.text,s.indicator,s.deadline,s.done?'Oui':'Non'])];
+        XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(smart),'Objectifs SMART');
+    }
+    
+    if(p.journal?.length){
+        const journal=[['Date','Type','Contenu'],...p.journal.map(j=>[j.date,j.type,j.content])];
+        XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(journal),'Journal');
+    }
+    
+    XLSX.writeFile(wb,`${slug(p.meta?.name)}.xlsx`);
+    toast('Export Excel OK','success');
+}
+
+function importJSON(e){
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=async(ev)=>{
+        try{
+            const imported=JSON.parse(ev.target.result);
+            imported.id=Date.now().toString();
+            imported.modified=new Date().toISOString();
+            await dbSave(imported);
+            await renderList();
+            await selectProject(imported.id);
+            toast('Projet importé','success');
+        }catch(err){toast('Fichier JSON invalide','error')}
+    };
+    reader.readAsText(file);
+    e.target.value='';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════════════════════
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'):''}
+function slug(s){return(s||'projet').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function dl(content,name,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click()}
+function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click()}
+function toast(msg,type='info'){const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`<span>${{success:'✓',error:'✕',warning:'⚠',info:'ℹ'}[type]||'ℹ'}</span> ${msg}`;document.getElementById('toast-container').appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},2500)}
 </script>
 </body>
 </html>
