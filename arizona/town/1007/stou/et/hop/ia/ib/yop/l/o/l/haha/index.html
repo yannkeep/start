@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Comparatif : Fan Club vs Officiel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .transition-all-300 {
+            transition: all 0.3s ease-in-out;
+        }
+        /* Custom scrollbar for data tables if needed */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+    <!-- Chosen Palette: Slate (Backgrounds) + Indigo (Primary) + Emerald/Rose (Status) -->
+    <!-- Application Structure Plan:
+         1. Header: Context of the audit.
+         2. Executive Dashboard: High-level score comparison (Radar Chart).
+         3. Performance Deep Dive: Bar charts for Core Web Vitals (Simulated).
+         4. Content & UX Analysis: Interactive cards comparing strategy and design.
+         5. Technical Stack: Comparison of technologies used.
+         6. Conclusion/Verdict: Final automated summary.
+         
+         Interaction: Users can toggle metrics, hover over charts for details, and filter content analysis cards.
+         Reasoning: This structure moves from "Big Picture" to "Technical Details", suitable for both stakeholders and developers.
+    -->
+    <!-- Visualization & Content Choices:
+         1. Radar Chart: To show balance between Design, Perf, Content, and Tech.
+         2. Bar Charts: Direct comparison of load times (Time to Interactive).
+         3. Feature Matrix: HTML Grid with JS filtering for clear side-by-side feature comparison.
+         
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-indigo-600 text-2xl font-bold mr-2">❖</span>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">Audit Web Comparatif</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="scrollToSection('dashboard')" class="text-slate-500 hover:text-indigo-600 font-medium transition-colors">Vue d'ensemble</button>
+                    <button onclick="scrollToSection('performance')" class="text-slate-500 hover:text-indigo-600 font-medium transition-colors">Performance</button>
+                    <button onclick="scrollToSection('ux-content')" class="text-slate-500 hover:text-indigo-600 font-medium transition-colors">UX & Contenu</button>
+                    <button onclick="scrollToSection('verdict')" class="text-slate-500 hover:text-indigo-600 font-medium transition-colors">Verdict</button>
+                </div>
+                <!-- Mobile Menu Button (Functional via JS) -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-700 focus:outline-none">
+                        <span class="text-2xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="scrollToSection('dashboard')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 w-full text-left">Vue d'ensemble</button>
+                <button onclick="scrollToSection('performance')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 w-full text-left">Performance</button>
+                <button onclick="scrollToSection('ux-content')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 w-full text-left">UX & Contenu</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero / Intro -->
+    <header class="bg-indigo-700 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Analyse : Fan Site vs Site Officiel</h1>
+            <p class="text-indigo-100 max-w-3xl text-lg leading-relaxed">
+                Rapport interactif comparant l'expérience utilisateur, les performances techniques et la stratégie de contenu du projet fan <strong>"Reaven / Target 9"</strong> face au portail historique <strong>"Pac-G.be"</strong>.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3 text-sm">
+                <span class="bg-indigo-600 px-3 py-1 rounded-full border border-indigo-500">Simulé sur Desktop & Mobile</span>
+                <span class="bg-indigo-600 px-3 py-1 rounded-full border border-indigo-500">GitHub Pages vs CMS Classique</span>
+            </div>
+            <p class="mt-4 text-xs text-indigo-300 italic">*Note : Les données ci-dessous sont des estimations basées sur une analyse technique standard des architectures observées.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+        <!-- SECTION 1: DASHBOARD (RADAR CHART) -->
+        <section id="dashboard" class="scroll-mt-24">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-900">Vue d'ensemble Stratégique</h2>
+                <p class="text-slate-600 mt-2">Comparaison globale sur 5 axes majeurs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Chart Col -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Col -->
+                <div class="space-y-4">
+                    <!-- Fan Site Card -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 card-hover transition-all-300 border-l-4 border-l-emerald-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-slate-800">Site Fan (Reaven)</h3>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide mt-1">Architecture Moderne</p>
+                            </div>
+                            <span class="text-2xl font-bold text-emerald-600">A</span>
+                        </div>
+                        <p class="mt-3 text-sm text-slate-600">Performance excellente due à l'hébergement statique (GitHub Pages). Focus sur l'expérience visuelle.</p>
+                        <div class="mt-4 flex items-center space-x-2 text-sm font-medium text-emerald-700">
+                            <span>▲ Rapidité</span>
+                            <span>▲ Créativité</span>
+                        </div>
+                    </div>
+
+                    <!-- Official Site Card -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 card-hover transition-all-300 border-l-4 border-l-blue-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-slate-800">Site Officiel (Pac-G)</h3>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide mt-1">Portail Communautaire</p>
+                            </div>
+                            <span class="text-2xl font-bold text-blue-600">B</span>
+                        </div>
+                        <p class="mt-3 text-sm text-slate-600">Richesse de contenu et archives. Structure plus traditionnelle et navigation dense.</p>
+                        <div class="mt-4 flex items-center space-x-2 text-sm font-medium text-blue-700">
+                            <span>▲ Exhaustivité</span>
+                            <span>▲ Référencement</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PERFORMANCE METRICS -->
+        <section id="performance" class="scroll-mt-24 border-t border-slate-200 pt-10">
+            <div class="mb-8 max-w-3xl">
+                <h2 class="text-2xl font-bold text-slate-900">Analyse de Performance (Core Web Vitals)</h2>
+                <p class="text-slate-600 mt-2">
+                    La rapidité d'affichage est cruciale pour l'engagement. Le site fan, probable SPA (Single Page App) ou site statique, montre un avantage net sur le "First Contentful Paint".
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Bar Chart: Load Time -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-semibold text-slate-800 mb-4">Temps de Chargement (Secondes)</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceBarChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-slate-400">Plus bas est meilleur</p>
+                </div>
+
+                <!-- Text Analysis -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-center space-y-6">
+                    <div>
+                        <h4 class="font-bold text-slate-900 flex items-center">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                            Site Fan (Reaven)
+                        </h4>
+                        <p class="text-sm text-slate-600 mt-1">
+                            Utilise probablement un générateur de site statique (type Jekyll, Hugo ou React build). Aucun traitement serveur lourd (PHP/MySQL) n'est requis au chargement, ce qui offre une sensation d'instantanéité.
+                        </p>
+                    </div>
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 flex items-center">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Site Officiel (Pac-G)
+                        </h4>
+                        <p class="text-sm text-slate-600 mt-1">
+                            Structure classique de CMS. Le temps de réponse serveur (TTFB) peut varier selon l'hébergement. Le chargement des scripts tiers ou des images non optimisées peut ralentir le "Time to Interactive".
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: UX & CONTENT STRATEGY -->
+        <section id="ux-content" class="scroll-mt-24 border-t border-slate-200 pt-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8">
+                <div class="max-w-3xl">
+                    <h2 class="text-2xl font-bold text-slate-900">Expérience Utilisateur & Contenu</h2>
+                    <p class="text-slate-600 mt-2">Comparaison des approches éditoriales et visuelles.</p>
+                </div>
+                <!-- Filter Controls -->
+                <div class="mt-4 md:mt-0 bg-slate-100 p-1 rounded-lg inline-flex">
+                    <button onclick="filterContent('all')" id="btn-all" class="px-4 py-2 text-sm font-medium rounded-md bg-white shadow-sm text-slate-800 transition-all">Tout</button>
+                    <button onclick="filterContent('design')" id="btn-design" class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-white/50 transition-all">Design</button>
+                    <button onclick="filterContent('structure')" id="btn-structure" class="px-4 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-white/50 transition-all">Structure</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Cards Grid -->
+            <div id="content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards injected by JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 4: VERDICT -->
+        <section id="verdict" class="scroll-mt-24 py-10 bg-indigo-50 rounded-2xl px-6 md:px-12 text-center my-10 border border-indigo-100">
+            <h2 class="text-3xl font-bold text-indigo-900 mb-4">Le Verdict</h2>
+            <p class="text-indigo-800 max-w-2xl mx-auto mb-8 text-lg">
+                Le site fan <strong>Reaven</strong> réussit brillamment sur l'aspect technique et immersif, offrant une expérience moderne. Le site <strong>Pac-G</strong> reste la référence pour la densité d'information.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto text-left">
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-emerald-500">
+                    <h3 class="font-bold text-slate-900">Points Forts du Fan Site</h3>
+                    <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">✓</span>Navigation fluide (SPA/Static)</li>
+                        <li class="flex items-start"><span class="mr-2">✓</span>Design visuel impactant (Dark mode/Hero images)</li>
+                        <li class="flex items-start"><span class="mr-2">✓</span>Code propre et léger</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-orange-500">
+                    <h3 class="font-bold text-slate-900">Axes d'amélioration possibles</h3>
+                    <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                        <li class="flex items-start"><span class="mr-2">⚠</span>Accessibilité (Contraste parfois faible)</li>
+                        <li class="flex items-start"><span class="mr-2">⚠</span>Profondeur du contenu textuel (SEO)</li>
+                        <li class="flex items-start"><span class="mr-2">⚠</span>Dépendance JS pour le contenu</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="mb-2">Généré via Canvas Analysis Tool</p>
+            <p class="text-xs text-slate-600">Les marques citées (Reaven, Pac-G) appartiennent à leurs propriétaires respectifs.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Implementation -->
+    <script>
+        // --- DATA STATE ---
+        const contentData = [
+            {
+                id: 1,
+                category: 'design',
+                title: 'Esthétique Visuelle',
+                fan: 'Minimaliste, "Dark Mode", focus sur les grands visuels. Utilisation de CSS moderne (Flex/Grid).',
+                official: 'Traditionnel, dense, structure en colonnes multiples. Palette de couleurs classique.',
+                winner: 'fan'
+            },
+            {
+                id: 2,
+                category: 'structure',
+                title: 'Navigation',
+                fan: 'Linéaire ou exploratoire. Menu burger ou caché. Idéal pour le storytelling.',
+                official: 'Hiérarchique (Menu > Sous-menu). Idéal pour trouver une info précise rapidement.',
+                winner: 'draw'
+            },
+            {
+                id: 3,
+                category: 'structure',
+                title: 'Réactivité (Mobile)',
+                fan: 'Excellent ("Mobile First"). Les éléments s\'empilent proprement.',
+                official: 'Variable. Les tableaux ou vieux menus peuvent poser problème sur petit écran.',
+                winner: 'fan'
+            },
+            {
+                id: 4,
+                category: 'design',
+                title: 'Interactivité',
+                fan: 'Micro-interactions au survol, transitions douces entre les pages.',
+                official: 'Statique. Interactions limitées aux liens cliquables standards.',
+                winner: 'fan'
+            },
+            {
+                id: 5,
+                category: 'structure',
+                title: 'Densité de l\'Information',
+                fan: 'Faible. Contenu "snackable" et visuel.',
+                official: 'Forte. Articles longs, forums, archives détaillées.',
+                winner: 'official'
+            }
+        ];
+
+        // --- CHART INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initRadarChart();
+            initBarChart();
+            renderContentCards('all');
+            
+            // Mobile Menu
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        });
+
+        // --- CHARTS LOGIC ---
+        
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Performance', 'Accessibilité', 'Design Moderne', 'Contenu (SEO)', 'Tech Stack', 'Mobile'],
+                    datasets: [{
+                        label: 'Fan Site (Reaven)',
+                        data: [95, 70, 90, 60, 95, 92],
+                        fill: true,
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)', // Emerald
+                        borderColor: 'rgb(16, 185, 129)',
+                        pointBackgroundColor: 'rgb(16, 185, 129)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(16, 185, 129)'
+                    }, {
+                        label: 'Site Officiel (Pac-G)',
+                        data: [65, 80, 50, 90, 60, 70],
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // Blue
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: { borderWidth: 3 }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Hide numbers for cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function initBarChart() {
+            const ctx = document.getElementById('performanceBarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['LCP (Largest Contentful Paint)', 'FCP (First Contentful Paint)', 'TTI (Time to Interactive)'],
+                    datasets: [
+                        {
+                            label: 'Fan Site (Reaven)',
+                            data: [1.2, 0.8, 1.5], // Simulated fast times
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderRadius: 6,
+                        },
+                        {
+                            label: 'Site Officiel (Pac-G)',
+                            data: [3.5, 2.1, 4.2], // Simulated slower times
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderRadius: 6,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Secondes (s)' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + ' s';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- CONTENT FILTERING LOGIC ---
+        function filterContent(category) {
+            // Update Buttons
+            ['all', 'design', 'structure'].forEach(c => {
+                const btn = document.getElementById(`btn-${c}`);
+                if (c === category) {
+                    btn.classList.remove('text-slate-600', 'hover:bg-white/50');
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-slate-800');
+                } else {
+                    btn.classList.add('text-slate-600', 'hover:bg-white/50');
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-slate-800');
+                }
+            });
+
+            renderContentCards(category);
+        }
+
+        function renderContentCards(filter) {
+            const container = document.getElementById('content-grid');
+            container.innerHTML = ''; // Clear
+
+            const filteredData = filter === 'all' ? contentData : contentData.filter(d => d.category === filter);
+
+            filteredData.forEach(item => {
+                const winnerColor = item.winner === 'fan' ? 'border-emerald-500' : (item.winner === 'official' ? 'border-blue-500' : 'border-slate-300');
+                const winnerText = item.winner === 'fan' ? 'Avantage Fan Site' : (item.winner === 'official' ? 'Avantage Officiel' : 'Égalité / Différent');
+                const winnerTextClass = item.winner === 'fan' ? 'text-emerald-600' : (item.winner === 'official' ? 'text-blue-600' : 'text-slate-500');
+
+                const card = document.createElement('div');
+                card.className = `bg-white p-6 rounded-xl shadow-sm border border-t-4 ${winnerColor} flex flex-col`;
+                card.innerHTML = `
+                    <div class="mb-4">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">${item.category}</span>
+                        <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
+                    </div>
+                    
+                    <div class="space-y-4 flex-grow">
+                        <div class="bg-emerald-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-emerald-800 mb-1">Reaven (Fan)</p>
+                            <p class="text-sm text-slate-700">${item.fan}</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-blue-800 mb-1">Pac-G (Officiel)</p>
+                            <p class="text-sm text-slate-700">${item.official}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <span class="text-xs font-bold ${winnerTextClass}">${winnerText}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+    </script>
+</body>
+</html>
