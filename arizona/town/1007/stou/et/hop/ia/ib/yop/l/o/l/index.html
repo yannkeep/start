@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étude de Cas : Stratégie SEO & GEO vs pac-g.be</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7; /* Warm neutral background */
+            color: #1F2937;
+        }
+
+        /* Chart Container Utilities */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 400px;
+            max-height: 400px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF; 
+        }
+
+        .nav-active {
+            border-bottom: 2px solid #4F46E5;
+            color: #4F46E5;
+            font-weight: 600;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+    </style>
+
+    <!-- Chosen Palette: Warm Corporate Tech (Background: #FDFBF7, Primary: #4F46E5 (Indigo), Secondary: #10B981 (Emerald), Text: #1F2937) -->
+    <!-- Application Structure Plan: The app is designed as an interactive Strategic Audit Dashboard. It follows a logical flow: 1. Diagnosis (Current vs Competitor), 2. The AI/GEO Shift (Why traditional SEO isn't enough), 3. Strategy (Actionable plan), 4. Projection (Results). This structure moves from 'Problem' to 'Solution' to 'Outcome', standard for academic/business presentations. -->
+    <!-- Visualization & Content Choices: 
+         1. Radar Chart: Goal -> Compare multi-dimensional metrics (Tech, Content, Backlinks) vs pac-g.be. Choice -> Chart.js Radar. Justification -> Instantly shows strengths/weaknesses gaps.
+         2. Bubble Chart: Goal -> Visualize Semantic Authority & Topic Clusters. Choice -> Chart.js Bubble. Justification -> Shows keyword volume vs semantic relevance, critical for GEO.
+         3. Line Chart: Goal -> Project growth over time. Choice -> Chart.js Line. Justification -> Visualizes the 'overtaking' moment.
+         4. Interactive List: Goal -> Present roadmap. Choice -> Vanilla JS Filterable List. Justification -> Allows users to focus on specific domains (Tech/Content).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-2xl font-bold text-indigo-600 tracking-tight">REAVEN<span class="text-gray-400 font-light">.audit</span></span>
+                    </div>
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-8" id="nav-container">
+                        <button onclick="switchTab('dashboard')" class="nav-btn nav-active inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900" data-target="dashboard">
+                            Diagnostique Comparatif
+                        </button>
+                        <button onclick="switchTab('geo-ai')" class="nav-btn inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="geo-ai">
+                            Analyse GEO & IA
+                        </button>
+                        <button onclick="switchTab('roadmap')" class="nav-btn inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-target="roadmap">
+                            Plan Stratégique
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-indigo-400">Niveau Académique</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Header Context -->
+        <div class="mb-10 text-center sm:text-left">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+                Peut-on supplanter <span class="text-indigo-600 bg-indigo-50 px-2 rounded">pac-g.be</span> ?
+            </h1>
+            <p class="text-lg text-gray-600 max-w-3xl">
+                Étude de faisabilité technique et sémantique. Analyse comparative des vecteurs de croissance SEO traditionnels et d'optimisation pour les modèles génératifs (GEO).
+            </p>
+        </div>
+
+        <!-- VIEW: DASHBOARD (Diagnosis) -->
+        <div id="view-dashboard" class="space-y-8 animate-fade-in">
+            
+            <!-- Section Intro -->
+            <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">📊 État des Lieux : Le Duel Digital</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Cette section analyse l'écart actuel entre un challenger potentiel (Projet Reaven) et la cible établie (pac-g.be). 
+                    Nous utilisons des métriques composites pondérées incluant l'autorité de domaine, la profondeur du contenu et la performance technique (Core Web Vitals).
+                    L'objectif est d'identifier les failles structurelles de la cible.
+                </p>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-lg border border-gray-100 card-shadow text-center">
+                    <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Autorité (DA) Cible</div>
+                    <div class="mt-2 text-3xl font-extrabold text-gray-900">32<span class="text-sm text-gray-400 font-normal">/100</span></div>
+                    <div class="mt-1 text-xs text-green-600">Stable</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-gray-100 card-shadow text-center">
+                    <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Vulnérabilité IA</div>
+                    <div class="mt-2 text-3xl font-extrabold text-indigo-600">Élevée</div>
+                    <div class="mt-1 text-xs text-gray-500">Faible structuration de données</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-gray-100 card-shadow text-center">
+                    <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Backlinks Actifs</div>
+                    <div class="mt-2 text-3xl font-extrabold text-gray-900">1.2K</div>
+                    <div class="mt-1 text-xs text-red-500">Difficile à égaler à court terme</div>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-gray-100 card-shadow text-center">
+                    <div class="text-xs font-medium text-gray-400 uppercase tracking-wider">Opportunité Sémantique</div>
+                    <div class="mt-2 text-3xl font-extrabold text-green-600">85%</div>
+                    <div class="mt-1 text-xs text-gray-500">Mots-clés de longue traîne inexploités</div>
+                </div>
+            </div>
+
+            <!-- Radar Chart Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">Matrice de Compétitivité (Gap Analysis)</h3>
+                        <select id="radar-scenario" class="text-sm border-gray-300 border rounded-md shadow-sm p-1">
+                            <option value="current">État Actuel</option>
+                            <option value="projected">Projection après Optimisation</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="competitorRadarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Key Insights Text -->
+                <div class="space-y-4">
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                        <h4 class="text-indigo-900 font-bold text-sm">📍 Analyse Technique</h4>
+                        <p class="text-indigo-800 text-xs mt-1">
+                            pac-g.be repose sur une architecture classique. Son code n'est pas optimisé pour le rendu côté serveur moderne (SSR), ce qui ralentit l'indexation mobile.
+                        </p>
+                    </div>
+                    <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
+                        <h4 class="text-orange-900 font-bold text-sm">⚠️ Déficit de Contenu "Helpful"</h4>
+                        <p class="text-orange-800 text-xs mt-1">
+                            Le contenu est purement descriptif. Google (Update HCU) et les IA favorisent désormais le contenu expérientiel et l'expertise démontrée (E-E-A-T), absents chez le concurrent.
+                        </p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                        <h4 class="text-green-900 font-bold text-sm">🚀 Le Levier Vitesse</h4>
+                        <p class="text-green-800 text-xs mt-1">
+                            Une refonte en SPA (Single Page App) ou l'utilisation de frameworks modernes (Next.js/Nuxt) permettrait de surpasser pac-g.be sur les Core Web Vitals instantanément.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: GEO & AI (Semantic Web) -->
+        <div id="view-geo-ai" class="hidden space-y-8 animate-fade-in">
+            
+            <!-- Section Intro -->
+            <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">🤖 GEO : Generative Engine Optimization</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Pour supplanter pac-g.be, nous ne devons pas seulement viser la première position Google, mais devenir la <strong>réponse par défaut</strong> de ChatGPT, Gemini et Perplexity.
+                    Cela nécessite de structurer le site comme une base de connaissances (Knowledge Graph) lisible par les machines, en utilisant JSON-LD et des entités interconnectées.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Semantic Cluster Chart -->
+                <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Grappes Sémantiques & Autorité Topique</h3>
+                    <p class="text-xs text-gray-500 mb-4">Taille = Volume de Recherche | Couleur = Intensité Concurrentielle (Rouge = pac-g.be domine)</p>
+                    <div class="chart-wrapper">
+                        <canvas id="semanticBubbleChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Structured Data Explanation -->
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Stratégie "Entity-First"</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 h-6 w-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">1</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-900">Marquage Schema.org Avancé</h4>
+                                <p class="text-xs text-gray-600 mt-1">
+                                    Implémentation massive de `Product`, `Service`, `FAQPage`, et surtout `SameAs` pour lier la marque aux profils sociaux et bases de données tierces, consolidant le Knowledge Graph.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 h-6 w-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">2</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-900">Citations & Co-occurrences</h4>
+                                <p class="text-xs text-gray-600 mt-1">
+                                    Les LLM fonctionnent par probabilité. Nous devons associer le terme "Meilleur [Service]" avec "Reaven" sur des sites tiers pour biaiser les poids probabilistes des modèles d'IA.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 h-6 w-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">3</span>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-900">Formatage pour la Réponse Directe</h4>
+                                <p class="text-xs text-gray-600 mt-1">
+                                    Structurer le contenu en listes, tableaux et définitions concises (moins de 50 mots) en début de paragraphe pour faciliter l'extraction par les "Featured Snippets" et les chatbots.
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Simulation Box -->
+                    <div class="mt-6 bg-white border border-gray-300 rounded p-4">
+                        <div class="text-xs text-gray-500 uppercase font-bold mb-2">Simulation Prompt IA</div>
+                        <div class="font-mono text-sm bg-gray-100 p-2 rounded text-gray-700">
+                            User: "Quelle est la meilleure alternative à pac-g.be ?"<br>
+                            <span class="text-indigo-600">AI: "Basé sur les avis récents et l'analyse technique, Reaven offre une approche plus moderne..."</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: ROADMAP (Strategy) -->
+        <div id="view-roadmap" class="hidden space-y-8 animate-fade-in">
+
+            <!-- Section Intro -->
+            <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">📅 Feuille de Route Stratégique</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Pour dépasser pac-g.be, une approche frontale sur les mots-clés génériques est suicidaire (trop coûteuse). 
+                    Nous adoptons une stratégie d'encerclement (Flanking Strategy) via la longue traîne et l'excellence technique.
+                </p>
+            </div>
+
+            <!-- Projection Chart -->
+            <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Projection de Trafic Organique (12 Mois)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="projectionChart"></canvas>
+                </div>
+                <p class="text-center text-xs text-gray-500 mt-2">Le point de bascule (Break-even point) est estimé au Mois 7.</p>
+            </div>
+
+            <!-- Filterable Action List -->
+            <div class="bg-white p-6 rounded-lg border border-gray-100 card-shadow">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-gray-800">Actions Prioritaires</h3>
+                    <div class="flex space-x-2 mt-2 sm:mt-0">
+                        <button onclick="filterTasks('all')" class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition">Tout</button>
+                        <button onclick="filterTasks('tech')" class="px-3 py-1 text-xs font-medium bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition">Technique</button>
+                        <button onclick="filterTasks('content')" class="px-3 py-1 text-xs font-medium bg-green-50 text-green-600 rounded hover:bg-green-100 transition">Sémantique</button>
+                        <button onclick="filterTasks('offsite')" class="px-3 py-1 text-xs font-medium bg-orange-50 text-orange-600 rounded hover:bg-orange-100 transition">Autorité</button>
+                    </div>
+                </div>
+
+                <div class="space-y-3" id="task-list">
+                    <!-- Tasks injected via JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm text-gray-500">© 2024 Analyse Académique - Web Marketing Stratégique.</p>
+            <p class="text-xs text-gray-400 mt-1">Données simulées pour l'exercice. Aucune affiliation avec pac-g.be.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        
+        // Competitor Radar Data
+        const radarData = {
+            labels: ['Autorité de Domaine', 'Qualité du Contenu (E-E-A-T)', 'Vitesse Technique (CWV)', 'Structure Sémantique (GEO)', 'Expérience Mobile', 'Backlinks'],
+            current: {
+                label: 'État Actuel (vs pac-g.be)',
+                data: [40, 30, 85, 90, 80, 20], // We are better technically, weaker in authority
+                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                borderColor: '#4F46E5',
+                pointBackgroundColor: '#4F46E5'
+            },
+            competitor: {
+                label: 'Cible (pac-g.be)',
+                data: [75, 50, 40, 30, 45, 80], // They have authority/links, but bad tech/GEO
+                backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                borderColor: '#9CA3AF',
+                pointBackgroundColor: '#9CA3AF'
+            },
+            projected: {
+                label: 'Projection M+12',
+                data: [65, 85, 95, 95, 90, 60], // We catch up on authority, dominate elsewhere
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                borderColor: '#10B981',
+                pointBackgroundColor: '#10B981'
+            }
+        };
+
+        // Semantic Bubble Data
+        // x: Search Volume, y: Opportunity Score (Low competition), r: Relevancy
+        const bubbleData = [
+            { x: 20, y: 90, r: 15, topic: "Longue Traîne Spécifique" }, // High opportunity, low vol
+            { x: 50, y: 60, r: 25, topic: "Questions 'Comment faire'" },
+            { x: 80, y: 30, r: 35, topic: "Mots-clés Principaux (pac-g)" }, // High vol, low opportunity (dominated by competitor)
+            { x: 40, y: 80, r: 20, topic: "Comparatifs & Avis" },
+            { x: 30, y: 85, r: 10, topic: "Recherche Vocale" }
+        ];
+
+        // Roadmap Tasks
+        const tasks = [
+            { id: 1, type: 'tech', title: "Migration vers Architecture JAMstack", desc: "Éliminer le TTFB (Time to First Byte) pour surpasser pac-g.be sur la vitesse.", impact: "High" },
+            { id: 2, type: 'content', title: "Création de 5 Piliers Sémantiques", desc: "Couvrir l'ensemble du champ lexical pour établir l'autorité topique.", impact: "Very High" },
+            { id: 3, type: 'offsite', title: "Campagne Digital PR", desc: "Obtenir des backlinks de sites .edu ou presse pour booster le TrustFlow.", impact: "Medium" },
+            { id: 4, type: 'tech', title: "Implémentation JSON-LD 'LocalBusiness'", desc: "Pour le référencement local et l'affichage dans Google Maps/Pack.", impact: "High" },
+            { id: 5, type: 'content', title: "Optimisation pour la 'Position Zéro'", desc: "Répondre aux questions PAA (People Also Ask) mieux que pac-g.be.", impact: "High" }
+        ];
+
+        // --- CHARTS INITIALIZATION ---
+
+        let radarChartInstance = null;
+
+        function initRadarChart() {
+            const ctx = document.getElementById('competitorRadarChart').getContext('2d');
+            
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: radarData.labels,
+                    datasets: [radarData.competitor, radarData.current]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function updateRadar(scenario) {
+            if (!radarChartInstance) return;
+            
+            const dataset = scenario === 'projected' ? radarData.projected : radarData.current;
+            
+            radarChartInstance.data.datasets = [radarData.competitor, dataset];
+            radarChartInstance.update();
+        }
+
+        function initBubbleChart() {
+            const ctx = document.getElementById('semanticBubbleChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Opportunités Sémantiques',
+                        data: bubbleData,
+                        backgroundColor: (context) => {
+                            const val = context.raw?.y;
+                            return val > 70 ? 'rgba(16, 185, 129, 0.6)' : // High opportunity = Green
+                                   val > 40 ? 'rgba(79, 70, 229, 0.6)' : // Med = Indigo
+                                   'rgba(239, 68, 68, 0.6)'; // Low = Red (Competitor Stronghold)
+                        },
+                        borderColor: 'transparent'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.topic + " (Opp: " + context.raw.y + "%)";
+                                }
+                            }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Volume de Recherche' },
+                            grid: { display: false }
+                        },
+                        y: { 
+                            title: { display: true, text: 'Score d\'Opportunité (Faible Concurrence)' },
+                            min: 0, max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function initProjectionChart() {
+            const ctx = document.getElementById('projectionChart').getContext('2d');
+            
+            // Generate monthly labels
+            const labels = Array.from({length: 12}, (_, i) => `Mois ${i+1}`);
+            
+            // Linear growth for competitor, Exponential for us
+            const competitorTraffic = labels.map((_, i) => 5000 + (i * 100)); // Slow growth
+            const ourTraffic = labels.map((_, i) => 1000 * Math.exp(0.2 * i)); // Exponential growth
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Cible (pac-g.be)',
+                            data: competitorTraffic,
+                            borderColor: '#9CA3AF',
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Nous (Stratégie GEO)',
+                            data: ourTraffic,
+                            borderColor: '#4F46E5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                footer: (tooltipItems) => {
+                                    const us = tooltipItems[1].parsed.y;
+                                    const them = tooltipItems[0].parsed.y;
+                                    if(us > them) return "🚀 Dépassement !";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- DOM MANIPULATION ---
+
+        function switchTab(tabId) {
+            // Hide all views
+            ['dashboard', 'geo-ai', 'roadmap'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+            });
+            
+            // Show target view
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            
+            // Update Nav Classes
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === tabId) {
+                    btn.classList.add('nav-active', 'text-gray-900');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('nav-active', 'text-gray-900');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+
+            // Trigger chart resize handles if needed (Chart.js usually handles this, but good for safety)
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        function renderTasks(filter = 'all') {
+            const container = document.getElementById('task-list');
+            container.innerHTML = '';
+            
+            const filtered = tasks.filter(t => filter === 'all' || t.type === filter);
+            
+            filtered.forEach(task => {
+                const colorClass = task.type === 'tech' ? 'bg-indigo-100 text-indigo-800' :
+                                   task.type === 'content' ? 'bg-green-100 text-green-800' :
+                                   'bg-orange-100 text-orange-800';
+                
+                const typeLabel = task.type === 'tech' ? 'TECHNIQUE' : 
+                                  task.type === 'content' ? 'CONTENU' : 'AUTORITÉ';
+
+                const html = `
+                    <div class="flex items-start p-4 border rounded hover:shadow-md transition bg-white">
+                        <div class="flex-shrink-0 mt-1">
+                            <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none rounded ${colorClass}">
+                                ${typeLabel}
+                            </span>
+                        </div>
+                        <div class="ml-4 flex-grow">
+                            <h4 class="text-sm font-bold text-gray-900">${task.title}</h4>
+                            <p class="text-xs text-gray-600 mt-1">${task.desc}</p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0 text-right">
+                             <span class="text-xs font-semibold text-gray-400">Impact</span><br>
+                             <span class="text-sm font-bold text-gray-800">${task.impact}</span>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function filterTasks(type) {
+            renderTasks(type);
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initRadarChart();
+            initBubbleChart();
+            initProjectionChart();
+            renderTasks();
+
+            // Radar Scenario Listener
+            document.getElementById('radar-scenario').addEventListener('change', (e) => {
+                updateRadar(e.target.value);
+            });
+        });
+
+    </script>
+</body>
+</html>
