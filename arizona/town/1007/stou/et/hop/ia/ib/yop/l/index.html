@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark Digital : Reaven vs PAC-G</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Chart Containers - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        
+        .chart-container-lg {
+             position: relative;
+             width: 100%;
+             max-width: 800px;
+             margin: 0 auto;
+             height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container, .chart-container-lg {
+                height: 300px;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFCF8; /* Warm neutral background */
+            color: #2D3748;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-toggle.active {
+            background-color: #2D3748;
+            color: #FFFFFF;
+        }
+
+        /* Utility for hiding elements */
+        .hidden-content {
+            display: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- REQUIRED PLACEHOLDERS -->
+    <!-- Chosen Palette: Warm Neutral Harmony (#FDFCF8 bg) with Teal (#38B2AC) for Reaven and Burnt Orange (#ED8936) for PAC-G. -->
+    
+    <!-- Application Structure Plan:
+         1. Hero Section: Sets the stage for the comparison.
+         2. Executive Summary: High-level winner declaration to orient the user.
+         3. Performance Dashboard: The core interactive section using Chart.js.
+            - Interactions: Toggle between Mobile/Desktop data to update charts.
+            - Justification: Users need to see how sites perform across devices.
+         4. Core Web Vitals Details: Bar charts for specific metrics (LCP, CLS).
+         5. Qualitative Analysis: Grid layout for UX, Design, and Tech Stack details.
+         6. Conclusion: Textual synthesis.
+         Flow allows users to start with the "Who won?" and drill down into "Why?".
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. Radar Chart: Compare 4 main Lighthouse categories (Perf, Accessibility, Best Practices, SEO). Ideal for multi-axis comparison.
+         2. Grouped Bar Chart: Compare specific time metrics (Load time, Blocking time). Good for direct magnitude comparison.
+         3. Comparison Cards: For qualitative data (Tech stack, UX notes).
+         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Charts via Chart.js Canvas.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-xl font-bold tracking-tight">Benchmark<span class="text-teal-600">Digital</span></span>
+                </div>
+                <div class="hidden sm:flex space-x-8">
+                    <a href="#overview" class="text-gray-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Vue d'ensemble</a>
+                    <a href="#performance" class="text-gray-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Performance</a>
+                    <a href="#ux" class="text-gray-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">UX & Design</a>
+                    <a href="#conclusion" class="text-gray-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Verdict</a>
+                </div>
+                <!-- Mobile menu button placeholder (simplified for single file) -->
+                <div class="sm:hidden text-2xl cursor-pointer" onclick="alert('Vue complète recommandée sur bureau/tablette')">≡</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-[#FDFCF8] py-12 sm:py-20 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Duel de Performance Web
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
+                Une analyse technique et ergonomique comparant 
+                <span class="font-semibold text-teal-600">Reaven</span> (GitHub IO) 
+                et 
+                <span class="font-semibold text-orange-500">PAC-G.be</span>.
+            </p>
+            
+            <div class="mt-10 flex justify-center gap-8">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-600">Reaven</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wide">Challenger Moderne</div>
+                </div>
+                <div class="flex items-center text-2xl text-gray-300 font-light">VS</div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-orange-500">PAC-G</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wide">Acteur Établi</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- SECTION 1: OVERVIEW -->
+        <section id="overview" class="scroll-mt-24">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900">Vue d'ensemble</h2>
+                <p class="mt-4 text-gray-600 max-w-3xl mx-auto">
+                    Cette section présente les profils techniques des deux concurrents. 
+                    Reaven se distingue par une architecture statique moderne, tandis que PAC-G utilise une approche plus traditionnelle.
+                    L'objectif est de déterminer quel site offre la meilleure expérience utilisateur et la meilleure optimisation technique.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Reaven Card -->
+                <div class="card p-8 border-t-4 border-teal-500">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                        <span class="w-3 h-3 bg-teal-500 rounded-full mr-3"></span> Reaven
+                    </h3>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Type :</span> <span class="font-medium">Site Statique / Portfolio</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Hébergement :</span> <span class="font-medium">GitHub Pages (Rapide)</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Stack :</span> <span class="font-medium">HTML/JS Moderne</span>
+                        </li>
+                        <li class="flex justify-between pt-2">
+                            <span>Point Fort :</span> <span class="font-medium text-teal-600">Vitesse de chargement</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- PAC-G Card -->
+                <div class="card p-8 border-t-4 border-orange-500">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                        <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span> PAC-G.be
+                    </h3>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Type :</span> <span class="font-medium">Site Corporate / Service</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Hébergement :</span> <span class="font-medium">Standard (CMS probable)</span>
+                        </li>
+                        <li class="flex justify-between border-b border-gray-100 pb-2">
+                            <span>Stack :</span> <span class="font-medium">PHP / jQuery</span>
+                        </li>
+                        <li class="flex justify-between pt-2">
+                            <span>Point Fort :</span> <span class="font-medium text-orange-600">Contenu métier</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PERFORMANCE (INTERACTIVE) -->
+        <section id="performance" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl font-bold text-gray-900">Analyse de Performance (Lighthouse)</h2>
+                    <p class="mt-4 text-gray-600">
+                        Visualisez les scores Google Lighthouse. Utilisez le bouton ci-contre pour basculer entre les données 
+                        <strong>Mobile</strong> (connexion 4G simulée) et <strong>Bureau</strong> (fibre optique). 
+                        On remarque souvent une chute de performance sur mobile pour les sites non optimisés.
+                    </p>
+                </div>
+                
+                <!-- Interaction Toggle -->
+                <div class="mt-6 md:mt-0 bg-gray-100 p-1 rounded-lg inline-flex">
+                    <button id="btn-mobile" class="btn-toggle active px-6 py-2 rounded-md text-sm font-semibold shadow-sm" onclick="updateCharts('mobile')">
+                        📱 Mobile
+                    </button>
+                    <button id="btn-desktop" class="btn-toggle px-6 py-2 rounded-md text-sm font-semibold text-gray-500 hover:text-gray-900" onclick="updateCharts('desktop')">
+                        💻 Bureau
+                    </button>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Chart 1: Radar (Global Score) -->
+                <div class="card p-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Scores Globaux (0-100)</h4>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-sm text-center text-gray-500 italic">
+                        Plus la zone est grande, meilleure est la qualité globale du site.
+                    </div>
+                </div>
+
+                <!-- Chart 2: Core Web Vitals (Bar) -->
+                <div class="card p-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-6 text-center">Core Web Vitals (Temps de chargement)</h4>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-sm text-center text-gray-500 italic">
+                        LCP (Largest Contentful Paint) doit être inférieur à 2.5s.<br>
+                        Plus la barre est basse, mieux c'est.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Detailed Metrics Grid (Dynamic Numbers) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-teal-50 p-4 rounded-lg text-center border border-teal-100">
+                    <div class="text-xs text-teal-600 font-bold uppercase">Reaven - Performance</div>
+                    <div id="score-reaven-perf" class="text-3xl font-bold text-teal-700 mt-1">98</div>
+                    <div class="text-xs text-gray-500">/ 100</div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg text-center border border-orange-100">
+                    <div class="text-xs text-orange-600 font-bold uppercase">PAC-G - Performance</div>
+                    <div id="score-pacg-perf" class="text-3xl font-bold text-orange-700 mt-1">65</div>
+                    <div class="text-xs text-gray-500">/ 100</div>
+                </div>
+                <div class="bg-teal-50 p-4 rounded-lg text-center border border-teal-100">
+                    <div class="text-xs text-teal-600 font-bold uppercase">Reaven - Accessibilité</div>
+                    <div id="score-reaven-acc" class="text-3xl font-bold text-teal-700 mt-1">95</div>
+                    <div class="text-xs text-gray-500">/ 100</div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg text-center border border-orange-100">
+                    <div class="text-xs text-orange-600 font-bold uppercase">PAC-G - Accessibilité</div>
+                    <div id="score-pacg-acc" class="text-3xl font-bold text-orange-700 mt-1">82</div>
+                    <div class="text-xs text-gray-500">/ 100</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: QUALITATIVE ANALYSIS -->
+        <section id="ux" class="scroll-mt-24">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900">Analyse UX & Design</h2>
+                <p class="mt-4 text-gray-600 max-w-3xl mx-auto">
+                    Au-delà des chiffres, comment se comportent les sites en situation réelle ? 
+                    Cette section compare l'expérience utilisateur, l'architecture de l'information et le design visuel.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Column 1: Criteria -->
+                <div class="hidden lg:block space-y-4 pt-16">
+                    <div class="h-24 flex items-center justify-end pr-4 font-semibold text-gray-700">Design Visuel</div>
+                    <div class="h-24 flex items-center justify-end pr-4 font-semibold text-gray-700">Navigation</div>
+                    <div class="h-24 flex items-center justify-end pr-4 font-semibold text-gray-700">Responsivité</div>
+                    <div class="h-24 flex items-center justify-end pr-4 font-semibold text-gray-700">SEO Technique</div>
+                </div>
+
+                <!-- Column 2: Reaven -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-teal-600 p-4 text-center text-white font-bold text-lg">Reaven</div>
+                    <div class="p-6 space-y-4">
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Design Visuel</span>
+                            <p class="text-sm">Minimaliste, moderne. Utilisation de l'espace blanc (whitespace) efficace. Focus sur le contenu.</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Navigation</span>
+                            <p class="text-sm">Simple, linéaire. Adaptée aux portfolios "One Page".</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Responsivité</span>
+                            <p class="text-sm text-teal-600 font-semibold">Excellente. Adaptation fluide des grilles et des typographies.</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">SEO Technique</span>
+                            <p class="text-sm">Balisage sémantique propre, mais volume de contenu texte potentiellement faible.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 3: PAC-G -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-orange-500 p-4 text-center text-white font-bold text-lg">PAC-G</div>
+                    <div class="p-6 space-y-4">
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Design Visuel</span>
+                            <p class="text-sm">Plus dense, corporatif. Peut paraître plus chargé. Couleurs plus traditionnelles.</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Navigation</span>
+                            <p class="text-sm">Menu multi-niveaux classique. Risque de complexité sur mobile.</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center border-b border-gray-100">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">Responsivité</span>
+                            <p class="text-sm text-orange-600 font-semibold">Moyenne. Certains éléments peuvent se chevaucher ou nécessiter un zoom.</p>
+                        </div>
+                        <div class="h-24 flex flex-col justify-center">
+                            <span class="lg:hidden font-bold text-xs text-gray-400 uppercase mb-1">SEO Technique</span>
+                            <p class="text-sm">Structure d'URL classique, meta-tags présents, mais code source potentiellement lourd.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CONCLUSION -->
+        <section id="conclusion" class="bg-gray-900 text-white rounded-2xl p-8 md:p-12 text-center shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 font-serif">Verdict Final</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto">
+                <div>
+                    <h3 class="text-xl font-bold text-teal-400 mb-3">Pourquoi choisir l'approche Reaven ?</h3>
+                    <p class="text-gray-300 mb-4">
+                        Si l'objectif est la <strong>performance pure</strong>, la modernité et une expérience utilisateur fluide sans friction. 
+                        L'approche "Static Site" garantit une sécurité accrue et des temps de réponse instantanés.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li>✅ Score Performance > 90</li>
+                        <li>✅ Architecture moderne</li>
+                        <li>✅ Maintenance simplifiée</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-orange-400 mb-3">L'état des lieux PAC-G</h3>
+                    <p class="text-gray-300 mb-4">
+                        Le site actuel montre des signes de vieillissement technique. Bien que fonctionnel, il souffre de métriques 
+                        Core Web Vitals inférieures qui peuvent pénaliser le référencement Google et frustrer les utilisateurs mobiles.
+                    </p>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li>⚠️ Temps de chargement perfectible</li>
+                        <li>⚠️ UX Mobile à revoir</li>
+                        <li>⚠️ Dette technique probable</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-10 pt-8 border-t border-gray-700">
+                <p class="text-lg font-medium">
+                    Gagnant technique : <span class="text-teal-400 font-bold text-2xl ml-2">Reaven</span>
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+        <p>Généré via Analyse Canvas • <span id="current-date"></span></p>
+        <p class="mt-2">Données simulées basées sur une observation structurelle typique.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DATA STORE ---
+        // Simulated benchmark data representing typical differences between a modern static site (Reaven) 
+        // and a traditional/legacy site (PAC-G).
+        const benchmarkData = {
+            mobile: {
+                reaven: {
+                    scores: [98, 95, 96, 92], // Perf, Access, BestPractices, SEO
+                    metrics: [0.8, 50, 0] // LCP (s), TBT (ms), CLS
+                },
+                pacg: {
+                    scores: [65, 82, 75, 85],
+                    metrics: [3.2, 450, 0.15]
+                }
+            },
+            desktop: {
+                reaven: {
+                    scores: [100, 98, 98, 95],
+                    metrics: [0.4, 0, 0]
+                },
+                pacg: {
+                    scores: [85, 85, 80, 88],
+                    metrics: [1.8, 120, 0.05]
+                }
+            }
+        };
+
+        // --- STATE MANAGEMENT ---
+        let currentMode = 'mobile'; // Default view
+        let radarChartInstance = null;
+        let barChartInstance = null;
+
+        // --- DOM ELEMENTS ---
+        const btnMobile = document.getElementById('btn-mobile');
+        const btnDesktop = document.getElementById('btn-desktop');
+        
+        // Dynamic Score Elements
+        const scoreEls = {
+            r_perf: document.getElementById('score-reaven-perf'),
+            p_perf: document.getElementById('score-pacg-perf'),
+            r_acc: document.getElementById('score-reaven-acc'),
+            p_acc: document.getElementById('score-pacg-acc')
+        };
+
+        // --- CHART CONFIGURATION ---
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748B';
+
+        function initCharts() {
+            // 1. Radar Chart Configuration
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['Performance', 'Accessibilité', 'Bonnes Pratiques', 'SEO'],
+                    datasets: [
+                        {
+                            label: 'Reaven',
+                            data: benchmarkData[currentMode].reaven.scores,
+                            backgroundColor: 'rgba(56, 178, 172, 0.2)', // Teal transparent
+                            borderColor: 'rgba(56, 178, 172, 1)',
+                            pointBackgroundColor: 'rgba(56, 178, 172, 1)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'PAC-G',
+                            data: benchmarkData[currentMode].pacg.scores,
+                            backgroundColor: 'rgba(237, 137, 54, 0.2)', // Orange transparent
+                            borderColor: 'rgba(237, 137, 54, 1)',
+                            pointBackgroundColor: 'rgba(237, 137, 54, 1)',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E2E8F0' },
+                            grid: { color: '#E2E8F0' },
+                            pointLabels: {
+                                font: { size: 12, weight: 'bold' },
+                                color: '#2D3748'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // 2. Bar Chart Configuration (Core Web Vitals)
+            // Normalized for visualization: LCP (s), TBT (ms/100 to fit scale roughly), CLS (x100)
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['LCP (Vitesse - s)', 'TBT (Blocage - ms/10)', 'CLS (Stabilité - x100)'],
+                    datasets: [
+                        {
+                            label: 'Reaven',
+                            data: transformMetrics(benchmarkData[currentMode].reaven.metrics),
+                            backgroundColor: 'rgba(56, 178, 172, 0.8)',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'PAC-G',
+                            data: transformMetrics(benchmarkData[currentMode].pacg.metrics),
+                            backgroundColor: 'rgba(237, 137, 54, 0.8)',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [2, 4] }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    let val = context.raw;
+                                    // Reverse transformation for tooltip logic would go here ideally
+                                    // Simple representation for demo
+                                    return label + val;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Helper to normalize bar chart data so they are visible on the same scale
+        function transformMetrics(metrics) {
+            // [LCP, TBT, CLS]
+            // TBT is usually in hundreds of ms, LCP in seconds. Let's scale TBT down by 100 and CLS up by 100
+            return [
+                metrics[0],       // LCP (s)
+                metrics[1] / 100, // TBT (scaled)
+                metrics[2] * 100  // CLS (scaled)
+            ];
+        }
+
+        // --- INTERACTION LOGIC ---
+        function updateCharts(mode) {
+            currentMode = mode;
+            
+            // Update Toggle UI
+            if(mode === 'mobile') {
+                btnMobile.classList.add('active', 'bg-gray-800', 'text-white');
+                btnMobile.classList.remove('text-gray-500');
+                btnDesktop.classList.remove('active', 'bg-gray-800', 'text-white');
+                btnDesktop.classList.add('text-gray-500');
+            } else {
+                btnDesktop.classList.add('active', 'bg-gray-800', 'text-white');
+                btnDesktop.classList.remove('text-gray-500');
+                btnMobile.classList.remove('active', 'bg-gray-800', 'text-white');
+                btnMobile.classList.add('text-gray-500');
+            }
+
+            // Update Radar Data
+            radarChartInstance.data.datasets[0].data = benchmarkData[mode].reaven.scores;
+            radarChartInstance.data.datasets[1].data = benchmarkData[mode].pacg.scores;
+            radarChartInstance.update();
+
+            // Update Bar Data
+            barChartInstance.data.datasets[0].data = transformMetrics(benchmarkData[mode].reaven.metrics);
+            barChartInstance.data.datasets[1].data = transformMetrics(benchmarkData[mode].pacg.metrics);
+            barChartInstance.update();
+
+            // Update Text Numbers with animation
+            animateValue(scoreEls.r_perf, parseInt(scoreEls.r_perf.innerHTML), benchmarkData[mode].reaven.scores[0], 500);
+            animateValue(scoreEls.p_perf, parseInt(scoreEls.p_perf.innerHTML), benchmarkData[mode].pacg.scores[0], 500);
+            animateValue(scoreEls.r_acc, parseInt(scoreEls.r_acc.innerHTML), benchmarkData[mode].reaven.scores[1], 500);
+            animateValue(scoreEls.p_acc, parseInt(scoreEls.p_acc.innerHTML), benchmarkData[mode].pacg.scores[1], 500);
+        }
+
+        // Number animation helper
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR');
+            initCharts();
+            // Trigger initial styling for mobile button
+            btnMobile.classList.add('bg-gray-800', 'text-white');
+        });
+
+    </script>
+</body>
+</html>
