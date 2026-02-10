@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ouaisfieu · Google Dorking Lab — Maîtrise la recherche avancée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mint: #48bb78;
+  --mint-dim: #2f855a;
+  --mint-glow: #48bb7833;
+  --lilac: #9f7aea;
+  --lilac-dim: #6b46c1;
+  --lilac-glow: #9f7aea33;
+  --bg: #0a0e14;
+  --bg-card: #111820;
+  --bg-elevated: #1a2332;
+  --text: #e2e8f0;
+  --text-dim: #718096;
+  --text-bright: #f7fafc;
+  --border: #2d3748;
+  --danger: #fc8181;
+  --warning: #f6ad55;
+  --success: #68d391;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* === SCANLINES OVERLAY === */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* === GRID BACKGROUND === */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.15;
+}
+
+/* === LAYOUT === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* === HERO === */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--mint-dim);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--mint);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+  animation: fadeSlideUp 0.6s ease;
+  background: var(--mint-glow);
+}
+
+.hero-badge .pulse {
+  width: 8px; height: 8px;
+  background: var(--mint);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--mint-glow); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 8px transparent; }
+}
+
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--text-bright);
+  animation: fadeSlideUp 0.8s ease 0.1s both;
+}
+
+.hero h1 .g { color: var(--mint); }
+.hero h1 .d { color: var(--lilac); }
+.hero h1 em { font-style: italic; }
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  max-width: 680px;
+  margin: 20px auto 0;
+  animation: fadeSlideUp 0.8s ease 0.2s both;
+}
+
+.hero-sub strong { color: var(--text); font-weight: 600; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === QUERY BUILDER === */
+.builder-section {
+  padding: 40px 0 60px;
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--lilac);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  color: var(--text-dim);
+  max-width: 600px;
+  margin-bottom: 32px;
+}
+
+/* Builder card */
+.builder-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.builder-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.builder-header .dots {
+  display: flex; gap: 6px;
+}
+.builder-header .dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.builder-header .dots span:nth-child(1) { background: #fc8181; }
+.builder-header .dots span:nth-child(2) { background: #f6ad55; }
+.builder-header .dots span:nth-child(3) { background: #68d391; }
+
+.builder-header .title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.builder-body {
+  padding: 24px;
+}
+
+/* Operator buttons */
+.operator-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.op-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.op-btn:hover {
+  border-color: var(--mint);
+  background: var(--mint-glow);
+  color: var(--mint);
+  transform: translateY(-1px);
+}
+
+.op-btn.active {
+  border-color: var(--mint);
+  background: var(--mint);
+  color: var(--bg);
+}
+
+.op-btn .tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  z-index: 100;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.op-btn:hover .tooltip { display: block; }
+
+/* Query input */
+.query-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.query-input {
+  width: 100%;
+  padding: 16px 20px;
+  padding-right: 120px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--mint);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.query-input:focus { border-color: var(--mint); }
+
+.query-input::placeholder { color: var(--text-dim); font-size: 13px; }
+
+.query-actions {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.btn-search, .btn-copy, .btn-clear {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+
+.btn-search {
+  background: var(--mint);
+  color: var(--bg);
+}
+.btn-search:hover { background: var(--mint-dim); transform: scale(1.03); }
+
+.btn-copy {
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.btn-copy:hover { color: var(--lilac); border-color: var(--lilac); }
+
+.btn-clear {
+  background: transparent;
+  color: var(--text-dim);
+  padding: 8px;
+}
+.btn-clear:hover { color: var(--danger); }
+
+/* Target selector */
+.target-section {
+  margin-bottom: 20px;
+}
+
+.target-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.target-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.target-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.target-chip:hover { border-color: var(--lilac); color: var(--lilac); }
+.target-chip.active {
+  border-color: var(--lilac);
+  background: var(--lilac-glow);
+  color: var(--lilac);
+}
+
+/* Preview */
+.query-preview {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--mint);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  min-height: 44px;
+  word-break: break-all;
+}
+
+.query-preview .highlight-site { color: var(--lilac); }
+.query-preview .highlight-op { color: var(--mint); }
+.query-preview .highlight-term { color: var(--text-bright); }
+
+/* === LEVELS === */
+.levels-section {
+  padding: 60px 0;
+}
+
+.level-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 32px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.level-tab {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.level-tab:hover { color: var(--text); }
+
+.level-tab.active {
+  background: var(--mint);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.level-tab[data-level="2"].active { background: var(--lilac); }
+.level-tab[data-level="3"].active { background: linear-gradient(135deg, var(--mint), var(--lilac)); }
+.level-tab[data-level="4"].active { background: linear-gradient(135deg, var(--danger), var(--lilac), var(--mint)); }
+
+.level-panel { display: none; }
+.level-panel.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dork cards */
+.dork-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.dork-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.dork-card:hover {
+  border-color: var(--mint-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.dork-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.dork-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mint);
+}
+
+.dork-tag {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dork-tag.recon { background: var(--mint-glow); color: var(--mint); border: 1px solid var(--mint-dim); }
+.dork-tag.audit { background: var(--lilac-glow); color: var(--lilac); border: 1px solid var(--lilac-dim); }
+.dork-tag.osint { background: rgba(246,173,85,0.15); color: var(--warning); border: 1px solid rgba(246,173,85,0.4); }
+.dork-tag.legal { background: rgba(252,129,129,0.15); color: var(--danger); border: 1px solid rgba(252,129,129,0.4); }
+
+.dork-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.dork-query-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dork-query {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.dork-query:hover { border-color: var(--border); }
+
+.dork-try-btn {
+  padding: 10px 16px;
+  background: var(--mint);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dork-try-btn:hover { background: var(--mint-dim); transform: scale(1.03); }
+
+.dork-load-btn {
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  color: var(--lilac);
+  border: 1px solid var(--lilac-dim);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dork-load-btn:hover { background: var(--lilac-glow); }
+
+/* === ECOSYSTEM MAP === */
+.eco-section {
+  padding: 60px 0;
+}
+
+.eco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.eco-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.eco-card:hover {
+  border-color: var(--lilac-dim);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.eco-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.eco-card-icon.site { background: var(--mint-glow); }
+.eco-card-icon.repo { background: var(--lilac-glow); }
+
+.eco-card h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.eco-card .url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.eco-card .desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.eco-dork-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.eco-dork-btn {
+  padding: 5px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.eco-dork-btn:hover {
+  border-color: var(--mint);
+  color: var(--mint);
+}
+
+/* === CHEATSHEET === */
+.cheat-section {
+  padding: 60px 0;
+}
+
+.cheat-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+.cheat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.cheat-table thead {
+  background: var(--bg-elevated);
+}
+
+.cheat-table th {
+  padding: 14px 20px;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+}
+
+.cheat-table td {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.cheat-table tr:last-child td { border-bottom: none; }
+
+.cheat-table tr:hover { background: rgba(255,255,255,0.02); }
+
+.cheat-table .op-name {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--mint);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cheat-table .example {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--lilac);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: all 0.2s;
+}
+
+.cheat-table .example:hover { text-decoration-color: var(--lilac); }
+
+/* === RANDOM GENERATOR === */
+.random-section {
+  padding: 40px 0 80px;
+}
+
+.random-card {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.random-card h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 2rem;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+
+.random-card p {
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+
+.random-output {
+  padding: 16px 24px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--mint);
+  margin-bottom: 20px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  word-break: break-all;
+  transition: all 0.3s;
+}
+
+.random-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-random {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-random.primary {
+  background: linear-gradient(135deg, var(--mint), var(--lilac));
+  color: white;
+}
+.btn-random.primary:hover { transform: scale(1.04); box-shadow: 0 4px 20px var(--mint-glow); }
+
+.btn-random.secondary {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-random.secondary:hover { border-color: var(--lilac); color: var(--lilac); }
+
+/* === FOOTER === */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+footer a { color: var(--mint); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--mint);
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--mint);
+  z-index: 10000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .query-input { padding-right: 20px; font-size: 13px; }
+  .query-actions { position: static; transform: none; margin-top: 8px; }
+  .eco-grid { grid-template-columns: 1fr; }
+  .builder-body { padding: 16px; }
+  .level-nav { flex-wrap: nowrap; overflow-x: auto; }
+  .dork-query-row { flex-direction: column; }
+  .dork-query { width: 100%; }
+}
+
+/* Stats bar */
+.stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  padding: 32px 0;
+  margin-top: 16px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--mint), var(--lilac));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  text-align: center;
+  padding: 20px 0;
+  animation: bounce 2s infinite;
+}
+
+.scroll-hint span {
+  color: var(--text-dim);
+  font-size: 24px;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      ouaisfieu · intelligence citoyenne
+    </div>
+    <h1><span class="g">Google</span> <span class="d">Dorking</span><br><em>Lab</em></h1>
+    <p class="hero-sub">
+      Google indexe <strong>tout</strong>. Documents oubliés, données exposées, contenus cachés.
+      Apprends à transformer un moteur de recherche en <strong>outil d'investigation citoyenne</strong>.
+      De débutant à expert, avec l'écosystème ouaisfieu comme terrain de jeu.
+    </p>
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-value">23+</div>
+        <div class="stat-label">Opérateurs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">40+</div>
+        <div class="stat-label">Requêtes prêtes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">11</div>
+        <div class="stat-label">Plateformes ciblées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">∞</div>
+        <div class="stat-label">Potentiel citoyen</div>
+      </div>
+    </div>
+    <div class="scroll-hint"><span>↓</span></div>
+  </div>
+</section>
+
+<!-- QUERY BUILDER -->
+<section class="builder-section">
+  <div class="container">
+    <div class="section-label">// Constructeur de requêtes</div>
+    <h2 class="section-title">Forge ta requête</h2>
+    <p class="section-desc">Clique sur les opérateurs, choisis une cible, tape tes mots-clés. La requête se construit en temps réel.</p>
+
+    <div class="builder-card">
+      <div class="builder-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="title">query-builder.sh — Google Dork Generator</span>
+      </div>
+      <div class="builder-body">
+
+        <!-- Target -->
+        <div class="target-section">
+          <div class="target-label">🎯 Cible</div>
+          <div class="target-chips" id="targetChips">
+            <button class="target-chip" data-target="">Tout Google</button>
+            <button class="target-chip active" data-target="ouaisfi.eu">ouaisfi.eu</button>
+            <button class="target-chip" data-target="ouaisfieu.github.io">ouaisfieu.github.io</button>
+            <button class="target-chip" data-target="yannkeep.github.io">yannkeep.github.io</button>
+            <button class="target-chip" data-target="github.com/ouaisfieu">github.com/ouaisfieu</button>
+            <button class="target-chip" data-target="github.com/yannkeep">github.com/yannkeep</button>
+            <button class="target-chip" data-target="dl.ouaisfi.eu">dl.ouaisfi.eu</button>
+          </div>
+        </div>
+
+        <!-- Operators -->
+        <div class="target-label">⚡ Opérateurs</div>
+        <div class="operator-grid" id="opGrid">
+          <button class="op-btn" data-op="intitle:" data-desc="Dans le titre de la page">
+            intitle:
+            <span class="tooltip">Cherche dans le titre HTML</span>
+          </button>
+          <button class="op-btn" data-op="allintitle:" data-desc="Tous les mots dans le titre">
+            allintitle:
+            <span class="tooltip">Tous les mots doivent être dans le titre</span>
+          </button>
+          <button class="op-btn" data-op="inurl:" data-desc="Dans l'URL">
+            inurl:
+            <span class="tooltip">Cherche dans l'URL de la page</span>
+          </button>
+          <button class="op-btn" data-op="allinurl:" data-desc="Tous les mots dans l'URL">
+            allinurl:
+            <span class="tooltip">Tous les mots doivent être dans l'URL</span>
+          </button>
+          <button class="op-btn" data-op="intext:" data-desc="Dans le corps du texte">
+            intext:
+            <span class="tooltip">Cherche dans le contenu textuel</span>
+          </button>
+          <button class="op-btn" data-op="allintext:" data-desc="Tous les mots dans le texte">
+            allintext:
+            <span class="tooltip">Tous les mots dans le corps de la page</span>
+          </button>
+          <button class="op-btn" data-op="filetype:" data-desc="Type de fichier (pdf, docx, json...)">
+            filetype:
+            <span class="tooltip">Filtre par extension de fichier</span>
+          </button>
+          <button class="op-btn" data-op="ext:" data-desc="Extension de fichier">
+            ext:
+            <span class="tooltip">Filtre par extension (alias filetype)</span>
+          </button>
+          <button class="op-btn" data-op="cache:" data-desc="Version en cache Google">
+            cache:
+            <span class="tooltip">Affiche la version mise en cache par Google</span>
+          </button>
+          <button class="op-btn" data-op="related:" data-desc="Sites similaires">
+            related:
+            <span class="tooltip">Trouve des sites au contenu similaire</span>
+          </button>
+          <button class="op-btn" data-op="info:" data-desc="Infos sur un site">
+            info:
+            <span class="tooltip">Informations Google sur un domaine</span>
+          </button>
+          <button class="op-btn" data-op="link:" data-desc="Pages qui pointent vers...">
+            link:
+            <span class="tooltip">Pages contenant un lien vers l'URL</span>
+          </button>
+          <button class="op-btn" data-op="before:" data-desc="Avant une date (YYYY-MM-DD)">
+            before:
+            <span class="tooltip">Résultats publiés avant cette date</span>
+          </button>
+          <button class="op-btn" data-op="after:" data-desc="Après une date (YYYY-MM-DD)">
+            after:
+            <span class="tooltip">Résultats publiés après cette date</span>
+          </button>
+          <button class="op-btn" data-op='""' data-desc="Expression exacte">
+            "exact"
+            <span class="tooltip">Cherche l'expression exacte entre guillemets</span>
+          </button>
+          <button class="op-btn" data-op=" OR " data-desc="L'un ou l'autre terme">
+            OR
+            <span class="tooltip">Cherche l'un OU l'autre des termes</span>
+          </button>
+          <button class="op-btn" data-op=" -" data-desc="Exclure un terme">
+            -exclure
+            <span class="tooltip">Exclut les pages contenant ce terme</span>
+          </button>
+          <button class="op-btn" data-op=" * " data-desc="Joker / wildcard">
+            *
+            <span class="tooltip">Remplace n'importe quel(s) mot(s)</span>
+          </button>
+          <button class="op-btn" data-op="define:" data-desc="Définition">
+            define:
+            <span class="tooltip">Définition Google d'un terme</span>
+          </button>
+          <button class="op-btn" data-op="AROUND(" data-desc="Mots proches (AROUND(N))">
+            AROUND(N)
+            <span class="tooltip">Termes à proximité (N mots d'écart max)</span>
+          </button>
+        </div>
+
+        <!-- Input -->
+        <div class="query-input-wrap">
+          <input type="text" class="query-input" id="queryInput" placeholder="Tape tes mots-clés ici... ex: particratie belgique">
+          <div class="query-actions">
+            <button class="btn-clear" onclick="clearQuery()" title="Effacer">✕</button>
+            <button class="btn-copy" onclick="copyQuery()" title="Copier">Copier</button>
+            <button class="btn-search" onclick="executeSearch()" title="Lancer sur Google">🔍 Go</button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="target-label" style="margin-top:16px;">📋 Requête générée</div>
+        <div class="query-preview" id="queryPreview">
+          <span class="highlight-op">site:</span><span class="highlight-site">ouaisfi.eu</span> <span class="highlight-term">tes mots-clés ici</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEVELS -->
+<section class="levels-section">
+  <div class="container">
+    <div class="section-label">// Progression</div>
+    <h2 class="section-title">Du padawan au maître Jedi</h2>
+    <p class="section-desc">Chaque niveau débloque de nouvelles techniques. Toutes les requêtes sont cliquables et testables sur l'écosystème ouaisfieu.</p>
+
+    <div class="level-nav">
+      <button class="level-tab active" data-level="1" onclick="showLevel(1)">🟢 Débutant</button>
+      <button class="level-tab" data-level="2" onclick="showLevel(2)">🟡 Intermédiaire</button>
+      <button class="level-tab" data-level="3" onclick="showLevel(3)">🟠 Avancé</button>
+      <button class="level-tab" data-level="4" onclick="showLevel(4)">🔴 Expert OSINT</button>
+    </div>
+
+    <!-- LEVEL 1: DÉBUTANT -->
+    <div class="level-panel active" id="level1">
+      <div class="dork-grid" id="dorkGrid1"></div>
+    </div>
+
+    <!-- LEVEL 2: INTERMÉDIAIRE -->
+    <div class="level-panel" id="level2">
+      <div class="dork-grid" id="dorkGrid2"></div>
+    </div>
+
+    <!-- LEVEL 3: AVANCÉ -->
+    <div class="level-panel" id="level3">
+      <div class="dork-grid" id="dorkGrid3"></div>
+    </div>
+
+    <!-- LEVEL 4: EXPERT -->
+    <div class="level-panel" id="level4">
+      <div class="dork-grid" id="dorkGrid4"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM MAP -->
+<section class="eco-section">
+  <div class="container">
+    <div class="section-label">// Cartographie</div>
+    <h2 class="section-title">L'écosystème ouaisfieu</h2>
+    <p class="section-desc">Tous nos sites, dépôts et plateformes. Chaque bouton lance une requête Google Dork ciblée.</p>
+
+    <div class="eco-grid" id="ecoGrid"></div>
+  </div>
+</section>
+
+<!-- CHEATSHEET -->
+<section class="cheat-section">
+  <div class="container">
+    <div class="section-label">// Référence rapide</div>
+    <h2 class="section-title">Cheatsheet complète</h2>
+    <p class="section-desc">Tous les opérateurs Google en un tableau. Clique sur un exemple pour le charger dans le constructeur.</p>
+
+    <div class="cheat-table-wrap">
+      <table class="cheat-table" id="cheatTable">
+        <thead>
+          <tr>
+            <th>Opérateur</th>
+            <th>Usage</th>
+            <th>Exemple ouaisfieu</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RANDOM GENERATOR -->
+<section class="random-section">
+  <div class="container">
+    <div class="random-card">
+      <h3>🎲 Générateur aléatoire</h3>
+      <p>Découvre des requêtes que tu n'aurais jamais pensé à taper. Chaque clic = une surprise de l'écosystème.</p>
+      <div class="random-output" id="randomOutput">Clique pour générer une requête...</div>
+      <div class="random-btns">
+        <button class="btn-random primary" onclick="generateRandom()">⚡ Générer</button>
+        <button class="btn-random secondary" onclick="searchRandom()">🔍 Lancer sur Google</button>
+        <button class="btn-random secondary" onclick="loadRandom()">↑ Charger dans le builder</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      <strong style="color:var(--mint);">ouaisfieu</strong> · Google Dorking Lab · 
+      <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a> · 
+      <a href="https://github.com/ouaisfieu" target="_blank">GitHub</a> · 
+      Intelligence citoyenne, pas de la surveillance.
+    </p>
+    <p style="margin-top:8px; font-size:11px;">
+      Fork · Hack · Spread — Toutes les techniques présentées ici sont <strong>légales</strong> et utilisent exclusivement des données publiques indexées par Google.
+    </p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== DATA ==========
+
+const SITES = [
+  'ouaisfi.eu',
+  'ouaisfieu.github.io',
+  'yannkeep.github.io',
+  'github.com/ouaisfieu',
+  'github.com/yannkeep',
+  'dl.ouaisfi.eu'
+];
+
+const ECOSYSTEM = [
+  {
+    name: 'ouaisfi.eu',
+    url: 'ouaisfi.eu',
+    icon: '🏠', type: 'site',
+    desc: 'Portail principal du projet ouaisfieu — analyses, plaidoyers, intelligence citoyenne.',
+    dorks: ['site:ouaisfi.eu', 'site:ouaisfi.eu filetype:pdf', 'site:ouaisfi.eu intitle:plaidoyer']
+  },
+  {
+    name: 'ouaisfieu.github.io',
+    url: 'ouaisfieu.github.io',
+    icon: '📡', type: 'site',
+    desc: 'Hub GitHub Pages — sites statiques, dashboards, outils interactifs, publications.',
+    dorks: ['site:ouaisfieu.github.io', 'site:ouaisfieu.github.io inurl:mission', 'site:ouaisfieu.github.io intitle:dashboard']
+  },
+  {
+    name: 'yannkeep.github.io',
+    url: 'yannkeep.github.io',
+    icon: '🧪', type: 'site',
+    desc: 'Espace personnel — laboratoire d\'expérimentation, projets parallèles.',
+    dorks: ['site:yannkeep.github.io', 'site:yannkeep.github.io filetype:html', 'site:yannkeep.github.io intitle:test']
+  },
+  {
+    name: 'GitHub — ouaisfieu',
+    url: 'github.com/ouaisfieu',
+    icon: '🐙', type: 'repo',
+    desc: 'Organisation GitHub — tous les dépôts open source du projet.',
+    dorks: ['site:github.com/ouaisfieu', 'site:github.com/ouaisfieu filetype:md', 'site:github.com/ouaisfieu inurl:blob']
+  },
+  {
+    name: 'GitHub — yannkeep',
+    url: 'github.com/yannkeep',
+    icon: '👤', type: 'repo',
+    desc: 'Profil GitHub personnel — contributions, forks, projets expérimentaux.',
+    dorks: ['site:github.com/yannkeep', 'site:github.com/yannkeep inurl:README', 'site:github.com/yannkeep filetype:json']
+  },
+  {
+    name: 'dl.ouaisfi.eu',
+    url: 'dl.ouaisfi.eu',
+    icon: '📦', type: 'site',
+    desc: 'Data repository — fichiers téléchargeables, datasets, documents de référence.',
+    dorks: ['site:dl.ouaisfi.eu', 'site:dl.ouaisfi.eu filetype:pdf', 'site:dl.ouaisfi.eu filetype:json']
+  }
+];
+
+const DORKS = {
+  1: [ // Débutant
+    {
+      name: 'site: — Limiter à un domaine',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'L\'opérateur le plus fondamental. Restreint la recherche à un seul site. Indispensable pour explorer un écosystème.',
+      query: 'site:ouaisfi.eu'
+    },
+    {
+      name: 'site: + mots-clés',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Combine un domaine avec des termes de recherche. Trouve du contenu spécifique sur nos sites.',
+      query: 'site:ouaisfieu.github.io particratie belgique'
+    },
+    {
+      name: '"expression exacte"',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Les guillemets forcent Google à chercher l\'expression telle quelle. Plus de résultats approximatifs.',
+      query: 'site:ouaisfi.eu "intelligence citoyenne"'
+    },
+    {
+      name: 'OR — L\'un ou l\'autre',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Cherche les pages contenant l\'un OU l\'autre terme. Parfait pour couvrir plusieurs variantes.',
+      query: 'site:ouaisfi.eu particratie OR "éducation permanente"'
+    },
+    {
+      name: '-exclure des termes',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Le tiret exclut un terme des résultats. Nettoie les résultats parasites.',
+      query: 'site:github.com/ouaisfieu -issues -pulls'
+    },
+    {
+      name: 'filetype: — Trouver des PDF',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Cible uniquement les fichiers d\'un type précis. PDF, JSON, MD, HTML... tout ce que Google indexe.',
+      query: 'site:ouaisfi.eu filetype:pdf'
+    },
+    {
+      name: 'intitle: — Dans le titre',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Cherche le mot-clé uniquement dans le titre HTML de la page. Résultats ultra-ciblés.',
+      query: 'site:ouaisfieu.github.io intitle:mission'
+    },
+    {
+      name: 'Chercher tous nos sites d\'un coup',
+      tag: 'recon', tagLabel: 'Recon',
+      desc: 'Utilise OR pour scanner plusieurs domaines en une seule requête. Vue panoramique de l\'écosystème.',
+      query: 'site:ouaisfi.eu OR site:ouaisfieu.github.io OR site:yannkeep.github.io'
+    }
+  ],
+  2: [ // Intermédiaire
+    {
+      name: 'inurl: — Fouiller les URLs',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Cherche un terme dans l\'URL elle-même. Révèle la structure et l\'architecture d\'un site.',
+      query: 'site:ouaisfieu.github.io inurl:plaidoyer'
+    },
+    {
+      name: 'allintitle: — Titre complet',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Tous les mots spécifiés doivent être dans le titre. Plus restrictif qu\'intitle.',
+      query: 'allintitle:ouaisfieu belgique particratie'
+    },
+    {
+      name: 'intext: — Contenu profond',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Cherche dans le corps du texte uniquement. Ignore titres et URLs pour du contenu réel.',
+      query: 'site:ouaisfi.eu intext:"contre-institution numérique"'
+    },
+    {
+      name: 'filetype:json — Datasets exposés',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Cherche les fichiers JSON publics. Datasets, configurations, APIs exposées...',
+      query: 'site:ouaisfieu.github.io filetype:json'
+    },
+    {
+      name: 'filetype:md — Documentation Markdown',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Trouve les README, guides et documentation technique en Markdown sur GitHub.',
+      query: 'site:github.com/ouaisfieu filetype:md'
+    },
+    {
+      name: 'Combiner opérateurs — Multi-filtre',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'La vraie puissance du dorking : empiler les opérateurs pour une précision chirurgicale.',
+      query: 'site:ouaisfi.eu intitle:plaidoyer filetype:html intext:arizona'
+    },
+    {
+      name: 'before: / after: — Chronologie',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Filtre par date de publication. Reconstruit la chronologie d\'un projet.',
+      query: 'site:ouaisfi.eu after:2025-01-01 before:2026-02-01'
+    },
+    {
+      name: 'Cartographier les sous-domaines',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Enlève le www et utilise site: sur le domaine racine pour découvrir tous les sous-domaines.',
+      query: 'site:*.ouaisfi.eu -www'
+    },
+    {
+      name: 'AROUND(N) — Proximité sémantique',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Trouve des pages où deux termes sont proches l\'un de l\'autre (max N mots d\'écart).',
+      query: 'site:ouaisfi.eu "particratie" AROUND(5) "belgique"'
+    }
+  ],
+  3: [ // Avancé
+    {
+      name: 'Audit de sécurité — Fichiers sensibles',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Cherche des fichiers de configuration, env, logs qui pourraient être exposés involontairement.',
+      query: 'site:github.com/ouaisfieu (filetype:env OR filetype:yml OR filetype:toml) -node_modules'
+    },
+    {
+      name: 'Directory listing — Index of',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Trouve les répertoires ouverts (directory listing activé). Révèle l\'arborescence complète.',
+      query: 'site:ouaisfieu.github.io intitle:"index of"'
+    },
+    {
+      name: 'Empreinte technologique',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Identifie les technologies utilisées via les fichiers et patterns caractéristiques.',
+      query: 'site:github.com/ouaisfieu (inurl:package.json OR inurl:Gemfile OR inurl:config.yml)'
+    },
+    {
+      name: 'Cross-référencement institutionnel',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Trouve qui parle de ouaisfieu en dehors de nos propres sites. Mesure la visibilité externe.',
+      query: '"ouaisfieu" OR "ouaisfi.eu" -site:ouaisfi.eu -site:github.com/ouaisfieu -site:ouaisfieu.github.io'
+    },
+    {
+      name: 'Backlinks — Qui nous lie ?',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Détecte les sites qui contiennent des liens vers notre écosystème.',
+      query: 'intext:"ouaisfi.eu" -site:ouaisfi.eu -site:github.com'
+    },
+    {
+      name: 'Recherche concurrentielle',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Trouve des sites similaires à ouaisfieu. Intelligence concurrentielle et inspiration.',
+      query: 'related:ouaisfi.eu'
+    },
+    {
+      name: 'Scraping de datasets — JSON/CSV',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Cible spécifiquement les fichiers de données exploitables dans notre écosystème.',
+      query: 'site:ouaisfieu.github.io (filetype:json OR filetype:csv) inurl:data'
+    },
+    {
+      name: 'GitHub Code Search — Secrets',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Vérifie qu\'aucune clé API ou token n\'est exposé dans les dépôts publics.',
+      query: 'site:github.com/ouaisfieu ("api_key" OR "token" OR "secret" OR "password")'
+    },
+    {
+      name: 'Wildcard + site — Structure profonde',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Utilise le joker pour explorer les patterns d\'URL et découvrir des sections cachées.',
+      query: 'site:ouaisfieu.github.io inurl:/*/index.html'
+    }
+  ],
+  4: [ // Expert
+    {
+      name: '🔬 Forensics numériques — Cache Google',
+      tag: 'legal', tagLabel: 'Forensics',
+      desc: 'Accède aux versions archivées par Google. Utile quand du contenu a été supprimé ou modifié.',
+      query: 'cache:ouaisfi.eu'
+    },
+    {
+      name: '🕸️ Cartographie complète d\'un GitHub',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Requête exhaustive pour mapper tous les contenus d\'une organisation GitHub. Repos, wikis, issues, blobs.',
+      query: 'site:github.com/ouaisfieu (inurl:blob OR inurl:tree OR inurl:wiki OR inurl:issues OR inurl:README)'
+    },
+    {
+      name: '📊 Chasse aux données ouvertes',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Combine types de fichiers et domaines pour trouver tout dataset exploitable dans l\'écosystème.',
+      query: '(site:ouaisfi.eu OR site:ouaisfieu.github.io OR site:dl.ouaisfi.eu) (filetype:json OR filetype:csv OR filetype:xlsx OR filetype:pdf)'
+    },
+    {
+      name: '🏛️ Surveillance institutionnelle',
+      tag: 'legal', tagLabel: 'Forensics',
+      desc: 'Monitore les publications gouvernementales belges mentionnant les sujets couverts par ouaisfieu.',
+      query: 'site:belgium.be OR site:lachambre.be "éducation permanente" OR "particratie" after:2025-01-01'
+    },
+    {
+      name: '📰 Veille médiatique ciblée',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Scanne les médias belges francophones pour les sujets suivis par le projet.',
+      query: '(site:rtbf.be OR site:lesoir.be OR site:lalibre.be) ("particratie" OR "éducation permanente" OR "contre-institution")'
+    },
+    {
+      name: '⚖️ Jurisprudence & droit social',
+      tag: 'legal', tagLabel: 'Legal',
+      desc: 'Cherche les décisions de justice et textes légaux pertinents pour l\'action citoyenne.',
+      query: '(site:const-court.be OR site:juridat.be OR site:etaamb.be) "chômage" OR "CPAS" OR "invalidité" after:2024-01-01'
+    },
+    {
+      name: '🔗 Mega-dork — Vue panoramique totale',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'La requête ultime : scanner l\'intégralité de l\'écosystème ouaisfieu en une seule frappe.',
+      query: 'site:ouaisfi.eu OR site:ouaisfieu.github.io OR site:yannkeep.github.io OR site:github.com/ouaisfieu OR site:github.com/yannkeep OR site:dl.ouaisfi.eu'
+    },
+    {
+      name: '🧬 Ingénierie sociale inversée',
+      tag: 'legal', tagLabel: 'Forensics',
+      desc: 'Qui cite notre travail ? Trouve les mentions de nos analyses dans des contextes académiques ou médiatiques.',
+      query: '("intelligence citoyenne" OR "contre-institution numérique" OR "ouaisfieu") -site:ouaisfi.eu -site:github.com filetype:pdf'
+    },
+    {
+      name: '🗂️ Inventaire exhaustif de fichiers',
+      tag: 'audit', tagLabel: 'Audit',
+      desc: 'Liste tous les types de fichiers présents dans l\'écosystème. Audit complet des assets.',
+      query: 'site:ouaisfieu.github.io (filetype:html OR filetype:css OR filetype:js OR filetype:json OR filetype:md OR filetype:pdf OR filetype:png OR filetype:svg)'
+    },
+    {
+      name: '🎯 Profiling thématique croisé',
+      tag: 'osint', tagLabel: 'OSINT',
+      desc: 'Croise nos thématiques avec les sources institutionnelles pour détecter les convergences.',
+      query: '(site:crisp.be OR site:pac-g.be OR site:cesep.be) ("éducation permanente" OR "action culturelle") after:2025-06-01'
+    }
+  ]
+};
+
+const CHEATSHEET = [
+  { op: 'site:', usage: 'Restreint aux pages d\'un domaine', example: 'site:ouaisfi.eu' },
+  { op: 'intitle:', usage: 'Mot-clé dans le titre HTML', example: 'site:ouaisfi.eu intitle:plaidoyer' },
+  { op: 'allintitle:', usage: 'Tous les mots dans le titre', example: 'allintitle:ouaisfieu belgique' },
+  { op: 'inurl:', usage: 'Mot-clé dans l\'URL', example: 'site:ouaisfieu.github.io inurl:mission' },
+  { op: 'allinurl:', usage: 'Tous les mots dans l\'URL', example: 'allinurl:ouaisfieu dashboard' },
+  { op: 'intext:', usage: 'Mot-clé dans le corps de page', example: 'site:ouaisfi.eu intext:particratie' },
+  { op: 'allintext:', usage: 'Tous les mots dans le corps', example: 'allintext:belgique particratie arizona' },
+  { op: 'filetype:', usage: 'Type de fichier spécifique', example: 'site:ouaisfi.eu filetype:pdf' },
+  { op: 'ext:', usage: 'Extension de fichier (alias)', example: 'site:github.com/ouaisfieu ext:json' },
+  { op: 'cache:', usage: 'Version en cache Google', example: 'cache:ouaisfi.eu' },
+  { op: 'related:', usage: 'Sites au contenu similaire', example: 'related:ouaisfi.eu' },
+  { op: 'info:', usage: 'Fiche Google d\'un domaine', example: 'info:ouaisfi.eu' },
+  { op: 'before:', usage: 'Résultats avant une date', example: 'site:ouaisfi.eu before:2025-06-01' },
+  { op: 'after:', usage: 'Résultats après une date', example: 'site:ouaisfi.eu after:2025-01-01' },
+  { op: '"..."', usage: 'Expression exacte', example: 'site:ouaisfi.eu "intelligence citoyenne"' },
+  { op: 'OR', usage: 'L\'un ou l\'autre terme', example: 'site:ouaisfi.eu particratie OR CPAS' },
+  { op: '-', usage: 'Exclure un terme', example: 'site:github.com/ouaisfieu -issues' },
+  { op: '*', usage: 'Wildcard (joker)', example: 'site:ouaisfi.eu "éducation * permanente"' },
+  { op: 'AROUND(N)', usage: 'Mots à N mots d\'écart max', example: '"belgique" AROUND(3) "démocratie"' },
+  { op: 'define:', usage: 'Définition d\'un terme', example: 'define:particratie' },
+  { op: '( )', usage: 'Grouper des opérateurs', example: 'site:ouaisfi.eu (plaidoyer OR mission)' },
+  { op: '..*', usage: 'Plage numérique (ex: 2020..2026)', example: 'site:ouaisfi.eu 2024..2026' },
+];
+
+// ========== STATE ==========
+let currentTarget = 'ouaisfi.eu';
+let currentRandomQuery = '';
+
+// ========== FUNCTIONS ==========
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function buildFullQuery() {
+  const input = document.getElementById('queryInput').value.trim();
+  let parts = [];
+  if (currentTarget) parts.push(`site:${currentTarget}`);
+  if (input) parts.push(input);
+  return parts.join(' ');
+}
+
+function updatePreview() {
+  const full = buildFullQuery();
+  const preview = document.getElementById('queryPreview');
+  if (!full) {
+    preview.innerHTML = '<span style="color:var(--text-dim)">Construis ta requête ci-dessus...</span>';
+    return;
+  }
+  // Syntax highlighting
+  let html = full
+    .replace(/(site:|intitle:|allintitle:|inurl:|allinurl:|intext:|allintext:|filetype:|ext:|cache:|related:|info:|before:|after:|define:|link:)/g, '<span class="highlight-op">$1</span>')
+    .replace(/\b(OR|AND|AROUND\(\d+\))\b/g, '<span class="highlight-op">$1</span>')
+    .replace(/"([^"]+)"/g, '<span class="highlight-site">"$1"</span>');
+  preview.innerHTML = html;
+}
+
+function setTarget(target) {
+  currentTarget = target;
+  document.querySelectorAll('.target-chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  updatePreview();
+}
+
+function addOperator(op) {
+  const input = document.getElementById('queryInput');
+  if (op === '""') {
+    const sel = input.value.substring(input.selectionStart, input.selectionEnd);
+    if (sel) {
+      input.value = input.value.substring(0, input.selectionStart) + '"' + sel + '"' + input.value.substring(input.selectionEnd);
+    } else {
+      input.value += '""';
+      input.focus();
+      input.setSelectionRange(input.value.length - 1, input.value.length - 1);
+    }
+  } else if (op === 'AROUND(') {
+    input.value += ' AROUND(3) ';
+  } else {
+    input.value += op;
+  }
+  input.focus();
+  updatePreview();
+}
+
+function clearQuery() {
+  document.getElementById('queryInput').value = '';
+  updatePreview();
+}
+
+function copyQuery() {
+  const q = buildFullQuery();
+  navigator.clipboard.writeText(q).then(() => showToast('✓ Requête copiée !'));
+}
+
+function executeSearch() {
+  const q = buildFullQuery();
+  if (q) window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+}
+
+function searchDork(query) {
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+}
+
+function loadInBuilder(query) {
+  // Parse query to extract site and rest
+  const siteMatch = query.match(/site:(\S+)/);
+  if (siteMatch) {
+    currentTarget = siteMatch[1];
+    document.querySelectorAll('.target-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.target === currentTarget);
+    });
+    const rest = query.replace(/site:\S+\s*/, '').trim();
+    document.getElementById('queryInput').value = rest;
+  } else {
+    currentTarget = '';
+    document.querySelectorAll('.target-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.target === '');
+    });
+    document.getElementById('queryInput').value = query;
+  }
+  updatePreview();
+  document.querySelector('.builder-section').scrollIntoView({ behavior: 'smooth' });
+  showToast('↑ Requête chargée dans le builder');
+}
+
+function showLevel(n) {
+  document.querySelectorAll('.level-tab').forEach(t => t.classList.toggle('active', parseInt(t.dataset.level) === n));
+  document.querySelectorAll('.level-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('level' + n).classList.add('active');
+}
+
+function renderDorks() {
+  for (let level = 1; level <= 4; level++) {
+    const grid = document.getElementById('dorkGrid' + level);
+    grid.innerHTML = DORKS[level].map(d => `
+      <div class="dork-card">
+        <div class="dork-card-header">
+          <span class="dork-name">${d.name}</span>
+          <span class="dork-tag ${d.tag}">${d.tagLabel}</span>
+        </div>
+        <div class="dork-desc">${d.desc}</div>
+        <div class="dork-query-row">
+          <div class="dork-query">${escapeHtml(d.query)}</div>
+          <button class="dork-try-btn" onclick="searchDork(\`${d.query.replace(/`/g,'\\`')}\`)">🔍 Tester</button>
+          <button class="dork-load-btn" onclick="loadInBuilder(\`${d.query.replace(/`/g,'\\`')}\`)">↑ Builder</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderEcosystem() {
+  const grid = document.getElementById('ecoGrid');
+  grid.innerHTML = ECOSYSTEM.map(e => `
+    <div class="eco-card">
+      <div class="eco-card-icon ${e.type}">${e.icon}</div>
+      <h3>${e.name}</h3>
+      <div class="url">${e.url}</div>
+      <div class="desc">${e.desc}</div>
+      <div class="eco-dork-btns">
+        ${e.dorks.map(d => `<button class="eco-dork-btn" onclick="searchDork('${d}')" title="${d}">🔍 ${d.replace('site:' + e.url + ' ', '').substring(0, 25)}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCheatsheet() {
+  const tbody = document.querySelector('#cheatTable tbody');
+  tbody.innerHTML = CHEATSHEET.map(c => `
+    <tr>
+      <td class="op-name">${escapeHtml(c.op)}</td>
+      <td>${c.usage}</td>
+      <td><span class="example" onclick="loadInBuilder('${c.example}')">${escapeHtml(c.example)}</span></td>
+    </tr>
+  `).join('');
+}
+
+function generateRandom() {
+  const allDorks = [...DORKS[1], ...DORKS[2], ...DORKS[3], ...DORKS[4]];
+  const random = allDorks[Math.floor(Math.random() * allDorks.length)];
+  currentRandomQuery = random.query;
+  const output = document.getElementById('randomOutput');
+  output.style.opacity = 0;
+  setTimeout(() => {
+    output.textContent = random.query;
+    output.style.opacity = 1;
+  }, 150);
+}
+
+function searchRandom() {
+  if (currentRandomQuery) searchDork(currentRandomQuery);
+  else showToast('Génère d\'abord une requête !');
+}
+
+function loadRandom() {
+  if (currentRandomQuery) loadInBuilder(currentRandomQuery);
+  else showToast('Génère d\'abord une requête !');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  // Target chips
+  document.querySelectorAll('.target-chip').forEach(chip => {
+    chip.addEventListener('click', () => setTarget(chip.dataset.target));
+  });
+
+  // Operator buttons
+  document.querySelectorAll('.op-btn').forEach(btn => {
+    btn.addEventListener('click', () => addOperator(btn.dataset.op));
+  });
+
+  // Input live preview
+  document.getElementById('queryInput').addEventListener('input', updatePreview);
+  document.getElementById('queryInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') executeSearch();
+  });
+
+  // Render all sections
+  renderDorks();
+  renderEcosystem();
+  renderCheatsheet();
+  updatePreview();
+});
+</script>
+
+</body>
+</html>
