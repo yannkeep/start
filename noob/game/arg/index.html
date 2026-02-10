@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>⚔️ RÉSISTANCE CITOYENNE — Intelligence Civile</title>
+  <meta name="description" content="Jeu RPG d'intelligence civile belge. 12 missions, 15 outils, flashcards, gamification. Tout est accessible, rien n'est verrouillé.">
+  <meta name="theme-color" content="#030306">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ═══ APP HEADER ═══ -->
+<header class="app-header">
+  <div class="logo" onclick="nav('hub')">
+    <div class="logo-icon">⚔️</div>
+    <div>
+      <div class="logo-text">RÉSISTANCE</div>
+      <div class="logo-sub">Intelligence Civile</div>
+    </div>
+  </div>
+  <div class="xp-wrap">
+    <span class="xp-icon" id="xpIcon">🌱</span>
+    <span class="xp-rank" id="xpRank">NÉOPHYTE</span>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    <span class="xp-nums"><span id="xpCur">0</span>/<span id="xpMax">200</span></span>
+  </div>
+  <div class="themes">
+    <button class="th-btn active" data-th="dark" onclick="setTheme('dark')" title="Sombre">🌑</button>
+    <button class="th-btn" data-th="console" onclick="setTheme('console')" title="Terminal">💻</button>
+    <button class="th-btn" data-th="neon" onclick="setTheme('neon')" title="Néon">🌈</button>
+    <button class="th-btn" data-th="80s" onclick="setTheme('80s')" title="Rétro">📼</button>
+  </div>
+</header>
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<nav class="bnav">
+  <button class="bnav-btn active" data-v="hub" onclick="nav('hub')">
+    <span>🏠</span><span>QG</span>
+  </button>
+  <button class="bnav-btn" data-v="missions" onclick="nav('missions')">
+    <span>🎯</span><span>Missions</span>
+  </button>
+  <button class="bnav-btn" data-v="tools" onclick="nav('tools')">
+    <span>🛠️</span><span>Outils</span>
+  </button>
+  <button class="bnav-btn" data-v="flashcards" onclick="nav('flashcards')">
+    <span>📚</span><span>Cartes</span>
+  </button>
+  <button class="bnav-btn" data-v="trophies" onclick="nav('trophies')">
+    <span>🏆</span><span>Trophées</span>
+  </button>
+</nav>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main id="main"></main>
+
+<!-- ═══ TOASTS ═══ -->
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
