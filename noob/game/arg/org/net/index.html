@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>⚔️ RÉSISTANCE CITOYENNE — Intelligence Civile</title>
+<meta name="description" content="Jeu RPG d'intelligence civile belge. 12 missions, quiz, 15 outils, flashcards.">
+<meta name="theme-color" content="#030306">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   RÉSISTANCE CITOYENNE v3 — STYLES
+   Mobile-first • Dark Cyberpunk • ARIA • Reduced Motion • Quiz/Stats/Content
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --mint:#7fffd4;--mint-d:rgba(127,255,212,.12);--mint-g:rgba(127,255,212,.35);
+  --lilac:#c8a2ff;--lilac-d:rgba(200,162,255,.12);--lilac-g:rgba(200,162,255,.35);
+  --bg0:#030306;--bg1:#080810;--bg2:#0c0c16;--bg3:#12121e;--bg4:#181826;--bg5:#1e1e2e;
+  --t1:#f0f0ff;--t2:#a0a0c0;--t3:#606080;
+  --danger:#ff4757;--success:#2ed573;--warning:#ffa502;--info:#00d9ff;
+  --brd:rgba(127,255,212,.12);--brd-h:rgba(127,255,212,.25);
+  --r:6px;--tr:.2s ease;
+  --f-display:'Orbitron',monospace;--f-body:'Space Grotesk',sans-serif;--f-mono:'JetBrains Mono',monospace;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+[data-theme="console"]{--mint:#00ff00;--lilac:#00ff00;--mint-d:rgba(0,255,0,.12);--mint-g:rgba(0,255,0,.4);--bg0:#000;--bg1:#000a00;--bg2:#001200;--bg3:#001a00;--bg4:#002200;--bg5:#002a00;--t1:#00ff00;--t2:#00cc00;--t3:#008800;--brd:rgba(0,255,0,.15);--f-body:'JetBrains Mono',monospace;--f-display:'JetBrains Mono',monospace;}
+[data-theme="neon"]{--mint:#00ffff;--lilac:#ff00ff;--mint-d:rgba(0,255,255,.12);--lilac-d:rgba(255,0,255,.12);--mint-g:rgba(0,255,255,.4);--lilac-g:rgba(255,0,255,.4);--bg0:#05000a;--bg1:#0a0015;--bg2:#100020;--bg3:#18002d;--bg4:#200038;--bg5:#280045;--t1:#fff;--t2:#ff88ff;--t3:#8844aa;--brd:rgba(255,0,255,.15);}
+[data-theme="80s"]{--mint:#ff6ec7;--lilac:#00ced1;--mint-d:rgba(255,110,199,.12);--lilac-d:rgba(0,206,209,.12);--mint-g:rgba(255,110,199,.4);--lilac-g:rgba(0,206,209,.4);--bg0:#0f0518;--bg1:#180a25;--bg2:#200f30;--bg3:#28143a;--bg4:#301945;--bg5:#381e50;--t1:#fff8dc;--t2:#ffb6c1;--t3:#9370db;--brd:rgba(255,110,199,.15);}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-text-size-adjust:100%}
+body{font-family:var(--f-body);background:var(--bg0);color:var(--t1);min-height:100dvh;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+a{color:var(--mint);text-decoration:none}
+img{max-width:100%}
+button{cursor:pointer;font:inherit;border:none;background:none;color:inherit}
+input,textarea,select{font:inherit;color:var(--t1);background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--mint);outline-offset:2px;border-color:var(--mint)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
+
+/* ═══ REDUCED MOTION ═══ */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ═══ SKIP LINK ═══ */
+.skip-link{position:absolute;top:-100%;left:0;background:var(--mint);color:var(--bg0);padding:.5rem 1rem;z-index:9999;font-weight:700}
+.skip-link:focus{top:0}
+
+/* ═══ HEADER ═══ */
+.header{position:sticky;top:0;z-index:100;background:rgba(3,3,6,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--brd);padding:.5rem .75rem;display:flex;align-items:center;gap:.5rem}
+.hdr-logo{font:700 .85rem var(--f-display);color:var(--mint);letter-spacing:1px;white-space:nowrap}
+.xp-wrap{flex:1;display:flex;align-items:center;gap:.4rem;min-width:0}
+.xp-rank{font:.6rem var(--f-display);color:var(--lilac);white-space:nowrap}
+.xp-bar{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;min-width:40px}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:3px;transition:width .4s ease}
+.xp-text{font:.6rem var(--f-mono);color:var(--t3);white-space:nowrap}
+.theme-dots{display:flex;gap:4px}
+.theme-dots button{width:16px;height:16px;border-radius:50%;border:2px solid transparent;transition:border-color var(--tr)}
+.theme-dots button.active{border-color:var(--t1)}
+.theme-dots [data-th="dark"]{background:#7fffd4}
+.theme-dots [data-th="console"]{background:#00ff00}
+.theme-dots [data-th="neon"]{background:#ff00ff}
+.theme-dots [data-th="80s"]{background:#ff6ec7}
+
+/* ═══ MAIN ═══ */
+main{padding-bottom:calc(70px + var(--safe-b));min-height:calc(100dvh - 50px)}
+main:focus{outline:none}
+
+/* ═══ BOTTOM NAV ═══ */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(3,3,6,.95);backdrop-filter:blur(10px);border-top:1px solid var(--brd);display:flex;padding-bottom:var(--safe-b)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:.4rem 0;font-size:.55rem;color:var(--t3);min-height:44px;justify-content:center;transition:color var(--tr)}
+.bnav-btn.active{color:var(--mint)}
+.bnav-btn .ico{font-size:1.1rem}
+
+/* ═══ PAGE ═══ */
+.page{padding:.75rem;max-width:800px;margin:0 auto}
+.page-head{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
+.page-head h2{font:700 1rem var(--f-display);color:var(--mint);flex:1}
+.page-sub{font-size:.75rem;color:var(--t3);margin-bottom:.75rem}
+.back-btn{font-size:.8rem;color:var(--lilac);padding:.3rem .5rem;border:1px solid var(--brd);border-radius:var(--r);min-height:32px}
+.back-btn:hover,.back-btn:focus{border-color:var(--lilac);outline:none}
+.done-badge{font-size:.65rem;color:var(--success);background:rgba(46,213,115,.15);padding:2px 8px;border-radius:var(--r)}
+
+/* ═══ SEARCH BAR — NEW ═══ */
+.search-bar{margin-bottom:.75rem}
+.search-bar input{width:100%;padding:.5rem .75rem;border-radius:20px;font-size:.85rem}
+
+/* ═══ HUB ═══ */
+.hub{max-width:600px;margin:0 auto;padding:.5rem}
+.hub-header{text-align:center;margin-bottom:1rem}
+.hub-title{font:900 1.2rem var(--f-display);background:linear-gradient(135deg,var(--mint),var(--lilac));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hub-sub{font-size:.7rem;color:var(--t3);margin-top:2px}
+.hub-rank-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.75rem;display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.rank-big{font-size:2rem}
+.rank-info{flex:1}
+.rank-name{font:700 .85rem var(--f-display)}
+.rank-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin:.3rem 0}
+.rank-fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:3px;transition:width .4s}
+.rank-xp{font:.65rem var(--f-mono);color:var(--t3)}
+.hub-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:.75rem}
+.hs{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.4rem;text-align:center}
+.hs-v{font:700 1rem var(--f-display);color:var(--mint)}
+.hs-l{font-size:.55rem;color:var(--t3);margin-top:2px}
+.hub-quote{background:var(--bg2);border-left:3px solid var(--lilac);padding:.6rem .75rem;margin-bottom:.75rem;border-radius:0 var(--r) var(--r) 0}
+.hq-text{font-size:.8rem;font-style:italic;color:var(--t2)}
+.hq-author{font-size:.65rem;color:var(--lilac);margin-top:4px}
+.hub-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;margin-bottom:.75rem}
+.hbtn{padding:.5rem .75rem;border:1px solid var(--brd);border-radius:var(--r);font-size:.8rem;text-align:center;min-height:44px;transition:all var(--tr)}
+.hbtn:hover,.hbtn:focus{border-color:var(--mint);background:var(--mint-d);outline:none}
+.hbtn-primary{background:var(--mint-d);border-color:var(--mint);color:var(--mint)}
+.hbtn-done{background:rgba(46,213,115,.15);border-color:var(--success);color:var(--success)}
+.hbtn-sm{font-size:.7rem;padding:.3rem .5rem;border:1px solid var(--brd);border-radius:var(--r);min-height:32px}
+.hbtn-sm:hover,.hbtn-sm:focus{border-color:var(--mint);outline:none}
+.hub-section-title{font:700 .7rem var(--f-display);color:var(--t3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px}
+.hub-missions{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.75rem}
+.hm-card{display:flex;align-items:center;gap:.5rem;padding:.5rem;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);cursor:pointer;transition:border-color var(--tr);min-height:44px}
+.hm-card:hover,.hm-card:focus{border-color:var(--mint);outline:none}
+.hm-icon{font-size:1.2rem}
+.hm-info{flex:1;min-width:0}
+.hm-name{font-size:.75rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin:.2rem 0}
+.hm-fill{height:100%;background:var(--mint);border-radius:2px;transition:width .3s}
+.hm-pct{font:.55rem var(--f-mono);color:var(--t3)}
+.hm-arrow{color:var(--t3);font-size:1.2rem}
+.hub-footer{display:flex;gap:.4rem;justify-content:center}
+
+/* ═══ MISSION GRID ═══ */
+.cat-filter{display:flex;gap:.3rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.5rem;-webkit-overflow-scrolling:touch}
+.cf-btn{white-space:nowrap;padding:.25rem .5rem;border:1px solid var(--brd);border-radius:20px;font-size:.7rem;color:var(--t3);min-height:32px}
+.cf-btn.active{border-color:var(--mint);color:var(--mint);background:var(--mint-d)}
+.mission-grid{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media(min-width:480px){.mission-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:800px){.mission-grid{grid-template-columns:repeat(3,1fr)}}
+.m-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem;cursor:pointer;transition:all var(--tr)}
+.m-card:hover,.m-card:focus{border-color:var(--mint);transform:translateY(-2px);outline:none}
+.m-done{border-color:var(--success)}
+.m-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+.m-icon{font-size:1.3rem}
+.m-diff{font-size:.65rem;color:var(--warning)}
+.m-name{font:600 .8rem var(--f-body);margin-bottom:2px}
+.m-cat{font-size:.6rem;color:var(--t3);margin-bottom:.3rem}
+.m-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.m-fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:2px;transition:width .3s}
+.m-meta{display:flex;justify-content:space-between;font:.6rem var(--f-mono);color:var(--t3);margin-top:.3rem}
+.m-xp{color:var(--mint)}
+.m-badge{font-size:.55rem;color:var(--success);text-align:center;margin-top:.3rem;font-weight:700}
+
+/* ═══ SINGLE MISSION ═══ */
+.mission-brief{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem;margin-bottom:.5rem}
+.mb-label{font:.6rem var(--f-display);color:var(--mint);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:1px}
+.mb-text{font-size:.8rem;color:var(--t2);line-height:1.5}
+.mission-lore{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem;margin-bottom:.5rem;cursor:pointer}
+.ml-label{font-size:.7rem;color:var(--lilac);display:flex;justify-content:space-between}
+.ml-toggle{transition:transform var(--tr)}
+.mission-lore.open .ml-toggle{transform:rotate(180deg)}
+.ml-text{font-size:.75rem;color:var(--t3);max-height:0;overflow:hidden;transition:max-height .3s;margin-top:0}
+.mission-lore.open .ml-text{max-height:500px;margin-top:.4rem}
+.mission-intel{margin-bottom:.5rem}
+.mi-label{font:.6rem var(--f-display);color:var(--mint);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:1px}
+.mi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem}
+@media(min-width:500px){.mi-grid{grid-template-columns:repeat(4,1fr)}}
+.mi-card{background:var(--bg3);border-radius:var(--r);padding:.4rem;text-align:center;border:1px solid var(--brd)}
+.mi-danger{border-color:rgba(255,71,87,.3);background:rgba(255,71,87,.08)}
+.mi-warning{border-color:rgba(255,165,2,.3);background:rgba(255,165,2,.08)}
+.mi-info{border-color:rgba(0,217,255,.3);background:rgba(0,217,255,.08)}
+.mi-mint{border-color:rgba(127,255,212,.3);background:rgba(127,255,212,.08)}
+.mi-lilac{border-color:rgba(200,162,255,.3);background:rgba(200,162,255,.08)}
+.mi-val{font:700 .85rem var(--f-display);color:var(--t1)}
+.mi-lbl{font-size:.55rem;color:var(--t3);margin-top:2px}
+.mission-progress{margin-bottom:.5rem}
+.mp-bar{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.mp-fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--lilac));border-radius:4px;transition:width .4s}
+.mp-text{font:.6rem var(--f-mono);color:var(--t3);margin-top:3px;text-align:center}
+
+/* ═══ OBJECTIVES with CONTENT ═══ */
+.mo-label{font:.6rem var(--f-display);color:var(--mint);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px}
+.mo-item{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:.3rem;overflow:hidden}
+.mo-header{display:flex;align-items:center;gap:.4rem;padding:.5rem;cursor:pointer;min-height:44px}
+.mo-header:focus{outline:2px solid var(--mint);outline-offset:-2px}
+.mo-done{border-color:rgba(46,213,115,.3)}
+.mo-done .mo-text{text-decoration:line-through;color:var(--t3)}
+.mo-check{font-size:1rem;flex-shrink:0}
+.mo-text{flex:1;font-size:.8rem}
+.mo-xp{font:.6rem var(--f-mono);color:var(--mint);flex-shrink:0}
+
+/* Content toggle & display — NEW */
+.mo-content-toggle{padding:0 .5rem .4rem;display:flex}
+.mo-read-btn{font-size:.7rem;padding:.25rem .5rem;border:1px solid var(--brd);border-radius:var(--r);color:var(--lilac);transition:all var(--tr)}
+.mo-read-btn:hover,.mo-read-btn:focus{border-color:var(--lilac);background:var(--lilac-d);outline:none}
+.mo-read-btn.read{color:var(--success);border-color:rgba(46,213,115,.3)}
+.mo-content{padding:.5rem;background:var(--bg2);border-top:1px solid var(--brd)}
+.mo-content-text{font-size:.78rem;color:var(--t2);line-height:1.6}
+.mo-content-text p{margin-bottom:.5rem}
+.mo-content-text strong{color:var(--mint);font-weight:600}
+
+/* ═══ QUIZ — NEW ═══ */
+.quiz-intro{font-size:.8rem;color:var(--t2);margin-bottom:1rem;padding:.5rem;background:var(--bg3);border-radius:var(--r);border:1px solid var(--brd)}
+.quiz-q{margin-bottom:.75rem}
+.qq-text{font-size:.85rem;font-weight:600;color:var(--t1);margin-bottom:.4rem}
+.qq-choices{display:flex;flex-direction:column;gap:.25rem}
+.qq-choice{display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);cursor:pointer;font-size:.8rem;min-height:40px;transition:all var(--tr)}
+.qq-choice:hover,.qq-choice:focus-within{border-color:var(--mint);background:var(--mint-d)}
+.qq-choice input{accent-color:var(--mint)}
+.qq-correct{border-color:var(--success)!important;background:rgba(46,213,115,.1)!important}
+.quiz-result{padding:.6rem;border-radius:var(--r);font-weight:700;text-align:center;margin-bottom:.5rem}
+.qr-pass{background:rgba(46,213,115,.15);color:var(--success);border:1px solid var(--success)}
+.qr-fail{background:rgba(255,71,87,.15);color:var(--danger);border:1px solid var(--danger)}
+.mission-quiz-link{margin:.5rem 0;text-align:center}
+
+/* ═══ TOOLS ═══ */
+.tp-section{margin-bottom:1rem}
+.tp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;padding-bottom:.3rem;border-bottom:1px solid var(--brd)}
+.tp-name{font:700 .8rem var(--f-display);color:var(--mint)}
+.tp-desc{font-size:.6rem;color:var(--t3)}
+.tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem}
+@media(min-width:600px){.tool-grid{grid-template-columns:repeat(3,1fr)}}
+.t-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem;text-align:center;cursor:pointer;transition:all var(--tr);min-height:70px;display:flex;flex-direction:column;justify-content:center}
+.t-card:hover,.t-card:focus{border-color:var(--mint);transform:translateY(-2px);outline:none}
+.t-done{border-color:var(--success)}
+.t-icon{font-size:1.3rem}
+.t-name{font-size:.7rem;font-weight:600;margin-top:2px}
+.t-xp{font:.55rem var(--f-mono);color:var(--mint);margin-top:2px}
+.tool-phase{font-size:.7rem;color:var(--lilac);margin-bottom:.3rem}
+.tool-help{font-size:.75rem;color:var(--t3);margin-bottom:.5rem;padding:.4rem;background:var(--bg2);border-radius:var(--r)}
+.tool-progress{margin-bottom:.5rem}
+.tp-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.tp-fill{height:100%;background:var(--mint);border-radius:3px;transition:width .3s}
+.tp-pct{font:.55rem var(--f-mono);color:var(--t3);margin-top:2px}
+.tf-group{margin-bottom:.5rem}
+.tf-label{font-size:.7rem;color:var(--lilac);display:block;margin-bottom:.2rem;font-weight:600}
+.tf-input{width:100%;resize:vertical;min-height:60px}
+.tool-tip{font-size:.7rem;color:var(--t3);text-align:center;margin-top:.3rem}
+.mt-label{font:.6rem var(--f-display);color:var(--mint);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:1px}
+.mt-grid{display:flex;flex-wrap:wrap;gap:.3rem}
+.mt-btn{padding:.35rem .6rem;font-size:.7rem;border:1px solid var(--brd);border-radius:var(--r);min-height:36px;transition:all var(--tr)}
+.mt-btn:hover,.mt-btn:focus{border-color:var(--mint);background:var(--mint-d);outline:none}
+.mt-prefill{font-size:.6rem;margin-left:2px}
+
+/* ═══ FLASHCARDS ═══ */
+.fc-empty{text-align:center;padding:2rem .5rem}
+.fce-icon{font-size:2.5rem;margin-bottom:.5rem}
+.fce-title{font:700 1rem var(--f-display);color:var(--t1);margin-bottom:.3rem}
+.fce-text{font-size:.7rem;color:var(--t3);margin-bottom:1rem;max-width:350px;margin-left:auto;margin-right:auto}
+.fce-actions{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
+.fc-toolbar{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem;align-items:center}
+.fc-select{flex:1;min-width:120px;max-width:250px;font-size:.7rem;padding:.35rem .5rem;min-height:32px}
+.fc-card-wrap{perspective:1000px;margin:0 auto 1rem;max-width:500px;cursor:pointer}
+.fc-card{position:relative;transition:transform .5s;transform-style:preserve-3d}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-inner{position:relative;width:100%;min-height:200px}
+.fc-front,.fc-back{width:100%;min-height:200px;backface-visibility:hidden;border:1px solid var(--brd);border-radius:var(--r);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1rem;text-align:center}
+.fc-front{background:var(--bg3)}
+.fc-back{background:var(--bg2);transform:rotateY(180deg);position:absolute;top:0;left:0}
+.fc-label{font:.5rem var(--f-display);color:var(--lilac);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:2px}
+.fc-question,.fc-answer{font-size:.9rem;line-height:1.5;word-break:break-word}
+.fc-tap{font-size:.55rem;color:var(--t3);margin-top:.75rem}
+.fc-progress-wrap{max-width:500px;margin:0 auto .75rem;text-align:center}
+.fc-pbar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.fc-pfill{height:100%;background:var(--mint);border-radius:2px;transition:width .3s}
+.fc-counter{font:.6rem var(--f-mono);color:var(--t3);margin-top:3px}
+.fc-rating{display:flex;gap:.5rem;justify-content:center;margin-bottom:.5rem}
+.fcr-btn{flex:1;max-width:200px;padding:.5rem;border-radius:var(--r);font-size:.8rem;font-weight:600;min-height:44px;transition:all var(--tr)}
+.fcr-good{border:1px solid var(--success);color:var(--success);background:rgba(46,213,115,.1)}
+.fcr-good:hover{background:rgba(46,213,115,.25)}
+.fcr-bad{border:1px solid var(--danger);color:var(--danger);background:rgba(255,71,87,.1)}
+.fcr-bad:hover{background:rgba(255,71,87,.25)}
+.fc-nav{display:flex;gap:.3rem;justify-content:center;margin-bottom:.5rem}
+.fc-stats-row{display:flex;gap:.75rem;justify-content:center;font:.6rem var(--f-mono);color:var(--t3);flex-wrap:wrap}
+.fcs-good{color:var(--success)}.fcs-bad{color:var(--danger)}
+
+/* ═══ TROPHIES ═══ */
+.ranks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-bottom:1rem}
+@media(min-width:500px){.ranks-grid{grid-template-columns:repeat(4,1fr)}}
+.rank-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.4rem;text-align:center}
+.rk-done{border-color:rgba(127,255,212,.3);background:var(--mint-d)}
+.rk-locked{opacity:.4}
+.rk-icon{font-size:1.3rem}
+.rk-name{font:.55rem var(--f-display);margin-top:2px}
+.rk-min{font:.5rem var(--f-mono);color:var(--t3);margin-top:2px}
+.trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem}
+@media(min-width:500px){.trophy-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:700px){.trophy-grid{grid-template-columns:repeat(4,1fr)}}
+.trophy-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem;text-align:center}
+.tr-done{border-color:rgba(127,255,212,.3);background:var(--mint-d)}
+.tr-locked{opacity:.5}
+.tr-icon{font-size:1.3rem}
+.tr-name{font-size:.65rem;font-weight:700;margin-top:2px}
+.tr-desc{font-size:.55rem;color:var(--t3);margin-top:2px}
+.tr-xp{font:.5rem var(--f-mono);color:var(--mint);margin-top:3px}
+
+/* ═══ STATS — NEW ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;margin-bottom:1rem}
+@media(min-width:500px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem;text-align:center}
+.sc-icon{font-size:1.3rem}
+.sc-val{font:700 1rem var(--f-display);color:var(--mint);margin:.2rem 0}
+.sc-label{font-size:.6rem;color:var(--t3)}
+.stats-xp,.stats-missions{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem;margin-bottom:.75rem}
+.stats-xp h3,.stats-missions h3{font:.7rem var(--f-display);color:var(--mint);margin-bottom:.4rem}
+.xpb-row{display:flex;justify-content:space-between;padding:.2rem 0;font-size:.75rem;border-bottom:1px solid var(--brd)}
+.xpb-row:last-child{border:none}
+.xpb-row strong{color:var(--mint)}
+.sm-row{display:flex;align-items:center;gap:.4rem;padding:.3rem 0;border-bottom:1px solid var(--brd);font-size:.7rem}
+.sm-row:last-child{border:none}
+.sm-icon{font-size:1rem;flex-shrink:0;width:1.5rem;text-align:center}
+.sm-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sm-obj,.sm-read,.sm-quiz{font:.55rem var(--f-mono);color:var(--t3);flex-shrink:0}
+
+/* ═══ TOAST ═══ */
+.toast-wrap{position:fixed;top:60px;right:.5rem;z-index:1000;display:flex;flex-direction:column;gap:.3rem;max-width:320px}
+.toast{padding:.5rem .75rem;border-radius:var(--r);font-size:.75rem;background:var(--bg4);border:1px solid var(--brd);opacity:0;transform:translateX(100%);transition:all .3s}
+.toast.show{opacity:1;transform:translateX(0)}
+.t-success{border-color:var(--success);background:rgba(46,213,115,.15)}
+.t-warning{border-color:var(--warning);background:rgba(255,165,2,.15)}
+.t-error{border-color:var(--danger);background:rgba(255,71,87,.15)}
+.t-info{border-color:var(--info);background:rgba(0,217,255,.15)}
+
+/* ═══ RESPONSIVE NAV ═══ */
+@media(min-width:600px){
+  .hub-stats{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:900px){
+  .bnav{position:static;border-top:none;border-bottom:1px solid var(--brd);flex-direction:row;padding-bottom:0}
+  .bnav-btn{flex-direction:row;gap:4px;font-size:.7rem;min-height:40px}
+  main{padding-bottom:1rem}
+}
+
+/* ═══ PRINT ═══ */
+@media print{
+  .header,.bnav,.toast-wrap,.hub-footer,.hub-actions,.fc-nav,.fc-rating,.back-btn{display:none!important}
+  body{background:#fff;color:#000}
+  .page{max-width:100%}
+  .mo-content{display:block!important}
+  .mo-content[hidden]{display:block!important}
+}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="header" role="banner">
+  <div class="hdr-logo" aria-label="Résistance Citoyenne">⚔️ RC</div>
+  <div class="xp-wrap" role="region" aria-label="Progression XP">
+    <span id="xpIcon" class="xp-rank" aria-hidden="true">🌱</span>
+    <span id="xpRank" class="xp-rank">NÉOPHYTE</span>
+    <div class="xp-bar"><div id="xpFill" class="xp-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="200"></div></div>
+    <span class="xp-text"><span id="xpCur">0</span>/<span id="xpMax">200</span></span>
+  </div>
+  <div class="theme-dots" role="group" aria-label="Thèmes">
+    <button data-th="dark" onclick="setTheme('dark')" aria-label="Thème sombre" title="Sombre"></button>
+    <button data-th="console" onclick="setTheme('console')" aria-label="Thème console" title="Console"></button>
+    <button data-th="neon" onclick="setTheme('neon')" aria-label="Thème néon" title="Néon"></button>
+    <button data-th="80s" onclick="setTheme('80s')" aria-label="Thème 80s" title="80s"></button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" role="main" aria-live="polite"></main>
+
+<nav class="bnav" role="navigation" aria-label="Navigation principale">
+  <button class="bnav-btn active" data-v="hub" onclick="nav('hub')" aria-label="Quartier Général" aria-current="page"><span class="ico" aria-hidden="true">🏠</span>QG</button>
+  <button class="bnav-btn" data-v="missions" onclick="nav('missions')" aria-label="Missions"><span class="ico" aria-hidden="true">🎯</span>Missions</button>
+  <button class="bnav-btn" data-v="tools" onclick="nav('tools')" aria-label="Outils"><span class="ico" aria-hidden="true">🛠️</span>Outils</button>
+  <button class="bnav-btn" data-v="flashcards" onclick="nav('flashcards')" aria-label="Flashcards"><span class="ico" aria-hidden="true">📚</span>Flashcards</button>
+  <button class="bnav-btn" data-v="trophies" onclick="nav('trophies')" aria-label="Trophées"><span class="ico" aria-hidden="true">🏆</span>Trophées</button>
+</nav>
+
+<div id="toasts" class="toast-wrap" aria-live="polite"></div>
+
+<script>
+(function(){
+// ═══════════════════════════════════════════════════════════════════════════
+// RÉSISTANCE CITOYENNE v3 — DATA (enrichi: contenu objectifs, quiz, prefill)
+// ═══════════════════════════════════════════════════════════════════════════
+
+var RANKS = [
+  {name:'NÉOPHYTE',min:0,icon:'🌱',color:'#888'},
+  {name:'INITIÉ·E',min:200,icon:'📖',color:'#2ed573'},
+  {name:'ACTIVISTE',min:500,icon:'✊',color:'#ffa502'},
+  {name:'STRATÈGE',min:1200,icon:'🎯',color:'#00d9ff'},
+  {name:'ARCHITECTE',min:2500,icon:'🏗️',color:'#c8a2ff'},
+  {name:'MAÎTRE·SSE',min:4000,icon:'⚔️',color:'#7fffd4'},
+  {name:'LÉGENDE',min:5500,icon:'🔥',color:'#ff6ec7'}
+];
+
+var MISSIONS = [
+  {
+    id:'arizona',name:'Décrypter l\'Arizona',icon:'🔍',cat:'analyse',difficulty:2,xpBase:100,
+    brief:'Le gouvernement Arizona (N-VA, MR, Engagés, CD&V, Vooruit) prépare 23 milliards d\'austérité. 30.122 personnes exclues du chômage dès la Vague 1. Décryptez les 8 failles.',
+    lore:'Février 2025. Bart De Wever forme la coalition Arizona après 211 jours. L\'accord prévoit la limitation à 24 mois — une rupture du contrat social belge construit depuis 1944.',
+    objectives:[
+      {id:'az1',text:'Identifier les 8 failles du budget Arizona',xp:20,
+       content:'Les 8 failles identifiées :\n\n1. Transfert non-financé vers les CPAS — Les 30.122 exclus atterrissent au CPAS, surcoût compensé à seulement 518€/personne/an (dérisoire vs coût réel 15.000€).\n2. Piège du taux marginal >100% — Reprendre un emploi partiel fait perdre plus qu\'il ne rapporte.\n3. Sous-estimation coûts santé — +30% consultations, +45% hospitalisations (KCE). Non budgété.\n4. Effet domino logement — Perte capacité locative → expulsions → hébergement d\'urgence.\n5. Perte recettes TVA et cotisations — Moins de consommation = moins de TVA. Cercle vicieux.\n6. Coût judiciaire — Recours massifs Art. 23, CEDH. Non provisionné.\n7. Décrochage scolaire enfants — 1 enfant sur 4 en risque AROPE.\n8. Irréversibilité sociale — Après 6 mois d\'exclusion, retour chute de 60% à 15%.'},
+      {id:'az2',text:'Documenter les 5 boucles de rétroaction destructrices',xp:25,
+       content:'5 boucles auto-entretenues :\n\nBoucle 1 — Précarité → Santé → Coûts : Exclusion → stress → pathologies → soins → dépenses INAMI non budgétées.\nBoucle 2 — Exclusion → CPAS → Communes : Perte allocation → RIS → surcoût communal → hausse additionnels.\nBoucle 3 — Chômage → Consommation → Emploi : Moins de revenus → moins de dépenses → fermetures → plus de chômage.\nBoucle 4 — Précarité → Logement → Urgence : Impayés → expulsions → hébergement 3× plus cher.\nBoucle 5 — Stigmatisation → Isolement → Inemployabilité : Cadrage Deborsu → honte → retrait → perte réseau.'},
+      {id:'az3',text:'Cartographier les 30.122 exclusions Vague 1',xp:15,
+       content:'Répartition géographique Vague 1 (janvier 2026) :\n\n• Bruxelles : ~8.500 (28%)\n• Wallonie : ~14.000 (46%) — Hainaut et Liège principaux\n• Flandre : ~7.600 (25%) — Anvers et Limbourg\n\nProfil type : 45-55 ans, faible qualification, problèmes de santé non reconnus MLD.\nVagues suivantes : V2 (juil. 2026) +25.000 | V3 (janv. 2027) +35.000 | Total 2027 : ~90.000.'},
+      {id:'az4',text:'Analyser le piège du taux marginal >100%',xp:20,
+       content:'Le « piège à l\'emploi » : chaque euro gagné fait perdre plus d\'un euro en allocations.\n\nCalcul réel (bénéficiaire RIS isolé 1.263€/mois + emploi mi-temps 950€ brut) :\n• Gain brut : +950€\n• Perte RIS : -1.263€\n• Perte BIM soins : ~-80€\n• Perte tarif social énergie : ~-60€\n• Coût transport/garde : ~-200€\n• Bilan net : -653€/mois\n\nTravailler fait perdre 653€. Mathématiquement irrationnel. Le budget Arizona ne prévoit aucun lissage.'},
+      {id:'az5',text:'Comparer Arizona vs ECP (24K€ vs 9,2 Mrd€)',xp:20,
+       content:'Arizona : 9,2 Mrd€ de coupes, logique punitive, 90.000 exclusions, cadre contesté Art.23, transfert CPAS massif, ROI négatif.\nECP : 24.000€ pilote, logique inclusive, 978.000 bénéficiaires potentiels, cadre existant (ruling SDA + loi 2005), aucun transfert CPAS, ROI positif.\n\nL\'ECP coûte 383.000× moins et couvre 10× plus de personnes.'}
+    ],
+    quiz:[
+      {q:'Combien de personnes exclues en Vague 1?',choices:['10.000','30.122','50.000','90.000'],correct:1},
+      {q:'Quel est le piège du taux marginal?',choices:['Gagner plus en travaillant','Perdre plus qu\'on ne gagne','Payer plus d\'impôts','Aucun effet'],correct:1},
+      {q:'Compensation CPAS par personne/an?',choices:['5.000€','2.000€','518€','1.263€'],correct:2},
+      {q:'Après 6 mois d\'exclusion, retour chute à...',choices:['45%','30%','15%','5%'],correct:2}
+    ],
+    intel:[
+      {label:'Exclusions V1',value:'30.122',color:'danger'},
+      {label:'Exclusions 2027',value:'90.000 est.',color:'danger'},
+      {label:'Budget austérité',value:'23 Mrd€',color:'warning'},
+      {label:'Coût/heure inactivité',value:'1M€/h',color:'warning'}
+    ],
+    tools:['swot','arbre','pourquoi'],
+    prefill:{swot:{forces:'Données chiffrées solides, précédents juridiques Art.23, soutien syndical',faiblesses:'Pas de relais médiatique, complexité du sujet, fatigue militante',opportunites:'Recours CC en cours, moratoire = fenêtre pression, Erasmus+ KA210',menaces:'Narratif assistanat, calendrier Arizona, fracturation syndicale'}},
+    fcTags:['arizona','coalition','chômage','exclusion','cpas','budget']
+  },
+  {
+    id:'deborsu',name:'Affaire Deborsu',icon:'📺',cat:'media',difficulty:2,xpBase:80,
+    brief:'RTL-TVI diffuse "Tous Fraudeurs" avec un ratio 120:1. Le documentaire stigmatise les allocataires pendant que l\'Arizona prépare les exclusions.',
+    lore:'La synecdoque accusatoire — cas individuels érigés en symboles d\'un groupe — fabrique l\'ennemi intérieur précaire.',
+    objectives:[
+      {id:'db1',text:'Déconstruire le cadrage épisodique',xp:20,
+       content:'Le cadrage épisodique (Iyengar, 1991) présente via des histoires individuelles plutôt que des analyses systémiques.\n\nDans « Tous Fraudeurs » : 120h tournées → 1h diffusée (ratio 120:1). Aucun contexte structural : fraude réelle <3%, zéro expert sociologue.\n\nEffet cognitif : le spectateur attribue la responsabilité à l\'individu (« il fraude par choix ») plutôt qu\'au système.\n\nAlternatif : Fraude sociale = 0,3% du budget vs fraude fiscale = 6-8% du PIB (30-50 Mrd€). Rapport 1:200.'},
+      {id:'db2',text:'Appliquer l\'analyse Herman-Chomsky',xp:25,
+       content:'5 filtres de Herman & Chomsky (1988) appliqués à RTL-TVI :\n\n1. Propriété : RTL Group/Bertelsmann — pas d\'intérêt à questionner le modèle dominant.\n2. Publicité : Annonceurs fuient les contenus critiquant banques/entreprises.\n3. Sources : Contrôleurs ONEM (répressif) vs chercheurs IWEPS/DULBEA (analytique) — seuls les premiers sont invités.\n4. Flak : Pression lobbies patronaux FEB/VOKA.\n5. Idéologie : Le « fraudeur social » remplace le « communiste » comme ennemi intérieur.\n\nRTL ne choisit pas consciemment — le système de filtres produit naturellement ce contenu (propagande sociologique d\'Ellul).'},
+      {id:'db3',text:'Rédiger une plainte argumentée au CSA',xp:20,
+       content:'Base légale : Art. 9 §1 (dignité), Art. 9 §2 (discrimination), Art. 36 (honnêteté info) du décret SMA.\n\nArguments :\n1. Ratio 120:1 = sélection tendancieuse (art. 36)\n2. Absence de contradiction\n3. Timing coordonné avec agenda Arizona\n4. Synecdoque accusatoire (art. 9 §2)\n5. Non-respect vie privée\n\nProcédure : plainte csa.be, 30 jours après diffusion, réponse sous 60 jours.'},
+      {id:'db4',text:'Produire un contre-récit sourcé',xp:15,
+       content:'Structure du contre-récit :\n\n1. Les faits vs le récit : Fraude sociale = 0,3%. Fraude fiscale = 200× plus.\n2. Les vrais chiffres : 2,1M AROPE (18,3%). 2,4M BIM (21%). 58% étudiants insécurité alimentaire.\n3. Les parcours de vie : Derrière chaque « fraudeur » montré, 100 personnes en détresse non montrées.\n4. L\'alternative : ECP qui transforme l\'inactivité en contribution.\n\nCanaux : ouaisfieu, RWLP, BAPN, LDH, réseaux sociaux.'}
+    ],
+    quiz:[
+      {q:'Ratio de montage du documentaire?',choices:['10:1','60:1','120:1','200:1'],correct:2},
+      {q:'Combien de filtres Herman-Chomsky?',choices:['3','5','7','10'],correct:1},
+      {q:'Fraude sociale = quel % du budget?',choices:['3%','1%','0,3%','5%'],correct:2}
+    ],
+    intel:[
+      {label:'Ratio montage',value:'120:1',color:'danger'},
+      {label:'Belges AROPE',value:'2,1M (18,3%)',color:'warning'},
+      {label:'Étudiants insécurité alim.',value:'58%',color:'danger'},
+      {label:'BIM',value:'2,4M (21% pop.)',color:'warning'}
+    ],
+    tools:['domino','message','alliance'],
+    prefill:{message:{accroche:'Pour chaque « fraudeur » montré par RTL, 200 personnes en détresse sont invisibilisées.',probleme:'Le documentaire utilise un ratio 120:1 sans contexte structural.',importance:'Fraude sociale = 0,3% du budget. Fraude fiscale = 200× plus.',cible:'CSA, parlementaires FWB, journalistes',action:'Déposer plainte CSA, diffuser contre-récit, interpeller parlementaires'}},
+    fcTags:['deborsu','média','fraude','rtl','csa','cadrage']
+  },
+  {
+    id:'art23',name:'Défense Art. 23',icon:'⚖️',cat:'juridique',difficulty:3,xpBase:120,
+    brief:'L\'article 23 de la Constitution garantit la sécurité sociale. Le standstill interdit toute régression. Recours introduit le 29/10/2025.',
+    lore:'Face à l\'impuissance des urnes, le citoyen s\'est tourné vers le juge. Le lawfare citoyen est l\'usage légitime du droit.',
+    objectives:[
+      {id:'j1',text:'Maîtriser l\'Art. 23 et le standstill',xp:20,
+       content:'Art. 23 : « Chacun a le droit de mener une vie conforme à la dignité humaine » — garantit sécurité sociale, santé, aide sociale.\n\nStandstill (cliquet) : La Cour constitutionnelle interdit de réduire significativement le niveau de protection existant sans justification d\'intérêt général.\n\nApplication Arizona : La limitation à 24 mois = régression significative par rapport au système actuel (durée illimitée sous conditions). L\'État devra prouver la proportionnalité.'},
+      {id:'j2',text:'Documenter les 4 plaintes CEDH en cours',xp:25,
+       content:'4 procédures CEDH actives :\n\n1. Plainte « Climat social » (2025) — Art. 3 CEDH (traitements dégradants), inspirée arrêt Camara.\n2. Plainte « Accès au juge » (2025) — Art. 6 CEDH, délais de recours trop courts pour personnes précarisées.\n3. Arrêt Camara (2023) — « Défaillance systémique » belge (demandeurs asile). Précédent applicable.\n4. Klimaatzaak (2021) — État condamné, décision non exécutée → montre les limites.\n\nStratégie : saturation judiciaire coordonnée (CC + CEDH + tribunaux du travail).'},
+      {id:'j3',text:'Préparer un dossier d\'interpellation communale',xp:20,
+       content:'Bruxelles : 25 signatures (ordonnance 17/07/2020).\nWallonie : Art. L1122-14 CDLD, droit individuel.\n\nStructure : identification commune + calcul surcoût CPAS local + interpellation Conseil communal + question écrite préalable + mobilisation signataires.\n\nExemple BXL : Surcoût = 87M€/an. Compensation fédérale = 3,1M€. Déficit = catastrophique.'},
+      {id:'j4',text:'Identifier les précédents juridiques',xp:15,
+       content:'Précédents clés :\n\n• Klimaatzaak (2021) : Condamnation État pour inaction climatique. Non exécuté.\n• Arrêt Camara (CEDH 2023) : « Défaillance systémique » belge.\n• CC arrêt 135/2011 : Annulation d\'une réduction sociale disproportionnée (standstill).\n• +9.000 condamnations de l\'État belge — pattern systémique, pas erreurs isolées.'},
+      {id:'j5',text:'Rédiger une pétition fédérale (objectif 25K)',xp:20,
+       content:'Art. 28 Constitution : 25.000+ signatures = débat parlementaire obligatoire.\n\nStructure : Exposé des faits (limitation 24 mois, 90.000 exclusions, violation Art. 23) → Demande (moratoire jusqu\'à l\'arrêt CC) → Signatures (nom, adresse, signature).\n\nCanaux : Change.org + collecte physique. Relais syndicaux FGTB (1,5M) + CSC.\nCalendrier : Avant Vague 2 (juillet 2026).'}
+    ],
+    quiz:[
+      {q:'Art. 23 garantit le droit à...',choices:['La liberté d\'expression','La sécurité sociale','Le vote obligatoire','La propriété'],correct:1},
+      {q:'Standstill signifie...',choices:['Gel des salaires','Interdiction de régression','Arrêt des négocias','Statu quo'],correct:1},
+      {q:'Signatures nécessaires pour interpeller (BXL)?',choices:['10','25','100','500'],correct:1},
+      {q:'Condamnations de l\'État belge?',choices:['+1.000','+5.000','+9.000','+15.000'],correct:2}
+    ],
+    intel:[
+      {label:'Recours déposé',value:'29/10/2025',color:'info'},
+      {label:'Arrêt CC attendu',value:'Fin 2026',color:'warning'},
+      {label:'Plaintes CEDH',value:'4 actives',color:'info'},
+      {label:'Condamnations État',value:'+9.000',color:'danger'}
+    ],
+    tools:['checklist','smart','suivi'],
+    prefill:{smart:{specifique:'Moratoire exclusions V2 (juillet 2026)',mesurable:'25.000 signatures + 3 interpellations communales',atteignable:'Oui avec relais syndicaux FGTB/CSC (1,5M membres)',relevant:'Protection Art. 23 + calendrier CC',temporel:'Avant 1er juillet 2026'}},
+    fcTags:['art23','constitution','standstill','cedh','juridique']
+  },
+  {
+    id:'troisguerres',name:'Les Trois Guerres Civiques',icon:'⚔️',cat:'doctrine',difficulty:3,xpBase:150,
+    brief:'三种公民战法 — Transposition de la doctrine chinoise au combat civique belge. Opinion, Dé-sidération, Prétoire : trois fronts simultanés.',
+    lore:'En 2003, la Commission militaire centrale de la RPC officialise les 三种战法. Notre réponse : la même architecture, inversée.',
+    objectives:[
+      {id:'tg1',text:'Comprendre la Guerre du Récit (舆论战)',xp:25,
+       content:'Guerre du Récit (舆论战 Yúlùn zhàn) civique :\n\n• OSINT citoyen : Collecter données publiques (SPF, BNB, Eurostat)\n• Lead-dexing : Suivi nominatif de chaque élu (votes, déclarations, mandats)\n• Contre-récit documenté : Pas d\'opinion — des faits sourcés, vérifiables\n• Saturation informationnelle positive : Tellement de contenu factuel que le récit dominant est noyé\n\nOutils : ouaisfieu (70+ analyses), infographies, flashcards, datasets ouverts.'},
+      {id:'tg2',text:'Maîtriser la Dé-sidération (心理战)',xp:25,
+       content:'Dé-sidération (心理战 Xīnlǐ zhàn) = sortir de la paralysie :\n\n• Éducation permanente : Rendre le complexe compréhensible\n• Montée en compétence : De « je ne comprends rien » à « je peux analyser »\n• Pyramide DIKW : Données → Information → Connaissance → Sagesse\n• Désapprentissage : Déconstruire les fausses évidences\n\nIndicateur : Le citoyen formé explique le budget Arizona à son voisin en 5 minutes.'},
+      {id:'tg3',text:'Appliquer la Guerre du Prétoire (法律战)',xp:25,
+       content:'Guerre du Prétoire (法律战 Fǎlǜ zhàn) — lawfare citoyen :\n\n1. Recours constitutionnel (Art. 23) — déposé 29/10/2025\n2. Plaintes CEDH (Art. 3, 6, 14) — 4 actives\n3. Interpellations communales — 589 communes = 589 fronts\n4. Pétitions fédérales — 25K = débat obligatoire\n5. Tribunaux du travail — recours individuels massifs\n6. Plainte CSA — volet Deborsu\n\nPrincipe : 1.000 recours individuels coordonnés > 1 recours collectif. L\'État a +9.000 condamnations.'},
+      {id:'tg4',text:'Cartographier les synergies entre les 3 guerres',xp:25,
+       content:'Les 3 guerres combinées :\n\nRécit → Prétoire : Données OSINT = pièces à conviction\nPrétoire → Récit : Condamnation = fait médiatique\nDé-sidération → Les deux : Citoyen formé peut témoigner, rédiger, produire\n\nCycle vertueux : Veille → Analyse → Publication → Mobilisation → Recours → Condamnation → Nouveau cycle.\n\nPoint critique : Si un front s\'arrête, les deux autres perdent. D\'où l\'infrastructure résiliente (11 plateformes).'},
+      {id:'tg5',text:'Identifier les armes de la particratie',xp:25,
+       content:'La particratie mène ses propres « trois guerres » :\n\nRécit : Contrôle médias (RTL/RTBF CA politisés), cadrage épisodique, novlangue (« activation » = exclusion).\nSidération : Complexité institutionnelle (6 parlements → « pas ma compétence »), volume législatif (1.200+ pages/an).\nLawfare : Non-exécution condamnations, longueur procédures (CC 12-18 mois), coût accès juge.\n\nNotre avantage : La particratie est lente, rigide, prévisible. Le citoyen connecté est rapide, agile, imprévisible.'}
+    ],
+    quiz:[
+      {q:'三种战法 se traduit par...',choices:['Trois stratégies','Trois guerres','Trois chemins','Trois doctrines'],correct:1},
+      {q:'La Dé-sidération vise à...',choices:['Effrayer l\'adversaire','Sortir le citoyen de la paralysie','Créer de la confusion','Infiltrer'],correct:1},
+      {q:'Avantage citoyen vs particratie?',choices:['Plus de budget','Plus rapide et agile','Plus nombreux','Plus d\'avocats'],correct:1}
+    ],
+    intel:[
+      {label:'Doctrine',value:'三种公民战法',color:'info'},
+      {label:'Guerre I',value:'Récit (舆论战)',color:'mint'},
+      {label:'Guerre II',value:'Dé-sidération (心理战)',color:'lilac'},
+      {label:'Guerre III',value:'Prétoire (法律战)',color:'warning'}
+    ],
+    tools:['pestel','theorie','acteurs'],prefill:{},
+    fcTags:['trois guerres','doctrine','récit','sidération','prétoire']
+  },
+  {
+    id:'osint',name:'OSINT Citoyen',icon:'🔎',cat:'renseignement',difficulty:2,xpBase:90,
+    brief:'L\'intelligence en sources ouvertes transforme le citoyen passif en veilleur actif. Collectez, vérifiez, exploitez.',
+    lore:'Le cycle : veille → donnée → preuve → contentieux → fait juridique → récit.',
+    objectives:[
+      {id:'os1',text:'Maîtriser la pyramide DIKW',xp:20,
+       content:'D — Données : Chiffres bruts. « 30.122 » seul ne dit rien.\nI — Information : Donnée contextualisée. « 30.122 exclusions en janvier 2026. »\nK — Connaissance : Info analysée. « Ces exclusions coûteront 87M€ aux CPAS car compensation = 518€/an vs coût 15.000€/an. »\nW — Sagesse : Connaissance opérationnalisée. « Déposer recours CC AVANT Vague 1 + 25 interpellations simultanées. »\n\nChaque outil ouaisfieu fait monter d\'un cran. Flashcards = D→I. Analyses = I→K. Plaidoyers = K→W.'},
+      {id:'os2',text:'Pratiquer le lead-dexing',xp:25,
+       content:'Lead-dexing = suivi systématique et nominatif de chaque élu.\n\nSuivre : Votes plénière/commission, déclarations vs votes (incohérences), mandats cumulés, présences.\n\nSources belges : lachambre.be (comptes-rendus), transparencia.be (mandats/rémunérations), CRISP, Moniteur belge.\n\n31.806 mandataires (1/km²). Objectif : fiche par député Arizona (89 fédéraux) avec historique de vote.'},
+      {id:'os3',text:'Exploiter les données ouvertes belges',xp:20,
+       content:'Sources : SPF/Statbel (démographie, AROPE), BNB (macro), Bureau du Plan (projections), IWEPS (Wallonie), IBSA (Bruxelles), Eurostat (comparaisons), KCE (santé), INAMI, ONEM.\n\nFormat : API ou exports CSV/Excel. Tout téléchargeable, vérifiable, citeable en justice.\n\nPrincipe : Ne jamais affirmer sans source. Chaque chiffre doit pointer vers une URL institutionnelle.'},
+      {id:'os4',text:'Produire un rapport OSINT admissible en justice',xp:25,
+       content:'Critères admissibilité :\n\n1. Traçabilité : source URL + date + capture horodatée\n2. Méthodologie documentée : comment, par qui, quand, quels outils\n3. Chaîne de custody : hash SHA-256 de chaque document\n4. Contradiction : mentionner aussi les données contraires\n5. Qualification : distinguer fait / déduction / opinion\n\nLes 70+ analyses ouaisfieu suivent cette méthodo. Chaque document est reproductible (Fork·Hack·Spread).'}
+    ],
+    quiz:[
+      {q:'DIKW signifie...',choices:['Data, Info, Knowledge, Wisdom','Direct, Indirect, Key, Wide','Design, Implement, Know, Win','Data, Index, Key, Write'],correct:0},
+      {q:'Mandataires en Belgique?',choices:['10.000','21.000','31.806','45.000'],correct:2},
+      {q:'Site pour mandats des élus?',choices:['lachambre.be','transparencia.be','moniteur.be','crisp.be'],correct:1}
+    ],
+    intel:[
+      {label:'Documents ouaisfieu',value:'70+ analyses',color:'mint'},
+      {label:'Plateformes',value:'11 sites',color:'info'},
+      {label:'Mandataires BE',value:'31.806',color:'warning'},
+      {label:'Budget ouaisfieu',value:'870€ total',color:'mint'}
+    ],
+    tools:['domino','fleur','acteurs'],prefill:{},
+    fcTags:['osint','données','veille','dikw','mandataires']
+  },
+  {
+    id:'commune',name:'Interpellation Communale',icon:'🏛️',cat:'action',difficulty:1,xpBase:70,
+    brief:'Le niveau communal est le premier front accessible. Chaque citoyen peut interpeller son conseil communal.',
+    lore:'La consultation populaire communale est ouverte dès 16 ans, sans condition de nationalité.',
+    objectives:[
+      {id:'co1',text:'Identifier votre commune et ses procédures',xp:15,
+       content:'Bruxelles : 25 signatures (ordonnance 17/07/2020), droit de poser questions orales.\nWallonie : Art. L1122-14 CDLD, droit individuel.\nFlandre : Decreet Lokaal Bestuur, pétition et interpellation.\n\nÉtapes : 1. Identifier commune (ibz.be) 2. Consulter règlement d\'ordre intérieur 3. Identifier procédure 4. Dates prochains conseils.'},
+      {id:'co2',text:'Rédiger une interpellation Arizona locale',xp:20,
+       content:'Modèle d\'interpellation :\n\nObjet : Impact limitation 24 mois sur le CPAS de [commune]\n\nConsidérant que : exclusion de [X] personnes, surcoût CPAS, compensation 518€/an = 3,5% du coût réel.\n\nQuestions : 1. Combien de personnes concernées? 2. Surcoût CPAS? 3. Budget prévu? 4. Mesures d\'accompagnement?\n\nDemande : Motion communale demandant un moratoire.'},
+      {id:'co3',text:'Calculer le surcoût CPAS local',xp:20,
+       content:'Formule : Surcoût = (Exclus × Coût RIS) − (Exclus × Compensation fédérale)\n\nVariables : RIS isolé = 15.156€/an. RIS cohabitant = 10.104€/an. Compensation = 518€/an. Transfert CPAS ~70%.\n\nExemple BXL 19 communes : Exclusions V1 ~8.500. Transfert CPAS (70%) ~5.950. Surcoût brut : 90,2M€. Compensation : 3,1M€. Surcoût net : ~87M€/an.'},
+      {id:'co4',text:'Mobiliser les 25 signatures',xp:15,
+       content:'Cercle 1 (1-10) : Famille, amis, voisins. Face-à-face 5 min/personne.\nCercle 2 (10-20) : Réseau associatif, maison de quartier, comité parents.\nCercle 3 (20-25) : Stand lieu public, porte-à-porte ciblé.\n\nDocuments : feuille signatures, résumé 1 page, infographie « Combien coûtera Arizona à notre commune? ».\nCalendrier : 2 semaines, lancer 3 semaines avant le conseil visé.'}
+    ],
+    quiz:[
+      {q:'Signatures nécessaires (BXL)?',choices:['10','25','50','100'],correct:1},
+      {q:'En Wallonie, combien de personnes?',choices:['1 (individuel)','10','25','50'],correct:0},
+      {q:'Coût RIS isolé annuel?',choices:['8.000€','12.000€','15.156€','20.000€'],correct:2}
+    ],
+    intel:[
+      {label:'Seuil BXL',value:'25 personnes',color:'info'},
+      {label:'Seuil Wallonie',value:'Art. L1122-14',color:'info'},
+      {label:'Surcoût CPAS BXL',value:'87M€',color:'danger'},
+      {label:'Compensation/an',value:'518€',color:'danger'}
+    ],
+    tools:['smart','checklist','message'],prefill:{},
+    fcTags:['commune','cpas','interpellation','signatures']
+  },
+  {
+    id:'ecp',name:'Économie Contributive',icon:'🌱',cat:'alternative',difficulty:2,xpBase:100,
+    brief:'L\'ECP propose : transformer 978.000 inactifs contraints en contributeurs valorisés sans perte de droits. Budget : 24.000€.',
+    lore:'Le cadre existe : ruling SDA + loi volontariat 2005. L\'ECP ne coûte pas — elle fait économiser.',
+    objectives:[
+      {id:'ec1',text:'Comprendre le mécanisme ECP',xp:20,
+       content:'Principe : Permettre aux inactifs contraints (chômage LD, invalidité, RIS) de contribuer à des projets d\'utilité sociale SANS perdre allocations.\n\nCadre légal existant : Ruling fiscal SDA (sécurisation statut), Loi 03/07/2005 (volontariat), Art. 100 §2 INAMI (reprise progressive invalides).\n\nExemples : Numérisation archives, tutorat scolaire, jardins partagés, repair cafés, veille citoyenne.'},
+      {id:'ec2',text:'Comparer Arizona (9,2 Mrd€) vs ECP (24K€)',xp:20,
+       content:'Arizona : 9,2 Mrd€ coupes, punitive, 90.000 exclusions, contesté Art.23, transfert CPAS, ROI négatif.\nECP : 24.000€ pilote, inclusive, 978.000 potentiels, cadre existant, aucun transfert, ROI positif.\n\nL\'ECP coûte 383.000× moins et couvre 10× plus de personnes. Le coût inactivité (1M€/h) rend toute alternative moins chère que le statu quo.'},
+      {id:'ec3',text:'Identifier les 978.000 inactifs contraints',xp:15,
+       content:'Chômeurs LD : ~180.000. Invalides/MLD : ~500.000. RIS/CPAS : ~150.000. NEET jeunes : ~80.000. Découragés : ~68.000.\n\nPas inactifs « par choix » mais par système : absence postes adaptés, formation, transport, garde enfants, santé mentale.\n\nCoût total : 21-24 Mrd€/an = 1M€/heure (allocations + soins supplémentaires + perte cotisations/TVA + coûts sociaux).'},
+      {id:'ec4',text:'Rédiger un dossier ruling SDA',xp:25,
+       content:'Structure : 1. Identification ASBL porteuse 2. Description activité (contributions citoyennes) 3. Question fiscale (défraiements imposables?) 4. Analyse juridique (seuils 40,67€/jour, 1.626,69€/an) 5. Demande confirmation conservation statut social.\n\nDélai : réponse sous 3 mois. Décision contraignante 5 ans.'},
+      {id:'ec5',text:'Calculer le ROI citoyen',xp:20,
+       content:'Économies par contributeur/an : réduction soins -1.200€ (KCE), réduction CPAS -2.000€, réduction judiciaire -500€, gain TVA +800€. Total ~4.500€/contributeur.\n\n100 contributeurs = 450K€ économies pour 24K€ investis → ROI 18,75×.\n10.000 contributeurs = 45M€.\n978.000 = 4,4 Mrd€/an = 18% du coût inactivité actuel.'}
+    ],
+    quiz:[
+      {q:'Coût inactivité par heure?',choices:['100K€','500K€','1M€','5M€'],correct:2},
+      {q:'Inactifs contraints?',choices:['200.000','500.000','978.000','1.500.000'],correct:2},
+      {q:'Ruling SDA valable combien d\'années?',choices:['1','3','5','10'],correct:2}
+    ],
+    intel:[
+      {label:'Inactifs contraints',value:'978.000',color:'danger'},
+      {label:'Coût inactivité',value:'1M€/h',color:'danger'},
+      {label:'Budget ECP',value:'24.000€',color:'mint'},
+      {label:'Cadre légal',value:'Ruling SDA + Loi 2005',color:'info'}
+    ],
+    tools:['theorie','swot','smart'],prefill:{},
+    fcTags:['ecp','contributive','inactivité','ruling']
+  },
+  {
+    id:'coalition',name:'Construction Coalition',icon:'🤝',cat:'strategie',difficulty:2,xpBase:90,
+    brief:'Cartographiez les alliés : syndicats (3M membres), associations, académiques. Construisez un front commun.',
+    lore:'Le modèle des Trois Guerres exige l\'intégration éducation populaire + plaidoyer + communication.',
+    objectives:[
+      {id:'cl1',text:'Cartographier alliés / neutres / opposants',xp:20,
+       content:'Alliés actifs : FGTB (~1,5M), CSC (~1,6M), RWLP, BAPN, LDH, DULBEA, IWEPS, Solidaris, MC.\nNeutres à basculer : Députés Vooruit/Engagés sensibles, RTBF Investigation, CPAS (impactés mais prudents).\nOpposants : N-VA (architecte), MR (aligné), FEB/VOKA (lobbies patronaux), RTL-TVI.'},
+      {id:'cl2',text:'Identifier 3-5 députés à basculer',xp:25,
+       content:'Coalition étroite → 3-5 voix qui basculent = blocage.\n\nVooruit : Députés ex-syndicalistes, mal à l\'aise avec limitation. Levier : contradiction programme/vote. Méthode : lead-dexing public.\nEngagés : Députés sociaux-chrétiens. Levier : Art. 23 = doctrine sociale. Méthode : interpellations ciblées.\n\nStratégie : pas d\'attaque frontale — montrer que voter la mesure sera électoralement coûteux. Fournir données CPAS locales.'},
+      {id:'cl3',text:'Rédiger un protocole de partenariat',xp:20,
+       content:'Engagements ouaisfieu : analyses sourcées, infrastructure numérique, animation EP, licence CC-BY-SA.\nEngagements partenaire : relais réseau, locaux pour ateliers, co-signature interpellations, soutien candidatures.\nGouvernance : comité trimestriel, évaluation semestrielle, droit de retrait.\nBudget commun : 0€ (principe ouaisfieu).'},
+      {id:'cl4',text:'Trouver un partenaire Erasmus+ KA210',xp:25,
+       content:'KA210 : 30-60K€ forfait, 6-24 mois, 2+ organisations de 2+ pays UE.\n\nPistes : France (ATD, Anticor), Pays-Bas (Open State Foundation), Allemagne (Abgeordnetenwatch), Espagne (Civio, Xnet).\n\nDeadline : 5 mars 2026. Taux succès ~80% pour premiers dépôts.\nAction : contacter 5 organisations cette semaine.'}
+    ],
+    quiz:[
+      {q:'Membres syndicaux FGTB+CSC?',choices:['500K','1M','3M','5M'],correct:2},
+      {q:'Budget Erasmus+ KA210?',choices:['10-20K€','30-60K€','100-200K€','500K€+'],correct:1},
+      {q:'Deadline Erasmus+ en cours?',choices:['1er février','5 mars 2026','15 avril','1er juin'],correct:1}
+    ],
+    intel:[
+      {label:'Membres syndicaux',value:'~3M (FGTB+CSC)',color:'info'},
+      {label:'Députés à cibler',value:'3-5',color:'warning'},
+      {label:'Erasmus+ KA210',value:'30-60K€',color:'mint'},
+      {label:'Deadline',value:'5 mars 2026',color:'danger'}
+    ],
+    tools:['alliance','acteurs','cibles'],prefill:{},
+    fcTags:['coalition','syndicats','partenariat','erasmus']
+  },
+  {
+    id:'particratie',name:'Anatomie de la Particratie',icon:'🏰',cat:'analyse',difficulty:3,xpBase:120,
+    brief:'31.806 mandataires, financement public >80%, listes bloquées. Déconstruisez le système.',
+    lore:'Le citoyen = « bétail de vote » (stemvee). 75-80% de défiance envers les partis.',
+    objectives:[
+      {id:'pa1',text:'Comprendre pilarisation et consociationalisme',xp:20,
+       content:'Pilarisation (verzuiling) : société organisée en piliers (catholique, socialiste, libéral), chacun avec écoles, hôpitaux, syndicats, médias.\n\nConsociationalisme (Lijphart 1968) : stabilité par négociation entre élites. Ce qui était pacification est devenu contrôle — les partis se partagent le pouvoir entre eux plutôt qu\'avec les citoyens.'},
+      {id:'pa2',text:'Analyser le financement public (>80%)',xp:20,
+       content:'>80% financement public (2× Allemagne, 3× France). ~70M€/an dotation fédérale. N-VA ~12M€, PS ~10M€, MR ~9M€.\n\nConséquence : Les partis ne dépendent pas des citoyens financièrement. Circuit fermé d\'auto-financement.\n\nComparaison : BE >80% | DE ~40% | FR ~25% | UK <5%.'},
+      {id:'pa3',text:'Documenter le mille-feuille institutionnel',xp:15,
+       content:'6 parlements + 6 gouvernements + 10 provinces + 589 communes.\n31.806 mandataires (1/365 hab, 1/km²). Chevauchement compétences permanent. « Pas ma compétence » = excuse structurelle. Aucun référendum.\n\nComplexité = bouclier psychologique du système : conçu pour décourager.'},
+      {id:'pa4',text:'Comparer avec Suisse, Pays-Bas, Canada',xp:20,
+       content:'Suisse : Référendum initiative populaire (100K signatures), 4×/an. Citoyen a le dernier mot.\nPays-Bas : Dé-pilarisé depuis 1960. Référendum consultatif aboli 2018.\nCanada : Référendums possibles (Québec), pétitions avec réponse obligatoire.\n\nBelgique : Aucun référendum, aucune initiative populaire, pétition = simple demande. Cumule contraintes sans contrepoids.'},
+      {id:'pa5',text:'Identifier les verrous constitutionnels',xp:25,
+       content:'5 verrous :\n1. Pas de référendum\n2. Listes bloquées de facto (dévolution)\n3. Majorité spéciale (2/3 + groupes linguistiques)\n4. Sonnette d\'alarme (blocage par groupe)\n5. Formation gouvernement sans délai (211 jours Arizona, 541 en 2010)\n\nLe système est verrouillé de l\'intérieur. Les outils de changement sont contrôlés par les bénéficiaires du statu quo.'}
+    ],
+    quiz:[
+      {q:'Mandataires en Belgique?',choices:['10.000','21.000','31.806','50.000'],correct:2},
+      {q:'Financement public partis belges?',choices:['>50%','>60%','>80%','>95%'],correct:2},
+      {q:'Parlements en Belgique?',choices:['3','4','6','8'],correct:2}
+    ],
+    intel:[
+      {label:'Mandataires',value:'31.806 (1/km²)',color:'warning'},
+      {label:'Financement public',value:'>80%',color:'danger'},
+      {label:'Défiance partis',value:'75-80%',color:'danger'},
+      {label:'Parlements',value:'6',color:'info'}
+    ],
+    tools:['pestel','arbre','fleur'],prefill:{},
+    fcTags:['particratie','mandataires','financement','pilarisation']
+  },
+  {
+    id:'financement',name:'Chasse aux Financements',icon:'💰',cat:'logistique',difficulty:1,xpBase:80,
+    brief:'Budget actuel : 870€ sur 2,5 ans. Sécuriser des financements sans compromettre l\'indépendance.',
+    lore:'Le moratoire EP 2026-2028 bloque la voie principale. Mais des alternatives existent.',
+    objectives:[
+      {id:'fi1',text:'Évaluer les 6 pistes de financement',xp:15,
+       content:'PCI FWB : 5-35K€ (95% prob.) | Erasmus+ KA210 : 30-60K€ (80%) | CERV : 50-300K€ (75%) | FRB : 3,75-50K€ (85%) | Décret OJ : 5-20K€ (60%) | Crowdfunding : 1-25K€ (variable).\n\nStratégie : postuler simultanément PCI + FRB + Erasmus (diversification).'},
+      {id:'fi2',text:'Rédiger un dossier PCI FWB',xp:20,
+       content:'PCI (Projet Cohésion & Inclusion) : 5-35K€, taux 95%, appel permanent.\n\nStructure : Identification + Description + Budget + Calendrier + Indicateurs.\n\nPoints forts ouaisfieu : 2,5 ans de production, méthodologie innovante (IA civile), coût opérationnel = 0€, impact mesurable.'},
+      {id:'fi3',text:'Préparer candidature Erasmus+ KA210',xp:25,
+       content:'KA210 : 30-60K€ forfait, 2+ organisations de 2+ pays UE, 6-24 mois.\n\nCritères : Pertinence (25%), Qualité plan (30%), Partenariat (20%), Impact (25%). Score min : 60/100.\n\nPartenaire nécessaire dans autre pays UE. Deadline : 5 mars 2026.'},
+      {id:'fi4',text:'Contacter la Fondation Roi Baudouin',xp:15,
+       content:'FRB : Fonds démocratie (3,75-50K€), appels Participation citoyenne et Pauvreté/exclusion.\n\nAtouts : Innovation, faible coût, reproductibilité.\nProcessus : dossier en ligne, jury, réponse 2-3 mois.\nContact : info@kbs-frb.be | +32 2 511 18 40.'},
+      {id:'fi5',text:'Lancer un crowdfunding',xp:15,
+       content:'Plateformes : KissKissBankBank, Ulule, GoFundMe. Objectif réaliste : 2.500-5.000€.\n\nCampagne : vidéo 2min, contreparties (analyses, stickers, flashcards physiques), 30 jours.\n\nAvantage : financement + communication + mobilisation. Chaque donateur = ambassadeur.'}
+    ],
+    quiz:[
+      {q:'Budget total ouaisfieu?',choices:['0€','870€','5.000€','25.000€'],correct:1},
+      {q:'Taux financement PCI?',choices:['50%','75%','95%','100%'],correct:2},
+      {q:'Budget KA210?',choices:['5-10K€','30-60K€','100-200K€','500K€+'],correct:1}
+    ],
+    intel:[
+      {label:'PCI FWB',value:'5-35K€ (95%)',color:'mint'},
+      {label:'Erasmus+ KA210',value:'30-60K€ (80%)',color:'mint'},
+      {label:'CERV',value:'50-300K€ (75%)',color:'info'},
+      {label:'FRB',value:'3,75-50K€ (85%)',color:'mint'}
+    ],
+    tools:['smart','suivi','domino'],prefill:{},
+    fcTags:['financement','erasmus','pci','crowdfunding']
+  },
+  {
+    id:'mld',name:'Dossier MLD',icon:'🏥',cat:'analyse',difficulty:2,xpBase:90,
+    brief:'500.000+ MLD. Sanctions ×4. 218.000 dossiers réexaminés. L\'Arizona vise les plus vulnérables.',
+    lore:'La réactivation forcée des MLD est l\'angle mort du débat public.',
+    objectives:[
+      {id:'ml1',text:'Documenter les 218.000 dossiers réexaminés',xp:20,
+       content:'INAMI : réexamen massif. Processus : convocation médecin-conseil → évaluation capacité résiduelle → plan réintégration → sanctions si non-coopération.\n\nProblèmes : 65% pathologies multiples, médecins non-spécialistes, marché du travail inadapté.\n\nProjection INAMI : 100.000 retours. Réalité (référence Pays-Bas) : 15-20.000 max.'},
+      {id:'ml2',text:'Analyser le quadruplement des sanctions',xp:20,
+       content:'Avant : 2,5% réduction. Après : 10% (×4).\n\nImpact : indemnité isolé ~1.200€/mois → sanction passe de -30€ à -120€. Pour personne sous seuil de pauvreté, = catastrophe.\n\nProfil sanctionnés : 70% santé mentale. Le « refus de coopérer » est souvent une incapacité. Non pris en compte.'},
+      {id:'ml3',text:'Calculer l\'irréalisme des 100K retours',xp:20,
+       content:'Expérience Pays-Bas (2015) : taux retour effectif = 8% (vs 20% projeté). Appliqué BE : 8% × 218.000 = 17.440.\n\nObstacles : inadéquation offre/demande, âge moyen 52 ans (discrimination >50 ans), pathologies réelles non résolubles par plan administratif.\n\nGain budgétaire = illusoire.'},
+      {id:'ml4',text:'Rédiger un plaidoyer patient-partenaire',xp:25,
+       content:'Modèle Montréal (patient-partenaire).\n\nStructure : 1. Données (500K+ MLD, 218K réexaminés, ×4 sanctions) 2. Témoignages anonymisés 3. Alternative : réactivation accompagnée 4. Demande : moratoire sanctions + évaluation indépendante.\n\nCanaux : LUSS, Solidaris/MC, médecins généralistes, commission Santé.\n\nArt. 100 §2 INAMI permet DÉJÀ la reprise progressive — il suffit de l\'utiliser.'}
+    ],
+    quiz:[
+      {q:'MLD en Belgique?',choices:['100K','250K','500K+','1M'],correct:2},
+      {q:'Sanctions multipliées par...',choices:['2','3','4','5'],correct:2},
+      {q:'Taux retour réaliste?',choices:['50K','30K','15-20K','5K'],correct:2}
+    ],
+    intel:[
+      {label:'MLD',value:'500.000+',color:'danger'},
+      {label:'Dossiers réexaminés',value:'218.000',color:'danger'},
+      {label:'Sanctions',value:'×4 (→10%)',color:'danger'},
+      {label:'Retours projetés',value:'100K (irréaliste)',color:'warning'}
+    ],
+    tools:['pourquoi','arbre','message'],prefill:{},
+    fcTags:['mld','invalidité','inami','sanctions']
+  },
+  {
+    id:'edperm',name:'Éducation Permanente',icon:'📚',cat:'strategie',difficulty:2,xpBase:100,
+    brief:'Viser la reconnaissance FWB d\'ici 2042. Le décret 2003 définit le cadre. ouaisfieu coche toutes les cases.',
+    lore:'Le moratoire 2026-2028 bloque la voie directe. Mais on peut préparer le terrain.',
+    objectives:[
+      {id:'ep1',text:'Comprendre le décret EP 2003 et ses 4 axes',xp:15,
+       content:'4 axes : 1. Analyse critique (70+ analyses ouaisfieu) 2. Participation citoyenne (interpellations, pétitions) 3. Émancipation (formation OSINT, Trois Guerres) 4. Exercice des droits (Art. 23, lawfare).\n\nTypes : Association EP (axe 1), Organisation EP (axes 1+2), Mouvement EP (4 axes). ouaisfieu vise Mouvement.'},
+      {id:'ep2',text:'Analyser le moratoire 2026-2028',xp:20,
+       content:'FWB : moratoire nouvelles reconnaissances EP 2026-2028. Raisons : contraintes budgétaires, rationalisation secteur.\n\nConséquences : impossible de postuler avant 2029. Alternatives : opérateur reconnu, PCI, préparation dossier.'},
+      {id:'ep3',text:'Identifier les alternatives',xp:20,
+       content:'1. Partenariat PAC (plus grand mouvement EP, 100+ régionales) → ouaisfieu comme « projet de PAC ».\n2. PCI FWB (5-35K€, appel permanent) → prouver l\'impact sans reconnaissance.\n3. ASBL autonome → produire 5 ans de preuves, postuler 2029-2031, reconnaissance 2035-2042.\n\nRecommandé : combiner 1+2 (couverture PAC + financement PCI).'},
+      {id:'ep4',text:'Rédiger le dossier de candidature EP',xp:25,
+       content:'Structure : 1. Présentation (historique, mission, équipe) 2. 4 axes (avec preuves documentées) 3. Public cible 4. Méthodologie (Fork·Hack·Spread, IA civile) 5. Implantation territoriale (11 plateformes + ateliers BXL) 6. Plan quinquennal.\n\nOù : Bruxelles (Recyclart, Pianofabriek). Quand : candidature formelle dès réouverture (2029+).'},
+      {id:'ep5',text:'Cartographier PAC et les mouvements existants',xp:20,
+       content:'Mouvements reconnus : PAC (100+ régionales, socialiste), Vie Féminine (chrétien, 50K membres), Équipes Populaires, CESEP.\nOrganisations : Lire et Écrire, Cultures & Santé, Barricade.\n\nBudget total EP FWB : ~35M€/an.\n\nNiche ouaisfieu : intelligence civile numérique. Aucun opérateur fait civic tech + OSINT + IA. Argument différenciant clé.'}
+    ],
+    quiz:[
+      {q:'Axes décret EP 2003?',choices:['2','3','4','6'],correct:2},
+      {q:'Moratoire EP...',choices:['2024-2025','2025-2027','2026-2028','2027-2030'],correct:2},
+      {q:'Plus grand mouvement EP?',choices:['CESEP','Lire et Écrire','PAC','Équipes Populaires'],correct:2}
+    ],
+    intel:[
+      {label:'Décret',value:'17 juillet 2003',color:'info'},
+      {label:'Moratoire',value:'2026-2028',color:'danger'},
+      {label:'Objectif',value:'Reconnaissance 2042',color:'mint'},
+      {label:'PAC',value:'Plus grand mvt EP',color:'info'}
+    ],
+    tools:['theorie','suivi','smart'],prefill:{},
+    fcTags:['éducation permanente','décret','moratoire','pac']
+  }
+];
+
+var TOOLS = [
+  {id:1,key:'domino',name:'Domino du Changement',icon:'🎯',phase:'voir',xp:50,fields:['vision','obstacles','ressources'],help:'Vision du changement, obstacles et ressources.'},
+  {id:2,key:'profil',name:'Profil d\'Engagement',icon:'👤',phase:'voir',xp:50,fields:['motivations','competences','temps','limites'],help:'Motivations, compétences, temps et limites du groupe.'},
+  {id:3,key:'fleur',name:'Fleur de Pouvoir',icon:'🌸',phase:'voir',xp:50,fields:['identites','privileges','oppressions'],help:'Identités sociales, privilèges, systèmes d\'oppression.'},
+  {id:4,key:'acteurs',name:'Cartographie Acteurs',icon:'🗺️',phase:'voir',xp:50,fields:['allies','opposants','neutres','cibles'],help:'Alliés, opposants, neutres, cibles prioritaires.'},
+  {id:5,key:'swot',name:'Analyse SWOT',icon:'📊',phase:'juger',xp:75,fields:['forces','faiblesses','opportunites','menaces'],help:'Forces/Faiblesses internes, Opportunités/Menaces externes.'},
+  {id:6,key:'pestel',name:'Analyse PESTEL',icon:'🌍',phase:'juger',xp:75,fields:['politique','economique','social','technologique','environnemental','legal'],help:'Macro: Politique, Économique, Social, Techno, Environnement, Légal.'},
+  {id:7,key:'arbre',name:'Arbre à Problèmes',icon:'🌳',phase:'juger',xp:75,fields:['probleme_central','causes','effets'],help:'Problème central, causes (racines), effets (branches).'},
+  {id:8,key:'pourquoi',name:'Les 5 Pourquoi',icon:'❓',phase:'juger',xp:75,fields:['symptome','pq1','pq2','pq3','pq4','pq5'],help:'Symptôme → 5× Pourquoi → cause racine.'},
+  {id:9,key:'theorie',name:'Théorie du Changement',icon:'📐',phase:'juger',xp:75,fields:['situation_actuelle','changement_vise','activites','resultats','impact'],help:'Situation → activités → résultats → impact.'},
+  {id:10,key:'alliance',name:'Avec / Sans / Contre',icon:'⚔️',phase:'agir',xp:100,fields:['avec','sans','contre'],help:'Avec qui, sans qui, contre qui.'},
+  {id:11,key:'smart',name:'Objectifs SMART',icon:'🎯',phase:'agir',xp:100,fields:['specifique','mesurable','atteignable','relevant','temporel'],help:'Spécifique, Mesurable, Atteignable, Relevant, Temporel.'},
+  {id:12,key:'cibles',name:'Cibles & Alliances',icon:'🎪',phase:'agir',xp:100,fields:['cible_primaire','cible_secondaire','allies_potentiels','strategie'],help:'Cibles de plaidoyer et alliances.'},
+  {id:13,key:'message',name:'Construction du Message',icon:'📣',phase:'agir',xp:100,fields:['accroche','probleme','importance','cible','action'],help:'Accroche → Problème → Importance → Cible → Action.'},
+  {id:14,key:'checklist',name:'Check-list Rencontre',icon:'📋',phase:'agir',xp:100,fields:['objectif','arguments','documents','questions','suivi'],help:'Objectif, arguments, documents, questions, suivi.'},
+  {id:15,key:'suivi',name:'Suivi & Évaluation',icon:'📈',phase:'agir',xp:100,fields:['indicateurs','sources','frequence','responsable','ajustements'],help:'Indicateurs, sources, fréquence, responsables.'}
+];
+
+var ACHIEVEMENTS = [
+  {id:'first_mission',name:'Premier Briefing',desc:'Ouvrir la liste des missions',icon:'📋',xp:15},
+  {id:'first_obj',name:'Première Victoire',desc:'Compléter un objectif',icon:'✅',xp:25},
+  {id:'first_read',name:'Apprenti·e',desc:'Lire le contenu d\'un objectif',icon:'📖',xp:20},
+  {id:'mission_complete',name:'Mission Accomplie',desc:'Terminer une mission',icon:'🎖️',xp:100},
+  {id:'quiz_pass',name:'Examen Réussi',desc:'Réussir un quiz (≥60%)',icon:'🎓',xp:50},
+  {id:'quiz_perfect',name:'Score Parfait',desc:'100% à un quiz',icon:'💯',xp:100},
+  {id:'five_missions',name:'Vétéran·e',desc:'Compléter 5 missions',icon:'⭐',xp:200},
+  {id:'all_missions',name:'Résistance Totale',desc:'Compléter toutes les missions',icon:'🏆',xp:500},
+  {id:'first_tool',name:'Premier Outil',desc:'Compléter un outil',icon:'🛠️',xp:50},
+  {id:'all_tools',name:'Arsenal Complet',desc:'Compléter les 15 outils',icon:'⚔️',xp:300},
+  {id:'voir_done',name:'Vision Claire',desc:'Tous les outils VOIR',icon:'👁️',xp:100},
+  {id:'juger_done',name:'Jugement Sûr',desc:'Tous les outils JUGER',icon:'⚖️',xp:100},
+  {id:'agir_done',name:'Passage à l\'Action',desc:'Tous les outils AGIR',icon:'✊',xp:100},
+  {id:'first_file',name:'Premier Fichier',desc:'Importer un fichier',icon:'📁',xp:15},
+  {id:'collector',name:'Archiviste',desc:'10 fichiers',icon:'📊',xp:75},
+  {id:'fc_session',name:'Révision',desc:'Terminer une session flashcards',icon:'📚',xp:30},
+  {id:'fc_master',name:'Mémoire Vive',desc:'100 cartes révisées',icon:'🧠',xp:100},
+  {id:'fc_perfect',name:'Sans Faute',desc:'Session parfaite (10+ cartes)',icon:'💎',xp:75},
+  {id:'night_owl',name:'Hibou Citoyen',desc:'Travailler entre 0h et 5h',icon:'🦉',xp:50},
+  {id:'exporter',name:'Sauvegarde',desc:'Exporter un projet',icon:'💾',xp:25},
+  {id:'three_guerres',name:'三种公民战法',desc:'Mission Trois Guerres',icon:'⚔️',xp:150},
+  {id:'speed_run',name:'Blitz',desc:'3 objectifs en 5 minutes',icon:'⚡',xp:75},
+  {id:'explorer',name:'Explorateur·rice',desc:'Visiter toutes les sections',icon:'🧭',xp:50},
+  {id:'prefill_used',name:'Contextualisation',desc:'Utiliser un outil pré-rempli',icon:'🔗',xp:30}
+];
+
+var DEMO_FLASHCARDS = [
+  {q:"Coalition Arizona — combien de partis?",a:"5 : N-VA, MR, Engagés, CD&V, Vooruit",tags:['arizona']},
+  {q:"Premier ministre Arizona?",a:"Bart De Wever (N-VA)",tags:['arizona']},
+  {q:"Durée max chômage après réforme?",a:"24 mois",tags:['arizona']},
+  {q:"Exclusions Vague 1?",a:"30.122 personnes",tags:['arizona']},
+  {q:"Exclusions cumulées 2027?",a:"90.000 estimées",tags:['arizona']},
+  {q:"Art. 23 — que garantit-il?",a:"Droit à la sécurité sociale, santé, logement, travail, culture",tags:['art23']},
+  {q:"Principe de standstill?",a:"Interdit toute régression sociale",tags:['art23']},
+  {q:"Date recours constitutionnel?",a:"29 octobre 2025",tags:['art23']},
+  {q:"Coût inactivité par heure?",a:"1 million d'euros",tags:['ecp']},
+  {q:"Inactifs contraints?",a:"978.000 personnes",tags:['ecp']},
+  {q:"Budget ECP vs Arizona?",a:"24K€ vs 9,2 Mrd€",tags:['ecp']},
+  {q:"Belges AROPE?",a:"2,1M (18,3%)",tags:['arizona']},
+  {q:"Mandataires belges?",a:"31.806 (1/km²)",tags:['particratie']},
+  {q:"Financement public partis?",a:">80%",tags:['particratie']},
+  {q:"Parlements en Belgique?",a:"6",tags:['particratie']},
+  {q:"三种公民战法?",a:"Les Trois Guerres Civiques",tags:['trois guerres']},
+  {q:"Guerre I civique?",a:"Récit (舆论战) — OSINT, contre-narratifs",tags:['trois guerres']},
+  {q:"Guerre II civique?",a:"Dé-sidération (心理战) — éducation permanente",tags:['trois guerres']},
+  {q:"Guerre III civique?",a:"Prétoire (法律战) — lawfare citoyen",tags:['trois guerres']},
+  {q:"Ratio montage Deborsu?",a:"120:1",tags:['deborsu']},
+  {q:"BIM?",a:"Bénéficiaire Intervention Majorée — 2,4M",tags:['arizona']},
+  {q:"Sanctions MLD multipliées par?",a:"4 (de 2,5% à 10%)",tags:['mld']},
+  {q:"MLD en Belgique?",a:"500.000+",tags:['mld']},
+  {q:"Seuil interpellation BXL?",a:"25 personnes",tags:['commune']},
+  {q:"Compensation CPAS/an?",a:"518€ (dérisoire)",tags:['commune']},
+  {q:"Surcoût CPAS Bruxelles?",a:"~87M€/an",tags:['commune']},
+  {q:"Moratoire Éducation Permanente?",a:"2026-2028",tags:['éducation permanente']},
+  {q:"Budget total ouaisfieu?",a:"870€ sur 2,5 ans",tags:['financement']},
+  {q:"Analyses produites?",a:"70+",tags:['osint']},
+  {q:"Étudiants insécurité alimentaire?",a:"58%",tags:['arizona']},
+  {q:"Méthodologie ouaisfieu?",a:"Fork · Hack · Spread",tags:['osint']},
+  {q:"DIKW?",a:"Données → Information → Connaissance → Sagesse",tags:['osint']},
+  {q:"Pilarisation?",a:"Organisation en piliers confessionnels/idéologiques",tags:['particratie']},
+  {q:"Consociationalisme?",a:"Démocratie consensus entre segments opposés",tags:['particratie']},
+  {q:"Stemvee?",a:"« Bétail de vote »",tags:['particratie']},
+  {q:"Cadrage épisodique?",a:"Histoires individuelles (vs thématique: causes systémiques)",tags:['deborsu']},
+  {q:"Herman-Chomsky : combien de filtres?",a:"5 filtres de propagande",tags:['deborsu']},
+  {q:"Klimaatzaak?",a:"État condamné pour inaction climatique (non exécuté)",tags:['art23']},
+  {q:"Arrêt Camara?",a:"Défaillance systémique belge (CEDH 2023)",tags:['art23']},
+  {q:"Décret EP — combien d'axes?",a:"4 : analyse, participation, émancipation, droits",tags:['éducation permanente']}
+];
+
+var QUOTES = [
+  {t:"Il est plus facile de tromper les gens que de les convaincre qu'ils ont été trompés.",a:"Mark Twain"},
+  {t:"Ce n'est pas une guerre de l'information, mais une guerre sur le sens de l'information.",a:"Civil Affairs Assoc."},
+  {t:"Ne doutez jamais qu'un petit groupe de citoyens engagés puisse changer le monde.",a:"Margaret Mead"},
+  {t:"L'injustice quelque part est une menace pour la justice partout.",a:"Martin Luther King Jr."},
+  {t:"Le silence devient lâcheté quand l'occasion exige de parler.",a:"Gandhi"},
+  {t:"On ne subit pas l'avenir, on le fait.",a:"Georges Bernanos"},
+  {t:"L'éducation permanente vise l'émancipation individuelle et collective.",a:"Décret 17/07/2003"},
+  {t:"Le code est une arme. L'information est une munition.",a:"ouaisfieu"},
+  {t:"Face à l'impuissance des urnes, le citoyen s'est tourné vers le juge.",a:"Analyse particratie"},
+  {t:"La complexité n'est pas un bug, c'est le bouclier psychologique du système.",a:"Trois Guerres Civiques"},
+  {t:"978.000 personnes ne sont pas inactives par choix. Elles sont inactives par système.",a:"Plaidoyer ECP"},
+  {t:"Surveiller, éveiller, contraindre.",a:"三种公民战法"},
+  {t:"Chaque interaction doit faire monter dans la pyramide DIKW.",a:"Doctrine ouaisfieu"},
+  {t:"Fork · Hack · Spread.",a:"Méthodologie ouaisfieu"}
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RÉSISTANCE CITOYENNE v3 — GAME ENGINE
+// Fixed: XP economy, quiz system, ARIA, content tracking
+// ═══════════════════════════════════════════════════════════════════════════
+
+var SAVE_KEY='resistance_citoyenne_v3';
+
+var STATE={
+  xp:0, achievements:[], theme:'dark', view:'hub',
+  missionId:null, toolId:null,
+  completedObj:[], completedTools:[],
+  toolData:{}, files:[], fcStats:{reviewed:0,sessions:0},
+  readContent:[], // NEW: track which objective content has been read
+  quizResults:{}, // NEW: {missionId: {score, total, passed}}
+  project:{}, visitedViews:[], timestamps:[], totalTime:0,
+  searchQuery:'' // NEW: global search
+};
+
+var fcState=null;
+
+// ═══ UTILITIES ═══
+var _q=id=>document.getElementById(id);
+var _qa=s=>document.querySelectorAll(s);
+var esc=s=>{if(typeof s!=='string')return s||'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+
+function toast(msg,type='info'){
+  const c=_q('toasts');if(!c)return;
+  const el=document.createElement('div');
+  el.className=`toast t-${type}`;
+  el.setAttribute('role','alert');
+  el.setAttribute('aria-live','assertive');
+  el.innerHTML=msg;
+  c.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),400);},3500);
+}
+
+function vibrate(ms=15){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+
+// ═══ XP & RANKS ═══
+function getRank(xp){return[...RANKS].reverse().find(r=>(xp||STATE.xp)>=r.min)||RANKS[0];}
+function getNextRank(xp){const idx=RANKS.findIndex(r=>r.name===getRank(xp).name);return RANKS[idx+1]||RANKS[RANKS.length-1];}
+function addXP(amount){
+  const old=getRank();STATE.xp+=amount;const nw=getRank();
+  updateXPBar();
+  if(nw.name!==old.name){toast(`🎉 <strong>Rang ${nw.icon} ${nw.name}</strong> débloqué!`,'success');vibrate(50);}
+  save();
+}
+function updateXPBar(){
+  const rank=getRank(),next=getNextRank();
+  const pct=Math.min(((STATE.xp-rank.min)/(next.min-rank.min))*100,100);
+  const el=_q('xpRank');if(el)el.textContent=rank.name;
+  const bar=_q('xpFill');if(bar){bar.style.width=pct+'%';bar.setAttribute('aria-valuenow',STATE.xp);}
+  const cur=_q('xpCur');if(cur)cur.textContent=STATE.xp;
+  const mx=_q('xpMax');if(mx)mx.textContent=next.min;
+  const ico=_q('xpIcon');if(ico)ico.textContent=rank.icon;
+}
+
+// ═══ ACHIEVEMENTS ═══
+function unlock(id){
+  if(STATE.achievements.includes(id))return;
+  const a=ACHIEVEMENTS.find(x=>x.id===id);if(!a)return;
+  STATE.achievements.push(id);addXP(a.xp);
+  toast(`🏆 <strong>${a.name}</strong> — ${a.desc} (+${a.xp}XP)`,'success');
+  vibrate(30);save();
+}
+
+// ═══ CONTENT READING — NEW ═══
+function markContentRead(objId){
+  if(STATE.readContent.includes(objId))return;
+  STATE.readContent.push(objId);
+  if(STATE.readContent.length===1)unlock('first_read');
+  addXP(5); // +5XP per content read (recurring source!)
+  toast('📖 Contenu étudié (+5XP)','info');
+  save();
+}
+
+// ═══ OBJECTIVES ═══
+function completeObjective(objId){
+  if(STATE.completedObj.includes(objId))return;
+  STATE.completedObj.push(objId);
+  let xp=0;
+  MISSIONS.forEach(m=>{const o=m.objectives.find(x=>x.id===objId);if(o)xp=o.xp;});
+  if(xp)addXP(xp);
+  toast(`✅ Objectif complété (+${xp}XP)`,'success');vibrate();
+
+  STATE.timestamps.push(Date.now());
+  const recent=STATE.timestamps.filter(t=>Date.now()-t<300000);
+  if(recent.length>=3)unlock('speed_run');
+  if(STATE.completedObj.length===1)unlock('first_obj');
+
+  // Check mission completion — NOW AWARDS xpBase!
+  MISSIONS.forEach(m=>{
+    const allDone=m.objectives.every(o=>STATE.completedObj.includes(o.id));
+    if(allDone&&!STATE.achievements.includes('mission_done_'+m.id)){
+      // Award mission bonus XP (was never distributed before!)
+      addXP(m.xpBase);
+      toast(`🎖️ Mission "${m.name}" complète! (+${m.xpBase}XP bonus)`,'success');
+      unlock('mission_complete');
+      if(m.id==='troisguerres')unlock('three_guerres');
+      // Track per-mission completion (for preventing double xpBase)
+      STATE.achievements.push('mission_done_'+m.id);
+    }
+  });
+
+  const completedMissions=MISSIONS.filter(m=>m.objectives.every(o=>STATE.completedObj.includes(o.id)));
+  if(completedMissions.length>=5)unlock('five_missions');
+  if(completedMissions.length>=MISSIONS.length)unlock('all_missions');
+
+  save();
+  if(typeof renderCurrentView==='function')renderCurrentView();
+}
+
+function toggleObjective(objId){
+  if(STATE.completedObj.includes(objId)){
+    STATE.completedObj=STATE.completedObj.filter(x=>x!==objId);save();
+    if(typeof renderCurrentView==='function')renderCurrentView();
+  }else{completeObjective(objId);}
+}
+
+// ═══ QUIZ SYSTEM — NEW ═══
+function submitQuiz(missionId){
+  const m=MISSIONS.find(x=>x.id===missionId);if(!m||!m.quiz)return;
+  let score=0;
+  m.quiz.forEach((q,i)=>{
+    const sel=document.querySelector(`input[name="quiz_${i}"]:checked`);
+    if(sel&&parseInt(sel.value)===q.correct)score++;
+  });
+  const total=m.quiz.length;
+  const passed=score/total>=0.6;
+  STATE.quizResults[missionId]={score,total,passed,date:Date.now()};
+
+  if(passed){
+    addXP(25);unlock('quiz_pass');
+    if(score===total)unlock('quiz_perfect');
+    toast(`🎓 Quiz réussi : ${score}/${total} (+25XP)`,'success');
+  }else{
+    toast(`Quiz : ${score}/${total} — 60% requis pour valider`,'warning');
+  }
+  save();
+  if(typeof renderCurrentView==='function')renderCurrentView();
+}
+
+// ═══ TOOL COMPLETION ═══
+function completeTool(toolId){
+  if(STATE.completedTools.includes(toolId))return;
+  const t=TOOLS.find(x=>x.id===toolId);if(!t)return;
+  STATE.completedTools.push(toolId);addXP(t.xp);
+  toast(`🛠️ <strong>${t.name}</strong> complété (+${t.xp}XP)`,'success');
+  if(STATE.completedTools.length===1)unlock('first_tool');
+  const voir=TOOLS.filter(t=>t.phase==='voir').every(t=>STATE.completedTools.includes(t.id));
+  const juger=TOOLS.filter(t=>t.phase==='juger').every(t=>STATE.completedTools.includes(t.id));
+  const agir=TOOLS.filter(t=>t.phase==='agir').every(t=>STATE.completedTools.includes(t.id));
+  if(voir)unlock('voir_done');if(juger)unlock('juger_done');if(agir)unlock('agir_done');
+  if(STATE.completedTools.length>=15)unlock('all_tools');
+  save();
+}
+
+function saveToolField(toolKey,field,value){
+  if(!STATE.toolData[toolKey])STATE.toolData[toolKey]={};
+  STATE.toolData[toolKey][field]=value;save();
+}
+
+// ═══ NAVIGATION ═══
+function nav(view,id){
+  STATE.view=view;
+  if(id!==undefined){
+    if(view==='mission')STATE.missionId=id;
+    if(view==='tool')STATE.toolId=id;
+  }
+  if(!STATE.visitedViews.includes(view))STATE.visitedViews.push(view);
+  if(STATE.visitedViews.length>=6)unlock('explorer');
+  renderCurrentView();
+  window.scrollTo(0,0);
+  // Focus management for accessibility
+  setTimeout(()=>{const h=_q('main');if(h)h.focus();},100);
+  save();
+}
+
+// ═══ PERSISTENCE ═══
+function save(){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({
+    xp:STATE.xp,achievements:STATE.achievements,theme:STATE.theme,
+    completedObj:STATE.completedObj,completedTools:STATE.completedTools,
+    toolData:STATE.toolData,files:STATE.files,fcStats:STATE.fcStats,
+    readContent:STATE.readContent,quizResults:STATE.quizResults,
+    project:STATE.project,visitedViews:STATE.visitedViews,totalTime:STATE.totalTime
+  }));}catch(e){console.error('Save:',e)}
+}
+
+function load(){
+  try{const s=localStorage.getItem(SAVE_KEY);if(!s)return;
+  const d=JSON.parse(s);
+  Object.assign(STATE,{
+    xp:d.xp||0,achievements:d.achievements||[],theme:d.theme||'dark',
+    completedObj:d.completedObj||[],completedTools:d.completedTools||[],
+    toolData:d.toolData||{},files:d.files||[],fcStats:d.fcStats||{reviewed:0,sessions:0},
+    readContent:d.readContent||[],quizResults:d.quizResults||{},
+    project:d.project||{},visitedViews:d.visitedViews||[],totalTime:d.totalTime||0
+  });}catch(e){console.error('Load:',e)}
+}
+
+function resetAll(){
+  if(!confirm('⚠️ Réinitialiser TOUTE la progression?'))return;
+  localStorage.removeItem(SAVE_KEY);location.reload();
+}
+
+// ═══ THEMES ═══
+function setTheme(t){STATE.theme=t;document.documentElement.dataset.theme=t;_qa('[data-th]').forEach(b=>b.classList.toggle('active',b.dataset.th===t));save();}
+
+// ═══ FILES ═══
+function handleFiles(fileList){
+  Array.from(fileList).forEach(file=>{
+    const reader=new FileReader();const ext=file.name.split('.').pop().toLowerCase();
+    reader.onload=e=>{
+      const content=e.target.result;let data=null;
+      if(ext==='json'){try{data=JSON.parse(content)}catch{toast('JSON invalide','error');return}}
+      else if(ext==='csv'){data=parseCSV(content)}else{data=content}
+      STATE.files.push({id:Date.now()+Math.random(),name:file.name,type:ext,data,raw:content,created:new Date().toISOString()});
+      unlock('first_file');if(STATE.files.length>=10)unlock('collector');
+      toast(`✓ ${file.name} importé`,'success');save();
+      if(typeof renderCurrentView==='function')renderCurrentView();
+    };reader.readAsText(file);
+  });
+}
+
+function parseCSV(text){
+  const lines=text.trim().split('\n');if(lines.length<2)return[];
+  const headers=csvLine(lines[0]);
+  return lines.slice(1).map(line=>{
+    const vals=csvLine(line);const obj={};
+    headers.forEach((h,i)=>{
+      const hl=h.toLowerCase().trim();let key=h;
+      if(['question','q','front','recto'].some(k=>hl.includes(k)))key='question';
+      else if(['answer','réponse','reponse','a','back','verso'].some(k=>hl.includes(k)))key='answer';
+      obj[key]=vals[i]||'';
+    });return obj;
+  }).filter(r=>Object.values(r).some(v=>v.trim()));
+}
+
+function csvLine(line){
+  const r=[];let c='',q=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){if(q&&line[i+1]==='"'){c+='"';i++}else q=!q}
+    else if((ch===','||ch===';')&&!q){r.push(c.trim());c=''}
+    else c+=ch;
+  }r.push(c.trim());return r;
+}
+
+function isFlashcardFile(f){return f.type==='csv'&&Array.isArray(f.data)&&f.data.length>0&&f.data[0].question&&f.data[0].answer;}
+
+function loadDemoFlashcards(){
+  const data=DEMO_FLASHCARDS.map(d=>({question:d.q,answer:d.a}));
+  STATE.files.push({id:Date.now(),name:'flashcards-resistance-40.csv',type:'csv',data,raw:'q,a\n'+data.map(d=>`"${d.question}","${d.answer}"`).join('\n'),created:new Date().toISOString()});
+  unlock('first_file');toast('🎯 40 flashcards chargées!','success');save();renderCurrentView();
+}
+
+// ═══ EXPORT ═══
+function exportProject(){
+  const data={version:'3.0',exported:new Date().toISOString(),state:{xp:STATE.xp,achievements:STATE.achievements,completedObj:STATE.completedObj,completedTools:STATE.completedTools,toolData:STATE.toolData,files:STATE.files,fcStats:STATE.fcStats,readContent:STATE.readContent,quizResults:STATE.quizResults,project:STATE.project}};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`resistance-projet-${new Date().toISOString().slice(0,10)}.json`;a.click();
+  URL.revokeObjectURL(a.href);unlock('exporter');toast('💾 Projet exporté!','success');
+}
+
+function importProject(){
+  const input=document.createElement('input');input.type='file';input.accept='.json';
+  input.onchange=e=>{const reader=new FileReader();reader.onload=ev=>{
+    try{const d=JSON.parse(ev.target.result);if(d.state){Object.assign(STATE,d.state);save();renderCurrentView();updateXPBar();toast('✓ Projet importé!','success');}}catch(err){toast('Fichier invalide','error')}
+  };reader.readAsText(e.target.files[0]);};input.click();
+}
+
+// ═══ STATS HELPERS — NEW ═══
+function getStats(){
+  const completedM=MISSIONS.filter(m=>m.objectives.every(o=>STATE.completedObj.includes(o.id)));
+  const totalObj=MISSIONS.reduce((s,m)=>s+m.objectives.length,0);
+  const quizDone=Object.keys(STATE.quizResults).length;
+  const quizPassed=Object.values(STATE.quizResults).filter(r=>r.passed).length;
+  const maxXP=MISSIONS.reduce((s,m)=>s+m.xpBase+m.objectives.reduce((ss,o)=>ss+o.xp,0),0)+TOOLS.reduce((s,t)=>s+t.xp,0)+ACHIEVEMENTS.reduce((s,a)=>s+a.xp,0);
+  return{completedM:completedM.length,totalM:MISSIONS.length,doneObj:STATE.completedObj.length,totalObj,completedTools:STATE.completedTools.length,achievements:STATE.achievements.length,totalAchiev:ACHIEVEMENTS.length,readContent:STATE.readContent.length,quizDone,quizPassed,maxXP,fcReviewed:STATE.fcStats.reviewed,fcSessions:STATE.fcStats.sessions};
+}
+
+// ═══ INIT ═══
+function initEngine(){
+  load();setTheme(STATE.theme);updateXPBar();
+  const h=new Date().getHours();if(h>=0&&h<5)unlock('night_owl');
+  setInterval(()=>{STATE.totalTime++;save();},60000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RÉSISTANCE CITOYENNE v3 — APP (UI Rendering)
+// New: content display, quiz, search, stats, ARIA, prefill tools
+// ═══════════════════════════════════════════════════════════════════════════
+
+var quoteTimer=null;
+
+function renderCurrentView(){
+  const main=_q('main');if(!main)return;
+  main.setAttribute('tabindex','-1');
+  const v=STATE.view;
+  _qa('.bnav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.v===v||(b.dataset.v==='hub'&&v==='hub'));b.setAttribute('aria-current',b.classList.contains('active')?'page':'false');});
+  switch(v){
+    case 'hub':renderHub(main);break;
+    case 'missions':renderMissions(main);break;
+    case 'mission':renderMission(main);break;
+    case 'tools':renderToolsList(main);break;
+    case 'tool':renderToolEditor(main);break;
+    case 'flashcards':renderFlashcards(main);break;
+    case 'trophies':renderTrophies(main);break;
+    case 'stats':renderStats(main);break;
+    case 'quiz':renderQuiz(main);break;
+    default:renderHub(main);
+  }
+}
+
+// ═══ HUB ═══
+function renderHub(el){
+  const rank=getRank(),next=getNextRank();
+  const pct=Math.min(((STATE.xp-rank.min)/(next.min-rank.min))*100,100);
+  const completedMissions=MISSIONS.filter(m=>m.objectives.every(o=>STATE.completedObj.includes(o.id)));
+  const totalObj=MISSIONS.reduce((s,m)=>s+m.objectives.length,0);
+  const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  el.innerHTML=`
+  <div class="hub">
+    <div class="hub-header"><div class="hub-title">⚔️ QUARTIER GÉNÉRAL</div><div class="hub-sub">Résistance Citoyenne — Intelligence Civile Belge</div></div>
+    <div class="hub-rank-card" role="region" aria-label="Progression">
+      <div class="rank-big">${rank.icon}</div>
+      <div class="rank-info">
+        <div class="rank-name" style="color:${rank.color}">${rank.name}</div>
+        <div class="rank-bar" role="progressbar" aria-valuenow="${STATE.xp}" aria-valuemin="${rank.min}" aria-valuemax="${next.min}"><div class="rank-fill" style="width:${pct}%"></div></div>
+        <div class="rank-xp">${STATE.xp} / ${next.min} XP</div>
+      </div>
+    </div>
+    <div class="hub-stats" role="region" aria-label="Statistiques">
+      <div class="hs"><div class="hs-v">${completedMissions.length}/${MISSIONS.length}</div><div class="hs-l">Missions</div></div>
+      <div class="hs"><div class="hs-v">${STATE.completedObj.length}/${totalObj}</div><div class="hs-l">Objectifs</div></div>
+      <div class="hs"><div class="hs-v">${STATE.completedTools.length}/15</div><div class="hs-l">Outils</div></div>
+      <div class="hs"><div class="hs-v">${STATE.achievements.length}/${ACHIEVEMENTS.length}</div><div class="hs-l">Trophées</div></div>
+    </div>
+    <div class="hub-quote" role="complementary" aria-label="Citation"><div class="hq-text">"${esc(q.t)}"</div><div class="hq-author">— ${esc(q.a)}</div></div>
+    <div class="hub-actions">
+      <button class="hbtn hbtn-primary" onclick="nav('missions')" aria-label="Voir les missions">🎯 Missions</button>
+      <button class="hbtn" onclick="nav('tools')" aria-label="Outils méthodologiques">🛠️ Outils</button>
+      <button class="hbtn" onclick="nav('flashcards')" aria-label="Flashcards">📚 Flashcards</button>
+      <button class="hbtn" onclick="nav('stats')" aria-label="Statistiques">📊 Stats</button>
+    </div>
+    <div class="hub-section-title">⚡ Missions en cours</div>
+    <div class="hub-missions">
+      ${MISSIONS.slice(0,4).map(m=>{
+        const done=m.objectives.filter(o=>STATE.completedObj.includes(o.id)).length;
+        const total=m.objectives.length;const p=Math.round((done/total)*100);
+        return `<div class="hm-card" onclick="nav('mission','${m.id}')" role="button" tabindex="0" aria-label="${esc(m.name)}, ${done} sur ${total} objectifs">
+          <div class="hm-icon">${m.icon}</div><div class="hm-info"><div class="hm-name">${esc(m.name)}</div>
+          <div class="hm-bar" role="progressbar" aria-valuenow="${done}" aria-valuemax="${total}"><div class="hm-fill" style="width:${p}%"></div></div>
+          <div class="hm-pct">${done}/${total}</div></div><div class="hm-arrow">›</div></div>`;
+      }).join('')}
+    </div>
+    <div class="hub-footer">
+      <button class="hbtn-sm" onclick="exportProject()" aria-label="Exporter projet">💾 Exporter</button>
+      <button class="hbtn-sm" onclick="importProject()" aria-label="Importer projet">📂 Importer</button>
+      <button class="hbtn-sm" onclick="resetAll()" aria-label="Réinitialiser">🗑️ Reset</button>
+    </div>
+  </div>`;
+}
+
+// ═══ MISSIONS LIST ═══
+function renderMissions(el){
+  const cats=[...new Set(MISSIONS.map(m=>m.cat))];
+  // Search
+  const sq=STATE.searchQuery.toLowerCase();
+  const filtered=sq?MISSIONS.filter(m=>m.name.toLowerCase().includes(sq)||m.brief.toLowerCase().includes(sq)||m.cat.includes(sq)):MISSIONS;
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head">
+      <button class="back-btn" onclick="nav('hub')" aria-label="Retour au QG">← QG</button>
+      <h2>🎯 Toutes les Missions</h2>
+    </div>
+    <div class="search-bar"><input type="search" id="missionSearch" placeholder="🔍 Rechercher une mission..." value="${esc(STATE.searchQuery)}" oninput="STATE.searchQuery=this.value;renderCurrentView()" aria-label="Rechercher"></div>
+    <div class="page-sub">${filtered.length} mission${filtered.length>1?'s':''} • Toutes accessibles</div>
+    <div class="cat-filter" id="catFilter" role="toolbar" aria-label="Filtres par catégorie">
+      <button class="cf-btn active" onclick="filterMissions(null,this)" aria-pressed="true">Toutes</button>
+      ${cats.map(c=>`<button class="cf-btn" onclick="filterMissions('${c}',this)" aria-pressed="false">${catLabel(c)}</button>`).join('')}
+    </div>
+    <div class="mission-grid" id="missionGrid">
+      ${filtered.map(m=>{
+        const done=m.objectives.filter(o=>STATE.completedObj.includes(o.id)).length;
+        const total=m.objectives.length;const pct=Math.round((done/total)*100);const complete=done===total;
+        return `<div class="m-card ${complete?'m-done':''}" data-cat="${m.cat}" onclick="nav('mission','${m.id}')" role="button" tabindex="0" aria-label="${esc(m.name)}, ${done} sur ${total}">
+          <div class="m-top"><span class="m-icon">${m.icon}</span><span class="m-diff">${'★'.repeat(m.difficulty)}${'☆'.repeat(3-m.difficulty)}</span></div>
+          <div class="m-name">${esc(m.name)}</div><div class="m-cat">${catLabel(m.cat)}</div>
+          <div class="m-bar"><div class="m-fill" style="width:${pct}%"></div></div>
+          <div class="m-meta"><span>${done}/${total}</span><span class="m-xp">+${m.xpBase}XP</span></div>
+          ${complete?'<div class="m-badge">✓ COMPLÈTE</div>':''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+  unlock('first_mission');
+}
+
+function catLabel(c){return{analyse:'🔍 Analyse',media:'📺 Média',juridique:'⚖️ Juridique',doctrine:'⚔️ Doctrine',renseignement:'🔎 OSINT',action:'🏛️ Action',alternative:'🌱 Alternative',strategie:'🤝 Stratégie',logistique:'💰 Logistique'}[c]||c;}
+
+function filterMissions(cat,btn){
+  _qa('#catFilter .cf-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false');});
+  btn.classList.add('active');btn.setAttribute('aria-pressed','true');
+  _qa('#missionGrid .m-card').forEach(c=>{c.style.display=(!cat||c.dataset.cat===cat)?'':'none';});
+}
+
+// ═══ SINGLE MISSION (with content display + quiz) ═══
+function renderMission(el){
+  const m=MISSIONS.find(x=>x.id===STATE.missionId);
+  if(!m){nav('missions');return;}
+  const done=m.objectives.filter(o=>STATE.completedObj.includes(o.id)).length;
+  const total=m.objectives.length;const pct=Math.round((done/total)*100);
+  const complete=done===total;
+  const qr=STATE.quizResults[m.id];
+
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head">
+      <button class="back-btn" onclick="nav('missions')" aria-label="Retour aux missions">← Missions</button>
+      <h2>${m.icon} ${esc(m.name)}</h2>
+      ${complete?'<span class="done-badge">✓ COMPLÈTE</span>':''}
+    </div>
+    <div class="mission-brief"><div class="mb-label">BRIEFING</div><div class="mb-text">${esc(m.brief)}</div></div>
+    <div class="mission-lore" onclick="this.classList.toggle('open')" role="button" tabindex="0" aria-expanded="false">
+      <div class="ml-label">📖 Contexte <span class="ml-toggle">▼</span></div>
+      <div class="ml-text">${esc(m.lore)}</div>
+    </div>
+    <div class="mission-intel"><div class="mi-label">📊 RENSEIGNEMENTS</div>
+      <div class="mi-grid">${m.intel.map(i=>`<div class="mi-card mi-${i.color}"><div class="mi-val">${i.value}</div><div class="mi-lbl">${esc(i.label)}</div></div>`).join('')}</div>
+    </div>
+    <div class="mission-progress">
+      <div class="mp-bar" role="progressbar" aria-valuenow="${done}" aria-valuemax="${total}"><div class="mp-fill" style="width:${pct}%"></div></div>
+      <div class="mp-text">${done}/${total} objectifs • ${pct}% • +${m.xpBase}XP bonus</div>
+    </div>
+    <div class="mission-objectives" role="list" aria-label="Objectifs">
+      <div class="mo-label">🎯 OBJECTIFS</div>
+      ${m.objectives.map(o=>{
+        const isDone=STATE.completedObj.includes(o.id);
+        const isRead=STATE.readContent.includes(o.id);
+        const hasContent=!!o.content;
+        return `<div class="mo-item ${isDone?'mo-done':''}" role="listitem">
+          <div class="mo-header" onclick="toggleObjective('${o.id}')" role="checkbox" aria-checked="${isDone}" tabindex="0">
+            <div class="mo-check">${isDone?'✅':'⬜'}</div>
+            <div class="mo-text">${esc(o.text)}</div>
+            <div class="mo-xp">+${o.xp}</div>
+          </div>
+          ${hasContent?`<div class="mo-content-toggle">
+            <button class="mo-read-btn ${isRead?'read':''}" onclick="event.stopPropagation();toggleContent('${o.id}')" aria-expanded="false" aria-label="Lire le contenu">
+              ${isRead?'📖':'📕'} ${isRead?'Relire':'Lire le contenu'}
+            </button>
+          </div>
+          <div class="mo-content" id="content_${o.id}" hidden>
+            <div class="mo-content-text">${formatContent(o.content)}</div>
+          </div>`:''}
+        </div>`;
+      }).join('')}
+    </div>
+
+    ${m.quiz&&m.quiz.length?`
+    <div class="mission-quiz-link">
+      <button class="hbtn ${qr&&qr.passed?'hbtn-done':'hbtn-primary'}" onclick="STATE.view='quiz';STATE.missionId='${m.id}';renderCurrentView()" aria-label="Quiz de la mission">
+        ${qr?`🎓 Quiz ${qr.passed?'réussi':'échoué'} (${qr.score}/${qr.total})`:'🎓 Passer le quiz de mission'}
+      </button>
+    </div>`:''}
+
+    ${m.tools&&m.tools.length?`
+    <div class="mission-tools"><div class="mt-label">🛠️ OUTILS RECOMMANDÉS</div>
+      <div class="mt-grid">${m.tools.map(tk=>{
+        const t=TOOLS.find(x=>x.key===tk);if(!t)return'';
+        const hasPrefill=m.prefill&&m.prefill[tk];
+        return `<button class="mt-btn" onclick="openToolFromMission('${tk}','${m.id}')" aria-label="Outil ${t.name}${hasPrefill?' (pré-rempli)':''}">
+          ${t.icon} ${t.name} ${hasPrefill?'<span class="mt-prefill">📋</span>':''}
+        </button>`;
+      }).join('')}</div>
+    </div>`:''}
+  </div>`;
+}
+
+function formatContent(text){
+  return esc(text).replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/^/,'<p>').replace(/$/,'</p>');
+}
+
+function toggleContent(objId){
+  const el=_q('content_'+objId);if(!el)return;
+  const btn=el.previousElementSibling?.querySelector('.mo-read-btn');
+  if(el.hidden){
+    el.hidden=false;
+    if(btn){btn.setAttribute('aria-expanded','true');}
+    markContentRead(objId);
+  }else{
+    el.hidden=true;
+    if(btn){btn.setAttribute('aria-expanded','false');}
+  }
+}
+
+function openToolFromMission(toolKey,missionId){
+  const m=MISSIONS.find(x=>x.id===missionId);
+  if(m&&m.prefill&&m.prefill[toolKey]){
+    // Apply prefill data
+    if(!STATE.toolData[toolKey])STATE.toolData[toolKey]={};
+    const existing=STATE.toolData[toolKey];
+    const prefill=m.prefill[toolKey];
+    Object.keys(prefill).forEach(k=>{
+      if(!existing[k]||existing[k].length<3)existing[k]=prefill[k];
+    });
+    save();
+    unlock('prefill_used');
+  }
+  const t=TOOLS.find(x=>x.key===toolKey);
+  if(t)nav('tool',t.id);
+}
+
+// ═══ QUIZ VIEW — NEW ═══
+function renderQuiz(el){
+  const m=MISSIONS.find(x=>x.id===STATE.missionId);
+  if(!m||!m.quiz){nav('mission',STATE.missionId);return;}
+  const qr=STATE.quizResults[m.id];
+
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head">
+      <button class="back-btn" onclick="nav('mission','${m.id}')" aria-label="Retour à la mission">← ${esc(m.name)}</button>
+      <h2>🎓 Quiz</h2>
+    </div>
+    <div class="quiz-intro">Répondez à ${m.quiz.length} questions. Minimum 60% pour valider.</div>
+    <div class="quiz-questions" role="form" aria-label="Quiz">
+      ${m.quiz.map((q,i)=>`
+      <div class="quiz-q">
+        <div class="qq-text">${i+1}. ${esc(q.q)}</div>
+        <div class="qq-choices" role="radiogroup" aria-label="Question ${i+1}">
+          ${q.choices.map((c,j)=>{
+            const wasCorrect=qr?j===q.correct:false;
+            const wasSelected=false;
+            return `<label class="qq-choice ${qr&&wasCorrect?'qq-correct':''}" tabindex="0">
+              <input type="radio" name="quiz_${i}" value="${j}" ${qr?'disabled':''}>
+              <span>${esc(c)}</span>
+            </label>`;
+          }).join('')}
+        </div>
+      </div>`).join('')}
+    </div>
+    ${qr?`<div class="quiz-result ${qr.passed?'qr-pass':'qr-fail'}">
+      ${qr.passed?'✅':'❌'} Score : ${qr.score}/${qr.total} (${Math.round(qr.score/qr.total*100)}%)
+      ${qr.passed?'— Quiz validé!':'— 60% requis. Réessayez!'}
+    </div>
+    <button class="hbtn" onclick="delete STATE.quizResults['${m.id}'];save();renderCurrentView()">🔄 Recommencer</button>`
+    :`<button class="hbtn hbtn-primary" onclick="submitQuiz('${m.id}')">✓ Valider</button>`}
+  </div>`;
+}
+
+// ═══ TOOLS LIST ═══
+function renderToolsList(el){
+  const phases=[{key:'voir',label:'👁️ VOIR',desc:'Observer et comprendre'},{key:'juger',label:'⚖️ JUGER',desc:'Analyser et évaluer'},{key:'agir',label:'✊ AGIR',desc:'Planifier et mettre en œuvre'}];
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head">
+      <button class="back-btn" onclick="nav('hub')" aria-label="Retour au QG">← QG</button>
+      <h2>🛠️ Outils Méthodologiques</h2>
+    </div>
+    <div class="page-sub">15 outils • VOIR → JUGER → AGIR</div>
+    ${phases.map(p=>`
+    <div class="tp-section">
+      <div class="tp-head"><span class="tp-name">${p.label}</span><span class="tp-desc">${p.desc}</span></div>
+      <div class="tool-grid">${TOOLS.filter(t=>t.phase===p.key).map(t=>{
+        const isDone=STATE.completedTools.includes(t.id);
+        return `<div class="t-card ${isDone?'t-done':''}" onclick="nav('tool',${t.id})" role="button" tabindex="0" aria-label="${t.name}${isDone?' (complété)':''}">
+          <div class="t-icon">${t.icon}</div><div class="t-name">${t.name}</div>
+          <div class="t-xp">${isDone?'✓':'+'} ${t.xp}XP</div>
+        </div>`;
+      }).join('')}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ═══ TOOL EDITOR ═══
+function renderToolEditor(el){
+  const t=TOOLS.find(x=>x.id===STATE.toolId);
+  if(!t){nav('tools');return;}
+  const data=STATE.toolData[t.key]||{};
+  const filled=t.fields.filter(f=>(data[f]||'').length>5).length;
+  const pct=Math.round((filled/t.fields.length)*100);
+  const isDone=STATE.completedTools.includes(t.id);
+
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head">
+      <button class="back-btn" onclick="nav('tools')" aria-label="Retour aux outils">← Outils</button>
+      <h2>${t.icon} ${t.name}</h2>
+      ${isDone?'<span class="done-badge">✓</span>':''}
+    </div>
+    <div class="tool-phase">${capitalize(t.phase)} • +${t.xp}XP</div>
+    <div class="tool-help">${esc(t.help)}</div>
+    <div class="tool-progress">
+      <div class="tp-bar" role="progressbar" aria-valuenow="${filled}" aria-valuemax="${t.fields.length}"><div class="tp-fill" style="width:${pct}%"></div></div>
+      <div class="tp-pct">${filled}/${t.fields.length} champs</div>
+    </div>
+    <div class="tool-fields" role="form" aria-label="Champs de l'outil">
+      ${t.fields.map(f=>`
+      <div class="tf-group">
+        <label class="tf-label" for="tf_${f}">${capitalize(f.replace(/_/g,' '))}</label>
+        <textarea id="tf_${f}" class="tf-input" rows="4" placeholder="${capitalize(f)}..." oninput="saveToolField('${t.key}','${f}',this.value)">${esc(data[f]||'')}</textarea>
+      </div>`).join('')}
+    </div>
+    ${!isDone&&pct>=50?`<button class="hbtn hbtn-primary" onclick="completeTool(${t.id});renderCurrentView()">✓ Valider cet outil (+${t.xp}XP)</button>`:''}
+    ${pct<50?'<div class="tool-tip">Remplissez au moins 50% des champs (>5 caractères) pour valider.</div>':''}
+  </div>`;
+}
+function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+// ═══ FLASHCARDS ═══
+function renderFlashcards(el){
+  const fcFiles=STATE.files.filter(isFlashcardFile);
+  if(fcFiles.length===0){
+    el.innerHTML=`
+    <div class="page">
+      <div class="page-head"><button class="back-btn" onclick="nav('hub')">← QG</button><h2>📚 Flashcards</h2></div>
+      <div class="fc-empty"><div class="fce-icon">📚</div><div class="fce-title">Aucun jeu de flashcards</div>
+        <div class="fce-text">Importez un CSV ou chargez les 40 cartes de démo.</div>
+        <div class="fce-actions">
+          <button class="hbtn hbtn-primary" onclick="loadDemoFlashcards()">🎯 Charger 40 cartes démo</button>
+          <button class="hbtn" onclick="document.getElementById('fcFileInput').click()">📥 Importer CSV</button>
+        </div>
+      </div>
+      <input type="file" id="fcFileInput" hidden accept=".csv,.json" onchange="handleFiles(this.files);this.value=''">
+    </div>`;return;
+  }
+  if(!fcState||!fcFiles.find(f=>f.id===fcState.fileId)){
+    const f=fcFiles[0];
+    fcState={fileId:f.id,cards:[...f.data],index:0,flipped:false,good:0,bad:0,shuffled:false};
+  }
+  const card=fcState.cards[fcState.index];
+  const progress=((fcState.index+1)/fcState.cards.length)*100;
+
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head"><button class="back-btn" onclick="nav('hub')">← QG</button><h2>📚 Flashcards</h2></div>
+    <div class="fc-toolbar">
+      <select class="fc-select" onchange="fcChangeFile(this.value)" aria-label="Choisir un jeu">
+        ${fcFiles.map(f=>`<option value="${f.id}" ${f.id===fcState.fileId?'selected':''}>${esc(f.name)} (${f.data.length})</option>`).join('')}
+      </select>
+      <button class="hbtn-sm" onclick="fcShuffle()" aria-label="Mélanger">🔀</button>
+      <button class="hbtn-sm" onclick="loadDemoFlashcards()" aria-label="Charger démo">➕</button>
+      <button class="hbtn-sm" onclick="document.getElementById('fcFileInput2').click()" aria-label="Importer">📥</button>
+    </div>
+    <input type="file" id="fcFileInput2" hidden accept=".csv" onchange="handleFiles(this.files);this.value=''">
+    <div class="fc-card-wrap" onclick="fcFlip()" role="button" tabindex="0" aria-label="Retourner la carte">
+      <div class="fc-card ${fcState.flipped?'flipped':''}">
+        <div class="fc-inner">
+          <div class="fc-front"><div class="fc-label">QUESTION</div><div class="fc-question">${esc(card.question)}</div><div class="fc-tap">Touchez / Espace</div></div>
+          <div class="fc-back"><div class="fc-label">RÉPONSE</div><div class="fc-answer">${esc(card.answer)}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-progress-wrap"><div class="fc-pbar"><div class="fc-pfill" style="width:${progress}%"></div></div><div class="fc-counter">${fcState.index+1} / ${fcState.cards.length}</div></div>
+    ${fcState.flipped?`<div class="fc-rating">
+      <button class="fcr-btn fcr-good" onclick="fcMark('good')" aria-label="Je savais">✓ Je savais</button>
+      <button class="fcr-btn fcr-bad" onclick="fcMark('bad')" aria-label="À revoir">✗ À revoir</button>
+    </div>`:''}
+    <div class="fc-nav">
+      <button class="hbtn" onclick="fcPrev()" ${fcState.index===0?'disabled':''} aria-label="Carte précédente">⬅️ Préc.</button>
+      <button class="hbtn hbtn-primary" onclick="fcFlip()" aria-label="Retourner">🔄</button>
+      <button class="hbtn" onclick="fcNext()" ${fcState.index>=fcState.cards.length-1?'disabled':''} aria-label="Carte suivante">Suiv. ➡️</button>
+    </div>
+    <div class="fc-stats-row">
+      <span>Session: ${fcState.good+fcState.bad}</span>
+      ${fcState.good?`<span class="fcs-good">✓ ${fcState.good}</span>`:''}
+      ${fcState.bad?`<span class="fcs-bad">✗ ${fcState.bad}</span>`:''}
+      <span>Total: ${STATE.fcStats.reviewed}</span>
+    </div>
+  </div>`;
+}
+
+function fcFlip(){if(!fcState)return;fcState.flipped=!fcState.flipped;renderCurrentView();}
+function fcNext(){if(!fcState||fcState.index>=fcState.cards.length-1)return;fcState.index++;fcState.flipped=false;renderCurrentView();}
+function fcPrev(){if(!fcState||fcState.index<=0)return;fcState.index--;fcState.flipped=false;renderCurrentView();}
+function fcShuffle(){if(!fcState)return;for(let i=fcState.cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcState.cards[i],fcState.cards[j]]=[fcState.cards[j],fcState.cards[i]];}fcState.index=0;fcState.flipped=false;toast('🔀 Mélangé');renderCurrentView();}
+function fcMark(type){
+  if(!fcState)return;
+  if(type==='good')fcState.good++;else fcState.bad++;
+  STATE.fcStats.reviewed++;
+  if(STATE.fcStats.reviewed>=100)unlock('fc_master');
+  if(fcState.index>=fcState.cards.length-1){
+    STATE.fcStats.sessions++;unlock('fc_session');
+    if(fcState.bad===0&&fcState.good>=10)unlock('fc_perfect');
+    toast(`🎉 Session! ${fcState.good}/${fcState.good+fcState.bad}`,'success');
+  }
+  save();fcNext();
+}
+function fcChangeFile(id){const f=STATE.files.find(x=>x.id==id);if(!f||!isFlashcardFile(f))return;fcState={fileId:f.id,cards:[...f.data],index:0,flipped:false,good:0,bad:0,shuffled:false};renderCurrentView();}
+
+// ═══ TROPHIES ═══
+function renderTrophies(el){
+  const unlocked=STATE.achievements;
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head"><button class="back-btn" onclick="nav('hub')">← QG</button><h2>🏆 Trophées & Rangs</h2></div>
+    <div class="page-sub">${unlocked.length}/${ACHIEVEMENTS.length} trophées</div>
+    <div class="ranks-section"><h3>Rangs</h3>
+      <div class="ranks-grid">${RANKS.map(r=>{
+        const a=STATE.xp>=r.min;
+        return `<div class="rank-card ${a?'rk-done':'rk-locked'}"><div class="rk-icon">${r.icon}</div><div class="rk-name" style="color:${a?r.color:'var(--t3)'}">${r.name}</div><div class="rk-min">${r.min} XP</div></div>`;
+      }).join('')}</div>
+    </div>
+    <div class="trophies-section"><h3>Trophées</h3>
+      <div class="trophy-grid">${ACHIEVEMENTS.map(a=>{
+        const got=unlocked.includes(a.id);
+        return `<div class="trophy-card ${got?'tr-done':'tr-locked'}"><div class="tr-icon">${got?a.icon:'🔒'}</div><div class="tr-name">${got?a.name:'???'}</div><div class="tr-desc">${a.desc}</div><div class="tr-xp">${got?`✓ +${a.xp}XP`:`+${a.xp}XP`}</div></div>`;
+      }).join('')}</div>
+    </div>
+  </div>`;
+}
+
+// ═══ STATS VIEW — NEW ═══
+function renderStats(el){
+  const s=getStats();
+  const rank=getRank();
+  const maxContent=MISSIONS.reduce((s,m)=>s+m.objectives.filter(o=>o.content).length,0);
+  el.innerHTML=`
+  <div class="page">
+    <div class="page-head"><button class="back-btn" onclick="nav('hub')">← QG</button><h2>📊 Statistiques</h2></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sc-icon">🎯</div><div class="sc-val">${s.completedM}/${s.totalM}</div><div class="sc-label">Missions complètes</div></div>
+      <div class="stat-card"><div class="sc-icon">✅</div><div class="sc-val">${s.doneObj}/${s.totalObj}</div><div class="sc-label">Objectifs cochés</div></div>
+      <div class="stat-card"><div class="sc-icon">📖</div><div class="sc-val">${s.readContent}/${maxContent}</div><div class="sc-label">Contenus lus</div></div>
+      <div class="stat-card"><div class="sc-icon">🎓</div><div class="sc-val">${s.quizPassed}/${s.quizDone}</div><div class="sc-label">Quiz réussis</div></div>
+      <div class="stat-card"><div class="sc-icon">🛠️</div><div class="sc-val">${s.completedTools}/15</div><div class="sc-label">Outils complétés</div></div>
+      <div class="stat-card"><div class="sc-icon">🏆</div><div class="sc-val">${s.achievements}/${s.totalAchiev}</div><div class="sc-label">Trophées</div></div>
+      <div class="stat-card"><div class="sc-icon">📚</div><div class="sc-val">${s.fcReviewed}</div><div class="sc-label">Flashcards révisées</div></div>
+      <div class="stat-card"><div class="sc-icon">⏱️</div><div class="sc-val">${STATE.totalTime}m</div><div class="sc-label">Temps total</div></div>
+    </div>
+    <div class="stats-xp">
+      <h3>Économie XP</h3>
+      <div class="xp-breakdown">
+        <div class="xpb-row"><span>XP actuel</span><strong>${STATE.xp}</strong></div>
+        <div class="xpb-row"><span>Rang</span><strong>${rank.icon} ${rank.name}</strong></div>
+        <div class="xpb-row"><span>Prochain rang</span><strong>${getNextRank().icon} ${getNextRank().name} (${getNextRank().min}XP)</strong></div>
+      </div>
+    </div>
+    <div class="stats-missions"><h3>Détail par mission</h3>
+      ${MISSIONS.map(m=>{
+        const md=m.objectives.filter(o=>STATE.completedObj.includes(o.id)).length;
+        const mt=m.objectives.length;
+        const mr=m.objectives.filter(o=>STATE.readContent.includes(o.id)).length;
+        const mc=m.objectives.filter(o=>o.content).length;
+        const qr=STATE.quizResults[m.id];
+        return `<div class="sm-row">
+          <span class="sm-icon">${m.icon}</span>
+          <span class="sm-name">${esc(m.name)}</span>
+          <span class="sm-obj">${md}/${mt} obj</span>
+          <span class="sm-read">${mr}/${mc} 📖</span>
+          <span class="sm-quiz">${qr?`${qr.score}/${qr.total} ${qr.passed?'✅':'❌'}`:'—'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(STATE.view==='flashcards'&&fcState){
+    if(e.key===' '||e.key==='Enter'){e.preventDefault();fcFlip();}
+    else if(e.key==='ArrowRight'){e.preventDefault();fcNext();}
+    else if(e.key==='ArrowLeft'){e.preventDefault();fcPrev();}
+  }
+  if(e.key==='Escape'){
+    if(STATE.view==='mission')nav('missions');
+    else if(STATE.view==='tool')nav('tools');
+    else if(STATE.view==='quiz')nav('mission',STATE.missionId);
+    else if(STATE.view==='stats')nav('hub');
+    else nav('hub');
+  }
+});
+
+// Enter on role=button elements
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){
+    e.preventDefault();e.target.click();
+  }
+});
+
+// ═══ SWIPE ═══
+var touchStartX=0;
+document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const diff=e.changedTouches[0].screenX-touchStartX;
+  if(STATE.view==='flashcards'&&fcState){if(diff>60)fcPrev();else if(diff<-60)fcNext();}
+},{passive:true});
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{initEngine();renderCurrentView();});
+
+window.RANKS=RANKS;
+window.MISSIONS=MISSIONS;
+window.TOOLS=TOOLS;
+window.ACHIEVEMENTS=ACHIEVEMENTS;
+window.DEMO_FLASHCARDS=DEMO_FLASHCARDS;
+window.QUOTES=QUOTES;
+window.STATE=STATE;
+window.fcState=fcState;
+window.nav=nav;
+window.setTheme=setTheme;
+window.renderCurrentView=renderCurrentView;
+window.save=save;
+window.resetAll=resetAll;
+window.toggleObjective=toggleObjective;
+window.completeObjective=completeObjective;
+window.completeTool=completeTool;
+window.saveToolField=saveToolField;
+window.submitQuiz=submitQuiz;
+window.markContentRead=markContentRead;
+window.toggleContent=toggleContent;
+window.openToolFromMission=openToolFromMission;
+window.handleFiles=handleFiles;
+window.loadDemoFlashcards=loadDemoFlashcards;
+window.exportProject=exportProject;
+window.importProject=importProject;
+window.filterMissions=filterMissions;
+window.addXP=addXP;
+window.updateXPBar=updateXPBar;
+window.unlock=unlock;
+window.fcFlip=fcFlip;
+window.fcNext=fcNext;
+window.fcPrev=fcPrev;
+window.fcShuffle=fcShuffle;
+window.fcMark=fcMark;
+window.fcChangeFile=fcChangeFile;
+window.isFlashcardFile=isFlashcardFile;
+window.getRank=getRank;
+window.getNextRank=getNextRank;
+window.getStats=getStats;
+window.initEngine=initEngine;
+window._q=_q;
+window._qa=_qa;
+window.esc=esc;
+window.toast=toast;
+window.vibrate=vibrate;
+})();
+</script>
+</body>
+</html>
