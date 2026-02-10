@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" prefix="og: http://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ouaisfieu · War Room — Poste de Commandement Citoyen</title>
+
+<!-- SEO / GEO / Web Sémantique -->
+<meta name="description" content="Poste de commandement citoyen ouaisfieu : veille citoyenne, intelligence civile, contre-institution numérique belge. Dashboard opérationnel d'analyse politique et sociale.">
+<meta name="keywords" content="ouaisfieu, veille citoyenne, intelligence civile, Belgique, particratie, éducation permanente, civic tech, Arizona, CPAS, démocratie participative">
+<meta name="author" content="ouaisfieu · Cellule Analyse">
+<meta name="robots" content="index, follow">
+<meta name="geo.region" content="BE-BRU">
+<meta name="geo.placename" content="Bruxelles">
+<meta name="geo.position" content="50.8503;4.3517">
+<meta name="ICBM" content="50.8503, 4.3517">
+<link rel="canonical" href="https://ouaisfi.eu/warroom">
+
+<!-- Open Graph -->
+<meta property="og:title" content="ouaisfieu · War Room — Poste de Commandement Citoyen">
+<meta property="og:description" content="Dashboard opérationnel de veille citoyenne et d'intelligence civile belge.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ouaisfi.eu/warroom">
+<meta property="og:locale" content="fr_BE">
+<meta property="og:site_name" content="ouaisfieu">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ouaisfieu · War Room">
+<meta name="twitter:description" content="Poste de commandement citoyen — veille, analyse, action.">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ouaisfieu War Room",
+  "description": "Poste de commandement citoyen pour la veille citoyenne et l'intelligence civile en Belgique",
+  "url": "https://ouaisfi.eu/warroom",
+  "applicationCategory": "CivicTech",
+  "operatingSystem": "Web",
+  "author": {
+    "@type": "Organization",
+    "name": "ouaisfieu",
+    "url": "https://ouaisfi.eu"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "inLanguage": "fr",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Belgium"
+  }
+}
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES & THEMES
+   ═══════════════════════════════════════════ */
+:root {
+  --mint: #48bb78;
+  --mint-dim: #2f855a;
+  --mint-glow: #68d391;
+  --lilas: #9f7aea;
+  --lilas-dim: #805ad5;
+  --lilas-glow: #b794f4;
+  --danger: #fc5c65;
+  --warning: #fed330;
+  --success: #26de81;
+  --info: #45aaf2;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-mono: 'Space Mono', monospace;
+  --font-display: 'Outfit', sans-serif;
+  --font-retro: 'Press Start 2P', monospace;
+  --border-radius: 6px;
+  --scanline-opacity: 0;
+  --matrix-opacity: 0;
+  --crt-curve: 0;
+}
+
+[data-theme="dark"] {
+  --bg-0: #0a0a0f;
+  --bg-1: #12121a;
+  --bg-2: #1a1a28;
+  --bg-3: #222236;
+  --text-0: #e8e8f0;
+  --text-1: #b0b0c8;
+  --text-2: #7878a0;
+  --border: #2a2a44;
+  --glass: rgba(18, 18, 26, 0.85);
+}
+
+[data-theme="eighties"] {
+  --bg-0: #1a0028;
+  --bg-1: #220035;
+  --bg-2: #2a0042;
+  --bg-3: #350055;
+  --text-0: #ff00ff;
+  --text-1: #00ffff;
+  --text-2: #ff6ec7;
+  --border: #ff00ff44;
+  --glass: rgba(26, 0, 40, 0.9);
+  --mint: #00ffaa;
+  --mint-glow: #00ffcc;
+  --lilas: #ff00ff;
+  --lilas-glow: #ff66ff;
+  --scanline-opacity: 0.04;
+  --crt-curve: 1;
+}
+
+[data-theme="matrix"] {
+  --bg-0: #000800;
+  --bg-1: #001200;
+  --bg-2: #001a00;
+  --bg-3: #002200;
+  --text-0: #00ff41;
+  --text-1: #00cc33;
+  --text-2: #009922;
+  --border: #00ff4133;
+  --glass: rgba(0, 8, 0, 0.92);
+  --mint: #00ff41;
+  --mint-glow: #00ff88;
+  --lilas: #00aa22;
+  --lilas-glow: #00dd44;
+  --danger: #ff3300;
+  --warning: #ccff00;
+  --scanline-opacity: 0.06;
+  --matrix-opacity: 1;
+  --crt-curve: 1;
+}
+
+/* ═══════════════════════════════════════════
+   GLOBAL RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-mono);
+  background: var(--bg-0);
+  color: var(--text-0);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+  position: relative;
+}
+
+/* Matrix rain canvas */
+#matrixCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--matrix-opacity);
+  transition: opacity 0.5s;
+}
+
+/* CRT / Scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0, var(--scanline-opacity)) 2px,
+    rgba(0,0,0, var(--scanline-opacity)) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-0); }
+::-webkit-scrollbar-thumb { background: var(--mint-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mint); }
+
+/* ═══════════════════════════════════════════
+   HEADER / COMMAND BAR
+   ═══════════════════════════════════════════ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-glyph {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--mint), var(--lilas));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 1rem;
+  color: var(--bg-0);
+  animation: logoPulse 3s ease-in-out infinite;
+  font-family: var(--font-display);
+}
+
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 8px var(--mint), 0 0 20px var(--mint-dim); }
+  50% { box-shadow: 0 0 16px var(--lilas), 0 0 40px var(--lilas-dim); }
+}
+
+.brand-text h1 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--mint), var(--lilas));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.brand-text .subtitle {
+  font-size: 0.55rem;
+  color: var(--text-2);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Theme switcher pills */
+.theme-switcher {
+  display: flex;
+  background: var(--bg-2);
+  border-radius: 20px;
+  padding: 2px;
+  border: 1px solid var(--border);
+}
+
+.theme-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  border-radius: 18px;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.theme-btn.active {
+  background: linear-gradient(135deg, var(--mint-dim), var(--lilas-dim));
+  color: white;
+  box-shadow: 0 0 12px var(--mint-dim);
+}
+
+.theme-btn:hover:not(.active) {
+  color: var(--text-0);
+  background: var(--bg-3);
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.6rem;
+  color: var(--text-2);
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.clock {
+  font-variant-numeric: tabular-nums;
+  color: var(--mint);
+}
+
+/* ═══════════════════════════════════════════
+   MAIN LAYOUT
+   ═══════════════════════════════════════════ */
+.main-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* ═══════════════════════════════════════════
+   PANELS / CARDS
+   ═══════════════════════════════════════════ */
+.panel {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+.panel:hover {
+  border-color: var(--mint-dim);
+  box-shadow: 0 0 20px rgba(72, 187, 120, 0.08);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+}
+
+.panel-header h2 {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-0);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panel-header .tag {
+  font-size: 0.5rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+.tag-urgent {
+  background: var(--danger);
+  color: white;
+  animation: urgentPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--danger); }
+  50% { box-shadow: 0 0 16px var(--danger); }
+}
+
+.tag-mint { background: var(--mint-dim); color: white; }
+.tag-lilas { background: var(--lilas-dim); color: white; }
+.tag-info { background: var(--info); color: white; }
+
+.panel-body {
+  padding: 1rem;
+}
+
+/* ═══════════════════════════════════════════
+   PRIORITY / URGENCES SECTION
+   ═══════════════════════════════════════════ */
+.urgences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.urgence-card {
+  background: var(--bg-2);
+  border: 1px solid var(--danger);
+  border-left: 4px solid var(--danger);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.urgence-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(252, 92, 101, 0.05), transparent);
+  pointer-events: none;
+}
+
+.urgence-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(252, 92, 101, 0.15);
+}
+
+.urgence-card.severity-critique { border-left-color: var(--danger); }
+.urgence-card.severity-haute { border-left-color: var(--warning); }
+.urgence-card.severity-moyenne { border-left-color: var(--info); }
+
+.urgence-card .uc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.urgence-card .uc-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--text-0);
+}
+
+.urgence-card .uc-deadline {
+  font-size: 0.55rem;
+  color: var(--danger);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.urgence-card .uc-body {
+  font-size: 0.65rem;
+  color: var(--text-1);
+  line-height: 1.5;
+}
+
+.urgence-card .uc-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.uc-badge {
+  font-size: 0.5rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+/* ═══════════════════════════════════════════
+   TIMELINE
+   ═══════════════════════════════════════════ */
+.timeline-container {
+  position: relative;
+  padding: 0.5rem 0;
+  overflow-x: auto;
+}
+
+.timeline-track {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  padding: 1rem 0;
+  position: relative;
+}
+
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--mint-dim), var(--lilas-dim), var(--mint-dim));
+  transform: translateY(-50%);
+}
+
+.tl-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+  padding: 0 0.5rem;
+  cursor: pointer;
+}
+
+.tl-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--mint);
+  background: var(--bg-0);
+  z-index: 2;
+  transition: all var(--transition);
+}
+
+.tl-node:hover .tl-dot {
+  background: var(--mint);
+  box-shadow: 0 0 12px var(--mint);
+  transform: scale(1.4);
+}
+
+.tl-node.active .tl-dot {
+  background: var(--danger);
+  border-color: var(--danger);
+  box-shadow: 0 0 12px var(--danger);
+}
+
+.tl-node.future .tl-dot {
+  border-color: var(--lilas);
+  border-style: dashed;
+}
+
+.tl-label {
+  font-size: 0.5rem;
+  color: var(--text-2);
+  margin-top: 0.5rem;
+  text-align: center;
+  max-width: 100px;
+  line-height: 1.3;
+}
+
+.tl-date {
+  font-size: 0.55rem;
+  color: var(--mint);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.tl-type {
+  font-size: 0.4rem;
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
+
+.type-politique { background: var(--lilas-dim); color: white; }
+.type-impact { background: var(--danger); color: white; }
+.type-juridique { background: var(--warning); color: #000; }
+.type-projet { background: var(--mint-dim); color: white; }
+.type-reforme { background: var(--info); color: white; }
+.type-financier { background: #e67e22; color: white; }
+.type-mobilisation { background: #e74c3c; color: white; }
+.type-projection { background: var(--text-2); color: var(--bg-0); }
+.type-analyse { background: #3498db; color: white; }
+
+/* ═══════════════════════════════════════════
+   CRUD WORKSTATION
+   ═══════════════════════════════════════════ */
+.workstation-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.ws-tab {
+  padding: 0.6rem 1rem;
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.ws-tab.active {
+  color: var(--mint);
+  border-bottom-color: var(--mint);
+  background: var(--bg-1);
+}
+
+.ws-tab:hover:not(.active) {
+  color: var(--text-0);
+  background: var(--bg-3);
+}
+
+.ws-content {
+  display: none;
+  padding: 1rem;
+}
+
+.ws-content.active { display: block; }
+
+/* CRUD form */
+.crud-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.crud-form.full-width { grid-template-columns: 1fr; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group.span-2 { grid-column: span 2; }
+
+.form-group label {
+  font-size: 0.55rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  color: var(--text-0);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  border-radius: var(--border-radius);
+  transition: border-color var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--mint);
+  box-shadow: 0 0 8px rgba(72, 187, 120, 0.2);
+}
+
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-mint {
+  background: var(--mint-dim);
+  color: white;
+  border-color: var(--mint);
+}
+.btn-mint:hover {
+  background: var(--mint);
+  box-shadow: 0 0 16px rgba(72, 187, 120, 0.3);
+}
+
+.btn-lilas {
+  background: var(--lilas-dim);
+  color: white;
+  border-color: var(--lilas);
+}
+.btn-lilas:hover {
+  background: var(--lilas);
+  box-shadow: 0 0 16px rgba(159, 122, 234, 0.3);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn-danger:hover { background: var(--danger); color: white; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-1);
+}
+.btn-ghost:hover { background: var(--bg-3); color: var(--text-0); }
+
+.btn-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Data table */
+.data-table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.65rem;
+}
+
+.data-table th {
+  background: var(--bg-2);
+  color: var(--text-2);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+
+.data-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-1);
+  vertical-align: top;
+}
+
+.data-table tr:hover td {
+  background: var(--bg-2);
+  color: var(--text-0);
+}
+
+.data-table .priority-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.data-table .actions-cell {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.action-btn {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: 0.6rem;
+  transition: all var(--transition);
+}
+
+.action-btn:hover { border-color: var(--mint); color: var(--mint); }
+.action-btn.delete:hover { border-color: var(--danger); color: var(--danger); }
+
+/* ═══════════════════════════════════════════
+   STATS DASHBOARD
+   ═══════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  transition: all var(--transition);
+}
+
+.stat-card:hover {
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.stat-label {
+  font-size: 0.5rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--mint), var(--lilas));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+.stat-unit {
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.stat-context {
+  font-size: 0.5rem;
+  color: var(--text-2);
+  margin-top: 0.2rem;
+  line-height: 1.3;
+}
+
+.stat-trend {
+  font-size: 0.55rem;
+  margin-top: 0.25rem;
+}
+
+.trend-up { color: var(--danger); }
+.trend-down { color: var(--success); }
+.trend-stable { color: var(--text-2); }
+
+/* ═══════════════════════════════════════════
+   EXPORT TOOLBAR
+   ═══════════════════════════════════════════ */
+.export-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.export-bar .label {
+  font-size: 0.5rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.export-btn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.55rem;
+  font-family: var(--font-mono);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.export-btn:hover {
+  border-color: var(--mint);
+  color: var(--mint);
+  background: var(--bg-1);
+}
+
+/* ═══════════════════════════════════════════
+   FORCES/MENACES
+   ═══════════════════════════════════════════ */
+.swot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.swot-item {
+  background: var(--bg-2);
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  border-left: 3px solid;
+}
+
+.swot-item.force { border-left-color: var(--mint); }
+.swot-item.menace { border-left-color: var(--danger); }
+
+.swot-item .si-type {
+  font-size: 0.5rem;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.swot-item .si-desc {
+  font-size: 0.65rem;
+  color: var(--text-0);
+  margin-top: 0.3rem;
+  line-height: 1.4;
+}
+
+.swot-item .si-score {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: var(--mint);
+  float: right;
+}
+
+.swot-item .si-mitigation {
+  font-size: 0.55rem;
+  color: var(--lilas);
+  margin-top: 0.3rem;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════
+   ECOSYSTEM MAP
+   ═══════════════════════════════════════════ */
+.eco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.eco-node {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: 0.6rem;
+  text-align: center;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.eco-node:hover {
+  border-color: var(--lilas);
+  transform: scale(1.03);
+}
+
+.eco-node .en-icon { font-size: 1.2rem; margin-bottom: 0.3rem; }
+.eco-node .en-name { font-size: 0.6rem; font-weight: 700; color: var(--text-0); }
+.eco-node .en-role { font-size: 0.5rem; color: var(--text-2); margin-top: 0.2rem; }
+.eco-node .en-url { font-size: 0.45rem; color: var(--mint); margin-top: 0.2rem; word-break: break-all; }
+
+/* ═══════════════════════════════════════════
+   SEARCH / COMMAND PALETTE
+   ═══════════════════════════════════════════ */
+.cmd-palette {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+}
+
+.cmd-palette.open { display: flex; }
+
+.cmd-box {
+  background: var(--bg-1);
+  border: 1px solid var(--mint-dim);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(72, 187, 120, 0.1);
+  overflow: hidden;
+}
+
+.cmd-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  background: transparent;
+  border: none;
+  color: var(--text-0);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.cmd-results {
+  max-height: 40vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+}
+
+.cmd-result {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.7rem;
+  transition: background var(--transition);
+}
+
+.cmd-result:hover { background: var(--bg-2); }
+.cmd-result .cr-icon { color: var(--mint); font-size: 0.8rem; }
+.cmd-result .cr-text { color: var(--text-0); }
+.cmd-result .cr-hint { color: var(--text-2); font-size: 0.55rem; margin-left: auto; }
+
+/* ═══════════════════════════════════════════
+   NOTIFICATIONS / TOAST
+   ═══════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  background: var(--bg-2);
+  border: 1px solid var(--mint);
+  border-radius: var(--border-radius);
+  padding: 0.6rem 1rem;
+  font-size: 0.65rem;
+  color: var(--text-0);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: toastIn 0.3s ease-out;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.toast.error { border-color: var(--danger); }
+.toast.success { border-color: var(--success); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════
+   EDITOR MODAL
+   ═══════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.modal-body { padding: 1.2rem; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-2);
+  font-size: 0.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+.footer a { color: var(--mint); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+.footer .fork-badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--mint-dim);
+  border-radius: 20px;
+  font-size: 0.55rem;
+  color: var(--mint);
+  transition: all var(--transition);
+}
+
+.footer .fork-badge:hover {
+  background: var(--mint-dim);
+  color: white;
+}
+
+/* ═══════════════════════════════════════════
+   EIGHTIES OVERRIDES
+   ═══════════════════════════════════════════ */
+[data-theme="eighties"] .header {
+  background: linear-gradient(180deg, rgba(26,0,40,0.95), rgba(34,0,53,0.9));
+  border-bottom-color: #ff00ff66;
+}
+
+[data-theme="eighties"] .brand-text h1 {
+  background: linear-gradient(90deg, #00ffaa, #ff00ff, #00ffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: eightyGradient 3s linear infinite;
+  background-size: 200%;
+}
+
+@keyframes eightyGradient {
+  0% { background-position: 0%; }
+  100% { background-position: 200%; }
+}
+
+[data-theme="eighties"] .panel {
+  border-color: #ff00ff33;
+  box-shadow: 0 0 10px rgba(255,0,255,0.05), inset 0 0 20px rgba(255,0,255,0.02);
+}
+
+[data-theme="eighties"] .stat-value {
+  background: linear-gradient(135deg, #00ffaa, #ff00ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+}
+
+[data-theme="eighties"] .logo-glyph {
+  background: linear-gradient(135deg, #00ffaa, #ff00ff);
+  animation: eightyPulse 2s ease-in-out infinite;
+}
+
+@keyframes eightyPulse {
+  0%, 100% { box-shadow: 0 0 10px #ff00ff, 0 0 30px #00ffaa; }
+  50% { box-shadow: 0 0 20px #00ffff, 0 0 50px #ff00ff; }
+}
+
+/* MATRIX OVERRIDES */
+[data-theme="matrix"] .logo-glyph {
+  background: #00ff41;
+  box-shadow: 0 0 20px #00ff41, 0 0 40px #00ff4166;
+}
+
+[data-theme="matrix"] .stat-value {
+  background: none;
+  -webkit-text-fill-color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+[data-theme="matrix"] .brand-text h1 {
+  background: none;
+  -webkit-text-fill-color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+}
+
+[data-theme="matrix"] .panel {
+  border-color: #00ff4122;
+}
+
+[data-theme="matrix"] * {
+  font-family: var(--font-mono) !important;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .header { flex-wrap: wrap; padding: 0.5rem; }
+  .crud-form { grid-template-columns: 1fr; }
+  .crud-form .span-2 { grid-column: span 1; }
+  .swot-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .status-bar { display: none; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .urgences-grid { grid-template-columns: 1fr; }
+}
+
+/* Print styles */
+@media print {
+  .header, .export-bar, .theme-switcher, .cmd-palette, #matrixCanvas { display: none !important; }
+  body { background: white; color: black; }
+  .panel { border: 1px solid #ccc; break-inside: avoid; }
+}
+</style>
+</head>
+
+<body>
+<!-- Matrix Rain Canvas -->
+<canvas id="matrixCanvas"></canvas>
+
+<!-- Command Palette -->
+<div class="cmd-palette" id="cmdPalette">
+  <div class="cmd-box">
+    <input class="cmd-input" id="cmdInput" placeholder="⌘K · Rechercher sujets, données, actions..." autofocus>
+    <div class="cmd-results" id="cmdResults"></div>
+  </div>
+</div>
+
+<!-- Editor Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Éditer</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="header">
+  <div class="header-brand">
+    <div class="logo-glyph">ø</div>
+    <div class="brand-text">
+      <h1>ouaisfieu · WAR ROOM</h1>
+      <div class="subtitle">Poste de Commandement Citoyen — Intelligence Civile</div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>OPÉRATIONNEL</span>
+    <span>|</span>
+    <span class="clock" id="clock">--:--:--</span>
+    <span>|</span>
+    <span>BXL · 50.85°N</span>
+  </div>
+
+  <div class="header-controls">
+    <div class="theme-switcher">
+      <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')">◉ Dark</button>
+      <button class="theme-btn" data-theme="eighties" onclick="setTheme('eighties')">▣ 80s</button>
+      <button class="theme-btn" data-theme="matrix" onclick="setTheme('matrix')">⌁ Matrix</button>
+    </div>
+    <button class="btn btn-ghost" onclick="openCmd()" title="⌘K">⌘K</button>
+  </div>
+</header>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main-container">
+
+  <!-- ══════ URGENCES / PRIORITÉS ══════ -->
+  <section class="panel" id="urgencesPanel">
+    <div class="panel-header">
+      <h2>🔴 SUJETS PRIORITAIRES & URGENCES <span class="tag tag-urgent">CRITIQUE</span></h2>
+      <button class="btn btn-mint" onclick="openAddUrgence()">+ Ajouter</button>
+    </div>
+    <div class="panel-body">
+      <div class="urgences-grid" id="urgencesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ STATS DASHBOARD ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>📊 Indicateurs Clés <span class="tag tag-mint">LIVE DATA</span></h2>
+    </div>
+    <div class="panel-body">
+      <div class="stats-grid" id="statsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ TIMELINE ARIZONA ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>⏱ Chronologie Opérationnelle <span class="tag tag-lilas">2021 → 2042</span></h2>
+    </div>
+    <div class="panel-body">
+      <div class="timeline-container">
+        <div class="timeline-track" id="timelineTrack"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ CRUD WORKSTATION ══════ -->
+  <section class="panel" id="workstationPanel">
+    <div class="panel-header">
+      <h2>🛠 Poste de Travail CRUD <span class="tag tag-info">INTEROP</span></h2>
+    </div>
+    <div class="workstation-tabs">
+      <button class="ws-tab active" onclick="switchTab('subjects')">📋 Sujets</button>
+      <button class="ws-tab" onclick="switchTab('actions')">⚡ Actions</button>
+      <button class="ws-tab" onclick="switchTab('sources')">🔗 Sources</button>
+      <button class="ws-tab" onclick="switchTab('notes')">📝 Notes</button>
+    </div>
+
+    <!-- TAB: Sujets -->
+    <div class="ws-content active" id="tab-subjects">
+      <div class="crud-form">
+        <div class="form-group">
+          <label>Titre du sujet</label>
+          <input type="text" id="subjectTitle" placeholder="Ex: Affaire Deborsu, Vague 2 exclusions...">
+        </div>
+        <div class="form-group">
+          <label>Catégorie</label>
+          <select id="subjectCat">
+            <option value="politique">Politique</option>
+            <option value="juridique">Juridique</option>
+            <option value="social">Social</option>
+            <option value="media">Médias</option>
+            <option value="projet">Projet ouaisfieu</option>
+            <option value="financement">Financement</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Priorité</label>
+          <select id="subjectPriority">
+            <option value="critique">🔴 Critique</option>
+            <option value="haute">🟠 Haute</option>
+            <option value="moyenne">🟡 Moyenne</option>
+            <option value="basse">🟢 Basse</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Échéance</label>
+          <input type="date" id="subjectDeadline">
+        </div>
+        <div class="form-group span-2">
+          <label>Description</label>
+          <textarea id="subjectDesc" placeholder="Description détaillée du sujet..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-mint" onclick="addSubject()">+ Créer Sujet</button>
+      </div>
+      <div class="data-table-wrap" style="margin-top: 1rem; max-height: 400px; overflow-y: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>P</th>
+              <th>Titre</th>
+              <th>Cat.</th>
+              <th>Échéance</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="subjectsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Actions -->
+    <div class="ws-content" id="tab-actions">
+      <div class="crud-form">
+        <div class="form-group">
+          <label>Action</label>
+          <input type="text" id="actionTitle" placeholder="Ex: Rédiger recours constitutionnel...">
+        </div>
+        <div class="form-group">
+          <label>Sujet lié</label>
+          <select id="actionSubject"><option value="">— Aucun —</option></select>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="actionType">
+            <option value="rédaction">Rédaction</option>
+            <option value="recherche">Recherche</option>
+            <option value="juridique">Juridique</option>
+            <option value="contact">Contact/Réseau</option>
+            <option value="technique">Technique</option>
+            <option value="terrain">Terrain</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Deadline</label>
+          <input type="date" id="actionDeadline">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-mint" onclick="addAction()">+ Créer Action</button>
+      </div>
+      <div class="data-table-wrap" style="margin-top: 1rem; max-height: 400px; overflow-y: auto;">
+        <table class="data-table">
+          <thead><tr><th>Action</th><th>Type</th><th>Sujet</th><th>Deadline</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="actionsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Sources -->
+    <div class="ws-content" id="tab-sources">
+      <div class="crud-form">
+        <div class="form-group">
+          <label>Nom de la source</label>
+          <input type="text" id="sourceName" placeholder="Ex: Bureau fédéral du Plan, CRISP...">
+        </div>
+        <div class="form-group">
+          <label>URL</label>
+          <input type="url" id="sourceUrl" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="sourceType">
+            <option value="institutionnel">Institutionnel</option>
+            <option value="académique">Académique</option>
+            <option value="media">Média</option>
+            <option value="juridique">Juridique</option>
+            <option value="associatif">Associatif</option>
+            <option value="opendata">Open Data</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fiabilité</label>
+          <select id="sourceReliability">
+            <option value="5">★★★★★ Référence</option>
+            <option value="4">★★★★ Fiable</option>
+            <option value="3">★★★ Correct</option>
+            <option value="2">★★ À vérifier</option>
+            <option value="1">★ Suspect</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-mint" onclick="addSource()">+ Ajouter Source</button>
+      </div>
+      <div class="data-table-wrap" style="margin-top: 1rem; max-height: 400px; overflow-y: auto;">
+        <table class="data-table">
+          <thead><tr><th>Source</th><th>Type</th><th>Fiabilité</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="sourcesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Notes -->
+    <div class="ws-content" id="tab-notes">
+      <div class="crud-form full-width">
+        <div class="form-group">
+          <label>Titre</label>
+          <input type="text" id="noteTitle" placeholder="Titre de la note...">
+        </div>
+        <div class="form-group">
+          <label>Contenu (Markdown supporté)</label>
+          <textarea id="noteContent" rows="8" placeholder="## Analyse&#10;&#10;Écrire ici en Markdown..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tags (séparés par virgules)</label>
+          <input type="text" id="noteTags" placeholder="arizona, cpas, juridique...">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-mint" onclick="addNote()">+ Sauvegarder Note</button>
+      </div>
+      <div class="data-table-wrap" style="margin-top: 1rem; max-height: 400px; overflow-y: auto;">
+        <table class="data-table">
+          <thead><tr><th>Titre</th><th>Tags</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="notesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EXPORT BAR -->
+    <div class="export-bar">
+      <span class="label">Exporter :</span>
+      <button class="export-btn" onclick="exportJSON()">📦 JSON</button>
+      <button class="export-btn" onclick="exportCSV()">📊 CSV</button>
+      <button class="export-btn" onclick="exportMarkdown()">📝 Markdown</button>
+      <button class="export-btn" onclick="exportHTML()">🌐 HTML</button>
+      <button class="export-btn" onclick="exportSEO()">🔍 SEO/GEO</button>
+      <button class="export-btn" onclick="exportDocx()">📄 DOCX</button>
+      <button class="export-btn" onclick="exportPDF()">🖨 PDF</button>
+      <button class="export-btn" onclick="exportAll()">🚀 TOUT</button>
+    </div>
+  </section>
+
+  <!-- ══════ FORCES & MENACES ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>⚔ Forces & Menaces Projet</h2>
+    </div>
+    <div class="panel-body">
+      <div class="swot-grid" id="swotGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ ÉCOSYSTÈME ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>🌐 Écosystème ouaisfieu <span class="tag tag-mint">11 plateformes</span></h2>
+    </div>
+    <div class="panel-body">
+      <div class="eco-grid" id="ecoGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══════ MESURES ARIZONA ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>🗡 Mesures Arizona — Détail d'impact <span class="tag tag-urgent">9,2 Mrd€</span></h2>
+    </div>
+    <div class="panel-body">
+      <div class="data-table-wrap">
+        <table class="data-table" id="arizonaTable">
+          <thead>
+            <tr><th>Mesure</th><th>Montant</th><th>Horizon</th><th>Impact</th></tr>
+          </thead>
+          <tbody id="arizonaBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ FINANCEMENTS ══════ -->
+  <section class="panel">
+    <div class="panel-header">
+      <h2>💰 Pistes de Financement <span class="tag tag-lilas">TRACKER</span></h2>
+    </div>
+    <div class="panel-body">
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Programme</th><th>Min</th><th>Max</th><th>Source</th><th>Pertinence</th><th>Échéance</th></tr>
+          </thead>
+          <tbody id="fundingBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <p>ouaisfieu · War Room — Poste de Commandement Citoyen<br>
+  <a href="https://ouaisfi.eu" target="_blank" rel="noopener">ouaisfi.eu</a> · 
+  Licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · 
+  Budget total : 870€ · Coût opérationnel : 0€<br>
+  Zéro pub · Zéro traçage · 100% citoyen · Fork·Hack·Spread</p>
+  <a href="https://github.com/ouaisfieu" target="_blank" rel="noopener" class="fork-badge">⑂ Fork this War Room</a>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT ENGINE
+     ═══════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════
+// DATA STORE (localStorage-backed CRUD)
+// ═══════════════════════════════════════════
+const STORE_KEY = 'ouaisfieu_warroom_v2';
+
+const DEFAULT_DATA = {
+  subjects: [
+    { id: 1, title: "Affaire Deborsu — RTL-TVI", cat: "media", priority: "critique", deadline: "2026-03-15", desc: "Contre-narratif documentaire stigmatisant les allocataires. Action CSA + recours juridique.", status: "actif", created: "2026-02-01" },
+    { id: 2, title: "Vague 2 exclusions chômage", cat: "social", priority: "critique", deadline: "2026-03-01", desc: "30.122 exclusions vague 1 + vague 2 mars 2026 (8-20 ans chômage cumulé). CPAS saturés.", status: "actif", created: "2026-01-15" },
+    { id: 3, title: "Recours Art. 23 — Cour Constitutionnelle", cat: "juridique", priority: "haute", deadline: "2026-12-31", desc: "Recours introduit 29/10/2025. Standstill + droits sociaux. Arrêt attendu fin 2026/début 2027.", status: "en_cours", created: "2025-10-29" },
+    { id: 4, title: "Dépôt dossier EP — CCPLC", cat: "projet", priority: "haute", deadline: "2026-03-31", desc: "Dossier de reconnaissance Éducation Permanente. Moratoire 2026-2028 = obstacle majeur.", status: "actif", created: "2025-09-01" },
+    { id: 5, title: "Création ASBL ouaisfieu", cat: "projet", priority: "haute", deadline: "2026-02-28", desc: "Nécessaire avant dépôt dossier EP. Crédibilité institutionnelle.", status: "todo", created: "2026-01-10" },
+    { id: 6, title: "Budget Arizona — Étude d'impact 2042", cat: "politique", priority: "moyenne", deadline: "2026-04-30", desc: "Projections démographiques, dette, convergence des crises. Dossier de recherche approfondie.", status: "en_cours", created: "2026-02-02" },
+    { id: 7, title: "Candidature PCI FWB", cat: "financement", priority: "haute", deadline: "2026-03-31", desc: "Projets de Cohésion et d'Inclusion. Budget 665K€ en 2025. Axes jeunes/interculturel/racisme.", status: "todo", created: "2026-02-05" },
+    { id: 8, title: "Erasmus+ KA210", cat: "financement", priority: "moyenne", deadline: "2026-03-05", desc: "Partenariat simplifié 30-60K€. Condition: 1 partenaire pays programme UE.", status: "todo", created: "2026-02-01" },
+  ],
+  actions: [
+    { id: 1, title: "Rédiger plainte CSA Deborsu", type: "juridique", subjectId: 1, deadline: "2026-02-28", status: "en_cours", created: "2026-02-01" },
+    { id: 2, title: "Collecter 100 premiers témoignages exclus", type: "terrain", subjectId: 2, deadline: "2026-06-30", status: "todo", created: "2026-02-05" },
+    { id: 3, title: "Contacter PAC pour partenariat EP", type: "contact", subjectId: 4, deadline: "2026-02-20", status: "todo", created: "2026-02-08" },
+    { id: 4, title: "Finaliser statuts ASBL", type: "juridique", subjectId: 5, deadline: "2026-02-25", status: "todo", created: "2026-02-10" },
+    { id: 5, title: "Identifier partenaire Erasmus+ UE", type: "recherche", subjectId: 8, deadline: "2026-02-20", status: "todo", created: "2026-02-08" },
+  ],
+  sources: [
+    { id: 1, name: "Bureau fédéral du Plan", url: "https://www.plan.be", type: "institutionnel", reliability: 5, created: "2026-01-01" },
+    { id: 2, name: "CRISP", url: "https://www.crisp.be", type: "académique", reliability: 5, created: "2026-01-01" },
+    { id: 3, name: "SPF Emploi", url: "https://emploi.belgique.be", type: "institutionnel", reliability: 5, created: "2026-01-01" },
+    { id: 4, name: "Comité d'étude sur le vieillissement", url: "https://www.plan.be/publications/publication-2367", type: "institutionnel", reliability: 5, created: "2026-01-01" },
+    { id: 5, name: "BNB — Banque Nationale", url: "https://www.nbb.be", type: "institutionnel", reliability: 5, created: "2026-01-01" },
+    { id: 6, name: "INAMI", url: "https://www.inami.fgov.be", type: "institutionnel", reliability: 5, created: "2026-01-01" },
+  ],
+  notes: [
+    { id: 1, title: "Stratégie Trois Guerres Civiques", content: "## Framework opérationnel\n\nAdaptation de la doctrine des Trois Guerres :\n\n1. **Guerre d'opinion** — production de contre-récits documentés\n2. **Guerre psychologique** — dé-sidération citoyenne\n3. **Guerre juridique** — saturation judiciaire constitutionnelle\n\nCible : transformer l'énergie protestataire en capacité d'agir citoyenne durable.", tags: ["stratégie", "doctrine", "trois-guerres"], created: "2026-01-15" },
+    { id: 2, title: "Failles Budget Arizona — Mémo", content: "## 8 failles identifiées\n\n1. Transfert comptable fantôme (chômage → CPAS)\n2. Alternatives fiscales ignorées (17 Mrd patrimoine)\n3. Économie fantôme MLD (100K retours irréaliste)\n4. Effet boule de neige dette\n5. Piège BIM cascade\n6. Fragmentation régionale\n7. Taux marginal >100%\n8. Absence de filet pour exclus\n\nRatio : pour 1€ capital, 5-6€ coupés dans le social.", tags: ["arizona", "budget", "failles"], created: "2026-02-02" },
+  ],
+  nextId: { subjects: 9, actions: 6, sources: 7, notes: 3 }
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+
+function saveData(data) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+let DATA = loadData();
+
+// ═══════════════════════════════════════════
+// MATRIX RAIN (variables declared first to avoid TDZ)
+// ═══════════════════════════════════════════
+let matrixInterval = null;
+let matrixCanvas = null;
+let matrixCtx = null;
+let columns = [];
+
+// ═══════════════════════════════════════════
+// THEME SYSTEM
+// ═══════════════════════════════════════════
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === theme);
+  });
+  if (theme === 'matrix') startMatrix(); else stopMatrix();
+  try { localStorage.setItem('ouaisfieu_theme', theme); } catch(e) {}
+}
+
+function initMatrix() {
+  if (!matrixCanvas) return;
+  matrixCanvas.width = window.innerWidth;
+  matrixCanvas.height = window.innerHeight;
+  const fontSize = 14;
+  const colCount = Math.floor(matrixCanvas.width / fontSize);
+  columns = Array(colCount).fill(0);
+}
+
+function drawMatrix() {
+  if (!matrixCtx || !matrixCanvas) return;
+  matrixCtx.fillStyle = 'rgba(0, 8, 0, 0.05)';
+  matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  matrixCtx.fillStyle = '#00ff4188';
+  matrixCtx.font = '14px monospace';
+  const chars = 'ouaisfieu01アイウエオカキクケコ∞§€¥£¢';
+  columns.forEach((y, i) => {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    matrixCtx.fillText(char, i * 14, y * 14);
+    if (y * 14 > matrixCanvas.height && Math.random() > 0.975) columns[i] = 0;
+    else columns[i] = y + 1;
+  });
+}
+
+function startMatrix() {
+  if (!matrixCanvas) {
+    matrixCanvas = document.getElementById('matrixCanvas');
+    if (matrixCanvas) matrixCtx = matrixCanvas.getContext('2d');
+  }
+  if (!matrixCanvas) return;
+  initMatrix();
+  if (!matrixInterval) matrixInterval = setInterval(drawMatrix, 50);
+}
+
+function stopMatrix() {
+  if (matrixInterval) {
+    clearInterval(matrixInterval);
+    matrixInterval = null;
+    if (matrixCtx && matrixCanvas) matrixCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+  }
+}
+
+window.addEventListener('resize', () => { if (matrixInterval) initMatrix(); });
+
+// ═══════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════
+function updateClock() {
+  const el = document.getElementById('clock');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('fr-BE', { hour12: false });
+  }
+}
+
+// ═══════════════════════════════════════════
+// COMMAND PALETTE
+// ═══════════════════════════════════════════
+function openCmd() {
+  document.getElementById('cmdPalette').classList.add('open');
+  document.getElementById('cmdInput').focus();
+  document.getElementById('cmdInput').value = '';
+  updateCmdResults('');
+}
+
+function closeCmd() { document.getElementById('cmdPalette').classList.remove('open'); }
+
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openCmd(); }
+  if (e.key === 'Escape') closeCmd();
+});
+
+function updateCmdResults(query) {
+  const results = document.getElementById('cmdResults');
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    results.innerHTML = `
+      <div class="cmd-result" onclick="switchTab('subjects');closeCmd()"><span class="cr-icon">📋</span><span class="cr-text">Voir tous les sujets</span><span class="cr-hint">Tab</span></div>
+      <div class="cmd-result" onclick="switchTab('actions');closeCmd()"><span class="cr-icon">⚡</span><span class="cr-text">Voir toutes les actions</span><span class="cr-hint">Tab</span></div>
+      <div class="cmd-result" onclick="exportAll();closeCmd()"><span class="cr-icon">🚀</span><span class="cr-text">Exporter tout</span><span class="cr-hint">Export</span></div>
+      <div class="cmd-result" onclick="document.getElementById('urgencesPanel').scrollIntoView({behavior:'smooth'});closeCmd()"><span class="cr-icon">🔴</span><span class="cr-text">Aller aux urgences</span><span class="cr-hint">Nav</span></div>
+    `;
+    return;
+  }
+  let items = [];
+  DATA.subjects.forEach(s => { if (s.title.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)) items.push({ icon: '📋', text: s.title, hint: s.cat }); });
+  DATA.actions.forEach(a => { if (a.title.toLowerCase().includes(q)) items.push({ icon: '⚡', text: a.title, hint: a.type }); });
+  DATA.notes.forEach(n => { if (n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q)) items.push({ icon: '📝', text: n.title, hint: 'Note' }); });
+  DATA.sources.forEach(s => { if (s.name.toLowerCase().includes(q)) items.push({ icon: '🔗', text: s.name, hint: s.type }); });
+  results.innerHTML = items.length ? items.map(i => `<div class="cmd-result"><span class="cr-icon">${i.icon}</span><span class="cr-text">${i.text}</span><span class="cr-hint">${i.hint}</span></div>`).join('') : '<div class="cmd-result"><span class="cr-text" style="color:var(--text-2)">Aucun résultat</span></div>';
+}
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.ws-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ws-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.ws-tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toasts');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'} ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+function openModal(title, bodyHtml) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHtml;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('editModal').classList.remove('open'); }
+
+// ═══════════════════════════════════════════
+// CRUD: SUBJECTS
+// ═══════════════════════════════════════════
+function addSubject() {
+  const title = document.getElementById('subjectTitle').value.trim();
+  if (!title) return showToast('Titre requis', 'error');
+  DATA.subjects.push({
+    id: DATA.nextId.subjects++,
+    title,
+    cat: document.getElementById('subjectCat').value,
+    priority: document.getElementById('subjectPriority').value,
+    deadline: document.getElementById('subjectDeadline').value || '',
+    desc: document.getElementById('subjectDesc').value,
+    status: 'actif',
+    created: new Date().toISOString().slice(0, 10)
+  });
+  saveData(DATA);
+  renderSubjects();
+  renderUrgences();
+  updateActionSubjects();
+  document.getElementById('subjectTitle').value = '';
+  document.getElementById('subjectDesc').value = '';
+  showToast('Sujet créé');
+}
+
+function deleteSubject(id) {
+  DATA.subjects = DATA.subjects.filter(s => s.id !== id);
+  saveData(DATA);
+  renderSubjects();
+  renderUrgences();
+  showToast('Sujet supprimé');
+}
+
+function toggleSubjectStatus(id) {
+  const s = DATA.subjects.find(x => x.id === id);
+  if (s) {
+    const cycle = ['actif', 'en_cours', 'todo', 'terminé'];
+    s.status = cycle[(cycle.indexOf(s.status) + 1) % cycle.length];
+    saveData(DATA);
+    renderSubjects();
+    renderUrgences();
+  }
+}
+
+function editSubject(id) {
+  const s = DATA.subjects.find(x => x.id === id);
+  if (!s) return;
+  openModal('Éditer Sujet', `
+    <div class="crud-form">
+      <div class="form-group span-2"><label>Titre</label><input type="text" id="editSTitle" value="${s.title}"></div>
+      <div class="form-group"><label>Catégorie</label><select id="editSCat">${['politique','juridique','social','media','projet','financement'].map(c => `<option value="${c}" ${s.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Priorité</label><select id="editSPri">${['critique','haute','moyenne','basse'].map(p => `<option value="${p}" ${s.priority===p?'selected':''}>${p}</option>`).join('')}</select></div>
+      <div class="form-group"><label>Échéance</label><input type="date" id="editSDeadline" value="${s.deadline}"></div>
+      <div class="form-group"><label>Statut</label><select id="editSStatus">${['actif','en_cours','todo','terminé'].map(st => `<option value="${st}" ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div>
+      <div class="form-group span-2"><label>Description</label><textarea id="editSDesc" rows="4">${s.desc}</textarea></div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem"><button class="btn btn-mint" onclick="saveEditSubject(${id})">Sauvegarder</button><button class="btn btn-ghost" onclick="closeModal()">Annuler</button></div>
+  `);
+}
+
+function saveEditSubject(id) {
+  const s = DATA.subjects.find(x => x.id === id);
+  if (!s) return;
+  s.title = document.getElementById('editSTitle').value;
+  s.cat = document.getElementById('editSCat').value;
+  s.priority = document.getElementById('editSPri').value;
+  s.deadline = document.getElementById('editSDeadline').value;
+  s.status = document.getElementById('editSStatus').value;
+  s.desc = document.getElementById('editSDesc').value;
+  saveData(DATA);
+  renderSubjects();
+  renderUrgences();
+  closeModal();
+  showToast('Sujet mis à jour');
+}
+
+const PRIORITY_COLORS = { critique: 'var(--danger)', haute: '#e67e22', moyenne: 'var(--warning)', basse: 'var(--success)' };
+const STATUS_LABELS = { actif: '🔵 Actif', en_cours: '🟡 En cours', todo: '⬜ Todo', 'terminé': '✅ Terminé' };
+
+function renderSubjects() {
+  const tbody = document.getElementById('subjectsBody');
+  tbody.innerHTML = DATA.subjects.sort((a,b) => {
+    const po = { critique: 0, haute: 1, moyenne: 2, basse: 3 };
+    return po[a.priority] - po[b.priority];
+  }).map(s => `
+    <tr>
+      <td><span class="priority-dot" style="background:${PRIORITY_COLORS[s.priority]}"></span></td>
+      <td style="font-weight:600;color:var(--text-0)">${s.title}</td>
+      <td><span class="uc-badge">${s.cat}</span></td>
+      <td style="color:${s.deadline && new Date(s.deadline) < new Date() ? 'var(--danger)' : 'var(--text-1)'}">${s.deadline || '—'}</td>
+      <td><span style="cursor:pointer" onclick="toggleSubjectStatus(${s.id})">${STATUS_LABELS[s.status] || s.status}</span></td>
+      <td class="actions-cell">
+        <button class="action-btn" onclick="editSubject(${s.id})" title="Éditer">✎</button>
+        <button class="action-btn delete" onclick="deleteSubject(${s.id})" title="Supprimer">✕</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// CRUD: ACTIONS
+// ═══════════════════════════════════════════
+function addAction() {
+  const title = document.getElementById('actionTitle').value.trim();
+  if (!title) return showToast('Titre requis', 'error');
+  DATA.actions.push({
+    id: DATA.nextId.actions++, title,
+    type: document.getElementById('actionType').value,
+    subjectId: parseInt(document.getElementById('actionSubject').value) || null,
+    deadline: document.getElementById('actionDeadline').value || '',
+    status: 'todo',
+    created: new Date().toISOString().slice(0, 10)
+  });
+  saveData(DATA); renderActions();
+  document.getElementById('actionTitle').value = '';
+  showToast('Action créée');
+}
+
+function deleteAction(id) { DATA.actions = DATA.actions.filter(a => a.id !== id); saveData(DATA); renderActions(); showToast('Action supprimée'); }
+
+function toggleActionStatus(id) {
+  const a = DATA.actions.find(x => x.id === id);
+  if (a) { const c = ['todo','en_cours','terminé']; a.status = c[(c.indexOf(a.status)+1)%c.length]; saveData(DATA); renderActions(); }
+}
+
+function renderActions() {
+  document.getElementById('actionsBody').innerHTML = DATA.actions.map(a => {
+    const sub = DATA.subjects.find(s => s.id === a.subjectId);
+    return `<tr>
+      <td style="font-weight:600;color:var(--text-0)">${a.title}</td>
+      <td><span class="uc-badge">${a.type}</span></td>
+      <td>${sub ? sub.title : '—'}</td>
+      <td>${a.deadline || '—'}</td>
+      <td><span style="cursor:pointer" onclick="toggleActionStatus(${a.id})">${STATUS_LABELS[a.status] || a.status}</span></td>
+      <td class="actions-cell"><button class="action-btn delete" onclick="deleteAction(${a.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateActionSubjects() {
+  const sel = document.getElementById('actionSubject');
+  sel.innerHTML = '<option value="">— Aucun —</option>' + DATA.subjects.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// CRUD: SOURCES
+// ═══════════════════════════════════════════
+function addSource() {
+  const name = document.getElementById('sourceName').value.trim();
+  if (!name) return showToast('Nom requis', 'error');
+  DATA.sources.push({
+    id: DATA.nextId.sources++, name,
+    url: document.getElementById('sourceUrl').value,
+    type: document.getElementById('sourceType').value,
+    reliability: parseInt(document.getElementById('sourceReliability').value),
+    created: new Date().toISOString().slice(0, 10)
+  });
+  saveData(DATA); renderSources();
+  document.getElementById('sourceName').value = '';
+  document.getElementById('sourceUrl').value = '';
+  showToast('Source ajoutée');
+}
+
+function deleteSource(id) { DATA.sources = DATA.sources.filter(s => s.id !== id); saveData(DATA); renderSources(); showToast('Source supprimée'); }
+
+function renderSources() {
+  document.getElementById('sourcesBody').innerHTML = DATA.sources.map(s => `
+    <tr>
+      <td style="font-weight:600;color:var(--text-0)">${s.name}</td>
+      <td><span class="uc-badge">${s.type}</span></td>
+      <td>${'★'.repeat(s.reliability)}${'☆'.repeat(5-s.reliability)}</td>
+      <td>${s.url ? `<a href="${s.url}" target="_blank" rel="noopener" style="color:var(--mint);font-size:0.55rem">${s.url.replace(/^https?:\/\//, '').slice(0,30)}...</a>` : '—'}</td>
+      <td class="actions-cell"><button class="action-btn delete" onclick="deleteSource(${s.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// CRUD: NOTES
+// ═══════════════════════════════════════════
+function addNote() {
+  const title = document.getElementById('noteTitle').value.trim();
+  if (!title) return showToast('Titre requis', 'error');
+  DATA.notes.push({
+    id: DATA.nextId.notes++, title,
+    content: document.getElementById('noteContent').value,
+    tags: document.getElementById('noteTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    created: new Date().toISOString().slice(0, 10)
+  });
+  saveData(DATA); renderNotes();
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteContent').value = '';
+  document.getElementById('noteTags').value = '';
+  showToast('Note sauvegardée');
+}
+
+function deleteNote(id) { DATA.notes = DATA.notes.filter(n => n.id !== id); saveData(DATA); renderNotes(); showToast('Note supprimée'); }
+
+function viewNote(id) {
+  const n = DATA.notes.find(x => x.id === id);
+  if (!n) return;
+  openModal(n.title, `<pre style="white-space:pre-wrap;font-size:0.7rem;color:var(--text-1);line-height:1.6;max-height:50vh;overflow-y:auto">${n.content}</pre><p style="margin-top:0.75rem;font-size:0.55rem;color:var(--text-2)">Tags: ${n.tags.join(', ')} · Créé: ${n.created}</p>`);
+}
+
+function renderNotes() {
+  document.getElementById('notesBody').innerHTML = DATA.notes.map(n => `
+    <tr>
+      <td style="font-weight:600;color:var(--text-0);cursor:pointer" onclick="viewNote(${n.id})">${n.title}</td>
+      <td>${n.tags.map(t => `<span class="uc-badge">${t}</span>`).join(' ')}</td>
+      <td>${n.created}</td>
+      <td class="actions-cell"><button class="action-btn" onclick="viewNote(${n.id})">👁</button><button class="action-btn delete" onclick="deleteNote(${n.id})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// URGENCES PANEL
+// ═══════════════════════════════════════════
+function renderUrgences() {
+  const urgent = DATA.subjects.filter(s => s.priority === 'critique' || s.priority === 'haute').sort((a,b) => {
+    if (a.priority === 'critique' && b.priority !== 'critique') return -1;
+    if (b.priority === 'critique' && a.priority !== 'critique') return 1;
+    return (a.deadline || '9999') < (b.deadline || '9999') ? -1 : 1;
+  });
+  document.getElementById('urgencesGrid').innerHTML = urgent.map(s => {
+    const daysLeft = s.deadline ? Math.ceil((new Date(s.deadline) - new Date()) / 86400000) : null;
+    return `
+    <div class="urgence-card severity-${s.priority}" onclick="editSubject(${s.id})">
+      <div class="uc-header">
+        <div class="uc-title">${s.title}</div>
+        <div class="uc-deadline">${daysLeft !== null ? (daysLeft < 0 ? `⚠ ${Math.abs(daysLeft)}j RETARD` : `${daysLeft}j restants`) : '—'}</div>
+      </div>
+      <div class="uc-body">${s.desc}</div>
+      <div class="uc-meta">
+        <span class="uc-badge" style="border-color:${PRIORITY_COLORS[s.priority]};color:${PRIORITY_COLORS[s.priority]}">${s.priority}</span>
+        <span class="uc-badge">${s.cat}</span>
+        <span class="uc-badge">${STATUS_LABELS[s.status]?.replace(/[🔵🟡⬜✅] /, '') || s.status}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddUrgence() {
+  document.getElementById('subjectPriority').value = 'critique';
+  document.getElementById('workstationPanel').scrollIntoView({ behavior: 'smooth' });
+  switchTab('subjects');
+}
+
+// ═══════════════════════════════════════════
+// STATS DASHBOARD
+// ═══════════════════════════════════════════
+const STATS = [
+  { label: "Exclusions chômage Vague 1", value: "30.122", unit: "personnes", trend: "hausse", context: "Janv. 2026 → transfert CPAS", trendClass: "trend-up" },
+  { label: "Exclusions cumulées 2027", value: "90.000", unit: "estimées", trend: "↑ crit.", context: "CPAS saturés, 240 ETP manquants BXL", trendClass: "trend-up" },
+  { label: "Dossiers MLD à réexaminer", value: "218K", unit: "dossiers", trend: "fixe", context: "D'ici 2029 — 100K retours irréaliste", trendClass: "trend-stable" },
+  { label: "Surcoût CPAS Bruxelles", value: "80M€", unit: "", trend: "↑", context: "19 CPAS, compensation 518€/an dérisoire", trendClass: "trend-up" },
+  { label: "Budget ouaisfieu", value: "870€", unit: "total", trend: "—", context: "Coût opérationnel = 0€ · GitHub Pages", trendClass: "trend-stable" },
+  { label: "Documents produits", value: "70+", unit: "analyses", trend: "↑", context: "PDF, MD, HTML, DOCX — multi-format", trendClass: "trend-up" },
+  { label: "Trou budget santé", value: "2 Mrd€", unit: "", trend: "↑", context: "Norme 2% vs besoin 3,2%", trendClass: "trend-up" },
+  { label: "Belges risque pauvreté", value: "2,1M", unit: "AROPE", trend: "↑", context: "18,3% population · 58% étudiants insécurité alimentaire", trendClass: "trend-up" },
+  { label: "Charge intérêts dette", value: "10→21", unit: "Mrd€/an", trend: "↑↑", context: "2025→2030 · Effet boule de neige", trendClass: "trend-up" },
+  { label: "Plateformes ouaisfieu", value: "11", unit: "sites", trend: "stable", context: "3 SSG · 0€ hosting · zéro tracking", trendClass: "trend-stable" },
+];
+
+function renderStats() {
+  document.getElementById('statsGrid').innerHTML = STATS.map(s => `
+    <div class="stat-card">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value">${s.value} <span class="stat-unit">${s.unit}</span></div>
+      <div class="stat-context">${s.context}</div>
+      <div class="stat-trend ${s.trendClass}">${s.trend}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// TIMELINE
+// ═══════════════════════════════════════════
+const TIMELINE = [
+  { date: "2021", event: "Vague 1 ReAT — Coordinateurs retour travail", type: "reforme" },
+  { date: "2023-01", event: "Vague 2 — Contacts obligatoires, sanction 2,5%", type: "reforme" },
+  { date: "2025-01", event: "Accord Arizona signé", type: "politique" },
+  { date: "2025-04", event: "S&P perspective → négative", type: "financier" },
+  { date: "2025-06", event: "Fitch dégrade → A+", type: "financier" },
+  { date: "2025-10", event: "Recours Art. 23 déposé", type: "juridique" },
+  { date: "2025-12", event: "Grève front commun", type: "mobilisation" },
+  { date: "2026-01", event: "Vague 3 + 30.122 exclusions", type: "impact" },
+  { date: "2026-03", event: "Vague 2 excl. + Dépôt EP", type: "projet" },
+  { date: "2026-Q4", event: "Arrêt Cour Constit. ?", type: "juridique" },
+  { date: "2027", event: "90K exclusions cumulées", type: "impact" },
+  { date: "2029", event: "Objectif 80% emploi", type: "politique" },
+  { date: "2030", event: "Déficit 6,5% · Dette 120%", type: "projection" },
+  { date: "2035", event: "Accélération vieillissement", type: "projection" },
+  { date: "2042", event: "Convergence des crises", type: "projection" },
+];
+
+function renderTimeline() {
+  const now = new Date();
+  document.getElementById('timelineTrack').innerHTML = TIMELINE.map(t => {
+    const d = new Date(t.date);
+    const isActive = d.getFullYear() === now.getFullYear() && (!isNaN(d.getMonth()) ? d.getMonth() === now.getMonth() : true);
+    const isFuture = d > now || t.date > '2026-02';
+    return `
+    <div class="tl-node ${isActive ? 'active' : ''} ${isFuture ? 'future' : ''}" title="${t.event}">
+      <div class="tl-date">${t.date}</div>
+      <div class="tl-dot"></div>
+      <div class="tl-label">${t.event}</div>
+      <span class="tl-type type-${t.type}">${t.type}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// FORCES & MENACES
+// ═══════════════════════════════════════════
+const FORCES = [
+  { type: "Architecture", desc: "Résiliente, coût 0€, impossible à censurer", score: 95 },
+  { type: "Contenu", desc: "Corpus massif, sourcé, multi-format", score: 90 },
+  { type: "Éthique", desc: "0 pub, 0 traçage, licence libre", score: 100 },
+  { type: "Méthodologie", desc: "DIKW + OSINT + Intelligence Civile", score: 85 },
+  { type: "Forkability", desc: "Tout citoyen peut cloner le projet", score: 90 },
+  { type: "Positionnement", desc: "Seul civic tech belge grassroots 100% savoir", score: 95 },
+];
+
+const MENACES = [
+  { type: "Institutionnel", desc: "Moratoire EP 2026-2028", sev: "critique", mitigation: "Explorer Décret OJ, PCI, CERV" },
+  { type: "Financier", desc: "Budget quasi-nul, dépendance bénévolat", sev: "haute", mitigation: "Candidature FRB + PCI dès 2026" },
+  { type: "Juridique", desc: "Pas d'ASBL formelle", sev: "haute", mitigation: "Création ASBL avant dépôt EP" },
+  { type: "Technique", desc: "Fragmentation 3 SSG, 11 sites", sev: "moyenne", mitigation: "Migration Jekyll unifié" },
+  { type: "Humain", desc: "Risque épuisement — quasi-solo", sev: "haute", mitigation: "100 citoyens formés, partenariats ASBL" },
+  { type: "Politique", desc: "Sujets sensibles", sev: "moyenne", mitigation: "Statique pur = surface d'attaque nulle" },
+];
+
+function renderSWOT() {
+  document.getElementById('swotGrid').innerHTML =
+    FORCES.map(f => `<div class="swot-item force"><div class="si-score">${f.score}</div><div class="si-type">✦ ${f.type}</div><div class="si-desc">${f.desc}</div></div>`).join('') +
+    MENACES.map(m => `<div class="swot-item menace"><div class="si-type">⚠ ${m.type} <span class="uc-badge" style="border-color:${PRIORITY_COLORS[m.sev]};color:${PRIORITY_COLORS[m.sev]}">${m.sev}</span></div><div class="si-desc">${m.desc}</div><div class="si-mitigation">→ ${m.mitigation}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// ECOSYSTEM
+// ═══════════════════════════════════════════
+const ECO = [
+  { icon: "🏠", name: "ouaisfi.eu", role: "Portail central", url: "ouaisfi.eu" },
+  { icon: "📚", name: "DOCTech", role: "Fiches Belgique", url: "ouaisfieu.github.io/tech" },
+  { icon: "🔭", name: "BXL2030", role: "Prospective BXL", url: "ouaisfieu.github.io/bxl2030" },
+  { icon: "📰", name: "11·60 bis", role: "Dossiers actuels", url: "ouaisfieu.github.io/dossiers" },
+  { icon: "🗃", name: "dl.ouaisfi.eu", role: "Dépôt de données", url: "dl.ouaisfi.eu" },
+  { icon: "🦋", name: "Bluesky", role: "Canal social", url: "@ouaisfi.eu" },
+  { icon: "📊", name: "BXL2042", role: "Extension prospective", url: "ouaisfieu.github.io/bxl2042" },
+  { icon: "🤖", name: "GPTPardi", role: "Assistants IA", url: "ouaisfieu.github.io/GPTPardi" },
+  { icon: "📖", name: "Obsidian Vault", role: "Base de savoirs", url: "PKM local" },
+  { icon: "⑂", name: "GitHub", role: "Code source complet", url: "github.com/ouaisfieu" },
+  { icon: "🧪", name: "EARL", role: "Laboratoire citoyen", url: "earl.ouaisfi.eu" },
+];
+
+function renderEco() {
+  document.getElementById('ecoGrid').innerHTML = ECO.map(e => `
+    <div class="eco-node">
+      <div class="en-icon">${e.icon}</div>
+      <div class="en-name">${e.name}</div>
+      <div class="en-role">${e.role}</div>
+      <div class="en-url">${e.url}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// ARIZONA MEASURES TABLE
+// ═══════════════════════════════════════════
+const ARIZONA_MEASURES = [
+  { mesure: "Limitation chômage 24 mois", montant: "902M → 2 Mrd", horizon: "2026-2029", impact: "30.122 excl. V1 + 90K d'ici 2027" },
+  { mesure: "Réinsertion MLD", montant: "1,9 Mrd", horizon: "2026-2029", impact: "218K dossiers, 100K retours visés" },
+  { mesure: "Gel enveloppe bien-être", montant: "2,8 Mrd", horizon: "2025-2029", impact: "Érosion pouvoir d'achat 5 ans" },
+  { mesure: "Indexation plafonnée", montant: "883M/an", horizon: "2026+2028", impact: "Saut d'index déguisé, perte généralisée" },
+  { mesure: "Norme santé réduite 2%", montant: "2 Mrd cum.", horizon: "2026-2027", impact: "Trou budget, renoncement soins" },
+  { mesure: "Sanctions MLD ×4", montant: "—", horizon: "2026", impact: "2,5% → 10% indemnités" },
+  { mesure: "\"Épaules larges\" capital", montant: "~1 Mrd", horizon: "2026-2029", impact: "Ratio: 1€ capital = 5-6€ coupés social" },
+];
+
+function renderArizona() {
+  document.getElementById('arizonaBody').innerHTML = ARIZONA_MEASURES.map(m => `
+    <tr>
+      <td style="font-weight:600;color:var(--text-0)">${m.mesure}</td>
+      <td style="color:var(--danger);font-weight:700">${m.montant}</td>
+      <td>${m.horizon}</td>
+      <td style="font-size:0.6rem">${m.impact}</td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// FUNDING TRACKER
+// ═══════════════════════════════════════════
+const FUNDING = [
+  { id: "F01", nom: "PCI FWB", min: "5.000", max: "35.000", source: "FWB", pertinence: 95, echeance: "fin fév→mars" },
+  { id: "F02", nom: "Erasmus+ KA210", min: "30.000", max: "60.000", source: "UE / BIJ", pertinence: 80, echeance: "5 mars 2026" },
+  { id: "F03", nom: "CERV Citoyens", min: "50.000", max: "300.000", source: "UE", pertinence: 75, echeance: "Appels annuels" },
+  { id: "F04", nom: "Fondation Roi Baudouin", min: "3.750", max: "50.000", source: "FRB", pertinence: 85, echeance: "Continu" },
+  { id: "F05", nom: "Décret OJ (Jeunesse)", min: "20.000", max: "100.000", source: "FWB", pertinence: 60, echeance: "Variable" },
+  { id: "F06", nom: "Crowdfunding", min: "1.000", max: "25.000", source: "Growfunding", pertinence: 70, echeance: "À tout moment" },
+];
+
+function renderFunding() {
+  document.getElementById('fundingBody').innerHTML = FUNDING.map(f => `
+    <tr>
+      <td style="color:var(--mint)">${f.id}</td>
+      <td style="font-weight:600;color:var(--text-0)">${f.nom}</td>
+      <td>${f.min}€</td>
+      <td style="color:var(--lilas);font-weight:700">${f.max}€</td>
+      <td>${f.source}</td>
+      <td><div style="background:var(--bg-3);border-radius:4px;overflow:hidden;height:8px"><div style="background:${f.pertinence > 80 ? 'var(--mint)' : f.pertinence > 60 ? 'var(--warning)' : 'var(--text-2)'};height:100%;width:${f.pertinence}%;border-radius:4px;transition:width 0.5s"></div></div><span style="font-size:0.45rem;color:var(--text-2)">${f.pertinence}%</span></td>
+      <td style="font-size:0.55rem">${f.echeance}</td>
+    </tr>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// EXPORT FUNCTIONS
+// ═══════════════════════════════════════════
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Export ${filename} terminé`);
+}
+
+function exportJSON() {
+  downloadFile(JSON.stringify(DATA, null, 2), `ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+}
+
+function exportCSV() {
+  let csv = 'Type,ID,Titre,Catégorie,Priorité,Échéance,Statut,Description\n';
+  DATA.subjects.forEach(s => csv += `SUJET,${s.id},"${s.title}",${s.cat},${s.priority},${s.deadline},${s.status},"${s.desc.replace(/"/g, '""')}"\n`);
+  DATA.actions.forEach(a => csv += `ACTION,${a.id},"${a.title}",${a.type},—,${a.deadline},${a.status},—\n`);
+  DATA.sources.forEach(s => csv += `SOURCE,${s.id},"${s.name}",${s.type},${'★'.repeat(s.reliability)},—,—,"${s.url}"\n`);
+  downloadFile(csv, `ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.csv`, 'text/csv');
+}
+
+function exportMarkdown() {
+  let md = `# ouaisfieu · War Room — Export ${new Date().toLocaleDateString('fr-BE')}\n\n`;
+  md += `## 🔴 Sujets Prioritaires\n\n`;
+  DATA.subjects.filter(s => s.priority === 'critique' || s.priority === 'haute').forEach(s => {
+    md += `### ${s.priority === 'critique' ? '🔴' : '🟠'} ${s.title}\n- **Catégorie:** ${s.cat}\n- **Échéance:** ${s.deadline || '—'}\n- **Statut:** ${s.status}\n- ${s.desc}\n\n`;
+  });
+  md += `## 📋 Tous les Sujets\n\n| Priorité | Titre | Cat. | Échéance | Statut |\n|----------|-------|------|----------|--------|\n`;
+  DATA.subjects.forEach(s => md += `| ${s.priority} | ${s.title} | ${s.cat} | ${s.deadline || '—'} | ${s.status} |\n`);
+  md += `\n## ⚡ Actions\n\n| Action | Type | Deadline | Statut |\n|--------|------|----------|--------|\n`;
+  DATA.actions.forEach(a => md += `| ${a.title} | ${a.type} | ${a.deadline || '—'} | ${a.status} |\n`);
+  md += `\n## 📝 Notes\n\n`;
+  DATA.notes.forEach(n => md += `### ${n.title}\n*Tags: ${n.tags.join(', ')} · ${n.created}*\n\n${n.content}\n\n---\n\n`);
+  md += `\n## 🔗 Sources\n\n`;
+  DATA.sources.forEach(s => md += `- **${s.name}** (${s.type}, ${'★'.repeat(s.reliability)}) — ${s.url}\n`);
+  downloadFile(md, `ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.md`, 'text/markdown');
+}
+
+function exportHTML() {
+  const html = document.documentElement.outerHTML;
+  downloadFile(html, `ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.html`, 'text/html');
+}
+
+function exportSEO() {
+  const seo = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "ouaisfieu War Room",
+    description: "Poste de commandement citoyen pour la veille citoyenne en Belgique",
+    url: "https://ouaisfi.eu/warroom",
+    applicationCategory: "CivicTech",
+    author: { "@type": "Organization", name: "ouaisfieu", url: "https://ouaisfi.eu" },
+    dateModified: new Date().toISOString(),
+    keywords: DATA.subjects.map(s => s.title).join(', '),
+    geo: { "@type": "GeoCoordinates", latitude: 50.8503, longitude: 4.3517 },
+    areaServed: { "@type": "Country", name: "Belgium" }
+  };
+  downloadFile(JSON.stringify(seo, null, 2), `ouaisfieu_seo_geo_${new Date().toISOString().slice(0,10)}.json`, 'application/ld+json');
+}
+
+function exportDocx() {
+  // Generate clean HTML for DOCX conversion
+  let content = `<html><head><meta charset="utf-8"><style>body{font-family:Calibri,sans-serif;font-size:11pt}h1{color:#48bb78}h2{color:#9f7aea}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:6px;font-size:10pt}th{background:#f0f0f0}</style></head><body>`;
+  content += `<h1>ouaisfieu · War Room — Export ${new Date().toLocaleDateString('fr-BE')}</h1>`;
+  content += `<h2>Sujets Prioritaires</h2><table><tr><th>Priorité</th><th>Titre</th><th>Catégorie</th><th>Échéance</th><th>Statut</th><th>Description</th></tr>`;
+  DATA.subjects.forEach(s => content += `<tr><td>${s.priority}</td><td><b>${s.title}</b></td><td>${s.cat}</td><td>${s.deadline||'—'}</td><td>${s.status}</td><td>${s.desc}</td></tr>`);
+  content += `</table><h2>Actions</h2><table><tr><th>Action</th><th>Type</th><th>Deadline</th><th>Statut</th></tr>`;
+  DATA.actions.forEach(a => content += `<tr><td>${a.title}</td><td>${a.type}</td><td>${a.deadline||'—'}</td><td>${a.status}</td></tr>`);
+  content += `</table><h2>Sources</h2><table><tr><th>Source</th><th>Type</th><th>Fiabilité</th><th>URL</th></tr>`;
+  DATA.sources.forEach(s => content += `<tr><td>${s.name}</td><td>${s.type}</td><td>${'★'.repeat(s.reliability)}</td><td>${s.url}</td></tr>`);
+  content += `</table></body></html>`;
+  const blob = new Blob([content], { type: 'application/vnd.ms-word' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.doc`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Export DOCX terminé');
+}
+
+function exportPDF() {
+  window.print();
+  showToast('Impression/PDF lancée');
+}
+
+function exportAll() {
+  exportJSON();
+  setTimeout(() => exportCSV(), 500);
+  setTimeout(() => exportMarkdown(), 1000);
+  setTimeout(() => exportSEO(), 1500);
+  showToast('Export complet en cours...');
+}
+
+// ═══════════════════════════════════════════
+// INITIAL RENDER
+// ═══════════════════════════════════════════
+function init() {
+  // Init canvas reference
+  matrixCanvas = document.getElementById('matrixCanvas');
+  if (matrixCanvas) matrixCtx = matrixCanvas.getContext('2d');
+
+  // Load saved theme (after canvas is available)
+  const savedTheme = (function() { try { return localStorage.getItem('ouaisfieu_theme'); } catch(e) { return null; } })() || 'dark';
+  setTheme(savedTheme);
+
+  // Bind event listeners
+  const cmdPalette = document.getElementById('cmdPalette');
+  if (cmdPalette) cmdPalette.addEventListener('click', e => { if (e.target.id === 'cmdPalette') closeCmd(); });
+
+  const cmdInput = document.getElementById('cmdInput');
+  if (cmdInput) cmdInput.addEventListener('input', e => updateCmdResults(e.target.value));
+
+  const editModal = document.getElementById('editModal');
+  if (editModal) editModal.addEventListener('click', e => { if (e.target.id === 'editModal') closeModal(); });
+
+  // Start clock
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Render all sections
+  renderUrgences();
+  renderStats();
+  renderTimeline();
+  renderSubjects();
+  renderActions();
+  renderSources();
+  renderNotes();
+  renderSWOT();
+  renderEco();
+  renderArizona();
+  renderFunding();
+  updateActionSubjects();
+
+  // Entrance animation
+  document.querySelectorAll('.panel').forEach((panel, i) => {
+    panel.style.opacity = '0';
+    panel.style.transform = 'translateY(20px)';
+    panel.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    setTimeout(() => {
+      panel.style.opacity = '1';
+      panel.style.transform = 'translateY(0)';
+    }, 100 + i * 80);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
