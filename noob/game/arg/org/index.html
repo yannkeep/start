@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELGIUM SHAME INDEX — Campagne ouaisfieu</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --surface2: #1a1a1a;
+  --border: #2a2a2a;
+  --mint: #48bb78;
+  --mint-dim: rgba(72,187,120,0.15);
+  --lilac: #9f7aea;
+  --lilac-dim: rgba(159,122,234,0.15);
+  --red: #e53e3e;
+  --red-dim: rgba(229,62,62,0.12);
+  --amber: #ed8936;
+  --amber-dim: rgba(237,137,54,0.12);
+  --text: #e2e8f0;
+  --text-dim: #718096;
+  --white: #fff;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'Crimson Pro', serif;
+  --font-head: 'Space Grotesk', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* SCANLINE */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* HEADER */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 2rem;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, var(--red-dim) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, var(--lilac-dim) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, var(--mint-dim) 0%, transparent 40%);
+  animation: pulse 8s ease-in-out infinite alternate;
+}
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.hero-content {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--red);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: 1px solid var(--red);
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  margin-bottom: 2rem;
+  animation: blink 2s step-end infinite;
+}
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+.hero h1 .shame { color: var(--red); }
+.hero h1 .index { color: var(--mint); font-family: var(--font-mono); font-size: 0.5em; vertical-align: super; }
+
+.hero-sub {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  max-width: 700px;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+.hero-sub strong { color: var(--amber); }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.stat {
+  background: var(--surface);
+  padding: 1.5rem;
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--font-head);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--red);
+  line-height: 1;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 0.5rem;
+}
+
+/* NAV */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  overflow-x: auto;
+}
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+}
+.nav a {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 1rem 1.2rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.nav a:hover, .nav a.active {
+  color: var(--mint);
+  border-bottom-color: var(--mint);
+}
+
+/* SECTIONS */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--red);
+  letter-spacing: 0.2em;
+}
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* CARDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.card {
+  background: var(--surface);
+  padding: 2rem;
+}
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+}
+.card-tag.red { color: var(--red); background: var(--red-dim); }
+.card-tag.mint { color: var(--mint); background: var(--mint-dim); }
+.card-tag.lilac { color: var(--lilac); background: var(--lilac-dim); }
+.card-tag.amber { color: var(--amber); background: var(--amber-dim); }
+.card h3 {
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+.card p { color: var(--text-dim); font-size: 0.95rem; }
+.card ul { color: var(--text-dim); font-size: 0.9rem; padding-left: 1.2rem; }
+.card li { margin-bottom: 0.4rem; }
+
+/* SHAME DOSSIER */
+.dossier {
+  border: 1px solid var(--red);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+.dossier-header {
+  background: var(--red-dim);
+  padding: 1.5rem 2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.dossier-header:hover { background: rgba(229,62,62,0.2); }
+.dossier-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.dossier-score {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.dossier-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  background: var(--surface);
+}
+.dossier-body.open { max-height: 2000px; }
+.dossier-content {
+  padding: 2rem;
+}
+.dossier-fact {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0.5rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.dossier-fact:last-child { border-bottom: none; }
+.dossier-fact dt {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.dossier-fact dd { color: var(--text); }
+.dossier-fact dd strong { color: var(--red); }
+
+/* TIMELINE */
+.timeline {
+  position: relative;
+  padding-left: 3rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--red), var(--mint));
+}
+.tl-item {
+  position: relative;
+  padding-bottom: 2.5rem;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -3rem;
+  top: 0.3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--red);
+  background: var(--bg);
+}
+.tl-item.active::before { background: var(--red); box-shadow: 0 0 12px var(--red); }
+.tl-date {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--amber);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.tl-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0.3rem 0;
+}
+.tl-desc { color: var(--text-dim); font-size: 0.9rem; }
+
+/* ARSENAL */
+.arsenal-item {
+  border: 1px solid var(--border);
+  margin-bottom: 1px;
+  display: grid;
+  grid-template-columns: 80px 1fr 200px;
+  align-items: stretch;
+}
+.arsenal-num {
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.arsenal-content {
+  padding: 1.5rem;
+}
+.arsenal-content h4 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.arsenal-content p { font-size: 0.9rem; color: var(--text-dim); }
+.arsenal-meta {
+  background: var(--surface2);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+.arsenal-meta span { color: var(--text-dim); }
+.arsenal-meta .cost { color: var(--mint); }
+.arsenal-meta .impact { color: var(--red); }
+
+/* QUOTE */
+.manifesto {
+  border-left: 3px solid var(--red);
+  padding: 2rem;
+  margin: 3rem 0;
+  background: var(--red-dim);
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+.manifesto cite {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-style: normal;
+  color: var(--text-dim);
+}
+
+/* FOOTER */
+.footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+.footer-logo {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.footer-logo .o { color: var(--red); }
+.footer p {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .arsenal-item { grid-template-columns: 50px 1fr; }
+  .arsenal-meta { display: none; }
+  .dossier-fact { grid-template-columns: 1fr; }
+}
+
+/* LABEL GROUPS */
+.label-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.label.legal { color: var(--lilac); background: var(--lilac-dim); }
+.label.media { color: var(--amber); background: var(--amber-dim); }
+.label.street { color: var(--mint); background: var(--mint-dim); }
+.label.intl { color: var(--red); background: var(--red-dim); }
+
+/* PRINCIPLE BLOCK */
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.principle {
+  padding: 2rem;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.principle:last-child { border-right: none; }
+.principle-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.principle h4 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.principle p {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 600px) {
+  .principle-grid { grid-template-columns: 1fr; }
+  .principle { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* COUNTER */
+.shame-counter {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: right;
+  margin-bottom: 1rem;
+}
+.shame-counter span { color: var(--red); font-weight: 700; font-size: 1.2rem; }
+
+/* TABLE */
+.shame-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 3rem;
+  font-size: 0.85rem;
+}
+.shame-table th {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--red);
+  background: var(--surface);
+}
+.shame-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.shame-table tr:hover td { background: var(--surface2); }
+.score-bar {
+  display: inline-block;
+  height: 6px;
+  background: var(--red);
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">/// OPÉRATION EN COURS — FÉVRIER 2026 ///</div>
+    <h1>BELGIUM<br><span class="shame">SHAME</span><br>INDEX <span class="index">v1.0</span></h1>
+    <div class="hero-sub">
+      Campagne de <strong>pression citoyenne documentée</strong> contre les dysfonctionnements de l'État belge. Pas d'opinion. Pas d'injure. Que des <strong>faits vérifiables</strong>, des <strong>condamnations internationales</strong>, et des <strong>chiffres officiels</strong> qu'ils préféreraient que vous ne connaissiez pas.
+    </div>
+    
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">9 000+</div>
+        <div class="stat-label">Condamnations judiciaires<br>non exécutées (accueil)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">90 000</div>
+        <div class="stat-label">Exclusions chômage<br>programmées Arizona</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">541</div>
+        <div class="stat-label">Jours sans gouvernement<br>(record mondial 2010-11)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Plaintes collectives<br>actives au Conseil de l'Europe</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1M€</div>
+        <div class="stat-label">Astreinte/mois menacée<br>Klimaatzaak 2026</div>
+      </div>
+    </div>
+    
+    <div class="manifesto">
+      « Le lead-dexing n'est pas du doxing — c'est du journalisme de redevabilité. Chaque fiche de suivi est documentée, sourcée, vérifiable. »
+      <cite>— Doctrine ouaisfieu, Guerre I : La Guerre du Récit</cite>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#doctrine" class="active">Doctrine</a>
+    <a href="#dossiers">Dossiers Honte</a>
+    <a href="#arsenal">Arsenal</a>
+    <a href="#cibles">Cibles</a>
+    <a href="#timeline">Calendrier</a>
+    <a href="#juridique">Juridique</a>
+    <a href="#diffusion">Diffusion</a>
+  </div>
+</nav>
+
+<!-- ==================== SECTION 1: DOCTRINE ==================== -->
+<section class="section" id="doctrine">
+  <div class="section-head">
+    <span class="section-num">01 ///</span>
+    <h2 class="section-title">Doctrine de Campagne</h2>
+  </div>
+  
+  <div class="principle-grid">
+    <div class="principle">
+      <div class="principle-icon">📋</div>
+      <h4>FAITS UNIQUEMENT</h4>
+      <p>Zéro opinion. Zéro injure.<br>Que des données officielles,<br>arrêts de justice, rapports<br>d'organisations internationales.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">🔁</div>
+      <h4>RÉPÉTITION SYSTÉMIQUE</h4>
+      <p>Marteler les mêmes faits,<br>sous tous les formats,<br>sur tous les canaux,<br>jusqu'à saturation cognitive.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">⚖️</div>
+      <h4>BLINDAGE JURIDIQUE</h4>
+      <p>Chaque affirmation sourcée.<br>Pas de diffamation possible<br>quand on cite des arrêts<br>de la CEDH.</p>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag red">Guerre I — Récit</span>
+      <h3>Retournement de cadrage</h3>
+      <p>Face au cadrage épisodique (« le fraudeur »), on impose systématiquement le cadrage thématique (« le système qui produit la fraude »). Face à « la Belgique, pays de compromis », on expose « la Belgique, État voyou condamné 9 000 fois ».</p>
+    </div>
+    <div class="card">
+      <span class="card-tag lilac">Guerre II — Dé-sidération</span>
+      <h3>Briser l'impuissance apprise</h3>
+      <p>Le Belgium Shaming ne vise pas à déprimer — il vise à indigner. Chaque dossier montre que des recours existent, que des victoires sont possibles, que la résignation est une construction politique, pas une fatalité.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag mint">Guerre III — Juridique</span>
+      <h3>Saturation judiciaire</h3>
+      <p>Chaque dossier du Shame Index produit des pièces factuelles exploitables dans des contentieux. Les analyses alimentent les recours devant la Cour constitutionnelle, le Comité européen des droits sociaux, les tribunaux du travail.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 2: DOSSIERS HONTE ==================== -->
+<section class="section" id="dossiers">
+  <div class="section-head">
+    <span class="section-num">02 ///</span>
+    <h2 class="section-title">Dossiers de la Honte</h2>
+  </div>
+  <div class="shame-counter">Score total de honte nationale : <span>87/100</span></div>
+  
+  <!-- DOSSIER 1 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label legal">Juridique</span>
+          <span class="label intl">International</span>
+        </div>
+        <div class="dossier-title">DOSSIER #1 — L'ÉTAT VOYOU : 9 000 condamnations ignorées</div>
+      </div>
+      <div class="dossier-score">95</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>Entre 2022 et 2025, l'État belge et Fedasil ont été condamnés <strong>plus de 9 000 fois</strong> par les juridictions du travail et la CEDH pour manquement à l'obligation légale d'accueil.</dd></div>
+          <div class="dossier-fact"><dt>Source</dt><dd>Arrêt CEDH <em>Camara c. Belgique</em>, 18 juillet 2023 — « défaillance systémique » des autorités.</dd></div>
+          <div class="dossier-fact"><dt>Contexte</dt><dd>Des huissiers procèdent régulièrement à des saisies au siège de Fedasil. L'expression « État voyou » a été utilisée dès 2016 par le Premier président de la Cour de cassation, Jean de Codt.</dd></div>
+          <div class="dossier-fact"><dt>Comparaison</dt><dd>Aucun autre État membre du Conseil de l'Europe n'affiche un tel nombre de condamnations non exécutées sur la même période.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« 9 000 fois condamnée, 0 fois corrigée. La Belgique, championne d'Europe du mépris judiciaire. »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 2 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label legal">Social</span>
+          <span class="label media">Médias</span>
+        </div>
+        <div class="dossier-title">DOSSIER #2 — ARIZONA : 90 000 exclusions programmées</div>
+      </div>
+      <div class="dossier-score">92</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>Le gouvernement De Wever programme l'exclusion de <strong>90 000 personnes</strong> du chômage, dont 30 122 ménages basculant vers le CPAS. Surcoût pour Bruxelles seule : <strong>80 millions €</strong>.</dd></div>
+          <div class="dossier-fact"><dt>Source</dt><dd>ONEM, projections budgétaires 2026. Recours constitutionnel introduit le 29 octobre 2025 (article 23, standstill). IFDH avis n° 2025/4.</dd></div>
+          <div class="dossier-fact"><dt>Contexte</dt><dd>2,1 millions de Belges déjà en risque AROPE. Le transfert massif État → CPAS → individu pulvérise le contrat social de 1944.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« 90 000 familles jetées. Économie : 0 €. Le gouvernement ne réduit pas la dette — il la déplace sur les communes. »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 3 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label legal">Juridique</span>
+          <span class="label intl">Climat</span>
+        </div>
+        <div class="dossier-title">DOSSIER #3 — KLIMAATZAAK : l'illégalité climatique</div>
+      </div>
+      <div class="dossier-score">88</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>En novembre 2023, la Belgique a été condamnée pour violation des <strong>articles 2 et 8 de la CEDH</strong> (droit à la vie, vie privée) dans l'affaire Klimaatzaak.</dd></div>
+          <div class="dossier-fact"><dt>Menace</dt><dd>Astreintes de <strong>1 million €/mois</strong> de retard demandées pour 2026 si les objectifs -55% ne sont pas atteints.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« Condamnée pour avoir mis votre vie en danger. Toujours au pouvoir. »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 4 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label legal">Constitution</span>
+          <span class="label intl">CEDH</span>
+        </div>
+        <div class="dossier-title">DOSSIER #4 — Les députés juges de leur propre élection</div>
+      </div>
+      <div class="dossier-score">85</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>Arrêt CEDH <em>Mugemangango c. Belgique</em> (2020) : les parlementaires <strong>valident eux-mêmes leur propre élection</strong> (art. 48 Constitution), violant l'impartialité requise.</dd></div>
+          <div class="dossier-fact"><dt>Statut</dt><dd>En 2026, toujours pas corrigé. Le Comité des Ministres du Conseil de l'Europe continue de pointer cette lacune. Les élections belges se déroulent sous un régime juridiquement vicié.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« En Belgique, les élus décident si leur élection est valide. La CEDH a dit non. Rien n'a changé. »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 5 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label legal">Pensions</span>
+          <span class="label media">Privilèges</span>
+        </div>
+        <div class="dossier-title">DOSSIER #5 — Pensions illégales des parlementaires</div>
+      </div>
+      <div class="dossier-score">82</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>D'anciens présidents de la Chambre (Bracke, Flahaut) percevaient des <strong>suppléments de pension illégaux</strong> dépassant le plafond Wijninckx.</dd></div>
+          <div class="dossier-fact"><dt>Statut</dt><dd>Récupération bloquée. Certains invoquent la « confiance légitime » pour ne pas rembourser.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« Ils touchent des pensions illégales. Ils refusent de rembourser. Et c'est vous le "fraudeur". »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 6 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label intl">Liberté</span>
+          <span class="label legal">Association</span>
+        </div>
+        <div class="dossier-title">DOSSIER #6 — Loi Quintin : dissoudre les associations par décret</div>
+      </div>
+      <div class="dossier-score">90</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>La loi Quintin proposait de donner au Conseil des ministres le pouvoir de <strong>dissoudre des associations sans intervention judiciaire</strong>. Rappelé à l'ordre par le Conseil d'État. Critiqué par l'IFDH et Amnesty International.</dd></div>
+          <div class="dossier-fact"><dt>Contexte</dt><dd>En parallèle, le décret Weyts (Flandre) interdit aux organisations subsidiées d'utiliser leurs fonds pour des actions en justice contre le gouvernement flamand.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« En Belgique, le gouvernement veut pouvoir fermer les associations qui le critiquent. Sans juge. »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOSSIER 7 -->
+  <div class="dossier">
+    <div class="dossier-header" onclick="toggleDossier(this)">
+      <div>
+        <div class="label-row">
+          <span class="label media">Médias</span>
+          <span class="label street">Poverty Porn</span>
+        </div>
+        <div class="dossier-title">DOSSIER #7 — Tous Fraudeurs : le poverty porn d'État</div>
+      </div>
+      <div class="dossier-score">86</div>
+    </div>
+    <div class="dossier-body">
+      <div class="dossier-content">
+        <dl>
+          <div class="dossier-fact"><dt>Fait</dt><dd>RTL-TVI diffuse « Tous Fraudeurs » avec un <strong>ratio de montage de 120:1</strong> — 120 heures filmées pour 1 heure diffusée. La réalité est sélectionnée, pas montrée.</dd></div>
+          <div class="dossier-fact"><dt>Contexte</dt><dd>Diffusion synchronisée avec le calendrier des exclusions Arizona. Cadrage épisodique (le cas individuel) au lieu du cadrage thématique (le système). Grammaire visuelle identique au documentaire policier : caméras embarquées, musique de suspense, surcadrage.</dd></div>
+          <div class="dossier-fact"><dt>Angle viral</dt><dd><strong>« 120 heures de tournage. 1 heure de montage. 0 minutes pour le contexte. C'est du journalisme ou de la propagande ? »</strong></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 3: ARSENAL ==================== -->
+<section class="section" id="arsenal">
+  <div class="section-head">
+    <span class="section-num">03 ///</span>
+    <h2 class="section-title">Arsenal de Campagne</h2>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">01</div>
+    <div class="arsenal-content">
+      <h4>INFOGRAPHIES VIRALES — « Le saviez-vous ? »</h4>
+      <p>Format carré, optimisé réseaux sociaux. Un fait choquant + une source officielle + le logo ouaisfieu. Série de 30 visuels couvrant les 7 dossiers. Ton clinique, pas indigné — les faits suffisent.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">MASSIF</span></span>
+      <span>Délai : 1 semaine</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">02</div>
+    <div class="arsenal-content">
+      <h4>LEAD-DEXING — Fiches de redevabilité des élus</h4>
+      <p>Fiche publique par député de la majorité Arizona : nom, parti, circonscription, votes clés, positions sur les exclusions, patrimoine déclaré. Données 100% publiques (Moniteur, Chambre). Ce n'est pas du doxing — c'est du journalisme de redevabilité.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">TERRORISANT</span></span>
+      <span>Délai : 3 semaines</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">03</div>
+    <div class="arsenal-content">
+      <h4>SITE WEB DÉDIÉ — belgiumshame.eu</h4>
+      <p>Page statique (Hugo/Jekyll), hébergée GitHub Pages. Chaque dossier = une page. Score de honte mis à jour. Formulaire de signalement citoyen. SEO/GEO natif pour capter les recherches « Belgique droits sociaux », « chômage exclusion Belgique ».</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">10 €/an</span></span>
+      <span>Impact : <span class="impact">PERMANENT</span></span>
+      <span>Délai : 2 semaines</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">04</div>
+    <div class="arsenal-content">
+      <h4>PLAINTES COORDONNÉES — Saturation institutionnelle</h4>
+      <p>Kit citoyen pré-rédigé : modèle de plainte CSA (pour Tous Fraudeurs), modèle de saisine du Médiateur fédéral, modèle de question écrite à son député communal. Objectif : 500 plaintes identiques en 48h.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">SYSTÉMIQUE</span></span>
+      <span>Délai : 1 semaine</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">05</div>
+    <div class="arsenal-content">
+      <h4>THREAD INTERNATIONAL — « Did you know Belgium...? »</h4>
+      <p>Série de threads en anglais pour les audiences internationales : Reddit (r/europe, r/worldnews), Twitter/X, Mastodon. Exposer le décalage entre l'image « Bruxelles capitale de l'Europe » et la réalité d'un État condamné massivement par ses propres cours.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">RÉPUTATION</span></span>
+      <span>Délai : 3 jours</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">06</div>
+    <div class="arsenal-content">
+      <h4>INTERPELLATIONS COMMUNALES — Pression locale</h4>
+      <p>Cibler les conseils communaux des communes les plus touchées par les exclusions Arizona. Demande d'agenda via droit d'interpellation citoyenne (art. L1122-35 CDLD). Motion « commune solidaire » pré-rédigée. Précédent : Bruxelles, Ixelles, Jette, Liège ont déjà voté des motions similaires.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">INSTITUTIONNEL</span></span>
+      <span>Délai : variable</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">07</div>
+    <div class="arsenal-content">
+      <h4>SAISINE EUROPÉENNE — Comité des droits sociaux</h4>
+      <p>4 plaintes collectives déjà actives. Alimenter les dossiers existants (N° 237/2024 ETUC et N° 233/2023 FIDH/ATD) avec les données Arizona. Coordination avec les réseaux anti-pauvreté européens (EAPN, FEANTSA).</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">0 €</span></span>
+      <span>Impact : <span class="impact">DIPLOMATIQUE</span></span>
+      <span>Délai : 6 mois</span>
+    </div>
+  </div>
+
+  <div class="arsenal-item">
+    <div class="arsenal-num">08</div>
+    <div class="arsenal-content">
+      <h4>CONTRE-DOCUMENTAIRE — « Tous Gouvernants »</h4>
+      <p>Format court (15 min), hébergé PeerTube/YouTube. Retourner chaque technique de « Tous Fraudeurs » contre ses commanditaires. Mêmes caméras embarquées, même musique de suspense — mais cette fois dans les couloirs du Parlement, les cabinets ministériels, les conseils d'administration. Fork·Hack·Spread.</p>
+    </div>
+    <div class="arsenal-meta">
+      <span>Coût : <span class="cost">200 €</span></span>
+      <span>Impact : <span class="impact">VIRAL</span></span>
+      <span>Délai : 2 mois</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 4: CIBLES ==================== -->
+<section class="section" id="cibles">
+  <div class="section-head">
+    <span class="section-num">04 ///</span>
+    <h2 class="section-title">Cartographie des Cibles</h2>
+  </div>
+  
+  <p style="color:var(--text-dim); margin-bottom:2rem; font-size:0.95rem;">Rappel : on cible des <strong style="color:var(--mint)">institutions</strong>, pas des personnes privées. Les mandataires publics exercent une fonction publique et sont redevables devant les citoyens. Les documenter relève du contrôle démocratique, pas du harcèlement.</p>
+
+  <table class="shame-table">
+    <thead>
+      <tr>
+        <th>Cible</th>
+        <th>Type</th>
+        <th>Levier</th>
+        <th>Pression</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Gouvernement Arizona</strong></td>
+        <td>Institution</td>
+        <td>Recours constitutionnel (art. 23), interpellations parlementaires, naming factuel des votes</td>
+        <td><span class="score-bar" style="width:95%"></span> 95%</td>
+      </tr>
+      <tr>
+        <td><strong>ONEM</strong></td>
+        <td>Administration</td>
+        <td>Recours individuels massifs tribunaux du travail, demandes d'accès documents (transparence administrative)</td>
+        <td><span class="score-bar" style="width:80%"></span> 80%</td>
+      </tr>
+      <tr>
+        <td><strong>RTL-TVI / Tous Fraudeurs</strong></td>
+        <td>Média privé régulé</td>
+        <td>Plaintes CSA coordonnées, déconstruction méthodologique publique, droit de réponse</td>
+        <td><span class="score-bar" style="width:85%"></span> 85%</td>
+      </tr>
+      <tr>
+        <td><strong>Fedasil</strong></td>
+        <td>Agence fédérale</td>
+        <td>Documentation des 9 000 condamnations, saisies d'huissier documentées, pression CEDH continue</td>
+        <td><span class="score-bar" style="width:75%"></span> 75%</td>
+      </tr>
+      <tr>
+        <td><strong>Députés majorité (individuels)</strong></td>
+        <td>Mandataires publics</td>
+        <td>Lead-dexing : fiche vote par vote, interpellation locale, présence événements publics</td>
+        <td><span class="score-bar" style="width:90%"></span> 90%</td>
+      </tr>
+      <tr>
+        <td><strong>Image internationale de la Belgique</strong></td>
+        <td>Soft power</td>
+        <td>Campagne anglophone Reddit/X, alertes ONG internationales, rapporteurs spéciaux ONU</td>
+        <td><span class="score-bar" style="width:70%"></span> 70%</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================== SECTION 5: TIMELINE ==================== -->
+<section class="section" id="timeline">
+  <div class="section-head">
+    <span class="section-num">05 ///</span>
+    <h2 class="section-title">Calendrier Opérationnel</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item active">
+      <div class="tl-date">Février 2026 — MAINTENANT</div>
+      <div class="tl-title">Phase IGNITION</div>
+      <div class="tl-desc">Lancement du site belgiumshame.eu. Première série de 10 infographies virales (dossiers #1 et #2). Thread international « Did you know Belgium...? ». Kit de plainte CSA pré-rédigé contre Tous Fraudeurs distribué.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">1er Mars 2026</div>
+      <div class="tl-title">VAGUE 1 — Premières exclusions ONEM</div>
+      <div class="tl-desc">Occupation symbolique documentée. Lancement du lead-dexing des 87 députés de la majorité. Collecte des premiers témoignages d'exclus. Objectif : saturation médiatique le jour J.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mars-Avril 2026</div>
+      <div class="tl-title">Phase PRESSION</div>
+      <div class="tl-desc">Interpellations communales coordonnées (10 communes cibles). 500 plaintes CSA. Saisine du Médiateur fédéral. Publication du lead-dexing complet.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mai-Juin 2026</div>
+      <div class="tl-title">Phase INTERNATIONALE</div>
+      <div class="tl-desc">Alimentation des plaintes européennes (Comité droits sociaux). Contact rapporteurs spéciaux ONU. Publication du bilan 3 mois des exclusions. Sortie du contre-documentaire « Tous Gouvernants ».</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Septembre 2026</div>
+      <div class="tl-title">Phase BILAN</div>
+      <div class="tl-desc">Publication du rapport « Belgium Shame Report 2026 » — document exhaustif compilant tous les dossiers, témoignages et condamnations. Envoi aux 47 délégations permanentes du Conseil de l'Europe. Ciblage négociation budget 2027.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Fin 2026 — Début 2027</div>
+      <div class="tl-title">Phase VERDICT</div>
+      <div class="tl-desc">Arrêt Cour constitutionnelle attendu sur le recours article 23. Si annulation : victoire juridique historique + documentation. Si rejet : escalade européenne + nouveau cycle de pression.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 6: JURIDIQUE ==================== -->
+<section class="section" id="juridique">
+  <div class="section-head">
+    <span class="section-num">06 ///</span>
+    <h2 class="section-title">Blindage Juridique</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag mint">Légalité</span>
+      <h3>Pourquoi c'est légal</h3>
+      <p>Le contrôle citoyen des pouvoirs publics est un droit constitutionnel (art. 32 : publicité de l'administration). Critiquer une institution n'est pas de la diffamation. Publier des données publiques (votes parlementaires, déclarations de mandats) est protégé par la liberté d'expression (art. 19 Constitution, art. 10 CEDH). Le « naming and shaming » factuel d'un mandataire public agissant dans sa fonction publique est protégé par la jurisprudence constante de la CEDH (<em>Lingens c. Autriche</em>, 1986).</p>
+    </div>
+    <div class="card">
+      <span class="card-tag red">Lignes rouges</span>
+      <h3>Ce qu'on ne fait PAS</h3>
+      <ul>
+        <li>Pas de données privées (adresse domicile, famille, santé)</li>
+        <li>Pas d'injures ni de propos diffamatoires</li>
+        <li>Pas d'appel à la violence ou à la haine</li>
+        <li>Pas de harcèlement de personnes physiques</li>
+        <li>Que des sources vérifiables et citées</li>
+        <li>Droit de réponse toujours ouvert</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="card-tag lilac">Précédents</span>
+      <h3>Ça marche</h3>
+      <p>Le « shaming index » est une méthode éprouvée à l'international : Transparency International (Corruption Perceptions Index), Reporters sans frontières (Press Freedom Index), Human Rights Watch (country reports). La Belgique y figure déjà mal sur certains indicateurs — on ne fait que compiler et vulgariser ce qui existe déjà dans des rapports que personne ne lit.</p>
+    </div>
+  </div>
+
+  <div class="manifesto">
+    « La propagande sociologique perd sa puissance quand on la reconnaît. L'impuissance apprise se dissipe quand on la diagnostique. Le lawfare inversé devient scandaleux quand on le qualifie. »
+    <cite>— Les Trois Guerres Civiques, ouaisfieu, février 2026</cite>
+  </div>
+</section>
+
+<!-- ==================== SECTION 7: DIFFUSION ==================== -->
+<section class="section" id="diffusion">
+  <div class="section-head">
+    <span class="section-num">07 ///</span>
+    <h2 class="section-title">Stratégie de Diffusion</h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-tag red">Fediverse</span>
+      <h3>Mastodon / PeerTube</h3>
+      <p>Base arrière. Contenu long, analytique, non-censuré. Instance belge (mastodon.be, piaille.fr). Compte @belgiumshame. Chaque dossier = un thread structuré avec sources.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag amber">Réseaux mainstream</span>
+      <h3>X / Instagram / TikTok</h3>
+      <p>Contenu viral court. Infographies choc. Vidéos 30s format vertical. Hashtags : #BelgiumShame #ÉtatVoyou #90000Exclus #TousGouvernants. Objectif : trending topic le 1er mars.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag mint">Reddit / International</span>
+      <h3>r/europe, r/belgium, r/worldnews</h3>
+      <p>Threads documentés en anglais. Ton factuel, académique. Liens vers les arrêts CEDH originaux. Cible : journalistes internationaux, chercheurs, institutions européennes. « The country that hosts the EU is the most convicted member state. »</p>
+    </div>
+    <div class="card">
+      <span class="card-tag lilac">Terrain</span>
+      <h3>Affiches / Tracts / QR codes</h3>
+      <p>Affichage sauvage dans les gares, aux abords des CPAS, devant les permanences des députés de la majorité. QR code vers belgiumshame.eu. Format A3, impression basique noir/rouge. Coût total : ~50€ pour 500 exemplaires.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag red">Académique</span>
+      <h3>CRISP / Universités / Think tanks</h3>
+      <p>Envoi ciblé du Belgium Shame Report aux chercheurs en sciences politiques (ULB, UCLouvain, VUB, KUL). Proposition de cartes blanches Le Soir / De Morgen. Alimentation des séminaires sur la démocratie belge.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag amber">Partenaires naturels</span>
+      <h3>Syndicats / ONG / Éducation permanente</h3>
+      <p>FGTB, CSC, CGSLB (front commun). Ligue des Droits Humains. ATD Quart Monde. PAC. MOC. Leur fournir du contenu clé-en-main qu'ils peuvent co-signer et redistribuer dans leurs réseaux. Effet multiplicateur x100.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <div class="footer-logo"><span class="o">OUAIS</span>FIEU</div>
+  <p>BELGIUM SHAME INDEX — v1.0 — FÉVRIER 2026</p>
+  <p style="margin-top:0.5rem">FORK · HACK · SPREAD — CC BY-NC-SA 4.0</p>
+  <p style="margin-top:1rem; color:var(--red)">« L'intelligence citoyenne n'est pas un concept, c'est une pratique. »</p>
+</div>
+
+<script>
+function toggleDossier(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// Smooth nav highlighting
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (pageYOffset >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>
