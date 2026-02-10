@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>⚔️ RÉSISTANCE CITOYENNE — Intelligence Civile</title>
+<meta name="description" content="Jeu RPG d'intelligence civile belge. 12 missions, quiz, 15 outils, flashcards.">
+<meta name="theme-color" content="#030306">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="header" role="banner">
+  <div class="hdr-logo" aria-label="Résistance Citoyenne">⚔️ RC</div>
+  <div class="xp-wrap" role="region" aria-label="Progression XP">
+    <span id="xpIcon" class="xp-rank" aria-hidden="true">🌱</span>
+    <span id="xpRank" class="xp-rank">NÉOPHYTE</span>
+    <div class="xp-bar"><div id="xpFill" class="xp-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="200"></div></div>
+    <span class="xp-text"><span id="xpCur">0</span>/<span id="xpMax">200</span></span>
+  </div>
+  <div class="theme-dots" role="group" aria-label="Thèmes">
+    <button data-th="dark" onclick="setTheme('dark')" aria-label="Thème sombre" title="Sombre"></button>
+    <button data-th="console" onclick="setTheme('console')" aria-label="Thème console" title="Console"></button>
+    <button data-th="neon" onclick="setTheme('neon')" aria-label="Thème néon" title="Néon"></button>
+    <button data-th="80s" onclick="setTheme('80s')" aria-label="Thème 80s" title="80s"></button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" role="main" aria-live="polite"></main>
+
+<nav class="bnav" role="navigation" aria-label="Navigation principale">
+  <button class="bnav-btn active" data-v="hub" onclick="nav('hub')" aria-label="Quartier Général" aria-current="page"><span class="ico" aria-hidden="true">🏠</span>QG</button>
+  <button class="bnav-btn" data-v="missions" onclick="nav('missions')" aria-label="Missions"><span class="ico" aria-hidden="true">🎯</span>Missions</button>
+  <button class="bnav-btn" data-v="tools" onclick="nav('tools')" aria-label="Outils"><span class="ico" aria-hidden="true">🛠️</span>Outils</button>
+  <button class="bnav-btn" data-v="flashcards" onclick="nav('flashcards')" aria-label="Flashcards"><span class="ico" aria-hidden="true">📚</span>Flashcards</button>
+  <button class="bnav-btn" data-v="trophies" onclick="nav('trophies')" aria-label="Trophées"><span class="ico" aria-hidden="true">🏆</span>Trophées</button>
+</nav>
+
+<div id="toasts" class="toast-wrap" aria-live="polite"></div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
