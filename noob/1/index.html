@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" prefix="og: http://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ouaisfieu · War Room — Poste de Commandement Citoyen</title>
+<meta name="description" content="Poste de commandement citoyen ouaisfieu : veille citoyenne, intelligence civile, contre-institution numérique belge. Dashboard opérationnel d'analyse politique et sociale.">
+<meta name="keywords" content="ouaisfieu, veille citoyenne, intelligence civile, Belgique, particratie, éducation permanente, civic tech, Arizona, CPAS, démocratie participative, ECP, économie contributive">
+<meta name="author" content="ouaisfieu · Cellule Analyse">
+<meta name="robots" content="index, follow">
+<meta name="geo.region" content="BE-BRU">
+<meta name="geo.placename" content="Bruxelles">
+<meta name="geo.position" content="50.8503;4.3517">
+<meta name="ICBM" content="50.8503, 4.3517">
+<link rel="canonical" href="https://ouaisfi.eu/warroom">
+<meta property="og:title" content="ouaisfieu · War Room — Poste de Commandement Citoyen">
+<meta property="og:description" content="Dashboard opérationnel de veille citoyenne et d'intelligence civile belge. 8 failles Arizona, 5 boucles destructrices, ECP, projections 2042.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ouaisfi.eu/warroom">
+<meta property="og:locale" content="fr_BE">
+<meta property="og:site_name" content="ouaisfieu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ouaisfieu · War Room">
+<meta name="twitter:description" content="Poste de commandement citoyen — veille, analyse, action.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"ouaisfieu War Room","description":"Poste de commandement citoyen pour la veille citoyenne et l'intelligence civile en Belgique","url":"https://ouaisfi.eu/warroom","applicationCategory":"CivicTech","operatingSystem":"Web","author":{"@type":"Organization","name":"ouaisfieu","url":"https://ouaisfi.eu"},"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"license":"https://creativecommons.org/licenses/by-nc-sa/4.0/","inLanguage":"fr","areaServed":{"@type":"Country","name":"Belgium"}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Outfit:wght@300;400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+/* ═══ CSS VARIABLES ═══ */
+:root{--mint:#48bb78;--mint-d:#2f855a;--mint-g:#68d391;--lil:#9f7aea;--lil-d:#805ad5;--lil-g:#b794f4;--red:#fc5c65;--warn:#fed330;--ok:#26de81;--info:#45aaf2;--t:.3s cubic-bezier(.4,0,.2,1);--mono:'JetBrains Mono',monospace;--sans:'Outfit',sans-serif;--retro:'Press Start 2P',monospace;--r:6px;--scan:0;--mat:0;--crt:0;--safe-b:env(safe-area-inset-bottom,0px)}
+[data-theme=dark]{--b0:#0a0a0f;--b1:#111119;--b2:#191926;--b3:#222236;--t0:#e8e8f0;--t1:#b0b0c8;--t2:#7878a0;--brd:#2a2a44;--gl:rgba(17,17,25,.88)}
+[data-theme=eighties]{--b0:#1a0028;--b1:#220035;--b2:#2a0042;--b3:#350055;--t0:#ff00ff;--t1:#00ffff;--t2:#ff6ec7;--brd:#ff00ff44;--gl:rgba(26,0,40,.92);--mint:#00ffaa;--mint-g:#00ffcc;--lil:#ff00ff;--lil-g:#ff66ff;--scan:.04;--crt:1}
+[data-theme=matrix]{--b0:#000800;--b1:#001200;--b2:#001a00;--b3:#002200;--t0:#00ff41;--t1:#00cc33;--t2:#009922;--brd:#00ff4133;--gl:rgba(0,8,0,.93);--mint:#00ff41;--mint-g:#00ff88;--lil:#00aa22;--lil-g:#00dd44;--red:#ff3300;--warn:#ccff00;--scan:.06;--mat:1;--crt:1}
+
+/* ═══ RESET ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--mono);background:var(--b0);color:var(--t0);min-height:100vh;min-height:100dvh;overflow-x:hidden;transition:background var(--t),color var(--t);-webkit-tap-highlight-color:transparent;padding-bottom:calc(56px + var(--safe-b))}
+#mx{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--mat);transition:opacity .5s}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,var(--scan)) 2px,rgba(0,0,0,var(--scan)) 4px);pointer-events:none;z-index:9998}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--b0)}
+::-webkit-scrollbar-thumb{background:var(--mint-d);border-radius:2px}
+
+/* ═══ MOBILE NAV (bottom) ═══ */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--brd);display:flex;padding-bottom:var(--safe-b);height:calc(56px + var(--safe-b))}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;color:var(--t2);font:0.5rem/1 var(--mono);cursor:pointer;transition:color var(--t);padding:6px 0;min-height:44px}
+.bnav-btn.act{color:var(--mint)}
+.bnav-btn .ico{font-size:1.1rem}
+@media(min-width:769px){.bnav{display:none}body{padding-bottom:0}}
+
+/* ═══ HEADER ═══ */
+.hdr{position:sticky;top:0;z-index:100;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);padding:.5rem .75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.hdr-brand{display:flex;align-items:center;gap:.5rem;min-width:0}
+.logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--mint),var(--lil));display:flex;align-items:center;justify-content:center;font:900 .85rem var(--sans);color:var(--b0);flex-shrink:0;animation:lp 3s ease-in-out infinite}
+@keyframes lp{0%,100%{box-shadow:0 0 8px var(--mint),0 0 16px var(--mint-d)}50%{box-shadow:0 0 12px var(--lil),0 0 30px var(--lil-d)}}
+.hdr h1{font:900 clamp(.75rem,2.5vw,1.05rem)/1.2 var(--sans);background:linear-gradient(90deg,var(--mint),var(--lil));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr .sub{font-size:.5rem;color:var(--t2);letter-spacing:.12em;text-transform:uppercase;display:none}
+@media(min-width:600px){.hdr .sub{display:block}}
+.hdr-r{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.tswitch{display:flex;background:var(--b2);border-radius:16px;padding:2px;border:1px solid var(--brd)}
+.tbtn{padding:.25rem .5rem;font:.5rem var(--mono);border:none;background:none;color:var(--t2);cursor:pointer;border-radius:14px;transition:all var(--t);white-space:nowrap;min-height:28px}
+.tbtn.on{background:linear-gradient(135deg,var(--mint-d),var(--lil-d));color:#fff;box-shadow:0 0 10px var(--mint-d)}
+.sbar{display:none;align-items:center;gap:.6rem;font-size:.55rem;color:var(--t2)}
+@media(min-width:900px){.sbar{display:flex}}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:bl 2s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.clk{font-variant-numeric:tabular-nums;color:var(--mint)}
+
+/* ═══ LAYOUT ═══ */
+.wrap{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:.5rem}
+@media(min-width:769px){.wrap{padding:1rem}}
+
+/* ═══ SECTION NAV (desktop sidebar or mobile bottom) ═══ */
+.snav{display:none}
+@media(min-width:769px){
+.snav{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1rem;position:sticky;top:52px;z-index:50;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:.5rem;border-radius:var(--r);border:1px solid var(--brd)}
+.snav a{padding:.3rem .65rem;font:.55rem/1.2 var(--mono);color:var(--t2);text-decoration:none;border-radius:12px;transition:all var(--t);border:1px solid transparent;white-space:nowrap}
+.snav a:hover,.snav a.act{color:var(--mint);background:var(--b2);border-color:var(--mint-d)}
+}
+
+/* ═══ PANELS ═══ */
+.pnl{background:var(--b1);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden;transition:border-color var(--t);margin-bottom:.5rem;scroll-margin-top:60px}
+@media(min-width:769px){.pnl{margin-bottom:1rem}}
+.pnl:hover{border-color:var(--mint-d)}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:.6rem .75rem;background:var(--b2);border-bottom:1px solid var(--brd);gap:.4rem;cursor:pointer;-webkit-user-select:none;user-select:none;min-height:44px}
+.ph h2{font:700 clamp(.7rem,2vw,.85rem)/1.3 var(--sans);color:var(--t0);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.ph .chev{transition:transform var(--t);font-size:.7rem;color:var(--t2)}
+.pnl.closed .pb{display:none}
+.pnl.closed .chev{transform:rotate(-90deg)}
+.pb{padding:.75rem}
+@media(min-width:769px){.pb{padding:1rem}}
+.tag{font:.45rem var(--mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.tag-r{background:var(--red);color:#fff;animation:up 1.5s ease-in-out infinite}
+@keyframes up{0%,100%{box-shadow:0 0 4px var(--red)}50%{box-shadow:0 0 14px var(--red)}}
+.tag-m{background:var(--mint-d);color:#fff}
+.tag-l{background:var(--lil-d);color:#fff}
+.tag-i{background:var(--info);color:#fff}
+.tag-w{background:var(--warn);color:#000}
+
+/* ═══ URGENCES ═══ */
+.ug{display:grid;grid-template-columns:1fr;gap:.6rem}
+@media(min-width:520px){.ug{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.ug{grid-template-columns:repeat(3,1fr)}}
+.uc{background:var(--b2);border:1px solid var(--red);border-left:4px solid var(--red);border-radius:var(--r);padding:.65rem;cursor:pointer;transition:all var(--t);position:relative}
+.uc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(252,92,101,.04),transparent);pointer-events:none}
+.uc:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(252,92,101,.12)}
+.uc.s-h{border-color:var(--warn);border-left-color:var(--warn)}
+.uc.s-m{border-color:var(--info);border-left-color:var(--info)}
+.uc .uh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.35rem;gap:.3rem}
+.uc .ut{font:700 clamp(.65rem,1.8vw,.78rem)/1.3 var(--sans);color:var(--t0)}
+.uc .ud{font-size:.5rem;color:var(--red);font-weight:700;white-space:nowrap;flex-shrink:0}
+.uc .ub{font-size:.6rem;color:var(--t1);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uc .um{display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap}
+.badge{font:.45rem var(--mono);padding:1px 5px;border-radius:6px;border:1px solid var(--brd);color:var(--t2)}
+
+/* ═══ STATS ═══ */
+.sg{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media(min-width:420px){.sg{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:700px){.sg{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.sg{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1300px){.sg{grid-template-columns:repeat(5,1fr)}}
+.sc{background:var(--b2);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem;transition:all var(--t)}
+.sc:hover{border-color:var(--mint);transform:translateY(-1px)}
+.sl{font:.45rem var(--mono);color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem;line-height:1.3}
+.sv{font:900 clamp(1.1rem,3.5vw,1.6rem)/1.1 var(--sans);background:linear-gradient(135deg,var(--mint),var(--lil));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.su{font-size:.6rem;font-weight:400}
+.sx{font:.45rem var(--mono);color:var(--t2);margin-top:.15rem;line-height:1.3}
+.st{font:.5rem var(--mono);margin-top:.15rem}
+.t-u{color:var(--red)}.t-d{color:var(--ok)}.t-s{color:var(--t2)}
+
+/* ═══ TIMELINE ═══ */
+.tlc{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.5rem 0}
+.tlt{display:flex;min-width:max-content;padding:.75rem 0;position:relative}
+.tlt::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--mint-d),var(--lil-d),var(--mint-d));transform:translateY(-50%)}
+.tn{position:relative;display:flex;flex-direction:column;align-items:center;min-width:100px;padding:0 .3rem;cursor:pointer}
+@media(min-width:769px){.tn{min-width:115px}}
+.td-d{width:10px;height:10px;border-radius:50%;border:2px solid var(--mint);background:var(--b0);z-index:2;transition:all var(--t)}
+.tn:hover .td-d{background:var(--mint);box-shadow:0 0 10px var(--mint);transform:scale(1.3)}
+.tn.now .td-d{background:var(--red);border-color:var(--red);box-shadow:0 0 10px var(--red)}
+.tn.fut .td-d{border-color:var(--lil);border-style:dashed}
+.tn .tl-l{font:.45rem var(--mono);color:var(--t2);margin-top:.4rem;text-align:center;max-width:95px;line-height:1.25}
+.tn .tl-d{font:.5rem/1 var(--mono);color:var(--mint);font-weight:700;margin-bottom:.4rem}
+.ttype{font:.38rem var(--mono);padding:1px 3px;border-radius:3px;margin-top:.2rem;display:inline-block}
+.tp-po{background:var(--lil-d);color:#fff}.tp-im{background:var(--red);color:#fff}.tp-ju{background:var(--warn);color:#000}.tp-pr{background:var(--mint-d);color:#fff}.tp-re{background:var(--info);color:#fff}.tp-fi{background:#e67e22;color:#fff}.tp-mo{background:#c0392b;color:#fff}.tp-pj{background:var(--t2);color:var(--b0)}.tp-an{background:#3498db;color:#fff}
+
+/* ═══ DATA TABLE ═══ */
+.dtw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dt{width:100%;border-collapse:collapse;font-size:.6rem}
+@media(min-width:769px){.dt{font-size:.65rem}}
+.dt th{background:var(--b2);color:var(--t2);font-weight:400;text-transform:uppercase;font-size:.45rem;letter-spacing:.08em;padding:.45rem .5rem;text-align:left;border-bottom:1px solid var(--brd);position:sticky;top:0;white-space:nowrap}
+.dt td{padding:.45rem .5rem;border-bottom:1px solid var(--brd);color:var(--t1);vertical-align:top}
+.dt tr:hover td{background:var(--b2);color:var(--t0)}
+
+/* ═══ FAILLES / BOUCLES / CONTENT CARDS ═══ */
+.cgrid{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media(min-width:600px){.cgrid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1100px){.cgrid.c3{grid-template-columns:repeat(3,1fr)}}
+.cc{background:var(--b2);border:1px solid var(--brd);border-radius:var(--r);padding:.65rem;transition:border-color var(--t)}
+.cc:hover{border-color:var(--mint-d)}
+.cc.red{border-left:3px solid var(--red)}
+.cc.mint{border-left:3px solid var(--mint)}
+.cc.lil{border-left:3px solid var(--lil)}
+.cc.warn{border-left:3px solid var(--warn)}
+.cc.info{border-left:3px solid var(--info)}
+.cc .cn{font:600 clamp(.6rem,1.6vw,.72rem)/1.3 var(--sans);color:var(--t0);margin-bottom:.3rem}
+.cc .cd{font:.58rem/1.5 var(--mono);color:var(--t1)}
+.cc .cm{font:.5rem/1.4 var(--mono);color:var(--lil);margin-top:.3rem;font-style:italic}
+.cc .csc{font:900 1rem var(--sans);color:var(--mint);float:right;margin-left:.5rem}
+
+/* ═══ BOUCLE CHAIN ═══ */
+.bch{font:.55rem/1.6 var(--mono);color:var(--t1);padding:.4rem;background:var(--b0);border-radius:var(--r);margin-top:.3rem}
+.bch b{color:var(--red)}
+
+/* ═══ COMPARAISON TABLE ═══ */
+.cmp{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media(min-width:600px){.cmp{grid-template-columns:1fr 1fr}}
+.cmp-col{background:var(--b2);border-radius:var(--r);padding:.75rem;border-top:3px solid}
+.cmp-col.arizona{border-top-color:var(--red)}
+.cmp-col.ecp{border-top-color:var(--mint)}
+.cmp-col h3{font:700 .8rem var(--sans);margin-bottom:.5rem}
+.cmp-col .ci{font:.55rem/1.5 var(--mono);color:var(--t1);margin-bottom:.3rem}
+.cmp-col .ci strong{color:var(--t0)}
+
+/* ═══ CRUD ═══ */
+.tabs{display:flex;gap:0;background:var(--b2);border-bottom:1px solid var(--brd);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:.5rem .75rem;font:.55rem var(--mono);color:var(--t2);border:none;background:none;cursor:pointer;transition:all var(--t);border-bottom:2px solid transparent;white-space:nowrap;min-height:40px}
+.tab.on{color:var(--mint);border-bottom-color:var(--mint);background:var(--b1)}
+.tab:hover:not(.on){color:var(--t0);background:var(--b3)}
+.wc{display:none;padding:.75rem}
+@media(min-width:769px){.wc{padding:1rem}}
+.wc.on{display:block}
+.cf{display:grid;grid-template-columns:1fr;gap:.5rem;margin-bottom:.75rem}
+@media(min-width:600px){.cf{grid-template-columns:1fr 1fr}.cf .s2{grid-column:span 2}}
+.fg{display:flex;flex-direction:column;gap:.2rem}
+.fg label{font:.48rem var(--mono);color:var(--t2);text-transform:uppercase;letter-spacing:.08em}
+.fg input,.fg select,.fg textarea{background:var(--b0);border:1px solid var(--brd);color:var(--t0);padding:.45rem .6rem;font:.65rem var(--mono);border-radius:var(--r);transition:border-color var(--t);min-height:38px}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--mint);box-shadow:0 0 6px rgba(72,187,120,.2)}
+.fg textarea{resize:vertical;min-height:70px}
+.btn{padding:.45rem .8rem;font:.55rem var(--mono);border:1px solid var(--brd);border-radius:var(--r);cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:.35rem;min-height:36px}
+.b-m{background:var(--mint-d);color:#fff;border-color:var(--mint)}.b-m:hover{background:var(--mint);box-shadow:0 0 12px rgba(72,187,120,.3)}
+.b-l{background:var(--lil-d);color:#fff;border-color:var(--lil)}.b-l:hover{background:var(--lil)}
+.b-d{background:none;color:var(--red);border-color:var(--red)}.b-d:hover{background:var(--red);color:#fff}
+.b-g{background:none;color:var(--t1)}.b-g:hover{background:var(--b3);color:var(--t0)}
+.br{display:flex;gap:.4rem;flex-wrap:wrap}
+.abtn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--b3);border:1px solid var(--brd);border-radius:4px;color:var(--t2);cursor:pointer;font-size:.6rem;transition:all var(--t)}
+.abtn:hover{border-color:var(--mint);color:var(--mint)}
+.abtn.del:hover{border-color:var(--red);color:var(--red)}
+.ac{display:flex;gap:.25rem}
+.pdot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;margin-top:2px}
+
+/* ═══ EXPORT BAR ═══ */
+.ebar{display:flex;align-items:center;gap:.4rem;padding:.4rem .75rem;background:var(--b2);border-top:1px solid var(--brd);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ebar .el{font:.45rem var(--mono);color:var(--t2);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.ebtn{padding:.25rem .5rem;font:.5rem var(--mono);background:var(--b3);border:1px solid var(--brd);color:var(--t1);border-radius:4px;cursor:pointer;transition:all var(--t);white-space:nowrap;min-height:28px}
+.ebtn:hover{border-color:var(--mint);color:var(--mint);background:var(--b1)}
+
+/* ═══ ECO GRID ═══ */
+.eg{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+@media(min-width:600px){.eg{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.eg{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1200px){.eg{grid-template-columns:repeat(6,1fr)}}
+.en{background:var(--b2);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem;text-align:center;transition:all var(--t);cursor:pointer}
+.en:hover{border-color:var(--lil);transform:scale(1.02)}
+.en .ei{font-size:1.1rem;margin-bottom:.2rem}
+.en .enn{font:.55rem var(--sans);font-weight:700;color:var(--t0)}
+.en .er{font:.43rem var(--mono);color:var(--t2);margin-top:.15rem}
+
+/* ═══ PROJECTIONS TABLE ═══ */
+.proj-val{font-weight:700}.pv-r{color:var(--red)}.pv-w{color:var(--warn)}.pv-m{color:var(--mint)}
+
+/* ═══ TOAST ═══ */
+.tc{position:fixed;bottom:calc(60px + var(--safe-b));right:.5rem;z-index:10000;display:flex;flex-direction:column;gap:.4rem}
+@media(min-width:769px){.tc{bottom:1rem}}
+.toast{background:var(--b2);border:1px solid var(--mint);border-radius:var(--r);padding:.5rem .75rem;font:.6rem var(--mono);color:var(--t0);display:flex;align-items:center;gap:.4rem;animation:ti .3s ease-out;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.toast.err{border-color:var(--red)}
+@keyframes ti{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
+
+/* ═══ MODAL ═══ */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:5000;display:none;align-items:flex-end;justify-content:center}
+@media(min-width:769px){.mo{align-items:center}}
+.mo.open{display:flex}
+.modal{background:var(--b1);border:1px solid var(--brd);border-radius:12px 12px 0 0;width:100%;max-width:700px;max-height:85vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.4)}
+@media(min-width:769px){.modal{border-radius:12px}}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border-bottom:1px solid var(--brd);position:sticky;top:0;background:var(--b1);z-index:1}
+.mh h3{font:700 .9rem var(--sans)}
+.mx{background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;padding:8px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
+.mb{padding:1rem}
+
+/* ═══ CMD PALETTE ═══ */
+.cmd{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.cmd.open{display:flex}
+.cbox{background:var(--b1);border:1px solid var(--mint-d);border-radius:12px;width:92%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 30px rgba(72,187,120,.08);overflow:hidden}
+.cinp{width:100%;padding:.75rem 1rem;background:none;border:none;color:var(--t0);font:.8rem var(--mono);outline:none}
+.cres{max-height:40vh;overflow-y:auto;border-top:1px solid var(--brd)}
+.cr{padding:.5rem 1rem;cursor:pointer;display:flex;align-items:center;gap:.6rem;font:.65rem var(--mono);transition:background var(--t);min-height:40px}
+.cr:hover{background:var(--b2)}
+
+/* ═══ FOOTER ═══ */
+.foot{text-align:center;padding:1.5rem .75rem;color:var(--t2);font-size:.45rem;border-top:1px solid var(--brd);margin-top:1rem;line-height:1.6}
+.foot a{color:var(--mint);text-decoration:none}
+.foot a:hover{text-decoration:underline}
+.fkb{display:inline-block;margin-top:.4rem;padding:.25rem .7rem;border:1px solid var(--mint-d);border-radius:16px;font:.5rem var(--mono);color:var(--mint);transition:all var(--t)}
+.fkb:hover{background:var(--mint-d);color:#fff}
+
+/* ═══ THEME OVERRIDES ═══ */
+[data-theme=eighties] .hdr{border-bottom-color:#ff00ff66}
+[data-theme=eighties] .hdr h1{background:linear-gradient(90deg,#00ffaa,#ff00ff,#00ffff);-webkit-background-clip:text;background-clip:text;animation:eg 3s linear infinite;background-size:200%}
+@keyframes eg{0%{background-position:0%}100%{background-position:200%}}
+[data-theme=eighties] .sv{background:linear-gradient(135deg,#00ffaa,#ff00ff);-webkit-background-clip:text;background-clip:text}
+[data-theme=matrix] .sv{background:none;-webkit-text-fill-color:#00ff41;text-shadow:0 0 8px #00ff41}
+[data-theme=matrix] .hdr h1{background:none;-webkit-text-fill-color:#00ff41;text-shadow:0 0 8px #00ff41}
+[data-theme=matrix] *{font-family:var(--mono)!important}
+
+/* ═══ PRINT ═══ */
+@media print{.hdr,.ebar,.tswitch,.cmd,.bnav,.snav,#mx,.chev{display:none!important}body{background:#fff;color:#000;padding:0}.pnl{border:1px solid #ccc;break-inside:avoid}.pb{display:block!important}}
+</style>
+</head>
+<body>
+<canvas id="mx"></canvas>
+<div class="cmd" id="cmd"><div class="cbox"><input class="cinp" id="ci" placeholder="⌘K · Rechercher sujets, données, actions..."><div class="cres" id="cres"></div></div></div>
+<div class="mo" id="emod"><div class="modal"><div class="mh"><h3 id="mt">Éditer</h3><button class="mx" onclick="cMod()">✕</button></div><div class="mb" id="mbd"></div></div></div>
+<div class="tc" id="tc"></div>
+
+<!-- HEADER -->
+<header class="hdr">
+<div class="hdr-brand"><div class="logo">ø</div><div><h1>ouaisfieu · WAR ROOM</h1><div class="sub">Poste de Commandement Citoyen — Intelligence Civile Belge</div></div></div>
+<div class="sbar"><span class="sdot"></span><span>OPS</span><span>|</span><span class="clk" id="clk">--:--</span><span>|</span><span>BXL 50.85°N</span></div>
+<div class="hdr-r">
+<div class="tswitch"><button class="tbtn on" data-theme="dark" onclick="sT('dark')">Dark</button><button class="tbtn" data-theme="eighties" onclick="sT('eighties')">80s</button><button class="tbtn" data-theme="matrix" onclick="sT('matrix')">⌁Mx</button></div>
+<button class="btn b-g" onclick="oCmd()" title="⌘K" style="padding:.3rem .5rem;font-size:.6rem">⌘K</button>
+</div>
+</header>
+
+<!-- SECTION NAV (desktop) -->
+<nav class="snav" id="snav">
+<a href="#s-urg" class="act">🔴 Urgences</a>
+<a href="#s-stats">📊 Stats</a>
+<a href="#s-tl">⏱ Timeline</a>
+<a href="#s-failles">🔍 8 Failles</a>
+<a href="#s-boucles">🔄 5 Boucles</a>
+<a href="#s-ecp">💡 ECP</a>
+<a href="#s-crud">🛠 Workstation</a>
+<a href="#s-smart">🎯 SMART</a>
+<a href="#s-proj">📈 Projections</a>
+<a href="#s-forces">⚔ Forces</a>
+<a href="#s-eco">🌐 Écosystème</a>
+<a href="#s-fund">💰 Financements</a>
+</nav>
+
+<main class="wrap">
+
+<!-- ════════════ URGENCES ════════════ -->
+<section class="pnl" id="s-urg">
+<div class="ph" onclick="tog(this)"><h2>🔴 SUJETS PRIORITAIRES & URGENCES <span class="tag tag-r">CRITIQUE</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="ug" id="ugrid"></div></div>
+</section>
+
+<!-- ════════════ STATS ════════════ -->
+<section class="pnl" id="s-stats">
+<div class="ph" onclick="tog(this)"><h2>📊 Indicateurs Clés — Belgique & ouaisfieu <span class="tag tag-m">15 INDICATEURS</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="sg" id="sgrid"></div></div>
+</section>
+
+<!-- ════════════ TIMELINE ════════════ -->
+<section class="pnl" id="s-tl">
+<div class="ph" onclick="tog(this)"><h2>⏱ Chronologie Opérationnelle <span class="tag tag-l">2021→2042</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="tlc"><div class="tlt" id="tlt"></div></div></div>
+</section>
+
+<!-- ════════════ 8 FAILLES ════════════ -->
+<section class="pnl" id="s-failles">
+<div class="ph" onclick="tog(this)"><h2>🔍 Les 8 Failles du Budget Arizona <span class="tag tag-r">STRUCTURELLES</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="cgrid" id="fgrid"></div></div>
+</section>
+
+<!-- ════════════ 5 BOUCLES ════════════ -->
+<section class="pnl" id="s-boucles">
+<div class="ph" onclick="tog(this)"><h2>🔄 Les 5 Boucles de Rétroaction Destructrices <span class="tag tag-r">SYSTÉMIQUES</span></h2><span class="chev">▼</span></div>
+<div class="pb"><p style="font:.55rem/1.5 var(--mono);color:var(--t1);margin-bottom:.75rem">Chaque mesure déclenche des effets pervers qui annulent les économies visées et créent de nouveaux coûts. Le système s'attaque à ses propres fondations.</p><div class="cgrid" id="bgrid"></div></div>
+</section>
+
+<!-- ════════════ ECP + COMPARAISON ════════════ -->
+<section class="pnl" id="s-ecp">
+<div class="ph" onclick="tog(this)"><h2>💡 Économie Contributive Provisionnée vs Arizona <span class="tag tag-m">ALTERNATIVE</span></h2><span class="chev">▼</span></div>
+<div class="pb">
+<div style="background:var(--b2);border-radius:var(--r);padding:.75rem;margin-bottom:.75rem;border-left:3px solid var(--mint)">
+<div style="font:700 .8rem var(--sans);color:var(--mint);margin-bottom:.3rem">ECP — Le mécanisme</div>
+<div style="font:.58rem/1.6 var(--mono);color:var(--t1)">Permettre aux 978.000 personnes en inactivité contrainte de <strong style="color:var(--t0)">contribuer sans perdre leurs droits sociaux</strong>, via le ruling fiscal du SDA et la loi volontariat 2005. Transformer 21-24 Mrd€/an de dépenses passives en investissement actif. Budget pilote : <strong style="color:var(--mint)">24.000€</strong>. Équivalent coût inactivité : <strong style="color:var(--red)">1M€/heure</strong>.</div>
+<div style="font:.5rem/1.4 var(--mono);color:var(--lil);margin-top:.4rem">Gains : réduction coût inactivité · création valeur non-marchande · retour fiscal indirect · gain santé publique · capital social renforcé</div>
+</div>
+<div class="cmp" id="cmpgrid"></div>
+</div>
+</section>
+
+<!-- ════════════ CRUD WORKSTATION ════════════ -->
+<section class="pnl" id="s-crud">
+<div class="ph" onclick="tog(this)"><h2>🛠 Poste de Travail CRUD <span class="tag tag-i">INTEROP</span></h2><span class="chev">▼</span></div>
+<div class="tabs"><button class="tab on" onclick="stab('subj')">📋 Sujets</button><button class="tab" onclick="stab('act')">⚡ Actions</button><button class="tab" onclick="stab('src')">🔗 Sources</button><button class="tab" onclick="stab('note')">📝 Notes</button></div>
+
+<!-- Sujets -->
+<div class="wc on" id="t-subj">
+<div class="cf"><div class="fg"><label>Titre</label><input id="sT" placeholder="Ex: Affaire Deborsu..."></div><div class="fg"><label>Catégorie</label><select id="sC"><option value="politique">Politique</option><option value="juridique">Juridique</option><option value="social">Social</option><option value="media">Médias</option><option value="projet">Projet</option><option value="financement">Financement</option></select></div><div class="fg"><label>Priorité</label><select id="sP"><option value="critique">🔴 Critique</option><option value="haute">🟠 Haute</option><option value="moyenne">🟡 Moyenne</option><option value="basse">🟢 Basse</option></select></div><div class="fg"><label>Échéance</label><input type="date" id="sD"></div><div class="fg s2"><label>Description</label><textarea id="sX" placeholder="Description..."></textarea></div></div>
+<div class="br"><button class="btn b-m" onclick="aSubj()">+ Créer</button></div>
+<div class="dtw" style="margin-top:.75rem;max-height:350px;overflow-y:auto"><table class="dt"><thead><tr><th>P</th><th>Titre</th><th>Cat.</th><th>Éch.</th><th>Statut</th><th>Act.</th></tr></thead><tbody id="stb"></tbody></table></div>
+</div>
+
+<!-- Actions -->
+<div class="wc" id="t-act">
+<div class="cf"><div class="fg"><label>Action</label><input id="aT" placeholder="Ex: Rédiger recours..."></div><div class="fg"><label>Sujet lié</label><select id="aS"><option value="">—</option></select></div><div class="fg"><label>Type</label><select id="aTy"><option value="rédaction">Rédaction</option><option value="recherche">Recherche</option><option value="juridique">Juridique</option><option value="contact">Contact</option><option value="technique">Technique</option><option value="terrain">Terrain</option></select></div><div class="fg"><label>Deadline</label><input type="date" id="aD"></div></div>
+<div class="br"><button class="btn b-m" onclick="aAct()">+ Créer</button></div>
+<div class="dtw" style="margin-top:.75rem;max-height:350px;overflow-y:auto"><table class="dt"><thead><tr><th>Action</th><th>Type</th><th>Sujet</th><th>Deadline</th><th>Statut</th><th>Act.</th></tr></thead><tbody id="atb"></tbody></table></div>
+</div>
+
+<!-- Sources -->
+<div class="wc" id="t-src">
+<div class="cf"><div class="fg"><label>Source</label><input id="rN" placeholder="Ex: CRISP..."></div><div class="fg"><label>URL</label><input type="url" id="rU" placeholder="https://..."></div><div class="fg"><label>Type</label><select id="rT"><option>Institutionnel</option><option>Académique</option><option>Média</option><option>Juridique</option><option>Associatif</option><option>Open Data</option></select></div><div class="fg"><label>Fiabilité</label><select id="rF"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></div></div>
+<div class="br"><button class="btn b-m" onclick="aSrc()">+ Ajouter</button></div>
+<div class="dtw" style="margin-top:.75rem;max-height:350px;overflow-y:auto"><table class="dt"><thead><tr><th>Source</th><th>Type</th><th>★</th><th>URL</th><th>Act.</th></tr></thead><tbody id="rtb"></tbody></table></div>
+</div>
+
+<!-- Notes -->
+<div class="wc" id="t-note">
+<div class="cf" style="grid-template-columns:1fr"><div class="fg"><label>Titre</label><input id="nT" placeholder="Titre..."></div><div class="fg"><label>Contenu (Markdown)</label><textarea id="nC" rows="6" placeholder="## Analyse..."></textarea></div><div class="fg"><label>Tags (virgules)</label><input id="nG" placeholder="arizona, cpas..."></div></div>
+<div class="br"><button class="btn b-m" onclick="aNote()">+ Sauvegarder</button></div>
+<div class="dtw" style="margin-top:.75rem;max-height:350px;overflow-y:auto"><table class="dt"><thead><tr><th>Titre</th><th>Tags</th><th>Date</th><th>Act.</th></tr></thead><tbody id="ntb"></tbody></table></div>
+</div>
+
+<div class="ebar"><span class="el">Export :</span><button class="ebtn" onclick="xJSON()">📦 JSON</button><button class="ebtn" onclick="xCSV()">📊 CSV</button><button class="ebtn" onclick="xMD()">📝 MD</button><button class="ebtn" onclick="xHTML()">🌐 HTML</button><button class="ebtn" onclick="xSEO()">🔍 SEO</button><button class="ebtn" onclick="xDOCX()">📄 DOCX</button><button class="ebtn" onclick="xPDF()">🖨 PDF</button><button class="ebtn" onclick="xALL()">🚀 TOUT</button></div>
+</section>
+
+<!-- ════════════ SMART OBJECTIVES ════════════ -->
+<section class="pnl" id="s-smart">
+<div class="ph" onclick="tog(this)"><h2>🎯 Objectifs SMART — Plaidoyers <span class="tag tag-l">5 OBJECTIFS</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div id="smgrid" class="cgrid"></div></div>
+</section>
+
+<!-- ════════════ PROJECTIONS ════════════ -->
+<section class="pnl" id="s-proj">
+<div class="ph" onclick="tog(this)"><h2>📈 Projections 2024→2042 — Tableau de Bord Prospectif <span class="tag tag-w">CRITIQUE</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="dtw"><table class="dt" id="ptbl"><thead><tr><th>Indicateur</th><th>2024</th><th>2029</th><th>2035</th><th>2042</th><th>Source</th></tr></thead><tbody id="ptb"></tbody></table></div></div>
+</section>
+
+<!-- ════════════ ARIZONA MESURES ════════════ -->
+<section class="pnl" id="s-az">
+<div class="ph" onclick="tog(this)"><h2>🗡 Mesures Arizona — Détail <span class="tag tag-r">9,2 Mrd€</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="dtw"><table class="dt"><thead><tr><th>Mesure</th><th>Montant</th><th>Horizon</th><th>Impact</th></tr></thead><tbody id="aztb"></tbody></table></div></div>
+</section>
+
+<!-- ════════════ FORCES & MENACES ════════════ -->
+<section class="pnl" id="s-forces">
+<div class="ph" onclick="tog(this)"><h2>⚔ Forces & Menaces Projet <span class="tag tag-m">12 ITEMS</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="cgrid" id="swgrid"></div></div>
+</section>
+
+<!-- ════════════ ÉCOSYSTÈME ════════════ -->
+<section class="pnl" id="s-eco">
+<div class="ph" onclick="tog(this)"><h2>🌐 Écosystème ouaisfieu <span class="tag tag-m">11 plateformes</span></h2><span class="chev">▼</span></div>
+<div class="pb">
+<p style="font:.55rem/1.5 var(--mono);color:var(--t1);margin-bottom:.75rem">Architecture : 3 SSG (Grav, Hugo, Jekyll) · GitHub Pages · 0€ hosting · Zéro tracking · Bluesky (@ouaisfi.eu) · Licence CC BY-NC-SA 4.0</p>
+<div class="eg" id="egrid"></div>
+<div style="margin-top:.75rem">
+<div style="font:600 .7rem var(--sans);color:var(--t0);margin-bottom:.35rem">6 Axes Stratégiques CCPLC</div>
+<div class="cgrid c3" id="axgrid"></div>
+</div>
+</div>
+</section>
+
+<!-- ════════════ FINANCEMENTS ════════════ -->
+<section class="pnl" id="s-fund">
+<div class="ph" onclick="tog(this)"><h2>💰 Pistes de Financement <span class="tag tag-l">TRACKER</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="dtw"><table class="dt"><thead><tr><th>ID</th><th>Programme</th><th>Min</th><th>Max</th><th>Source</th><th>Pert.</th><th>Éch.</th></tr></thead><tbody id="ftb"></tbody></table></div></div>
+</section>
+
+<!-- ════════════ TROIS GUERRES ════════════ -->
+<section class="pnl" id="s-3g">
+<div class="ph" onclick="tog(this)"><h2>⚔ Doctrine des Trois Guerres Civiques <span class="tag tag-l">FRAMEWORK</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="cgrid c3" id="wgrid"></div></div>
+</section>
+
+<!-- ════════════ ARSENAL JURIDIQUE ════════════ -->
+<section class="pnl" id="s-jur">
+<div class="ph" onclick="tog(this)"><h2>⚖ Arsenal Juridique & Leviers Institutionnels <span class="tag tag-i">OPÉRATIONNEL</span></h2><span class="chev">▼</span></div>
+<div class="pb"><div class="cgrid" id="jgrid"></div></div>
+</section>
+
+</main>
+
+<!-- MOBILE NAV -->
+<nav class="bnav" id="bnav">
+<button class="bnav-btn act" onclick="bnTo('#s-urg',this)"><span class="ico">🔴</span>Urgences</button>
+<button class="bnav-btn" onclick="bnTo('#s-stats',this)"><span class="ico">📊</span>Stats</button>
+<button class="bnav-btn" onclick="bnTo('#s-crud',this)"><span class="ico">🛠</span>CRUD</button>
+<button class="bnav-btn" onclick="bnTo('#s-failles',this)"><span class="ico">🔍</span>Failles</button>
+<button class="bnav-btn" onclick="bnTo('#s-ecp',this)"><span class="ico">💡</span>ECP</button>
+</nav>
+
+<footer class="foot">
+<p>ouaisfieu · War Room v2 — Poste de Commandement Citoyen<br>
+<a href="https://ouaisfi.eu">ouaisfi.eu</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> · Budget : 870€ · Ops : 0€<br>
+0 pub · 0 traçage · 100% citoyen · Fork·Hack·Spread</p>
+<a href="https://github.com/ouaisfieu" class="fkb">⑂ Fork this War Room</a>
+</footer>
+
+<script>
+// ═══ DATA ═══
+const K='ouaisfieu_wr3';
+const DD={subjects:[
+{id:1,title:"Affaire Deborsu — RTL-TVI",cat:"media",priority:"critique",deadline:"2026-03-15",desc:"Contre-narratif documentaire stigmatisant allocataires. Action CSA + recours juridique + coalition médias associatifs.",status:"actif",created:"2026-02-01"},
+{id:2,title:"Vague 2 exclusions chômage (mars 2026)",cat:"social",priority:"critique",deadline:"2026-03-01",desc:"30.122 exclusions V1 (janv.) + V2 mars (8-20 ans cumulé). CPAS saturés, 240 ETP manquants BXL. Surcoût 80M€.",status:"actif",created:"2026-01-15"},
+{id:3,title:"Recours Art. 23 — Cour Constitutionnelle",cat:"juridique",priority:"critique",deadline:"2026-12-31",desc:"Recours introduit 29/10/2025. Standstill + droits sociaux. Arrêt attendu fin 2026/début 2027. Annulation = indemnisations rétroactives massives.",status:"en_cours",created:"2025-10-29"},
+{id:4,title:"Dépôt dossier EP — CCPLC",cat:"projet",priority:"haute",deadline:"2026-03-31",desc:"Reconnaissance Éducation Permanente. Moratoire 2026-2028 = obstacle. Explorer PCI, OJ, CERV comme alternatives.",status:"actif",created:"2025-09-01"},
+{id:5,title:"Création ASBL ouaisfieu",cat:"projet",priority:"haute",deadline:"2026-02-28",desc:"Nécessaire avant dépôt EP. Crédibilité institutionnelle. Statuts à finaliser.",status:"todo",created:"2026-01-10"},
+{id:6,title:"Budget Arizona — Étude d'impact 2042",cat:"politique",priority:"haute",deadline:"2026-04-30",desc:"Projections démographiques + dette + convergence crises. 8 failles + 5 boucles destructrices documentées. Déficit 6,5% PIB en 2030.",status:"en_cours",created:"2026-02-02"},
+{id:7,title:"Candidature PCI FWB",cat:"financement",priority:"haute",deadline:"2026-03-31",desc:"Projets Cohésion & Inclusion. Budget 665K€. Axes jeunes/interculturel/racisme. Pertinence 95%.",status:"todo",created:"2026-02-05"},
+{id:8,title:"Erasmus+ KA210",cat:"financement",priority:"moyenne",deadline:"2026-03-05",desc:"Partenariat simplifié 30-60K€. Condition: 1 partenaire pays programme UE. Identifier partenaire urgent.",status:"todo",created:"2026-02-01"},
+{id:9,title:"Plaintes CEDH actives contre Belgique",cat:"juridique",priority:"moyenne",deadline:"",desc:"4 plaintes: ETUC norme salariale, FIDH mendicité, FEANTSA logement Flandre, ERRC Gens du Voyage Charleroi.",status:"veille",created:"2026-02-08"},
+{id:10,title:"Ruling fiscal SDA pour ECP",cat:"juridique",priority:"haute",deadline:"2026-06-30",desc:"Obtenir validation du provisionnement différé. Clé de voûte du mécanisme ECP. Dossier impeccable requis.",status:"todo",created:"2026-02-05"},
+{id:11,title:"Partenariat PAC / CRISP",cat:"projet",priority:"moyenne",deadline:"2026-06-30",desc:"PAC = plus grand mouvement EP en FWB. CRISP = référence académique. Co-organisation ateliers-débats visée.",status:"todo",created:"2026-02-08"},
+{id:12,title:"Collecte 1000 témoignages exclus",cat:"terrain",priority:"haute",deadline:"2026-12-31",desc:"Base données structurée avec consentement éclairé. Publication plateforme dédiée + relais médias.",status:"todo",created:"2026-02-10"},
+],actions:[
+{id:1,title:"Rédiger plainte CSA Deborsu",type:"juridique",subjectId:1,deadline:"2026-02-28",status:"en_cours",created:"2026-02-01"},
+{id:2,title:"Collecter 100 premiers témoignages",type:"terrain",subjectId:12,deadline:"2026-06-30",status:"todo",created:"2026-02-05"},
+{id:3,title:"Contacter PAC pour partenariat EP",type:"contact",subjectId:11,deadline:"2026-02-20",status:"todo",created:"2026-02-08"},
+{id:4,title:"Finaliser statuts ASBL",type:"juridique",subjectId:5,deadline:"2026-02-25",status:"todo",created:"2026-02-10"},
+{id:5,title:"Identifier partenaire Erasmus+ UE",type:"recherche",subjectId:8,deadline:"2026-02-20",status:"todo",created:"2026-02-08"},
+{id:6,title:"Préparer dossier ruling SDA",type:"juridique",subjectId:10,deadline:"2026-04-30",status:"todo",created:"2026-02-10"},
+{id:7,title:"Mobilisation 50.000 manifestation nationale",type:"terrain",subjectId:2,deadline:"2026-06-30",status:"todo",created:"2026-02-10"},
+{id:8,title:"Basculer 3-5 députés Vooruit/Engagés vs bonus-malus CPAS",type:"contact",subjectId:2,deadline:"2026-10-31",status:"todo",created:"2026-02-10"},
+],sources:[
+{id:1,name:"Bureau fédéral du Plan",url:"https://www.plan.be",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:2,name:"CRISP",url:"https://www.crisp.be",type:"Académique",reliability:5,created:"2026-01-01"},
+{id:3,name:"SPF Emploi",url:"https://emploi.belgique.be",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:4,name:"Comité d'étude sur le vieillissement (CEV)",url:"https://www.plan.be",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:5,name:"BNB — Banque Nationale",url:"https://www.nbb.be",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:6,name:"INAMI",url:"https://www.inami.fgov.be",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:7,name:"Eurostat",url:"https://ec.europa.eu/eurostat",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:8,name:"FMI",url:"https://www.imf.org",type:"Institutionnel",reliability:5,created:"2026-01-01"},
+{id:9,name:"AIM (Agence InterMutualiste)",url:"https://aim-ima.be",type:"Institutionnel",reliability:4,created:"2026-01-01"},
+{id:10,name:"Coalition Santé",url:"",type:"Associatif",reliability:4,created:"2026-01-01"},
+],notes:[
+{id:1,title:"Stratégie Trois Guerres Civiques",content:"## Framework\n\n1. **Opinion** — contre-récits documentés, plaidoyers\n2. **Psychologique** — dé-sidération citoyenne, formation\n3. **Juridique** — saturation judiciaire constitutionnelle\n\nTransformer énergie protestataire → capacité d'agir durable.",tags:["stratégie","doctrine"],created:"2026-01-15"},
+{id:2,title:"Failles Arizona — Mémo synthèse",content:"## 8 failles identifiées\n\n1. Transfert comptable fantôme\n2. Alternatives fiscales ignorées (17 Mrd)\n3. Économie fantôme MLD\n4. Saut d'index déguisé\n5. Piège BIM taux marginal >100%\n6. Fragmentation régionale\n7. Promesse reportée 2030\n8. Budget défense contrepoint\n\n## 5 boucles destructrices\nTransfert · Taux marginal · Spirale austéritaire · Fragmentation · Dégradation capital humain\n\nRatio : 1€ capital → 5-6€ coupés social",tags:["arizona","budget","failles"],created:"2026-02-02"},
+{id:3,title:"Paradoxe central belge",content:"La Belgique dépense 21-24 Mrd€/an pour maintenir l'inactivité contrainte, refuse une taxe patrimoine de 17 Mrd€, précarise 2,1M de personnes dont le renoncement aux soins coûtera infiniment plus cher demain.\n\n978.000 personnes PAYÉES pour ne rien faire, pas parce qu'elles le veulent, mais parce que le système les PUNIT dès qu'elles essaient de contribuer.",tags:["paradoxe","ecp","inactivité"],created:"2026-02-05"},
+],nextId:{subjects:13,actions:9,sources:11,notes:4}};
+function ld(){try{const r=localStorage.getItem(K);if(r)return JSON.parse(r)}catch(e){}return JSON.parse(JSON.stringify(DD))}
+function sv(d){try{localStorage.setItem(K,JSON.stringify(d))}catch(e){}}
+let D=ld();
+
+// ═══ THEME ═══
+let mI=null,mC=null,mX=null,cols=[];
+function sT(t){document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.dataset.theme===t));t==='matrix'?startM():stopM();try{localStorage.setItem('ouf_t',t)}catch(e){}}
+function initM(){if(!mC)return;mC.width=innerWidth;mC.height=innerHeight;cols=Array(Math.floor(mC.width/14)).fill(0)}
+function drawM(){if(!mX||!mC)return;mX.fillStyle='rgba(0,8,0,.05)';mX.fillRect(0,0,mC.width,mC.height);mX.fillStyle='#00ff4188';mX.font='14px monospace';const ch='ouaisfieu01アイウエオ∞§€¥';cols.forEach((y,i)=>{mX.fillText(ch[Math.random()*ch.length|0],i*14,y*14);if(y*14>mC.height&&Math.random()>.975)cols[i]=0;else cols[i]=y+1})}
+function startM(){if(!mC){mC=document.getElementById('mx');if(mC)mX=mC.getContext('2d')}if(!mC)return;initM();if(!mI)mI=setInterval(drawM,50)}
+function stopM(){if(mI){clearInterval(mI);mI=null;if(mX&&mC)mX.clearRect(0,0,mC.width,mC.height)}}
+addEventListener('resize',()=>{if(mI)initM()});
+
+// ═══ CLOCK ═══
+function uClk(){const e=document.getElementById('clk');if(e)e.textContent=new Date().toLocaleTimeString('fr-BE',{hour12:false})}
+
+// ═══ PANEL TOGGLE ═══
+function tog(h){h.parentElement.classList.toggle('closed')}
+
+// ═══ MOBILE NAV ═══
+function bnTo(sel,btn){document.querySelector(sel)?.scrollIntoView({behavior:'smooth'});document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');const p=document.querySelector(sel);if(p&&p.classList.contains('closed'))p.classList.remove('closed')}
+
+// ═══ CMD PALETTE ═══
+function oCmd(){document.getElementById('cmd').classList.add('open');const i=document.getElementById('ci');i.focus();i.value='';uCR('')}
+function cCmd(){document.getElementById('cmd').classList.remove('open')}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();oCmd()}if(e.key==='Escape')cCmd()});
+function uCR(q){const r=document.getElementById('cres'),s=q.toLowerCase().trim();let items=[];if(!s){r.innerHTML=['📋 Sujets','⚡ Actions','🔍 8 Failles','💡 ECP','🎯 SMART'].map(x=>`<div class="cr">${x}</div>`).join('');return}
+D.subjects.forEach(x=>{if(x.title.toLowerCase().includes(s)||x.desc.toLowerCase().includes(s))items.push(`<div class="cr">📋 ${x.title}</div>`)});
+D.notes.forEach(x=>{if(x.title.toLowerCase().includes(s)||x.content.toLowerCase().includes(s))items.push(`<div class="cr">📝 ${x.title}</div>`)});
+r.innerHTML=items.length?items.join(''):'<div class="cr" style="color:var(--t2)">Aucun résultat</div>'}
+
+// ═══ TABS ═══
+function stab(t){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.wc').forEach(x=>x.classList.remove('on'));document.querySelector(`.tab[onclick="stab('${t}')"]`).classList.add('on');document.getElementById('t-'+t).classList.add('on')}
+
+// ═══ TOAST / MODAL ═══
+function toast(m,t='success'){const c=document.getElementById('tc'),e=document.createElement('div');e.className='toast'+(t==='error'?' err':'');e.textContent=(t==='success'?'✓ ':'✗ ')+m;c.appendChild(e);setTimeout(()=>{e.style.opacity='0';setTimeout(()=>e.remove(),300)},3000)}
+function oMod(t,h){document.getElementById('mt').textContent=t;document.getElementById('mbd').innerHTML=h;document.getElementById('emod').classList.add('open')}
+function cMod(){document.getElementById('emod').classList.remove('open')}
+
+// ═══ CRUD: SUBJECTS ═══
+const PC={critique:'var(--red)',haute:'#e67e22',moyenne:'var(--warn)',basse:'var(--ok)'};
+const SL={actif:'🔵 Actif',en_cours:'🟡 En cours',todo:'⬜ Todo','terminé':'✅ Fait',veille:'👁 Veille'};
+function aSubj(){const t=document.getElementById('sT').value.trim();if(!t)return toast('Titre requis','error');D.subjects.push({id:D.nextId.subjects++,title:t,cat:document.getElementById('sC').value,priority:document.getElementById('sP').value,deadline:document.getElementById('sD').value||'',desc:document.getElementById('sX').value,status:'actif',created:new Date().toISOString().slice(0,10)});sv(D);rSubj();rUrg();uAS();document.getElementById('sT').value='';document.getElementById('sX').value='';toast('Sujet créé')}
+function dSubj(id){D.subjects=D.subjects.filter(s=>s.id!==id);sv(D);rSubj();rUrg();toast('Supprimé')}
+function tStat(id){const s=D.subjects.find(x=>x.id===id);if(s){const c=['actif','en_cours','todo','terminé','veille'];s.status=c[(c.indexOf(s.status)+1)%c.length];sv(D);rSubj();rUrg()}}
+function eSubj(id){const s=D.subjects.find(x=>x.id===id);if(!s)return;oMod('Éditer: '+s.title,`<div class="cf"><div class="fg s2"><label>Titre</label><input id="eT" value="${s.title}"></div><div class="fg"><label>Cat.</label><select id="eC">${['politique','juridique','social','media','projet','financement','terrain'].map(c=>`<option ${s.cat===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="fg"><label>Priorité</label><select id="eP">${['critique','haute','moyenne','basse'].map(p=>`<option ${s.priority===p?'selected':''}>${p}</option>`).join('')}</select></div><div class="fg"><label>Éch.</label><input type="date" id="eD" value="${s.deadline}"></div><div class="fg"><label>Statut</label><select id="eS">${Object.keys(SL).map(st=>`<option ${s.status===st?'selected':''}>${st}</option>`).join('')}</select></div><div class="fg s2"><label>Description</label><textarea id="eX" rows="4">${s.desc}</textarea></div></div><div class="br" style="margin-top:.75rem"><button class="btn b-m" onclick="svSubj(${id})">Sauver</button><button class="btn b-g" onclick="cMod()">Annuler</button></div>`)}
+function svSubj(id){const s=D.subjects.find(x=>x.id===id);if(!s)return;s.title=document.getElementById('eT').value;s.cat=document.getElementById('eC').value;s.priority=document.getElementById('eP').value;s.deadline=document.getElementById('eD').value;s.status=document.getElementById('eS').value;s.desc=document.getElementById('eX').value;sv(D);rSubj();rUrg();cMod();toast('Mis à jour')}
+function rSubj(){document.getElementById('stb').innerHTML=D.subjects.sort((a,b)=>{const o={critique:0,haute:1,moyenne:2,basse:3};return(o[a.priority]??9)-(o[b.priority]??9)}).map(s=>`<tr><td><span class="pdot" style="background:${PC[s.priority]}"></span></td><td style="font-weight:600;color:var(--t0);cursor:pointer" onclick="eSubj(${s.id})">${s.title}</td><td><span class="badge">${s.cat}</span></td><td style="color:${s.deadline&&new Date(s.deadline)<new Date()?'var(--red)':'var(--t1)';};font-size:.55rem">${s.deadline||'—'}</td><td><span style="cursor:pointer" onclick="tStat(${s.id})">${SL[s.status]||s.status}</span></td><td class="ac"><button class="abtn" onclick="eSubj(${s.id})">✎</button><button class="abtn del" onclick="dSubj(${s.id})">✕</button></td></tr>`).join('')}
+
+// ═══ CRUD: ACTIONS ═══
+function aAct(){const t=document.getElementById('aT').value.trim();if(!t)return toast('Titre requis','error');D.actions.push({id:D.nextId.actions++,title:t,type:document.getElementById('aTy').value,subjectId:parseInt(document.getElementById('aS').value)||null,deadline:document.getElementById('aD').value||'',status:'todo',created:new Date().toISOString().slice(0,10)});sv(D);rAct();document.getElementById('aT').value='';toast('Action créée')}
+function dAct(id){D.actions=D.actions.filter(a=>a.id!==id);sv(D);rAct();toast('Supprimé')}
+function tAct(id){const a=D.actions.find(x=>x.id===id);if(a){const c=['todo','en_cours','terminé'];a.status=c[(c.indexOf(a.status)+1)%c.length];sv(D);rAct()}}
+function rAct(){document.getElementById('atb').innerHTML=D.actions.map(a=>{const s=D.subjects.find(x=>x.id===a.subjectId);return`<tr><td style="font-weight:600;color:var(--t0)">${a.title}</td><td><span class="badge">${a.type}</span></td><td style="font-size:.5rem">${s?s.title:'—'}</td><td style="font-size:.55rem">${a.deadline||'—'}</td><td><span style="cursor:pointer" onclick="tAct(${a.id})">${SL[a.status]||a.status}</span></td><td class="ac"><button class="abtn del" onclick="dAct(${a.id})">✕</button></td></tr>`}).join('')}
+function uAS(){document.getElementById('aS').innerHTML='<option value="">—</option>'+D.subjects.map(s=>`<option value="${s.id}">${s.title}</option>`).join('')}
+
+// ═══ CRUD: SOURCES & NOTES ═══
+function aSrc(){const n=document.getElementById('rN').value.trim();if(!n)return toast('Nom requis','error');D.sources.push({id:D.nextId.sources++,name:n,url:document.getElementById('rU').value,type:document.getElementById('rT').value,reliability:+document.getElementById('rF').value,created:new Date().toISOString().slice(0,10)});sv(D);rSrc();document.getElementById('rN').value='';document.getElementById('rU').value='';toast('Source ajoutée')}
+function dSrc(id){D.sources=D.sources.filter(s=>s.id!==id);sv(D);rSrc();toast('Supprimé')}
+function rSrc(){document.getElementById('rtb').innerHTML=D.sources.map(s=>`<tr><td style="font-weight:600;color:var(--t0)">${s.name}</td><td><span class="badge">${s.type}</span></td><td>${'★'.repeat(s.reliability)}</td><td>${s.url?`<a href="${s.url}" target="_blank" rel="noopener" style="color:var(--mint);font-size:.5rem">${s.url.replace(/^https?:\/\//,'').slice(0,25)}…</a>`:'—'}</td><td class="ac"><button class="abtn del" onclick="dSrc(${s.id})">✕</button></td></tr>`).join('')}
+function aNote(){const t=document.getElementById('nT').value.trim();if(!t)return toast('Titre requis','error');D.notes.push({id:D.nextId.notes++,title:t,content:document.getElementById('nC').value,tags:document.getElementById('nG').value.split(',').map(t=>t.trim()).filter(Boolean),created:new Date().toISOString().slice(0,10)});sv(D);rNote();document.getElementById('nT').value='';document.getElementById('nC').value='';document.getElementById('nG').value='';toast('Note sauvegardée')}
+function dNote(id){D.notes=D.notes.filter(n=>n.id!==id);sv(D);rNote();toast('Supprimé')}
+function vNote(id){const n=D.notes.find(x=>x.id===id);if(!n)return;oMod(n.title,`<pre style="white-space:pre-wrap;font:.65rem/1.6 var(--mono);color:var(--t1);max-height:50vh;overflow-y:auto">${n.content}</pre><p style="margin-top:.5rem;font:.5rem var(--mono);color:var(--t2)">Tags: ${n.tags.join(', ')} · ${n.created}</p>`)}
+function rNote(){document.getElementById('ntb').innerHTML=D.notes.map(n=>`<tr><td style="font-weight:600;color:var(--t0);cursor:pointer" onclick="vNote(${n.id})">${n.title}</td><td>${n.tags.map(t=>`<span class="badge">${t}</span>`).join(' ')}</td><td style="font-size:.5rem">${n.created}</td><td class="ac"><button class="abtn" onclick="vNote(${n.id})">👁</button><button class="abtn del" onclick="dNote(${n.id})">✕</button></td></tr>`).join('')}
+
+// ═══ URGENCES ═══
+function rUrg(){const u=D.subjects.filter(s=>s.priority==='critique'||s.priority==='haute').sort((a,b)=>{if(a.priority!==b.priority)return a.priority==='critique'?-1:1;return(a.deadline||'9999')<(b.deadline||'9999')?-1:1});document.getElementById('ugrid').innerHTML=u.map(s=>{const dl=s.deadline?Math.ceil((new Date(s.deadline)-new Date())/864e5):null;return`<div class="uc ${s.priority==='haute'?'s-h':''}" onclick="eSubj(${s.id})"><div class="uh"><div class="ut">${s.title}</div><div class="ud">${dl!==null?(dl<0?`⚠${Math.abs(dl)}j`:`${dl}j`):''}</div></div><div class="ub">${s.desc}</div><div class="um"><span class="badge" style="border-color:${PC[s.priority]};color:${PC[s.priority]}">${s.priority}</span><span class="badge">${s.cat}</span><span class="badge">${(SL[s.status]||s.status).replace(/[🔵🟡⬜✅👁] /,'')}</span></div></div>`}).join('')}
+
+// ═══ STATS ═══
+const ST=[
+{l:"Exclusions V1",v:"30.122",u:"pers.",t:"↑",tc:"t-u",x:"Janv 2026 → CPAS"},
+{l:"Exclusions cumulées 2027",v:"90.000",u:"est.",t:"↑↑",tc:"t-u",x:"CPAS saturés, 240 ETP manquants BXL"},
+{l:"Inactivité contrainte",v:"978K",u:"pers.",t:"stable",tc:"t-s",x:"Coût: 21-24 Mrd€/an = 1M€/heure"},
+{l:"Dossiers MLD à réexaminer",v:"218K",u:"dossiers",t:"fixe",tc:"t-s",x:"D'ici 2029 — 100K retours irréaliste"},
+{l:"Surcoût CPAS Bruxelles",v:"80M€",u:"",t:"↑",tc:"t-u",x:"19 CPAS, compensation 518€/an dérisoire"},
+{l:"Trou budget santé",v:"2 Mrd€",u:"",t:"↑",tc:"t-u",x:"Norme 2% vs besoin 3,2%"},
+{l:"Belges AROPE",v:"2,1M",u:"18,3%",t:"↑",tc:"t-u",x:"58% étudiants insécurité alimentaire"},
+{l:"Charge intérêts",v:"10→21",u:"Mrd/an",t:"↑↑",tc:"t-u",x:"2025→2030, effet boule de neige"},
+{l:"Déficit sécu sociale",v:"18,2",u:"Mrd€",t:"↑",tc:"t-u",x:"2024, avant mesures Arizona"},
+{l:"Malades > Chômeurs",v:"500K+",u:"MLD",t:"↑",tc:"t-u",x:"Plus de MLD que de chômeurs"},
+{l:"BIM bénéficiaires",v:"2,4M",u:"21% pop.",t:"stable",tc:"t-s",x:"Piège taux marginal >100%"},
+{l:"Sanctions ×4",v:"10%",u:"indemn.",t:"↑",tc:"t-u",x:"Était 2,5%, V3 Arizona 01/2026"},
+{l:"Documents ouaisfieu",v:"70+",u:"analyses",t:"↑",tc:"t-u",x:"PDF, MD, HTML, DOCX multi-format"},
+{l:"Budget ouaisfieu",v:"870€",u:"total",t:"—",tc:"t-s",x:"Ops: 0€ · 11 sites · GitHub Pages"},
+{l:"Plateformes",v:"11",u:"sites",t:"stable",tc:"t-s",x:"3 SSG · 0€ hosting · 0 tracking"},
+];
+function rSt(){document.getElementById('sgrid').innerHTML=ST.map(s=>`<div class="sc"><div class="sl">${s.l}</div><div class="sv">${s.v} <span class="su">${s.u}</span></div><div class="sx">${s.x}</div><div class="st ${s.tc}">${s.t}</div></div>`).join('')}
+
+// ═══ TIMELINE ═══
+const TL=[
+{d:"2021",e:"Vague 1 ReAT — Coordinateurs retour travail",t:"re"},{d:"2023-01",e:"Vague 2 — Contacts obligatoires, sanctions 2,5%",t:"re"},
+{d:"2025-01",e:"Accord Arizona signé (N-VA, MR, CD&V, Vooruit, Engagés)",t:"po"},{d:"2025-04",e:"S&P perspective → négative",t:"fi"},{d:"2025-06",e:"Fitch dégrade → A+",t:"fi"},{d:"2025-06",e:"BfP: déficit 6,5% PIB en 2030",t:"an"},
+{d:"2025-10",e:"Recours Art. 23 déposé",t:"ju"},{d:"2025-12",e:"Grève front commun syndical",t:"mo"},
+{d:"2026-01",e:"V3 Arizona + 30.122 exclusions V1",t:"im"},{d:"2026-03",e:"V2 exclusions (8-20 ans) + Dépôt EP",t:"pr"},{d:"2026-Q2",e:"Manif nationale (obj. 50K)",t:"mo"},{d:"2026-Q4",e:"Arrêt Cour Constit. attendu",t:"ju"},
+{d:"2027",e:"90K exclusions cumulées + Arrêt CC",t:"im"},{d:"2029",e:"218K MLD réexaminés · Obj. 80% emploi",t:"po"},{d:"2030",e:"Déficit 6,5% · Dette 120% PIB",t:"pj"},{d:"2035",e:"Accélération vieillissement · Dép. 37%",t:"pj"},{d:"2042",e:"Convergence crises: climat + dette + démo",t:"pj"},
+];
+const TM={po:'tp-po',im:'tp-im',ju:'tp-ju',pr:'tp-pr',re:'tp-re',fi:'tp-fi',mo:'tp-mo',pj:'tp-pj',an:'tp-an'};
+const TN={po:'politique',im:'impact',ju:'juridique',pr:'projet',re:'réforme',fi:'financier',mo:'mobilisation',pj:'projection',an:'analyse'};
+function rTl(){document.getElementById('tlt').innerHTML=TL.map(t=>{const now=new Date(),isFut=t.d>'2026-02';return`<div class="tn ${t.d.startsWith('2026-01')||t.d.startsWith('2026-02')?'now':''} ${isFut?'fut':''}"><div class="tl-d">${t.d}</div><div class="td-d"></div><div class="tl-l">${t.e}</div><span class="ttype ${TM[t.t]||''}">${TN[t.t]||t.t}</span></div>`}).join('')}
+
+// ═══ 8 FAILLES ═══
+const F8=[
+{n:"Faille 1: Transfert comptable fantôme",d:"La limitation chômage 24 mois ne supprime pas la dépense : elle la transfère vers les CPAS communaux. Compensation fédérale dérisoire : 518€/an vs coût réel de milliers d'euros. Surcoût BXL : 80M€, 240 ETP manquants. Bilan consolidé = nul ou négatif.",c:"red"},
+{n:"Faille 2: Alternatives fiscales ignorées",d:"Ratio 60% coupes / 40% recettes = choix idéologique. Taxe patrimoines >1M€ = 17 Mrd€ potentiels. Lutte fraude fiscale = milliards supplémentaires. Ruling fiscal SDA possible pour l'ECP.",c:"red"},
+{n:"Faille 3: Économie fantôme MLD",d:"Objectif 100K retours MLD pour économiser 1,9 Mrd = irréaliste. Causes structurelles ignorées (conditions de travail, âge pension, stress). Mesures punitives : -2,5% indemnités, 218K dossiers réexaminés. Trou santé : 2 Mrd€.",c:"red"},
+{n:"Faille 4: Saut d'index déguisé",d:"Plafonnement indexation au-delà de 4.000€ bruts (salaires) et 2.000€ (allocations). Touche ~50% des travailleurs. Effet structurel permanent. CSC : « double saut d'index ». Effet récessif : contraction pouvoir d'achat → baisse consommation → baisse recettes.",c:"warn"},
+{n:"Faille 5: Piège taux marginal >100%",d:"Cœur du problème ouaisfieu : chaque euro gagné par un précaire → perte statut BIM (2,4M personnes, 21% pop.) → cascade : perte tarifs sociaux énergie/transports/santé. Économiquement rationnel de rester inactif. Arizona aggrave ce piège.",c:"red"},
+{n:"Faille 6: Fragmentation régionale",d:"Calibré Flandre (3% chômage, quasi plein emploi) mais appliqué à BXL (12% chômage structurel) et Wallonie (reconversion inachevée). BXL absorbe 1/3 des exclusions pour 1/10 de la population.",c:"warn"},
+{n:"Faille 7: Promesse reportée",d:"Hausse quotité exemptée + baisse IPP reportées à 2030, au-delà de la législature. Bâton immédiat (coupes), carotte hypothétique. Les 7,9 Mrd€ d'effets retour budgétés sont purement spéculatifs.",c:"warn"},
+{n:"Faille 8: Budget défense contrepoint",d:"Seul département en croissance : 50M (2025) → 400M (2029). Financé par vente d'actifs productifs : Proximus, bpost, BNP Paribas Fortis. On vend les bijoux de famille pour financer la défense.",c:"lil"},
+];
+function rF(){document.getElementById('fgrid').innerHTML=F8.map(f=>`<div class="cc ${f.c}"><div class="cn">${f.n}</div><div class="cd">${f.d}</div></div>`).join('')}
+
+// ═══ 5 BOUCLES ═══
+const B5=[
+{n:"Boucle 1: Transfert comptable fantôme",ch:"Exclusion chômage fédéral <b>→</b> basculement RIS communal <b>→</b> économie fédérale = surcoût communal <b>→</b> bilan consolidé nul ou négatif"},
+{n:"Boucle 2: Piège du taux marginal",ch:"Taux marginal >100% <b>→</b> activation coercitive vers emplois précaires <b>→</b> appauvrissement paradoxal <b>→</b> maintien inactivité économiquement rationnel"},
+{n:"Boucle 3: Spirale austéritaire (piège grec)",ch:"Économies budgétaires <b>→</b> déficit structurel 11 Mrd 2029 <b>→</b> nécessité nouvelles économies <b>→</b> contraction économie <b>→</b> creusement déficit <b>→</b> plus d'austérité. Le FMI admet que l'austérité échoue généralement à réduire le ratio dette/PIB."},
+{n:"Boucle 4: Fragmentation régionale",ch:"Mesures calibrées Flandre (plein emploi) <b>→</b> appliquées BXL/Wallonie (chômage structurel) <b>→</b> suppression allocations sans emplois disponibles <b>→</b> création misère, pas emplois"},
+{n:"Boucle 5: Dégradation capital humain",ch:"Gel bien-être 5 ans + renoncement soins + précarisation <b>→</b> dégradation capacités employabilité <b>→</b> moins employables <b>→</b> coûtent plus longtemps <b>→</b> inverse exact de l'objectif gouvernemental"},
+];
+function rB(){document.getElementById('bgrid').innerHTML=B5.map((b,i)=>`<div class="cc red"><div class="cn">${b.n}</div><div class="bch">${b.ch}</div></div>`).join('')}
+
+// ═══ COMPARAISON ═══
+function rCmp(){document.getElementById('cmpgrid').innerHTML=`
+<div class="cmp-col arizona"><h3 style="color:var(--red)">🔴 Arizona (austéritaire)</h3>
+<div class="ci"><strong>Budget:</strong> 9,2 Mrd€ d'ajustement</div>
+<div class="ci"><strong>Méthode:</strong> Suppression allocations + contrainte + sanctions</div>
+<div class="ci"><strong>Risque:</strong> Spirale austéritaire, déficit ne se réduit pas (BfP)</div>
+<div class="ci"><strong>Impact:</strong> 90.000 exclusions, CPAS saturés, 240 ETP manquants BXL</div>
+<div class="ci"><strong>Hypothèse clé:</strong> Supprimer allocations = créer emploi (non démontré pour publics éloignés)</div>
+<div class="ci" style="color:var(--red);font-weight:600;margin-top:.3rem">3 paris fragiles: effets retour 7,9 Mrd · tissu social tient · marchés absorbent 100K personnes</div>
+</div>
+<div class="cmp-col ecp"><h3 style="color:var(--mint)">🟢 ouaisfieu (contributive — ECP)</h3>
+<div class="ci"><strong>Budget:</strong> 24.000€</div>
+<div class="ci"><strong>Méthode:</strong> Contribution citoyenne → réduction inactivité sans perte de droits</div>
+<div class="ci"><strong>Mécanisme:</strong> Ruling fiscal SDA + loi volontariat 2005</div>
+<div class="ci"><strong>Potentiel:</strong> 978.000 personnes en inactivité contrainte = vivier contributif massif</div>
+<div class="ci"><strong>Impact:</strong> Valorisation compétences, inclusion numérique, intelligence collective</div>
+<div class="ci" style="color:var(--mint);font-weight:600;margin-top:.3rem">Ratio : 24K€ pour débloquer 21-24 Mrd€/an de dépenses passives</div>
+</div>`}
+
+// ═══ SMART ═══
+const SM=[
+{t:"Moratoire exclusions",d:"D'ici 1er mars 2026",i:"Suspension officielle des vagues 2-3-4 par décision gouvernementale ou judiciaire"},
+{t:"1000 témoignages documentés",d:"Décembre 2026",i:"Base structurée avec consentement éclairé, publiée et relayée médias"},
+{t:"3-5 députés contre bonus-malus CPAS",d:"Automne 2026 (vote budget 2027)",i:"Vote amendement supprimant pénalisation communes pauvres"},
+{t:"Compensation 100% coûts RIS",d:"Budget fédéral 2027",i:"Remplacement subside 518€/an par remboursement intégral + frais personnel"},
+{t:"Manifestation nationale 50.000",d:"Printemps 2026",i:"Comptage officiel dépassant 50K participants avant vagues 3-4"},
+];
+function rSM(){document.getElementById('smgrid').innerHTML=SM.map(s=>`<div class="cc lil"><div class="cn">🎯 ${s.t}</div><div class="cd"><strong>Indicateur:</strong> ${s.i}</div><div class="cm">Échéance: ${s.d}</div></div>`).join('')}
+
+// ═══ PROJECTIONS ═══
+const PJ=[
+["Déficit % PIB","4,4%","5,2-6,2%","~6-7%","~7-8%","BfP/CE"],
+["Déficit absolu","~27 Mrd","~35-40 Mrd","~45-55 Mrd","~60-75 Mrd","Extrapol."],
+["Dette % PIB","104%","119%","130-140%","145-165%","BfP/BNB"],
+["Charge intérêts/an","~10 Mrd","~18-19 Mrd","~25-30 Mrd","~35-45 Mrd","Ag. dette"],
+["Dép. sociales % PIB","25,8%","~26,5%","~28%","~29,2%","CEV 2024"],
+["Coef. dépendance 67+","28,5%","~32%","~37%","~41%","CEV/Eurostat"],
+["Impact climat. % PIB","~0,5%","~1%","~2%","~3-4%","FPB/Cerac"],
+["Population 67+","~2,2M","~2,5M","~2,9M","~3,3M","Eurostat"],
+];
+function rPJ(){document.getElementById('ptb').innerHTML=PJ.map(r=>`<tr><td style="font-weight:600;color:var(--t0);white-space:nowrap">${r[0]}</td><td>${r[1]}</td><td class="proj-val pv-w">${r[2]}</td><td class="proj-val pv-r">${r[3]}</td><td class="proj-val pv-r" style="font-weight:700">${r[4]}</td><td style="font-size:.45rem;color:var(--t2)">${r[5]}</td></tr>`).join('')}
+
+// ═══ ARIZONA MESURES ═══
+const AZ=[
+["Limitation chômage 24 mois","902M → 2 Mrd","2026-2029","30.122 excl V1 + 90K d'ici 2027"],
+["Réinsertion MLD","1,9 Mrd","2026-2029","218K dossiers, 100K retours visés (irréaliste)"],
+["Gel enveloppe bien-être","2,8 Mrd","2025-2029","Érosion pouvoir d'achat 5 ans"],
+["Indexation plafonnée","883M/an","2026+2028","Saut d'index déguisé, ~50% travailleurs"],
+["Norme santé réduite 2%","2 Mrd cum.","2026-2027","Trou budget, renoncement soins"],
+["Sanctions MLD ×4","—","2026","2,5% → 10% indemnités"],
+["\"Épaules larges\" capital","~1 Mrd","2026-2029","1€ capital = 5-6€ coupés dans social"],
+["Budget défense ↑","50M→400M","2025-2029","Financé par vente Proximus, bpost, BNP"],
+];
+function rAZ(){document.getElementById('aztb').innerHTML=AZ.map(m=>`<tr><td style="font-weight:600;color:var(--t0)">${m[0]}</td><td style="color:var(--red);font-weight:700">${m[1]}</td><td>${m[2]}</td><td style="font-size:.55rem">${m[3]}</td></tr>`).join('')}
+
+// ═══ FORCES & MENACES ═══
+const FO=[{t:"Architecture",d:"Résiliente, coût 0€, impossible à censurer (statique pur)",s:95},{t:"Contenu",d:"Corpus massif 70+ docs, sourcé, multi-format",s:90},{t:"Éthique",d:"0 pub, 0 traçage, licence CC BY-NC-SA 4.0",s:100},{t:"Méthodologie",d:"DIKW + OSINT + Intelligence Civile = cadre rigoureux",s:85},{t:"Forkability",d:"Tout citoyen peut cloner le projet → Fork·Hack·Spread",s:90},{t:"Positionnement",d:"Seul civic tech belge grassroots 100% production de savoir",s:95}];
+const ME=[{t:"Institutionnel",d:"Moratoire EP 2026-2028 — gel reconnaissances",sv:"critique",m:"Explorer Décret OJ, PCI, CERV"},{t:"Financier",d:"Budget quasi-nul, dépendance bénévolat",sv:"haute",m:"Candidature FRB + PCI dès 2026"},{t:"Juridique",d:"Pas d'ASBL formelle — crédibilité limitée",sv:"haute",m:"Création ASBL avant dépôt EP"},{t:"Technique",d:"Fragmentation 3 SSG, 11 sites",sv:"moyenne",m:"Migration Jekyll unifié"},{t:"Humain",d:"Risque épuisement — projet quasi-solo",sv:"haute",m:"100 citoyens formés + partenariats ASBL"},{t:"Politique",d:"Sujets sensibles (corruption, surveillance)",sv:"moyenne",m:"Statique pur = surface attaque nulle"}];
+function rSW(){document.getElementById('swgrid').innerHTML=FO.map(f=>`<div class="cc mint"><div class="csc">${f.s}</div><div class="cn">✦ ${f.t}</div><div class="cd">${f.d}</div></div>`).join('')+ME.map(m=>`<div class="cc red"><div class="cn">⚠ ${m.t} <span class="badge" style="border-color:${PC[m.sv]};color:${PC[m.sv]}">${m.sv}</span></div><div class="cd">${m.d}</div><div class="cm">→ ${m.m}</div></div>`).join('')}
+
+// ═══ ÉCOSYSTÈME ═══
+const EC=[{i:"🏠",n:"ouaisfi.eu",r:"Portail central"},{i:"📚",n:"DOCTech",r:"Fiches Belgique"},{i:"🔭",n:"BXL2030",r:"Prospective BXL"},{i:"📰",n:"11·60 bis",r:"Dossiers actuels"},{i:"📊",n:"BXL2042",r:"Prospective 2042"},{i:"🗃",n:"dl.ouaisfi.eu",r:"Dépôt données"},{i:"🦋",n:"Bluesky",r:"@ouaisfi.eu"},{i:"🤖",n:"GPTPardi",r:"Assistants IA"},{i:"📖",n:"Obsidian",r:"Base savoirs"},{i:"⑂",n:"GitHub",r:"Code source"},{i:"🧪",n:"EARL",r:"Lab citoyen"}];
+const AX=[{i:"👁",n:"Observer",d:"Veille citoyenne structurée et collaborative"},{i:"📝",n:"Documenter",d:"Analyses, dossiers de fond, fiches accessibles"},{i:"🔧",n:"Outiller",d:"Méthodes et outils pour analyse critique"},{i:"🎓",n:"Former",d:"Ateliers-débats, webinaires, sessions"},{i:"🤝",n:"Connecter",d:"Liens société civile, académique, médias"},{i:"📏",n:"Évaluer",d:"Mesure impact qualitatif et quantitatif"}];
+function rEco(){document.getElementById('egrid').innerHTML=EC.map(e=>`<div class="en"><div class="ei">${e.i}</div><div class="enn">${e.n}</div><div class="er">${e.r}</div></div>`).join('');document.getElementById('axgrid').innerHTML=AX.map(a=>`<div class="cc info"><div class="cn">${a.i} ${a.n}</div><div class="cd">${a.d}</div></div>`).join('')}
+
+// ═══ FINANCEMENTS ═══
+const FU=[
+{id:"F01",n:"PCI FWB",mn:"5K",mx:"35K",s:"FWB",p:95,e:"fin fév→mars"},{id:"F02",n:"Erasmus+ KA210",mn:"30K",mx:"60K",s:"UE/BIJ",p:80,e:"5 mars 2026"},
+{id:"F03",n:"CERV Citoyens",mn:"50K",mx:"300K",s:"UE",p:75,e:"Appels annuels"},{id:"F04",n:"Fondation Roi Baudouin",mn:"3,75K",mx:"50K",s:"FRB",p:85,e:"Continu"},
+{id:"F05",n:"Décret OJ",mn:"20K",mx:"100K",s:"FWB",p:60,e:"Variable"},{id:"F06",n:"Crowdfunding",mn:"1K",mx:"25K",s:"Growfunding",p:70,e:"Tout moment"},
+];
+function rFu(){document.getElementById('ftb').innerHTML=FU.map(f=>`<tr><td style="color:var(--mint)">${f.id}</td><td style="font-weight:600;color:var(--t0)">${f.n}</td><td>${f.mn}€</td><td style="color:var(--lil);font-weight:700">${f.mx}€</td><td>${f.s}</td><td><div style="background:var(--b3);border-radius:4px;height:6px"><div style="background:${f.p>80?'var(--mint)':f.p>60?'var(--warn)':'var(--t2)'};height:100%;width:${f.p}%;border-radius:4px"></div></div><span style="font-size:.4rem;color:var(--t2)">${f.p}%</span></td><td style="font-size:.5rem">${f.e}</td></tr>`).join('')}
+
+// ═══ TROIS GUERRES ═══
+const W3=[
+{i:"📣",n:"Guerre d'Opinion",d:"Production de contre-récits documentés. Plaidoyers ECP et STOP Arizona. Médias associatifs. Bluesky #leaddexing. Transformer le récit dominant « fraudeurs » en « système absurde ».",c:"lil"},
+{i:"🧠",n:"Guerre Psychologique",d:"Dé-sidération citoyenne : sortir les gens de l'impuissance apprise. Formation intelligence civile. Ateliers-débats. Rendre visible l'invisible : 1M€/heure d'inactivité forcée.",c:"mint"},
+{i:"⚖",n:"Guerre Juridique",d:"Saturation judiciaire constitutionnelle. Recours Art. 23 (standstill). 4 plaintes CEDH actives. Interpellations citoyennes communales. Objectif : rendre le démantèlement social juridiquement intenable.",c:"info"},
+];
+function rW(){document.getElementById('wgrid').innerHTML=W3.map(w=>`<div class="cc ${w.c}"><div class="cn">${w.i} ${w.n}</div><div class="cd">${w.d}</div></div>`).join('')}
+
+// ═══ ARSENAL JURIDIQUE ═══
+const JU=[
+{n:"Art. 23 Constitution + Standstill",d:"Recours déposé 29/10/2025. Principe de standstill = interdiction de régresser en matière de droits sociaux. Arrêt attendu fin 2026/début 2027. Si annulation → indemnisations rétroactives massives, pas de plan B.",c:"warn"},
+{n:"4 Plaintes CEDH actives",d:"N°237 ETUC: norme salariale viole négociation collective · N°233 FIDH/ATD: mendicité viole art. 16, 30, E · N°203 FEANTSA: logement Flandre · N°195 ERRC: violences policières Gens du Voyage Charleroi.",c:"info"},
+{n:"Interpellation citoyenne communale",d:"Wallonie: art. L1122-14 CDLD, exposé oral 10min en séance publique. BXL: 25 personnes 18+ ans suffisent. Etterbeek: droit d'initiative 750 habitants → proposition au conseil, votée sous 12 mois.",c:"mint"},
+{n:"Consultation populaire communale",d:"Possible dès 16 ans, sans condition de nationalité. Levier sous-utilisé mais juridiquement accessible pour interpeller sur les impacts Arizona locaux.",c:"mint"},
+{n:"Action collective (Code éco. Livre XVII)",d:"Limitée aux litiges consommation/commerciaux. Ne couvre PAS droits sociaux ni droit du travail. ~12 affaires depuis 2014, presque toutes Test-Achats. Angle mort législatif.",c:"red"},
+{n:"Droit de pétition fédéral",d:"25.000 signatures (14.500 Flandre + 8.000 Wallonie + 2.500 BXL). Impact principalement symbolique et agendaire, sans force contraignante.",c:"lil"},
+];
+function rJu(){document.getElementById('jgrid').innerHTML=JU.map(j=>`<div class="cc ${j.c}"><div class="cn">⚖ ${j.n}</div><div class="cd">${j.d}</div></div>`).join('')}
+
+// ═══ EXPORTS ═══
+function dl(c,f,t){const b=new Blob([c],{type:t}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=f;a.click();URL.revokeObjectURL(u);toast('Export '+f)}
+function xJSON(){dl(JSON.stringify(D,null,2),`ouaisfieu_${new Date().toISOString().slice(0,10)}.json`,'application/json')}
+function xCSV(){let c='Type,ID,Titre,Cat,Priorité,Échéance,Statut,Description\n';D.subjects.forEach(s=>c+=`SUJET,${s.id},"${s.title}",${s.cat},${s.priority},${s.deadline},${s.status},"${(s.desc||'').replace(/"/g,'""')}"\n`);D.actions.forEach(a=>c+=`ACTION,${a.id},"${a.title}",${a.type},—,${a.deadline},${a.status},—\n`);dl(c,`ouaisfieu_${new Date().toISOString().slice(0,10)}.csv`,'text/csv')}
+function xMD(){let m=`# ouaisfieu War Room — ${new Date().toLocaleDateString('fr-BE')}\n\n## 🔴 Urgences\n\n`;D.subjects.filter(s=>s.priority==='critique'||s.priority==='haute').forEach(s=>m+=`### ${s.priority==='critique'?'🔴':'🟠'} ${s.title}\n- **${s.cat}** · ${s.deadline||'—'} · ${s.status}\n- ${s.desc}\n\n`);m+=`## 📋 Sujets\n\n| P | Titre | Cat | Éch | Statut |\n|---|-------|-----|-----|--------|\n`;D.subjects.forEach(s=>m+=`| ${s.priority} | ${s.title} | ${s.cat} | ${s.deadline||'—'} | ${s.status} |\n`);m+=`\n## ⚡ Actions\n\n`;D.actions.forEach(a=>m+=`- **${a.title}** (${a.type}) — ${a.deadline||'—'} — ${a.status}\n`);m+=`\n## 📝 Notes\n\n`;D.notes.forEach(n=>m+=`### ${n.title}\n${n.content}\n\n---\n\n`);dl(m,`ouaisfieu_${new Date().toISOString().slice(0,10)}.md`,'text/markdown')}
+function xHTML(){dl(document.documentElement.outerHTML,`ouaisfieu_warroom_${new Date().toISOString().slice(0,10)}.html`,'text/html')}
+function xSEO(){dl(JSON.stringify({"@context":"https://schema.org","@type":"WebApplication",name:"ouaisfieu War Room",description:"Poste de commandement citoyen",url:"https://ouaisfi.eu/warroom",dateModified:new Date().toISOString(),keywords:D.subjects.map(s=>s.title).join(', '),geo:{"@type":"GeoCoordinates",latitude:50.8503,longitude:4.3517}},null,2),`ouaisfieu_seo_${new Date().toISOString().slice(0,10)}.json`,'application/ld+json')}
+function xDOCX(){let h=`<html><head><meta charset="utf-8"><style>body{font-family:Calibri;font-size:10pt}h1{color:#48bb78}h2{color:#9f7aea}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:4px;font-size:9pt}th{background:#eee}</style></head><body><h1>ouaisfieu War Room</h1>`;h+=`<h2>Sujets</h2><table><tr><th>P</th><th>Titre</th><th>Cat</th><th>Éch</th><th>Statut</th><th>Desc</th></tr>`;D.subjects.forEach(s=>h+=`<tr><td>${s.priority}</td><td><b>${s.title}</b></td><td>${s.cat}</td><td>${s.deadline||'—'}</td><td>${s.status}</td><td>${s.desc}</td></tr>`);h+='</table></body></html>';const b=new Blob([h],{type:'application/vnd.ms-word'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`ouaisfieu_${new Date().toISOString().slice(0,10)}.doc`;a.click();URL.revokeObjectURL(u);toast('Export DOCX')}
+function xPDF(){window.print();toast('Impression/PDF')}
+function xALL(){xJSON();setTimeout(xCSV,500);setTimeout(xMD,1000);setTimeout(xSEO,1500);toast('Export complet...')}
+
+// ═══ INIT ═══
+function init(){
+mC=document.getElementById('mx');if(mC)mX=mC.getContext('2d');
+const t=(()=>{try{return localStorage.getItem('ouf_t')}catch(e){return null}})();
+sT(t||'dark');
+document.getElementById('cmd')?.addEventListener('click',e=>{if(e.target.id==='cmd')cCmd()});
+document.getElementById('ci')?.addEventListener('input',e=>uCR(e.target.value));
+document.getElementById('emod')?.addEventListener('click',e=>{if(e.target.id==='emod')cMod()});
+uClk();setInterval(uClk,1000);
+rUrg();rSt();rTl();rF();rB();rCmp();rSubj();rAct();rSrc();rNote();rSM();rPJ();rAZ();rSW();rEco();rFu();rW();rJu();uAS();
+document.querySelectorAll('.pnl').forEach((p,i)=>{p.style.opacity='0';p.style.transform='translateY(16px)';p.style.transition='opacity .4s ease,transform .4s ease';setTimeout(()=>{p.style.opacity='1';p.style.transform='translateY(0)'},80+i*50)});
+// Desktop nav highlighting
+if(window.IntersectionObserver){const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;document.querySelectorAll('.snav a').forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+id))}})},{threshold:.3});document.querySelectorAll('.pnl[id]').forEach(p=>obs.observe(p))}
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
