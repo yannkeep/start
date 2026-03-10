@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards - Apprentissage</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1a1f2e;
+      --bg-secondary: #232938;
+      --bg-card: #2a3142;
+
+      --green-50: #f0fdf4;
+      --green-100: #dcfce7;
+      --green-200: #bbf7d0;
+      --green-300: #86efac;
+      --green-400: #4ade80;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+
+      --lilac-50: #faf5ff;
+      --lilac-100: #f3e8ff;
+      --lilac-200: #e9d5ff;
+      --lilac-300: #d8b4fe;
+      --lilac-400: #c084fc;
+      --lilac-500: #a855f7;
+      --lilac-600: #9333ea;
+
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, #1e2535 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green-400), var(--lilac-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .controls-top {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 2px solid rgba(134, 239, 172, 0.2);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: rgba(134, 239, 172, 0.1);
+      border-color: var(--green-400);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green-500), var(--green-600));
+      border-color: var(--green-600);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--green-600), var(--green-600));
+      transform: translateY(-2px);
+    }
+
+    .progress-section {
+      background: var(--bg-secondary);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(134, 239, 172, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-400), var(--lilac-400));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .flashcard-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      margin-bottom: 32px;
+      min-height: 400px;
+    }
+
+    .flashcard {
+      width: 100%;
+      max-width: 700px;
+      height: 450px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, var(--bg-card) 0%, #2d3548 100%);
+      border: 2px solid rgba(134, 239, 172, 0.2);
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #2d3548 0%, var(--bg-card) 100%);
+      border: 2px solid rgba(192, 132, 252, 0.2);
+      transform: rotateY(180deg);
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    .card-front .card-label {
+      background: rgba(134, 239, 172, 0.15);
+      color: var(--green-400);
+    }
+
+    .card-back .card-label {
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--lilac-400);
+    }
+
+    .card-content {
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+
+    .card-hint {
+      margin-top: 32px;
+      font-size: 14px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .controls-bottom {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--bg-card);
+      border: 2px solid rgba(134, 239, 172, 0.2);
+      color: var(--text-primary);
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(134, 239, 172, 0.1);
+      border-color: var(--green-400);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .mastery-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(134, 239, 172, 0.1);
+    }
+
+    .mastery-label {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .mastery-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mastery-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: white;
+    }
+
+    .mastery-btn.again {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .mastery-btn.hard {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .mastery-btn.good {
+      background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    }
+
+    .mastery-btn.easy {
+      background: linear-gradient(135deg, var(--lilac-500), var(--lilac-600));
+    }
+
+    .mastery-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(134, 239, 172, 0.1);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green-400), var(--lilac-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .file-input-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 2px dashed rgba(192, 132, 252, 0.3);
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .file-input-label:hover {
+      background: rgba(192, 132, 252, 0.1);
+      border-color: var(--lilac-400);
+    }
+
+    #csv-file {
+      display: none;
+    }
+
+    .completion-screen {
+      text-align: center;
+      padding: 48px;
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .completion-screen h2 {
+      font-size: 36px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green-400), var(--lilac-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .completion-screen p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 24px 16px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .flashcard {
+        height: 380px;
+      }
+
+      .card-content {
+        font-size: 20px;
+      }
+
+      .card-face {
+        padding: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .flashcard {
+        height: 320px;
+      }
+
+      .card-content {
+        font-size: 18px;
+      }
+
+      .controls-bottom {
+        flex-direction: column;
+      }
+
+      .nav-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 Flashcards</h1>
+      <p class="subtitle">Apprentissage par répétition espacée</p>
+    </header>
+
+    <div class="controls-top">
+      <label for="csv-file" class="file-input-label">
+        <span>📁</span>
+        <span id="file-label">Importer un CSV</span>
+      </label>
+      <input type="file" id="csv-file" accept=".csv">
+      <button class="btn" id="shuffle-btn">🔀 Mélanger</button>
+      <button class="btn" id="reset-btn">🔄 Réinitialiser</button>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-info">
+        <span class="progress-text" id="card-counter">1 / 62</span>
+        <span class="progress-text" id="mastery-counter">Maîtrisées : 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="flashcard-wrapper">
+      <div class="flashcard" id="flashcard">
+        <div class="card-face card-front">
+          <div class="card-label">Question</div>
+          <div class="card-content" id="question-text"></div>
+          <div class="card-hint">Cliquez pour révéler la réponse</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">Réponse</div>
+          <div class="card-content" id="answer-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-bottom">
+      <button class="nav-btn" id="prev-btn">← Précédente</button>
+      <button class="btn-primary btn" id="flip-btn">Retourner</button>
+      <button class="nav-btn" id="next-btn">Suivante →</button>
+    </div>
+
+    <div class="mastery-section" id="mastery-section" style="display: none;">
+      <div class="mastery-label">Comment avez-vous trouvé cette carte ?</div>
+      <div class="mastery-buttons">
+        <button class="mastery-btn again" data-level="0">À revoir</button>
+        <button class="mastery-btn hard" data-level="1">Difficile</button>
+        <button class="mastery-btn good" data-level="2">Correct</button>
+        <button class="mastery-btn easy" data-level="3">Facile</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="total-cards">62</div>
+        <div class="stat-label">Cartes totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="studied-count">0</div>
+        <div class="stat-label">Étudiées</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="mastered-count">0</div>
+        <div class="stat-label">Maîtrisées</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_CARDS = [
+      ["Quel climat politique entoure l'éducation populaire en Belgique francophone depuis 2022 ?", "Un climat tendu, marqué par des attaques du pilier libéral (bleu) contre des associations liées au pilier socialiste (rouge)."],
+      ["Dans le système de noms de code du document, qui les termes \"Rouges\" et \"Bleus\" désignent-ils respectivement ?", "Les \"Rouges\" désignent les acteurs du pilier socialiste et les \"Bleus\" ceux du pilier libéral."],
+      ["Quel archétype représente \"Major Bleu\" dans l'analyse ?", "Un leader politique important du camp libéral (Mouvement Réformateur)."],
+      ["Quel archétype représente \"Capitaine Rouge\" dans l'analyse ?", "Une représentante importante d'une association du camp socialiste."],
+      ["Lors de l'audition parlementaire de juin 2024, quel a été l'élément déclencheur de l'affrontement entre Major Bleu et Capitaine Rouge ?", "Major Bleu a grossièrement interrompu Capitaine Rouge pour la questionner sur son \"attachement à un parti politique en particulier\"."],
+      ["Quelle a été la principale accusation de Major Bleu envers l'association de Capitaine Rouge lors de l'audition ?", "Il l'a accusée d'utiliser l'argent public pour financer de manière déguisée le Parti Socialiste (PS)."],
+      ["Comment Capitaine Rouge a-t-elle décrit la relation de son association avec le PS ?", "Elle a affirmé que l'association est structurellement indépendante bien qu'idéologiquement proche, faisant partie de \"l'action commune socialiste\"."],
+      ["Selon le document, s'attaquer à une figure de l'éducation permanente revient à jeter le discrédit sur un secteur entier, qui compte plus de _____ associations reconnues.", "300"],
+      ["Quelle est la mission du secteur de l'éducation permanente, que Capitaine Rouge a réaffirmée après l'incident ?", "Porter un projet politique au sens noble, c'est-à-dire une vision de la société, et ce pour toutes les tendances démocratiques."],
+      ["Quel narratif le camp libéral développe-t-il entre 2022 et 2023 concernant les associations de gauche ?", "Le récit d'une \"galaxie socialiste\" d'ASBL qui militeraient en réalité pour le Parti socialiste."],
+      ["Quelle accusation paradoxale Major Bleu a-t-il portée contre certains mouvements antifascistes ?", "Il les a qualifiés de \"structures aux procédés fascistes\"."],
+      ["En 2023, de quoi Major Bleu a-t-il accusé les campagnes des associations de lutte contre la pauvreté ?", "De \"maintenir les gens dans l'assistanat\"."],
+      ["Quelle a été la polémique soulevée par Major Bleu lors du festival de Dour à l'été 2025 ?", "Il a accusé une ASBL de prévention de \"banaliser la consommation de drogues\" avec de l'argent public."],
+      ["Quelle information factuelle Major Bleu a-t-il déformée concernant l'action de l'ASBL au festival de Dour ?", "Il a laissé entendre qu'elle distribuait massivement des kits de sniff, alors que seule une paille était remise aux personnes volontaires dans un cadre préventif."],
+      ["Après les élections de 2024, quelles mesures concrètes la nouvelle majorité MR–Engagés a-t-elle prises qui affectent le monde associatif ?", "Elle a adopté un décret-programme budgétaire comportant des coupes sévères, dont environ 13 millions d'euros pour la culture et l'éducation permanente."],
+      ["Comment l'opposition de gauche a-t-elle qualifié les coupes budgétaires du gouvernement MR-Engagés ?", "Comme une attaque directe contre le contre-pouvoir et les associations critiques."],
+      ["Quelle a été la réaction de la société civile face aux mesures d'austérité de 2025 ?", "Une mobilisation massive, incluant une manifestation de 80 000 à 140 000 personnes le 14 octobre 2025."],
+      ["Quelle tactique rhétorique un député de droite a-t-il utilisée pour minimiser la manifestation d'octobre 2025 ?", "Il a déclaré entendre surtout \"le signal des millions de personnes qui n'étaient pas dans la rue\", prétendant y voir un soutien silencieux."],
+      ["Qu'est-ce que la \"pilarisation\" dans le contexte historique belge ?", "La structuration de la société autour de grands piliers idéologiques (socialiste, catholique, libéral), chacun avec son propre réseau d'organisations."],
+      ["Qu'est-ce que l'\"Action commune socialiste\" ?", "L'écosystème d'organisations (syndicat, mutualité, associations) gravitant autour du Parti socialiste et partageant des valeurs communes."],
+      ["Citez deux organisations majeures faisant partie de l'écosystème du pilier socialiste.", "La FGTB (syndicat) et Solidaris (mutualité)."],
+      ["Qu'est-ce qu'une \"passerelle rouge\" selon le document ?", "Le passage de personnalités entre des postes de direction dans la société civile socialiste (syndicat, mutualité) et des mandats politiques au sein du PS."],
+      ["L'exemple du \"Colonel Rouge 2\" (mutualiste devenu ministre puis retourné à la mutualité) illustre le _____ entre le PS et son vivier associatif.", "va-et-vient"],
+      ["Le pilier libéral (bleu) possède-t-il aussi son propre réseau d'organisations ?", "Oui, bien qu'il soit décrit comme moins puissant et moins nombreux que celui du pilier socialiste (ex: CGSLB, Âgo)."],
+      ["Selon l'analyse, l'affiliation historique d'une association au pilier socialiste l'empêche-t-elle d'être critique envers le PS ?", "Non, le document précise que l'affiliation n'empêche pas la critique interne et l'autonomie d'action."],
+      ["Quel double objectif le Mouvement Réformateur (MR) poursuit-il en attaquant les \"satellites\" du PS ?", "S'imposer comme champion de la bonne gouvernance et consolider l'aile droite de son électorat."],
+      ["Qu'est-ce que la \"loi Quintin\" proposée en 2025 ?", "Un projet de loi libéral visant à permettre l'interdiction administrative d'associations qui causeraient un \"trouble à la sécurité\"."],
+      ["Quelle est la position du parti centriste Les Engagés vis-à-vis du monde associatif ?", "Une position plus modérée que le MR, prônant une complémentarité et une collaboration entre l'État et le secteur associatif."],
+      ["Comment l'accord de majorité de 2024 entre le MR et Les Engagés reflète-t-il leurs positions divergentes sur les ASBL ?", "Le MR a obtenu une phrase musclée en proclamation, tandis que Les Engagés ont rédigé le reste du chapitre de manière plus rassurante."],
+      ["Face aux attaques libérales, quel est l'enjeu principal pour le Parti Socialiste (PS) ?", "Capitaliser sur le mécontentement social en se posant en rempart face aux \"libéraux austéritaires\"."],
+      ["Comment la montée du PTB (gauche radicale) influence-t-elle la stratégie du PS ?", "Elle pousse le PS à durcir son ton et à soutenir plus activement les mobilisations sociales pour ne pas être débordé sur sa gauche."],
+      ["Tactique du pilier bleu : Interrompre un adversaire en plein débat officiel pour le déstabiliser et l'empêcher de dérouler son message.", "L'interpellation agressive en forum public."],
+      ["Tactique du pilier bleu : Remettre en cause l'indépendance d'une association en l'assimilant à un parti politique pour invalider son propos.", "L'accusation de partialité et de politisation."],
+      ["Tactique du pilier bleu : Associer un adversaire à des termes repoussoirs comme \"extrémiste\" ou \"fasciste\" pour le discréditer moralement.", "Le dénigrement par amalgames et étiquettes infamantes."],
+      ["Tactique du pilier bleu : Réduire systématiquement un enjeu social à une question d'argent public gaspillé.", "La focalisation sur le coût financier."],
+      ["Tactique du pilier bleu : Présenter des faits de manière biaisée, s'indigner sur cette base, quitte à corriger plus tard une fois l'émotion propagée.", "La déformation et le \"fake outrange\"."],
+      ["Tactique du pilier bleu : Prétendre qu'une contestation sociale est ultra-minoritaire ou ne représente pas la \"majorité silencieuse\".", "La minimisation/dévalorisation de la contestation."],
+      ["Tactique du pilier bleu : Utiliser le pouvoir exécutif pour couper les financements ou complexifier les règles afin d'affaiblir des structures adverses.", "L'arme budgétaire et réglementaire."],
+      ["Quel est l'objectif final de la \"bataille culturelle\" menée par le pilier bleu, selon le document ?", "Préparer l'opinion publique pour faire passer progressivement des lois restrictives envers le monde associatif."],
+      ["Quelle est la première piste d'action proposée aux milieux associatifs pour résister aux offensives politiques ?", "Rester unis et solidaires entre secteurs et piliers pour faire front commun."],
+      ["Face aux attaques jouant sur la méconnaissance du public, quelle stratégie de communication les associations doivent-elles renforcer ?", "La transparence et l'information, en montrant concrètement à quoi sert le financement public."],
+      ["En plus de la mobilisation de rue, quels contre-pouvoirs institutionnels les associations sont-elles encouragées à utiliser ?", "Le terrain juridique et institutionnel (saisir le Conseil d'État, interpeller les instituts des droits humains, etc.)."],
+      ["Quel type de réformes internes le monde associatif est-il invité à mener pour enlever des munitions à ses adversaires ?", "Limiter le cumul de mandats, ouvrir ses instances, évaluer objectivement ses projets et moderniser sa communication."],
+      ["Selon une militante citée, quelle arme est importante face aux tentatives de découragement ?", "La joie et l'enthousiasme militant, pour ne pas céder à la stratégie d'épuisement de l'adversaire."],
+      ["Quel débat fondamental les tensions politiques autour de l'éducation populaire remettent-elles sur la place publique ?", "Le débat sur le modèle de démocratie souhaité : confinée aux élus ou vivante avec des contre-pouvoirs citoyens organisés."],
+      ["Quel était le contexte de l'audition de juin 2024 avant l'intervention de Major Bleu ?", "Un esprit a priori constructif, où les échanges étaient \"sereins et courtois\"."],
+      ["En Belgique, l'éducation populaire s'inscrit dans la continuité des mouvements _____ et vise l'émancipation citoyenne.", "ouvriers"],
+      ["Quel organisme de presse a rapporté l'incident de l'audition sous le titre \"Le MR remet en cause l'éducation permanente...\" ?", "RTL Info (via l'agence Belga)."],
+      ["Quel est le nom de l'association d'éducation permanente libérale citée en exemple ?", "Âgo."],
+      ["Quel est le nom du syndicat chrétien et du mouvement ouvrier chrétien, faisant partie du pilier social-chrétien ?", "La CSC (syndicat) et le MOC (mouvement)."],
+      ["Quel argument est utilisé par le pilier bleu pour justifier l'existence de \"passerelles rouges\" ?", "Elles alimentent un discours de suspicion sur un \"clan socialiste\", une confusion des genres ou un \"État PS\"."],
+      ["Le document suggère que l'offensive du pilier bleu a eu un mérite involontaire, lequel ?", "Celui de remettre sur la place publique le débat sur le rôle des associations et des contre-pouvoirs dans la démocratie."],
+      ["En réaction à la stigmatisation, quelle a été la position des fédérations d'employeurs du non-marchand comme la FESEFA ?", "Elles ont dénoncé la présentation du secteur comme un poids et rappelé son apport au bien commun."],
+      ["L'initiative de créer un Observatoire des Libertés Associatives (OLA) vise à surveiller les législations et à ____ en cas de dérapage.", "alerter"],
+      ["Quelle coalition gouvernementale a été formée en Wallonie/FWB après les élections de 2024 ?", "Une coalition MR–Engagés, sans les socialistes."],
+      ["Qu'est-ce qui a été tourné en ridicule par les commentateurs après la grande manifestation de 2025 ?", "Le procédé orwellien d'un député prétendant que l'absence de millions de personnes dans la rue valait soutien au gouvernement."],
+      ["Quel est le nom de l'association d'éducation permanente liée au syndicat FGTB ?", "Le CEPAG (Centre d'Éducation Populaire André Genot)."],
+      ["Quelle association culturelle, citée à plusieurs reprises comme une cible du MR, fait partie du pilier socialiste ?", "PAC (Présence et Action Culturelles)."],
+      ["L'incident du festival de Dour illustre la stratégie du coup d'éclat médiatique, qui recentre le débat sur _____ et la morale, au détriment des faits.", "l'émotion"],
+      ["En quoi l'accusation de Major Bleu sur le financement du PS est-elle une tactique de dévoiement du débat ?", "Elle évite de discuter du fond (le travail de l'ASBL) pour se concentrer sur son étiquette politique supposée."],
+      ["Pourquoi la tactique de focalisation sur le coût financier est-elle considérée comme populiste et efficace ?", "Car elle exploite la morale fiscale et il est toujours difficile de justifier des subventions face à l'argument du \"contribuable floué\"."],
+      ["La conclusion affirme que c'est dans _____ que se renforcent les solidarités, suggérant que la période 2022-2025 pourrait être un électrochoc salutaire.", "l'adversité"]
+    ];
+
+    class FlashcardApp {
+      constructor() {
+        this.cards = [];
+        this.currentIndex = 0;
+        this.isFlipped = false;
+        this.progress = {};
+
+        this.loadFromLocalStorage();
+        this.init();
+      }
+
+      init() {
+        if (this.cards.length === 0) {
+          this.cards = DEFAULT_CARDS.map((card, index) => ({
+            id: index,
+            question: card[0],
+            answer: card[1]
+          }));
+          this.saveToLocalStorage();
+        }
+
+        this.attachEventListeners();
+        this.updateCard();
+        this.updateStats();
+      }
+
+      attachEventListeners() {
+        document.getElementById('flashcard').addEventListener('click', () => this.flip());
+        document.getElementById('flip-btn').addEventListener('click', () => this.flip());
+        document.getElementById('prev-btn').addEventListener('click', () => this.previous());
+        document.getElementById('next-btn').addEventListener('click', () => this.next());
+        document.getElementById('shuffle-btn').addEventListener('click', () => this.shuffle());
+        document.getElementById('reset-btn').addEventListener('click', () => this.reset());
+
+        document.getElementById('csv-file').addEventListener('change', (e) => this.handleFileUpload(e));
+
+        document.querySelectorAll('.mastery-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const level = parseInt(e.target.dataset.level);
+            this.recordMastery(level);
+          });
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') this.previous();
+          if (e.key === 'ArrowRight') this.next();
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.flip();
+          }
+        });
+      }
+
+      updateCard() {
+        const card = this.cards[this.currentIndex];
+        document.getElementById('question-text').textContent = card.question;
+        document.getElementById('answer-text').textContent = card.answer;
+        document.getElementById('card-counter').textContent = `${this.currentIndex + 1} / ${this.cards.length}`;
+
+        const progressPercent = ((this.currentIndex + 1) / this.cards.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+        document.getElementById('prev-btn').disabled = this.currentIndex === 0;
+        document.getElementById('next-btn').disabled = this.currentIndex === this.cards.length - 1;
+
+        if (this.isFlipped) {
+          document.getElementById('flashcard').classList.remove('flipped');
+          this.isFlipped = false;
+        }
+
+        document.getElementById('mastery-section').style.display = 'none';
+      }
+
+      flip() {
+        this.isFlipped = !this.isFlipped;
+        document.getElementById('flashcard').classList.toggle('flipped');
+        document.getElementById('mastery-section').style.display = this.isFlipped ? 'block' : 'none';
+      }
+
+      previous() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.updateCard();
+        }
+      }
+
+      next() {
+        if (this.currentIndex < this.cards.length - 1) {
+          this.currentIndex++;
+          this.updateCard();
+        } else {
+          this.showCompletion();
+        }
+      }
+
+      shuffle() {
+        for (let i = this.cards.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+        }
+        this.currentIndex = 0;
+        this.updateCard();
+      }
+
+      reset() {
+        this.currentIndex = 0;
+        this.progress = {};
+        this.saveToLocalStorage();
+        this.updateCard();
+        this.updateStats();
+      }
+
+      recordMastery(level) {
+        const card = this.cards[this.currentIndex];
+        if (!this.progress[card.id]) {
+          this.progress[card.id] = { level: 0, count: 0 };
+        }
+        this.progress[card.id].level = level;
+        this.progress[card.id].count++;
+        this.saveToLocalStorage();
+        this.updateStats();
+        this.next();
+      }
+
+      updateStats() {
+        document.getElementById('total-cards').textContent = this.cards.length;
+
+        const studied = Object.keys(this.progress).length;
+        document.getElementById('studied-count').textContent = studied;
+
+        const mastered = Object.values(this.progress).filter(p => p.level >= 2).length;
+        document.getElementById('mastered-count').textContent = mastered;
+        document.getElementById('mastery-counter').textContent = `Maîtrisées : ${mastered}`;
+      }
+
+      showCompletion() {
+        const wrapper = document.querySelector('.flashcard-wrapper');
+        wrapper.innerHTML = `
+          <div class="completion-screen">
+            <h2>✨ Deck terminé !</h2>
+            <p>Vous avez parcouru toutes les cartes</p>
+            <div class="stats-grid" style="max-width: 400px; margin: 24px auto;">
+              <div class="stat-card">
+                <div class="stat-value">${this.cards.length}</div>
+                <div class="stat-label">Cartes étudiées</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">${Object.values(this.progress).filter(p => p.level >= 2).length}</div>
+                <div class="stat-label">Maîtrisées</div>
+              </div>
+            </div>
+            <button class="btn-primary btn" id="restart-btn">Recommencer</button>
+          </div>
+        `;
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+          this.currentIndex = 0;
+          wrapper.innerHTML = `
+            <div class="flashcard" id="flashcard">
+              <div class="card-face card-front">
+                <div class="card-label">Question</div>
+                <div class="card-content" id="question-text"></div>
+                <div class="card-hint">Cliquez pour révéler la réponse</div>
+              </div>
+              <div class="card-face card-back">
+                <div class="card-label">Réponse</div>
+                <div class="card-content" id="answer-text"></div>
+              </div>
+            </div>
+          `;
+          document.getElementById('flashcard').addEventListener('click', () => this.flip());
+          this.updateCard();
+        });
+      }
+
+      handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const csvText = event.target.result;
+          const parsedCards = this.parseCSV(csvText);
+
+          if (parsedCards.length > 0) {
+            this.cards = parsedCards.map((card, index) => ({
+              id: Date.now() + index,
+              question: card[0],
+              answer: card[1]
+            }));
+            this.currentIndex = 0;
+            this.progress = {};
+            this.saveToLocalStorage();
+            this.updateCard();
+            this.updateStats();
+
+            document.getElementById('file-label').textContent = `${file.name} (${parsedCards.length} cartes)`;
+          } else {
+            alert('Aucune carte valide trouvée dans le fichier CSV');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      parseCSV(text) {
+        const lines = text.trim().split('\n');
+        const cards = [];
+
+        for (const line of lines) {
+          let question = '', answer = '';
+          let inQuotes = false;
+          let current = '';
+          let fieldIndex = 0;
+
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+
+            if (char === '"') {
+              if (inQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = !inQuotes;
+              }
+            } else if (char === ',' && !inQuotes) {
+              if (fieldIndex === 0) {
+                question = current.trim();
+                current = '';
+                fieldIndex++;
+              }
+            } else {
+              current += char;
+            }
+          }
+
+          answer = current.trim();
+
+          if (question && answer) {
+            cards.push([question, answer]);
+          }
+        }
+
+        return cards;
+      }
+
+      saveToLocalStorage() {
+        localStorage.setItem('flashcards', JSON.stringify(this.cards));
+        localStorage.setItem('progress', JSON.stringify(this.progress));
+        localStorage.setItem('currentIndex', this.currentIndex);
+      }
+
+      loadFromLocalStorage() {
+        const savedCards = localStorage.getItem('flashcards');
+        const savedProgress = localStorage.getItem('progress');
+        const savedIndex = localStorage.getItem('currentIndex');
+
+        if (savedCards) {
+          try {
+            this.cards = JSON.parse(savedCards);
+          } catch (e) {
+            this.cards = [];
+          }
+        }
+
+        if (savedProgress) {
+          try {
+            this.progress = JSON.parse(savedProgress);
+          } catch (e) {
+            this.progress = {};
+          }
+        }
+
+        if (savedIndex) {
+          this.currentIndex = parseInt(savedIndex) || 0;
+        }
+      }
+    }
+
+    new FlashcardApp();
+  </script>
+</body>
+</html>
