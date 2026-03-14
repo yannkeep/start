@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographie : Les Angles Morts de la Démocratie Belge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+        .vibrant-card {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 2rem;
+            border-top: 5px solid #3B82F6;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .vibrant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .border-top-amber { border-top-color: #F59E0B; }
+        .border-top-rose { border-top-color: #EF4444; }
+        .border-top-emerald { border-top-color: #10B981; }
+        
+        .number-stat {
+            background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+    <!-- Chosen Palette: Brilliant Blues & Energetic Accents (Hex: #1E3A8A, #3B82F6, #F59E0B, #EF4444, #10B981, #F8FAFC) -->
+    <!-- Application Structure Plan: A linear, highly visual scrollable infographic designed to break down a complex academic report into digestible sections. It starts with the core structural problem (Particracy), moves into specific symptoms (Cabinet sizes and Revolving Doors/Pantouflage), summarizes the systemic impact via a diagnostic radar, and concludes with clear, actionable solutions. This flow mimics a problem-diagnosis-prescription narrative. -->
+    <!-- Visualization & Content Choices: 
+         1. Power Imbalance -> Goal: Compare -> Bar Chart (Chart.js) -> Contrasts theoretical vs. actual power clearly.
+         2. Cabinet Sizes -> Goal: Compare -> Horizontal Bar Chart (Chart.js) -> Highlights the disproportionate size of Belgian cabinets vs neighbors.
+         3. Pantouflage Destinations -> Goal: Inform/Proportions -> Doughnut Chart (Chart.js) -> Shows where politicians go post-mandate.
+         4. Systemic Diagnosis -> Goal: Compare/Relationships -> Radar Chart (Chart.js) -> Maps multiple democratic health metrics against an ideal.
+         5. Solutions -> Goal: Organize/Process -> HTML/CSS Flexbox Cards -> Steps to reform, strictly no SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <header class="bg-slate-900 text-white py-20 px-4 sm:px-6 lg:px-8 border-b-8 border-blue-500">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="text-6xl mb-6">&#127963;</div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">Démocratie sous Influence</h1>
+            <p class="text-xl md:text-2xl text-blue-200 font-light max-w-3xl mx-auto leading-relaxed">
+                Radiographie des angles morts institutionnels en Belgique : de la particratie consulaire au pantouflage systémique.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 flex items-center">
+                    <span class="text-blue-600 mr-3">&#9878;</span> La Particratie Consulaire
+                </h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-4xl">
+                    Le modèle démocratique repose théoriquement sur la séparation des pouvoirs. En Belgique, la réalité révèle une concentration extrême du pouvoir aux mains des présidences de partis politiques. Ces "conclaves" dictent l'agenda, transformant le Parlement en simple chambre d'enregistrement et vidant le débat public de sa substance.
+                </p>
+            </div>
+
+            <div class="vibrant-card grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">L'Inversion du Pouvoir</h3>
+                    <p class="text-slate-600 mb-6">
+                        Ce graphique illustre l'écart critique entre l'influence constitutionnelle théorique et le pouvoir décisionnel réel observé. L'hyper-discipline de vote empêche les élus de sanctionner l'exécutif, créant une véritable "particratie".
+                    </p>
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <div class="text-4xl font-extrabold number-stat mb-2">99.8%</div>
+                        <p class="text-sm font-semibold text-blue-900 uppercase tracking-wide">Taux de loyauté parlementaire</p>
+                        <p class="text-xs text-slate-500 mt-2">Pourcentage de votes au Parlement s'alignant strictement sur les directives du siège du parti, illustrant l'absence de libre arbitre des députés.</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="particratieChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="mb-8 text-right">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 flex items-center justify-end">
+                    L'Anomalie des Cabinets Ministériels <span class="text-amber-500 ml-3">&#128188;</span>
+                </h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-4xl ml-auto">
+                    Un autre angle mort majeur réside dans la taille démesurée des cabinets ministériels (la "cabinétocratie"). Ces conseillers non élus, nommés politiquement, exercent un pouvoir phénoménal sur l'administration publique, créant une opacité décisionnelle structurelle et court-circuitant l'expertise neutre de l'État.
+                </p>
+            </div>
+
+            <div class="vibrant-card border-top-amber grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="order-2 lg:order-1 chart-container">
+                    <canvas id="cabinetsChart"></canvas>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Une Exception Européenne</h3>
+                    <p class="text-slate-600 mb-6">
+                        Comparée à ses voisins, la Belgique entretient une armée de "cabinétards". Cette hypertrophie dilue la responsabilité : les véritables rédacteurs des lois sont invisibles et intouchables électoralement.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center bg-amber-50 p-3 rounded text-amber-900">
+                            <span class="text-xl mr-3 font-bold">&#9888;</span>
+                            <span class="text-sm font-semibold">Risque de politisation de l'administration</span>
+                        </div>
+                        <div class="flex items-center bg-amber-50 p-3 rounded text-amber-900">
+                            <span class="text-xl mr-3 font-bold">&#9888;</span>
+                            <span class="text-sm font-semibold">Gouffre financier pour les finances publiques</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 flex items-center">
+                    <span class="text-rose-500 mr-3">&#8644;</span> Pantouflage et Conflits d'Intérêts
+                </h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-4xl">
+                    Le phénomène des "portes tournantes" (revolving doors) décrit le passage direct de responsables politiques ou hauts fonctionnaires vers le secteur privé qu'ils étaient chargés de réguler. Sans période de carence stricte (cooling-off period), la frontière entre intérêt général et intérêts privés devient poreuse.
+                </p>
+            </div>
+
+            <div class="vibrant-card border-top-rose grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Destinations Post-Mandat</h3>
+                    <p class="text-slate-600 mb-6">
+                        L'analyse des trajectoires des anciens ministres et chefs de cabinet révèle une concentration inquiétante vers des secteurs hautement régulés. La monétisation du carnet d'adresses et de l'information privilégiée ("délit d'initié informationnel") menace l'intégrité de l'État.
+                    </p>
+                    <ul class="text-sm text-slate-600 space-y-3">
+                        <li class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <span class="font-semibold text-slate-800">Secteur Financier</span>
+                            <span class="bg-rose-100 text-rose-800 py-1 px-2 rounded-full text-xs font-bold">Risque Élevé</span>
+                        </li>
+                        <li class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <span class="font-semibold text-slate-800">Énergie & Climat</span>
+                            <span class="bg-rose-100 text-rose-800 py-1 px-2 rounded-full text-xs font-bold">Risque Élevé</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="font-semibold text-slate-800">Consultance & Lobbying</span>
+                            <span class="bg-amber-100 text-amber-800 py-1 px-2 rounded-full text-xs font-bold">Risque Modéré</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pantouflageChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-900 rounded-[2rem] p-8 md:p-12 text-white shadow-2xl overflow-hidden">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 flex justify-center items-center">
+                    <span class="text-blue-400 mr-3">&#128269;</span> Diagnostic : L'État de Santé Démocratique
+                </h2>
+                <p class="text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
+                    Le radar ci-dessous synthétise la performance du système belge face aux standards d'une démocratie mature. Les distorsions révèlent les urgences institutionnelles.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="chart-container w-full" style="height: 400px;">
+                    <canvas id="diagnosticChart"></canvas>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+                        <h4 class="text-xl font-bold text-amber-400 mb-2">Déficit de Transparence</h4>
+                        <p class="text-sm text-slate-300">L'absence de registres de lobbying contraignants et le secret entourant les négociations partisanes privent le citoyen du suivi de la décision.</p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+                        <h4 class="text-xl font-bold text-rose-400 mb-2">Crise de Responsabilité (Accountability)</h4>
+                        <p class="text-sm text-slate-300">Les citoyens ne peuvent pas sanctionner directement les présidents de partis qui détiennent le pouvoir réel, rompant le lien de responsabilité électorale.</p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+                        <h4 class="text-xl font-bold text-blue-400 mb-2">Asymétrie des Pouvoirs</h4>
+                        <p class="text-sm text-slate-300">Le pouvoir exécutif (dominé par la particratie) a totalement absorbé la fonction de contrôle du pouvoir législatif.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 flex justify-center items-center">
+                    <span class="text-emerald-500 mr-3">&#128161;</span> Perspectives & Solutions
+                </h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto">
+                    Sortir de l'ornière nécessite des réformes structurelles profondes. Voici la feuille de route recommandée par les experts en gouvernance publique pour restaurer la confiance.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 justify-center">
+                
+                <div class="flex-1 bg-white p-6 rounded-xl border-t-4 border-t-emerald-500 shadow-md relative">
+                    <div class="absolute -top-5 left-6 bg-emerald-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">1</div>
+                    <h3 class="text-xl font-bold text-slate-800 mt-4 mb-3">Éthique & Indépendance</h3>
+                    <p class="text-sm text-slate-600 mb-4">Mettre fin au pantouflage systémique.</p>
+                    <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                        <li>Instaurer un <strong>délai de viduité (cooling-off)</strong> strict de 3 à 5 ans.</li>
+                        <li>Créer une <strong>Haute Autorité de la Transparence</strong> dotée de pouvoirs de sanction.</li>
+                        <li>Registre des lobbyistes obligatoire.</li>
+                    </ul>
+                </div>
+
+                <div class="hidden lg:flex items-center justify-center text-emerald-300 text-4xl font-bold">&#10142;</div>
+
+                <div class="flex-1 bg-white p-6 rounded-xl border-t-4 border-t-blue-500 shadow-md relative">
+                    <div class="absolute -top-5 left-6 bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">2</div>
+                    <h3 class="text-xl font-bold text-slate-800 mt-4 mb-3">Dé-particratisation</h3>
+                    <p class="text-sm text-slate-600 mb-4">Restaurer la primauté du Parlement et de l'État.</p>
+                    <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                        <li><strong>Réduction drastique</strong> de la taille des cabinets ministériels (max 15 personnes).</li>
+                        <li>Valorisation et dépolitisation de la haute fonction publique.</li>
+                        <li>Allègement de la discipline de vote partisane.</li>
+                    </ul>
+                </div>
+
+                <div class="hidden lg:flex items-center justify-center text-blue-300 text-4xl font-bold">&#10142;</div>
+
+                <div class="flex-1 bg-white p-6 rounded-xl border-t-4 border-t-amber-500 shadow-md relative">
+                    <div class="absolute -top-5 left-6 bg-amber-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">3</div>
+                    <h3 class="text-xl font-bold text-slate-800 mt-4 mb-3">Innovation Démocratique</h3>
+                    <p class="text-sm text-slate-600 mb-4">Intégrer le citoyen au-delà de l'élection.</p>
+                    <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                        <li>Institutionnalisation de <strong>panels citoyens tirés au sort</strong>.</li>
+                        <li>Droit d'initiative citoyenne contraignant.</li>
+                        <li>Référendums consultatifs sur les réformes éthiques majeures.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 text-center border-t border-slate-200 mt-12">
+        <p class="text-slate-500 text-sm font-medium">DocTech Analyse — Synthèse Infographique des Angles Morts de la Démocratie Belge</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            function wrapLabel(label, maxLength = 16) {
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = words[0];
+                for (let i = 1; i < words.length; i++) {
+                    if (currentLine.length + words[i].length + 1 <= maxLength) {
+                        currentLine += ' ' + words[i];
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            }
+
+            const commonTooltipConfig = {
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    titleFont: { size: 14, family: "'Inter', sans-serif" },
+                    bodyFont: { size: 14, family: "'Inter', sans-serif" },
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            const particratieLabels = ['Présidents de Partis', 'Gouvernement Fédéral', 'Parlement National', 'Citoyens Électeurs'].map(l => wrapLabel(l));
+            const ctxParticratie = document.getElementById('particratieChart').getContext('2d');
+            new Chart(ctxParticratie, {
+                type: 'bar',
+                data: {
+                    labels: particratieLabels,
+                    datasets: [
+                        {
+                            label: 'Pouvoir Décisionnel Réel',
+                            data: [90, 60, 20, 10],
+                            backgroundColor: '#1E3A8A',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Pouvoir Constitutionnel Théorique',
+                            data: [10, 50, 80, 100],
+                            backgroundColor: '#93C5FD',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...commonTooltipConfig,
+                        legend: { position: 'top', labels: { font: { family: "'Inter', sans-serif" } } }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            title: { display: true, text: 'Indice de Pouvoir (0-100)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            const cabinetsLabels = ['Belgique', 'France', 'Pays-Bas', 'Allemagne'].map(l => wrapLabel(l));
+            const ctxCabinets = document.getElementById('cabinetsChart').getContext('2d');
+            new Chart(ctxCabinets, {
+                type: 'bar',
+                indexAxis: 'y',
+                data: {
+                    labels: cabinetsLabels,
+                    datasets: [{
+                        label: 'Nombre estimé de collaborateurs ministériels (Gouvernement fédéral/central)',
+                        data: [2000, 550, 150, 120],
+                        backgroundColor: [
+                            '#EF4444', 
+                            '#FCD34D', 
+                            '#34D399', 
+                            '#34D399'  
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...commonTooltipConfig,
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Effectifs des Cabinets' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            const pantouflageLabels = ['Finance, Assurance & Banque', 'Énergie & Climat', 'Consultance & Lobbying', 'Télécoms & Tech', 'Autres secteurs privés'].map(l => wrapLabel(l));
+            const ctxPantouflage = document.getElementById('pantouflageChart').getContext('2d');
+            new Chart(ctxPantouflage, {
+                type: 'doughnut',
+                data: {
+                    labels: pantouflageLabels,
+                    datasets: [{
+                        data: [35, 25, 20, 10, 10],
+                        backgroundColor: [
+                            '#1E3A8A', 
+                            '#3B82F6', 
+                            '#F59E0B', 
+                            '#64748B', 
+                            '#CBD5E1'  
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        ...commonTooltipConfig,
+                        legend: { position: 'right', labels: { font: { family: "'Inter', sans-serif" }, padding: 15 } }
+                    }
+                }
+            });
+
+            const diagnosticLabels = [
+                'Transparence Décisionnelle', 
+                'Reddition de Comptes', 
+                'Indépendance Réglementaire', 
+                'Équilibre des Pouvoirs', 
+                'Participation Citoyenne'
+            ].map(l => wrapLabel(l));
+            
+            const ctxDiagnostic = document.getElementById('diagnosticChart').getContext('2d');
+            new Chart(ctxDiagnostic, {
+                type: 'radar',
+                data: {
+                    labels: diagnosticLabels,
+                    datasets: [
+                        {
+                            label: 'Standard Démocratique Idéal',
+                            data: [100, 100, 100, 100, 100],
+                            backgroundColor: 'rgba(52, 211, 153, 0.1)',
+                            borderColor: 'rgba(52, 211, 153, 0.6)',
+                            pointBackgroundColor: 'rgba(52, 211, 153, 1)',
+                            borderDash: [5, 5]
+                        },
+                        {
+                            label: 'Évaluation Belgique Observée',
+                            data: [30, 40, 55, 25, 45],
+                            backgroundColor: 'rgba(239, 68, 68, 0.4)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            pointBackgroundColor: '#EF4444',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#EF4444',
+                            borderWidth: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: 'rgba(248, 250, 252, 0.9)', font: { size: 12, family: "'Inter', sans-serif" } },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        ...commonTooltipConfig,
+                        legend: { position: 'bottom', labels: { color: '#F8FAFC', font: { family: "'Inter', sans-serif" } } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
